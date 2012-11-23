@@ -115,4 +115,89 @@
 		<welcome-file>default.htm</welcome-file>
 		<welcome-file>default.jsp</welcome-file>
 	</welcome-file-list>
+
+
+	<context-param>
+		<param-name>DB.driver</param-name>
+		<param-value>com.mysql.jdbc.Driver</param-value>
+	</context-param>
+	<context-param>
+		<param-name>DB.url</param-name>
+		<param-value>jdbc:mysql://151.1.159.238:3306/drcon860_curriculum</param-value>
+	</context-param>
+	<context-param>
+		<param-name>DB.userName</param-name>
+		<param-value>drcon860_DiErre</param-value>
+	</context-param>
+	<context-param>
+		<param-name>DB.password</param-name>
+		<param-value>DiErre2012</param-value>
+	</context-param>
+
+<!--
+prod 1
+	<context-param>
+		<param-name>DB.driver</param-name>
+		<param-value>com.mysql.jdbc.Driver</param-value>
+	</context-param>
+	<context-param>
+		<param-name>DB.url</param-name>
+		<param-value>jdbc:mysql://151.1.159.238:3306/drcon860_curriculum</param-value>
+	</context-param>
+	<context-param>
+		<param-name>DB.userName</param-name>
+		<param-value>drcon860_DiErre</param-value>
+	</context-param>
+	<context-param>
+		<param-name>DB.password</param-name>
+		<param-value>DiErre2012</param-value>
+	</context-param>
+
+
+prod 2
+	<context-param>
+		<param-name>DB.url</param-name>
+		<param-value>jdbc:mysql://151.1.159.238:3306/cvonline_Curriculum</param-value>
+	</context-param>
+	<context-param>
+		<param-name>DB.userName</param-name>
+		<param-value>cvonline_DiErre</param-value>
+	</context-param>
+	<context-param>
+		<param-name>DB.password</param-name>
+		<param-value>DiErre2012</param-value>
+	</context-param>
+
+loc 1
+	<context-param>
+		<param-name>DB.driver</param-name>
+		<param-value>com.mysql.jdbc.Driver</param-value>
+	</context-param>
+	<context-param>
+		<param-name>DB.url</param-name>
+		<param-value>jdbc:mysql://localhost:3306/drcon860_curriculum</param-value>
+	</context-param>
+	<context-param>
+		<param-name>DB.userName</param-name>
+		<param-value>root</param-value>
+	</context-param>
+	<context-param>
+		<param-name>DB.password</param-name>
+		<param-value>PwAdmin5%</param-value>
+	</context-param>
+
+loc 2
+	<context-param>
+		<param-name>DB.url</param-name>
+		<param-value>jdbc:mysql://localhost:3306/cvonline_Curriculum</param-value>
+	</context-param>
+	<context-param>
+		<param-name>DB.userName</param-name>
+		<param-value>root</param-value>
+	</context-param>
+	<context-param>
+		<param-name>DB.password</param-name>
+		<param-value>root</param-value>
+	</context-param>
+-->
 </web-app>
