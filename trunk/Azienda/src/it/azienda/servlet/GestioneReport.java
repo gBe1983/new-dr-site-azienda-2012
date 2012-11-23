@@ -9,7 +9,6 @@ import it.azienda.dto.PlanningDTO;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.sql.Connection;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -25,16 +24,8 @@ import javax.servlet.http.HttpSession;
 /**
  * Servlet implementation class GestioneReport
  */
-public class GestioneReport extends HttpServlet {
+public class GestioneReport extends BaseServlet {
 	private static final long serialVersionUID = 1L;
-       
-    /**
-     * @see HttpServlet#HttpServlet()
-     */
-    public GestioneReport() {
-        super();
-        // TODO Auto-generated constructor stub
-    }
 
 	/**
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
@@ -60,10 +51,7 @@ public class GestioneReport extends HttpServlet {
 
 		RequestDispatcher rd = null;
 
-		//recupeto la Connection
-		Connection conn = (Connection)sessione.getAttribute("connessione");
-		
-		ReportDAO rDAO = new ReportDAO();
+		ReportDAO rDAO = new ReportDAO(conn.getConnection());
 		
 		if(sessione.getAttribute("utenteLoggato") != null){
 			
@@ -71,12 +59,12 @@ public class GestioneReport extends HttpServlet {
 			
 			if(azione.equals("visualizzaReport")){
 				
-				RisorsaDAO risDAO = new RisorsaDAO();
-				ClienteDAO cDAO = new ClienteDAO();
+				RisorsaDAO risDAO = new RisorsaDAO(conn.getConnection());
+				ClienteDAO cDAO = new ClienteDAO(conn.getConnection());
 				
-				ArrayList listaCommesse = rDAO.caricamentoCommessa(conn);
-				ArrayList listaRisorse = risDAO.elencoRisorse(conn);
-				ArrayList listaCliente = cDAO.caricamentoClienti(conn);
+				ArrayList listaCommesse = rDAO.caricamentoCommessa();
+				ArrayList listaRisorse = risDAO.elencoRisorse();
+				ArrayList listaCliente = cDAO.caricamentoClienti();
 				
 				request.setAttribute("listaCommesse", listaCommesse);
 				request.setAttribute("listaRisorse", listaRisorse);
@@ -126,18 +114,18 @@ public class GestioneReport extends HttpServlet {
 				 */
 				if(!cliente.equals("") && risorsa.equals("") && commessa.equals("")){
 					
-					ArrayList listaCommesseCliente = rDAO.caricamentoCommesseCliente(cliente,conn);
+					ArrayList listaCommesseCliente = rDAO.caricamentoCommesseCliente(cliente);
 					ArrayList listaAssociazioniCommesse = new ArrayList();
 					report = new ArrayList();
 					
 					for(int x = 0; x < listaCommesseCliente.size(); x++){
 						CommessaDTO commessaCliente = (CommessaDTO) listaCommesseCliente.get(x);
-						listaAssociazioniCommesse = rDAO.caricamentoAssociazioniCommessaRisorsa(listaAssociazioniCommesse,commessaCliente.getId_commessa(), 0,formattazione.format(dataInizio),formattazione.format(dataFine), conn);
+						listaAssociazioniCommesse = rDAO.caricamentoAssociazioniCommessaRisorsa(listaAssociazioniCommesse,commessaCliente.getId_commessa(), 0,formattazione.format(dataInizio),formattazione.format(dataFine));
 					}
 					
 					for(int y = 0; y < listaAssociazioniCommesse.size(); y++){
 						Associaz_Risor_Comm associazioneCommesse = (Associaz_Risor_Comm) listaAssociazioniCommesse.get(y);
-						PlanningDTO planning = rDAO.caricamentoPlanning(associazioneCommesse.getId_associazione(), formattazione.format(dataInizio), formattazione.format(dataFine), conn);
+						PlanningDTO planning = rDAO.caricamentoPlanning(associazioneCommesse.getId_associazione(), formattazione.format(dataInizio), formattazione.format(dataFine));
 						if(planning != null){
 							report.add(planning);
 						}
@@ -152,12 +140,12 @@ public class GestioneReport extends HttpServlet {
 					ArrayList listaAssociazioniCommesse = new ArrayList();
 					report = new ArrayList();
 					
-					listaAssociazioniCommesse = rDAO.caricamentoAssociazioniCommessaRisorsa(listaAssociazioniCommesse,0, Integer.parseInt(risorsa),formattazione.format(dataInizio),formattazione.format(dataFine), conn);
+					listaAssociazioniCommesse = rDAO.caricamentoAssociazioniCommessaRisorsa(listaAssociazioniCommesse,0, Integer.parseInt(risorsa),formattazione.format(dataInizio),formattazione.format(dataFine));
 						
 					
 					for(int y = 0; y < listaAssociazioniCommesse.size(); y++){
 						Associaz_Risor_Comm associazioneCommesse = (Associaz_Risor_Comm) listaAssociazioniCommesse.get(y);
-						PlanningDTO planning = rDAO.caricamentoPlanning(associazioneCommesse.getId_associazione(), formattazione.format(dataInizio), formattazione.format(dataFine), conn);
+						PlanningDTO planning = rDAO.caricamentoPlanning(associazioneCommesse.getId_associazione(), formattazione.format(dataInizio), formattazione.format(dataFine));
 						if(planning != null){
 							report.add(planning);
 						}
@@ -172,12 +160,12 @@ public class GestioneReport extends HttpServlet {
 					ArrayList listaAssociazioniCommesse = new ArrayList();
 					report = new ArrayList();
 					
-					listaAssociazioniCommesse = rDAO.caricamentoAssociazioniCommessaRisorsa(listaAssociazioniCommesse,Integer.parseInt(commessa), 0,formattazione.format(dataInizio),formattazione.format(dataFine), conn);
+					listaAssociazioniCommesse = rDAO.caricamentoAssociazioniCommessaRisorsa(listaAssociazioniCommesse,Integer.parseInt(commessa), 0,formattazione.format(dataInizio),formattazione.format(dataFine));
 						
 					
 					for(int y = 0; y < listaAssociazioniCommesse.size(); y++){
 						Associaz_Risor_Comm associazioneCommesse = (Associaz_Risor_Comm) listaAssociazioniCommesse.get(y);
-						PlanningDTO planning = rDAO.caricamentoPlanning(associazioneCommesse.getId_associazione(), formattazione.format(dataInizio), formattazione.format(dataFine), conn);
+						PlanningDTO planning = rDAO.caricamentoPlanning(associazioneCommesse.getId_associazione(), formattazione.format(dataInizio), formattazione.format(dataFine));
 						if(planning != null){
 							report.add(planning);
 						}
@@ -189,19 +177,19 @@ public class GestioneReport extends HttpServlet {
 				
 				}else if(!cliente.equals("") && !risorsa.equals("") && commessa.equals("")){
 					
-					ArrayList listaCommesseCliente = rDAO.caricamentoCommesseCliente(cliente,conn);
+					ArrayList listaCommesseCliente = rDAO.caricamentoCommesseCliente(cliente);
 					ArrayList listaAssociazioniCommesse = new ArrayList();
 					report = new ArrayList();
 					
 					for(int x = 0; x < listaCommesseCliente.size(); x++){
 						CommessaDTO commessaCliente = (CommessaDTO) listaCommesseCliente.get(x);
-						listaAssociazioniCommesse = rDAO.caricamentoAssociazioniCommessaRisorsa(listaAssociazioniCommesse,commessaCliente.getId_commessa(), Integer.parseInt(risorsa),formattazione.format(dataInizio),formattazione.format(dataFine), conn);
+						listaAssociazioniCommesse = rDAO.caricamentoAssociazioniCommessaRisorsa(listaAssociazioniCommesse,commessaCliente.getId_commessa(), Integer.parseInt(risorsa),formattazione.format(dataInizio),formattazione.format(dataFine));
 					}
 						
 					
 					for(int y = 0; y < listaAssociazioniCommesse.size(); y++){
 						Associaz_Risor_Comm associazioneCommesse = (Associaz_Risor_Comm) listaAssociazioniCommesse.get(y);
-						PlanningDTO planning = rDAO.caricamentoPlanning(associazioneCommesse.getId_associazione(), formattazione.format(dataInizio), formattazione.format(dataFine), conn);
+						PlanningDTO planning = rDAO.caricamentoPlanning(associazioneCommesse.getId_associazione(), formattazione.format(dataInizio), formattazione.format(dataFine));
 						if(planning != null){
 							report.add(planning);
 						}
@@ -213,21 +201,21 @@ public class GestioneReport extends HttpServlet {
 				
 				}else if(!cliente.equals("") && risorsa.equals("") && !commessa.equals("")){
 					
-					ArrayList listaCommesseCliente = rDAO.caricamentoCommesseCliente(cliente,conn);
+					ArrayList listaCommesseCliente = rDAO.caricamentoCommesseCliente(cliente);
 					ArrayList listaAssociazioniCommesse = new ArrayList();
 					report = new ArrayList();
 					
 					for(int x = 0; x < listaCommesseCliente.size(); x++){
 						CommessaDTO commessaCliente = (CommessaDTO) listaCommesseCliente.get(x);
 						if(commessaCliente.getId_commessa() == Integer.parseInt(commessa)){
-							listaAssociazioniCommesse = rDAO.caricamentoAssociazioniCommessaRisorsa(listaAssociazioniCommesse,commessaCliente.getId_commessa(), 0,formattazione.format(dataInizio),formattazione.format(dataFine), conn);
+							listaAssociazioniCommesse = rDAO.caricamentoAssociazioniCommessaRisorsa(listaAssociazioniCommesse,commessaCliente.getId_commessa(), 0,formattazione.format(dataInizio),formattazione.format(dataFine));
 						}
 					}
 						
 					
 					for(int y = 0; y < listaAssociazioniCommesse.size(); y++){
 						Associaz_Risor_Comm associazioneCommesse = (Associaz_Risor_Comm) listaAssociazioniCommesse.get(y);
-						PlanningDTO planning = rDAO.caricamentoPlanning(associazioneCommesse.getId_associazione(), formattazione.format(dataInizio), formattazione.format(dataFine), conn);
+						PlanningDTO planning = rDAO.caricamentoPlanning(associazioneCommesse.getId_associazione(), formattazione.format(dataInizio), formattazione.format(dataFine));
 						if(planning != null){
 							report.add(planning);
 						}
@@ -242,11 +230,11 @@ public class GestioneReport extends HttpServlet {
 					ArrayList listaAssociazioniCommesse = new ArrayList();
 					report = new ArrayList();
 					
-					listaAssociazioniCommesse = rDAO.caricamentoAssociazioniCommessaRisorsa(listaAssociazioniCommesse,Integer.parseInt(commessa), Integer.parseInt(risorsa),formattazione.format(dataInizio),formattazione.format(dataFine), conn);
+					listaAssociazioniCommesse = rDAO.caricamentoAssociazioniCommessaRisorsa(listaAssociazioniCommesse,Integer.parseInt(commessa), Integer.parseInt(risorsa),formattazione.format(dataInizio),formattazione.format(dataFine));
 					
 					for(int y = 0; y < listaAssociazioniCommesse.size(); y++){
 						Associaz_Risor_Comm associazioneCommesse = (Associaz_Risor_Comm) listaAssociazioniCommesse.get(y);
-						PlanningDTO planning = rDAO.caricamentoPlanning(associazioneCommesse.getId_associazione(), formattazione.format(dataInizio), formattazione.format(dataFine), conn);
+						PlanningDTO planning = rDAO.caricamentoPlanning(associazioneCommesse.getId_associazione(), formattazione.format(dataInizio), formattazione.format(dataFine));
 						if(planning != null){
 							report.add(planning);
 						}
@@ -258,21 +246,21 @@ public class GestioneReport extends HttpServlet {
 				
 				}else if(!cliente.equals("") && !risorsa.equals("") && !commessa.equals("")){
 					
-					ArrayList listaCommesseCliente = rDAO.caricamentoCommesseCliente(cliente,conn);
+					ArrayList listaCommesseCliente = rDAO.caricamentoCommesseCliente(cliente);
 					ArrayList listaAssociazioniCommesse = new ArrayList();
 					report = new ArrayList();
 					
 					for(int x = 0; x < listaCommesseCliente.size(); x++){
 						CommessaDTO commessaCliente = (CommessaDTO) listaCommesseCliente.get(x);
 						if(commessaCliente.getId_commessa() == Integer.parseInt(commessa)){
-							listaAssociazioniCommesse = rDAO.caricamentoAssociazioniCommessaRisorsa(listaAssociazioniCommesse,commessaCliente.getId_commessa(), Integer.parseInt(risorsa),formattazione.format(dataInizio),formattazione.format(dataFine), conn);
+							listaAssociazioniCommesse = rDAO.caricamentoAssociazioniCommessaRisorsa(listaAssociazioniCommesse,commessaCliente.getId_commessa(), Integer.parseInt(risorsa),formattazione.format(dataInizio),formattazione.format(dataFine));
 						}
 					}
 						
 					
 					for(int y = 0; y < listaAssociazioniCommesse.size(); y++){
 						Associaz_Risor_Comm associazioneCommesse = (Associaz_Risor_Comm) listaAssociazioniCommesse.get(y);
-						PlanningDTO planning = rDAO.caricamentoPlanning(associazioneCommesse.getId_associazione(), formattazione.format(dataInizio), formattazione.format(dataFine), conn);
+						PlanningDTO planning = rDAO.caricamentoPlanning(associazioneCommesse.getId_associazione(), formattazione.format(dataInizio), formattazione.format(dataFine));
 						if(planning != null){
 							report.add(planning);
 						}
@@ -286,11 +274,11 @@ public class GestioneReport extends HttpServlet {
 					ArrayList listaAssociazioniCommesse = new ArrayList();
 					report = new ArrayList();
 					
-					listaAssociazioniCommesse = rDAO.caricamentoAssociazioniCommessaRisorsa(listaAssociazioniCommesse,0, 0,request.getParameter("da"),request.getParameter("a"), conn);
+					listaAssociazioniCommesse = rDAO.caricamentoAssociazioniCommessaRisorsa(listaAssociazioniCommesse,0, 0,request.getParameter("da"),request.getParameter("a"));
 					
 					for(int y = 0; y < listaAssociazioniCommesse.size(); y++){
 						Associaz_Risor_Comm associazioneCommesse = (Associaz_Risor_Comm) listaAssociazioniCommesse.get(y);
-						PlanningDTO planning = rDAO.caricamentoPlanning(associazioneCommesse.getId_associazione(), formattazione.format(dataInizio), formattazione.format(dataFine), conn);
+						PlanningDTO planning = rDAO.caricamentoPlanning(associazioneCommesse.getId_associazione(), formattazione.format(dataInizio), formattazione.format(dataFine));
 						if(planning != null){
 							report.add(planning);
 						}

@@ -18,16 +18,8 @@ import javax.servlet.http.HttpSession;
 /**
  * Servlet implementation class GestioneCliente
  */
-public class GestioneCliente extends HttpServlet {
+public class GestioneCliente extends BaseServlet {
 	private static final long serialVersionUID = 1L;
-       
-    /**
-     * @see HttpServlet#HttpServlet()
-     */
-    public GestioneCliente() {
-        super();
-        // TODO Auto-generated constructor stub
-    }
 
 	/**
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
@@ -50,11 +42,8 @@ public class GestioneCliente extends HttpServlet {
 		
 		HttpSession sessione = request.getSession();
 		
-		//recupeto la Connection
-		Connection conn = (Connection)sessione.getAttribute("connessione");
-		
 		//creo l'istanza della classe ClienteDAO
-		ClienteDAO cDAO = new ClienteDAO();
+		ClienteDAO cDAO = new ClienteDAO(conn.getConnection());
 		
 		//recupero il parametro "azione" 
 	if(sessione.getAttribute("utenteLoggato") != null){
@@ -90,7 +79,7 @@ public class GestioneCliente extends HttpServlet {
 			 * una query piuttosto che un altra.
 			 */
 			if(azione.equals("inserimentoCliente")){
-				String messaggio = cDAO.inserimentoCliente(cliente, conn);
+				String messaggio = cDAO.inserimentoCliente(cliente);
 				if(messaggio.equals("ok")){
 					request.setAttribute("messaggio", "Inserimento del Cliente avvenuta con successo");
 					rd = getServletContext().getRequestDispatcher("/index.jsp?azione=messaggio");
@@ -101,7 +90,7 @@ public class GestioneCliente extends HttpServlet {
 					rd.forward(request, response);
 				}
 			}else{
-				String messaggio = cDAO.modificaCliente(cliente, conn);
+				String messaggio = cDAO.modificaCliente(cliente);
 				if(messaggio.equals("ok")){
 					request.setAttribute("messaggio", "La modifica del Cliente avvenuta con successo");
 					rd = getServletContext().getRequestDispatcher("/index.jsp?azione=messaggio");
@@ -119,7 +108,7 @@ public class GestioneCliente extends HttpServlet {
 			 * nella tabella "Tbl_Cliente"
 			 */
 			
-			ArrayList listaNominativi = cDAO.caricamentoNominativiCliente(conn);
+			ArrayList listaNominativi = cDAO.caricamentoNominativiCliente();
 			
 			request.setAttribute("nominativi", listaNominativi);	
 			rd = getServletContext().getRequestDispatcher("/index.jsp?azione=visualizzaNominativi&dispositiva=cliente");
@@ -133,9 +122,9 @@ public class GestioneCliente extends HttpServlet {
 			 * il parametro nominativo lo ritroviamo nella pagina Ricerca Cliente
 			 */
 			if(request.getParameter("nominativo") != null){
-				cliente = cDAO.caricamentoCliente(null,request.getParameter("nominativo"), conn);
+				cliente = cDAO.caricamentoCliente(null,request.getParameter("nominativo"));
 			}else{
-				cliente = cDAO.caricamentoCliente(request.getParameter("codice"),null, conn);
+				cliente = cDAO.caricamentoCliente(request.getParameter("codice"),null);
 			}
 			
 			request.setAttribute("cliente", cliente);
@@ -153,7 +142,7 @@ public class GestioneCliente extends HttpServlet {
 			 * Cliente che l'Utente ha deciso di eliminare
 			 */
 			
-			String messaggio = cDAO.disabilitaCliente(request.getParameter("codice"), conn);
+			String messaggio = cDAO.disabilitaCliente(request.getParameter("codice"));
 			
 			if(messaggio.equals("ok")){
 				request.setAttribute("messaggio", "L'eliminazione del Cliente avvenuta con successo");
@@ -167,7 +156,7 @@ public class GestioneCliente extends HttpServlet {
 			
 		}else if(azione.equals("controlloCodiceCliente")){
 			
-			boolean controlloCodiceCliente = cDAO.controlloCodiceCliente(request.getParameter("codiceCliente"), conn);
+			boolean controlloCodiceCliente = cDAO.controlloCodiceCliente(request.getParameter("codiceCliente"));
 			PrintWriter out;
 			try {
 				out = response.getWriter();
@@ -183,7 +172,7 @@ public class GestioneCliente extends HttpServlet {
 			 * nella tabella "Tbl_Cliente"
 			 */
 			
-			ArrayList listaNominativi = cDAO.caricamentoNominativiClienteDisabilitati(conn);
+			ArrayList listaNominativi = cDAO.caricamentoNominativiClienteDisabilitati();
 			
 			request.setAttribute("nominativi", listaNominativi);	
 			rd = getServletContext().getRequestDispatcher("/index.jsp?azione=visualizzaNominativi&dispositiva=cliente&tipo=disabilitato");
@@ -191,7 +180,7 @@ public class GestioneCliente extends HttpServlet {
 			
 		}else if(azione.equals("abilitazioneCliente")){
 			
-			String  messaggio = cDAO.abilitaCliente(request.getParameter("codice"),conn);
+			String  messaggio = cDAO.abilitaCliente(request.getParameter("codice"));
 			
 			if(messaggio.equals("ok")){
 				request.setAttribute("messaggio", "L'abilitazione del Cliente avvenuta con successo");

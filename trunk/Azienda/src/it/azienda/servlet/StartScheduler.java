@@ -19,29 +19,21 @@ import javax.servlet.http.HttpServletResponse;
 /**
  * Servlet implementation class StartScheduler
  */
-public class StartScheduler extends HttpServlet {
+public class StartScheduler extends BaseServlet {
 	private static final long serialVersionUID = 1L;
-       
-    /**
-     * @see HttpServlet#HttpServlet()
-     */
-    public StartScheduler() {
-        super();
-        // TODO Auto-generated constructor stub
-    }
 
-    public void init(HttpServletRequest request, HttpServletResponse response) throws ServletException {
-    	// TODO Auto-generated method stub
-    	super.init();
-    	
-    	try {
-			processRequest(request,response);
+	public void init(HttpServletRequest request, HttpServletResponse response)throws ServletException {
+		// TODO Auto-generated method stub
+		super.init();
+
+		try {
+			processRequest(request, response);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-    }
-    
+	}
+
 	/**
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
@@ -61,25 +53,25 @@ public class StartScheduler extends HttpServlet {
 		// TODO Auto-generated method stub
 		
 		//oggetto connessione
-		Connessione connessione = new Connessione();
+		//Connessione connessione = new Connessione();
 		
 		//oggetto Connection
-		final Connection conn = connessione.connessione(request.getParameter("connessione"));
+		//final Connection conn = connessione.connessione(request.getParameter("connessione"));
 		
 		System.out.println("sono passato di qui!!!!");
 		
-		final RisorsaDAO risorsa = new RisorsaDAO();
+		final RisorsaDAO risorsa = new RisorsaDAO(conn.getConnection());
 		
 		Scheduler s = new Scheduler();
 		// Schedula un task, che sarà eseguito ogni minuto.
 		s.schedule("44 11 08 * *", new Runnable() {
 			public void run() {
-				ArrayList listaEmail = risorsa.invioEmail(conn);
+				ArrayList listaEmail = risorsa.invioEmail();
 				for(int x = 0; x < listaEmail.size(); x++){
 					RisorsaDTO risorsa = (RisorsaDTO) listaEmail.get(x);
 					System.out.println("nome " + risorsa.getNome());
 					System.out.println("cognome " + risorsa.getCognome());
-					Email email = new Email();
+					Email email = new Email(conn.getConnection());
 					String testoEmail = "<html>"
 							+ "<head>"
 							+ " <title> Registrazione Account Azienda</title>"

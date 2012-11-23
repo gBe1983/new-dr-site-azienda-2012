@@ -8,7 +8,6 @@ import it.azienda.dto.UtenteDTO;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.sql.Connection;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -24,16 +23,8 @@ import javax.servlet.http.HttpSession;
 /**
  * Servlet implementation class GestioneRisorse
  */
-public class GestioneRisorse extends HttpServlet {
+public class GestioneRisorse extends BaseServlet {
 	private static final long serialVersionUID = 1L;
-       
-    /**
-     * @see HttpServlet#HttpServlet()
-     */
-    public GestioneRisorse() {
-        super();
-        // TODO Auto-generated constructor stub
-    }
 
 	/**
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
@@ -57,12 +48,9 @@ public class GestioneRisorse extends HttpServlet {
 		HttpSession sessione = request.getSession();
 		
 		RequestDispatcher rd = null;
-		
-		//recupeto la Connection
-		Connection conn = (Connection)sessione.getAttribute("connessione");
-		
+
 		//creo l'istanza della classe RisorsaDAO
-		RisorsaDAO rDAO = new RisorsaDAO();
+		RisorsaDAO rDAO = new RisorsaDAO(conn.getConnection());
 	if(sessione.getAttribute("utenteLoggato") != null){
 		//recupero il valore dell'attributo azione
 		String azione = request.getParameter("azione");
@@ -115,7 +103,7 @@ public class GestioneRisorse extends HttpServlet {
 				 * in questa sezione effettuo l'inserimento della risorsa
 				 * effettuando un controllo sull'esito dell'inserimento della risorsa
 				 */
-				String messaggio = rDAO.inserimentoRisorsa(risorsa, conn);
+				String messaggio = rDAO.inserimentoRisorsa(risorsa);
 				
 				if(messaggio.equals("ok")){
 					//creo l'stanza dell'oggetto UtenteDTO per accogliere i valori 
@@ -126,18 +114,18 @@ public class GestioneRisorse extends HttpServlet {
 					 * creo l'stanza dell'oggetto UtenteDAO per richiamare il
 					 * metodo che andrà a inserire l'utenza della risorsa 
 					 */
-					UtenteDAO uDAO = new UtenteDAO();
+					UtenteDAO uDAO = new UtenteDAO(conn.getConnection());
 					
 					utente.setUsername(request.getParameter("username"));
 					utente.setPassword(request.getParameter("password"));
 					utente.setData_registrazione((new SimpleDateFormat("dd-MM-yyyy HH:mm:ss").format(new Date())));
 					utente.setData_login((new SimpleDateFormat("dd-MM-yyyy HH:mm:ss").format(new Date())));
-					utente.setId_risorsa(uDAO.caricamentoIdRisorsa(conn));
+					utente.setId_risorsa(uDAO.caricamentoIdRisorsa());
 					
-					String messaggioUtenteRisorsa = uDAO.inserimentoUtente(utente, conn);
+					String messaggioUtenteRisorsa = uDAO.inserimentoUtente(utente);
 				
 					if(messaggio.equals("ok")){
-						Email email = new Email();
+						Email email = new Email(conn.getConnection());
 
 						if(sessione.getAttribute("modalitaDiConnessione").equals("cvonline")){
 								String testoEmail = "<html>"
@@ -224,7 +212,7 @@ public class GestioneRisorse extends HttpServlet {
 				 */
 				risorsa.setIdRisorsa(Integer.parseInt(request.getParameter("idRisorsa")));
 				
-				String messaggio = rDAO.modificaRisorsa(risorsa, conn);
+				String messaggio = rDAO.modificaRisorsa(risorsa);
 				
 				request.setAttribute("messaggio", messaggio);
 				rd = getServletContext().getRequestDispatcher("/index.jsp?azione=messaggio");
@@ -246,7 +234,7 @@ public class GestioneRisorse extends HttpServlet {
 			risorsa.setFiguraProfessionale(request.getParameter("figuraProfessionale"));
 			risorsa.setSeniority(request.getParameter("seniority"));
 			
-			ArrayList listaRisorse = rDAO.ricercaRisorse(risorsa, conn);
+			ArrayList listaRisorse = rDAO.ricercaRisorse(risorsa);
 			if(listaRisorse.size() != 0){
 				sessione.setAttribute("listaRisorse", listaRisorse);
 				response.sendRedirect("./index.jsp?azione=visualizzaRisorse&numeroPagina=0&dispositiva=risorsa");
@@ -264,7 +252,7 @@ public class GestioneRisorse extends HttpServlet {
 			 */
 			
 			int idRisorsa = Integer.parseInt(request.getParameter("risorsa"));
-			RisorsaDTO risorsa = rDAO.caricamentoProfiloRisorsa(idRisorsa, conn);
+			RisorsaDTO risorsa = rDAO.caricamentoProfiloRisorsa(idRisorsa);
 			request.setAttribute("risorsa", risorsa);
 			
 			if(request.getParameter("page").equals("modifica")){
@@ -278,7 +266,7 @@ public class GestioneRisorse extends HttpServlet {
 		}else if(azione.equals("eliminaRisorsa")){
 			
 			int idRisorsa = Integer.parseInt(request.getParameter("risorsa"));
-			String messaggio = rDAO.eliminaRisorsa(idRisorsa, conn);
+			String messaggio = rDAO.eliminaRisorsa(idRisorsa);
 			
 			request.setAttribute("messaggio", messaggio);
 			rd = getServletContext().getRequestDispatcher("/index.jsp?azione=messaggio");
@@ -293,7 +281,7 @@ public class GestioneRisorse extends HttpServlet {
 			
 			String codiceCliente =request.getParameter("parametro");
 			
-			String valoriRisorse = rDAO.elencoTrattativeRisorse(codiceCliente, conn);
+			String valoriRisorse = rDAO.elencoTrattativeRisorse(codiceCliente);
 			
 			PrintWriter out;
 			try {
@@ -307,8 +295,8 @@ public class GestioneRisorse extends HttpServlet {
 			
 		}else if(azione.equals("caricamentoCredenziali")){
 			
-			UtenteDTO utente = rDAO.caricamentoCredenziali(Integer.parseInt(request.getParameter("risorsa")), conn);
-			RisorsaDTO risorsa = rDAO.caricamentoProfiloRisorsa(Integer.parseInt(request.getParameter("risorsa")), conn);
+			UtenteDTO utente = rDAO.caricamentoCredenziali(Integer.parseInt(request.getParameter("risorsa")));
+			RisorsaDTO risorsa = rDAO.caricamentoProfiloRisorsa(Integer.parseInt(request.getParameter("risorsa")));
 			
 			
 			request.setAttribute("risorsa", risorsa);
@@ -318,10 +306,10 @@ public class GestioneRisorse extends HttpServlet {
 			
 		}else if(azione.equals("modificaCredenziali")){
 			
-			String messaggio = rDAO.modificaCredenziali(request.getParameter("username"), request.getParameter("password"), Integer.parseInt(request.getParameter("utente")), conn);
+			String messaggio = rDAO.modificaCredenziali(request.getParameter("username"), request.getParameter("password"), Integer.parseInt(request.getParameter("utente")));
 			
 			if(messaggio.equals("ok")){
-				Email email = new Email();
+				Email email = new Email(conn.getConnection());
 				String testoEmail = "<html>"
 						+ "<head>"
 						+ " <title> Modifica Credenziali</title>"
