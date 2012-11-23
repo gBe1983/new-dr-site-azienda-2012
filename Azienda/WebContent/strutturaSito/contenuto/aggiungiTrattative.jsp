@@ -9,7 +9,6 @@
 <%@page import="java.util.GregorianCalendar"%>
 <%@page import="it.azienda.dto.CommessaDTO"%>
 <%@page import="it.azienda.dao.CommesseDAO"%>
-<%@page import="it.azienda.connessione.Connessione"%>
 <%@page import="java.sql.Connection"%>
 
 
@@ -27,14 +26,8 @@
 HttpSession controlloUtenteLoggato = request.getSession();
 if(controlloUtenteLoggato.getAttribute("utenteLoggato") != null){
 
-	CommesseDAO commessaDAO = new CommesseDAO();
-	
-	//creo l'istanza della classe connessione
-	Connessione connessione = new Connessione();
-	
-	//recupero l'istanza dell'oggetto Connection
-	Connection conn = (Connection) controlloUtenteLoggato.getAttribute("connessione");
-	
+	CommesseDAO commessaDAO = new CommesseDAO((Connection) controlloUtenteLoggato.getAttribute("connessione"));
+
 	ArrayList listaTipologie = (ArrayList) request.getAttribute("listaTrattattive");
 	ArrayList listaClienti = (ArrayList) request.getAttribute("listaClienti");
 	ArrayList listaRisorse = (ArrayList) request.getAttribute("listaRisorse");
@@ -232,7 +225,7 @@ if(controlloUtenteLoggato.getAttribute("utenteLoggato") != null){
 <table>
 	<tr>
 		<td>Codice Commessa</td>
-		<td><input type="text" name="codiceCommessa" id="codiceCommessa" value="<%=commessaDAO.creazioneCodiceCommessaEsterna(conn) %>" readonly="readonly" /></td>
+		<td><input type="text" name="codiceCommessa" id="codiceCommessa" value="<%=commessaDAO.creazioneCodiceCommessaEsterna() %>" readonly="readonly" /></td>
 	</tr>
 	<tr>
 		<td>* Data</td>
@@ -492,7 +485,7 @@ if(controlloUtenteLoggato.getAttribute("utenteLoggato") != null){
 			<table>
 				<tr>
 					<td>* Codice Commessa</td>
-					<td><input type="text" name="codiceCommessa" id="codiceCommessa" onblur="controlloCodiceCommessa(this.value)" value="<%=commessaDAO.creazioneCodiceCommessaEsterna(conn) %>" readonly="readonly" /></td>
+					<td><input type="text" name="codiceCommessa" id="codiceCommessa" onblur="controlloCodiceCommessa(this.value)" value="<%=commessaDAO.creazioneCodiceCommessaEsterna() %>" readonly="readonly" /></td>
 				</tr>
 				<tr>
 					<td>* Data</td>
