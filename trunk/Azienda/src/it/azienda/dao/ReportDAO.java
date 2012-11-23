@@ -12,25 +12,28 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
-public class ReportDAO {
+public class ReportDAO extends BaseDao {
 
-	PreparedStatement ps = null;
-	
+	public ReportDAO(Connection connessione) {
+		super(connessione);
+	}
+
 	//mi serve per castare le varie date_inizio e date_fine delle varie commesse
 	SimpleDateFormat formattaDataWeb = new SimpleDateFormat("dd-MM-yyyy");
 	
 	//mi serve per formattare le varie date_inizio e date_fine nel formato del DB
 	SimpleDateFormat formattaDataServer = new SimpleDateFormat("yyyy-MM-dd");
 	
-	public ArrayList caricamentoCommessa(Connection conn){
+	public ArrayList caricamentoCommessa(){
 		 
 		String sql = "select id_commessa,descrizione,codice_commessa from tbl_commesse";
 		
 		ArrayList listaCommesse = new ArrayList();
-		
+		PreparedStatement ps=null;
+		ResultSet rs=null;
 		try {
-			ps = conn.prepareStatement(sql);
-			ResultSet rs = ps.executeQuery();
+			ps = connessione.prepareStatement(sql);
+			rs = ps.executeQuery();
 			while(rs.next()){
 				CommessaDTO commessa = new CommessaDTO();
 				commessa.setId_commessa(rs.getInt(1));
@@ -41,22 +44,25 @@ public class ReportDAO {
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+		}finally{
+			close(ps,rs);
 		}
 		
 		return listaCommesse;
 		
 	}
 	
-	public ArrayList caricamentoCommesseCliente(String id_cliente, Connection conn){
+	public ArrayList caricamentoCommesseCliente(String id_cliente){
 		
 		String sql = "select id_commessa from tbl_commesse where id_cliente = ?";
 		
 		ArrayList listaCommesse = new ArrayList();
-		
+		PreparedStatement ps=null;
+		ResultSet rs=null;
 		try {
-			ps = conn.prepareStatement(sql);
+			ps = connessione.prepareStatement(sql);
 			ps.setString(1, id_cliente);
-			ResultSet rs = ps.executeQuery();
+			rs = ps.executeQuery();
 			while(rs.next()){
 				CommessaDTO commessa = new CommessaDTO();
 				commessa.setId_commessa(rs.getInt(1));
@@ -65,6 +71,8 @@ public class ReportDAO {
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+		}finally{
+			close(ps,rs);
 		}
 		
 		return listaCommesse;
@@ -75,11 +83,11 @@ public class ReportDAO {
 	 * tramite questo metodo effettuo la somma delle ore di ogni commessa
 	 */
 	
-	public PlanningDTO caricamentoPlanning(int id_associazione,String dataInizio, String dataFine, Connection conn){
+	public PlanningDTO caricamentoPlanning(int id_associazione,String dataInizio, String dataFine){
 		
 		String sql = "";
 		
-		String codiceCliente = controlloCodiceCliente(id_associazione, conn);
+		String codiceCliente = controlloCodiceCliente(id_associazione);
 		if(codiceCliente != null){
 		
 			sql = "select sum(num_ore), risorsa.cognome, risorsa.nome, cliente.ragione_sociale, commessa.codice_commessa, commessa.descrizione" +
@@ -101,13 +109,14 @@ public class ReportDAO {
 		}
 		
 		PlanningDTO planning = null;
-		
+		PreparedStatement ps=null;
+		ResultSet rs=null;
 		try {
-			ps = conn.prepareStatement(sql);
+			ps = connessione.prepareStatement(sql);
 			ps.setInt(1, id_associazione);
 			ps.setString(2, dataInizio);
 			ps.setString(3, dataFine);
-			ResultSet rs = ps.executeQuery();
+			rs = ps.executeQuery();
 			while(rs.next()){
 				planning = new PlanningDTO();
 				planning.setNumero_ore(rs.getInt(1));
@@ -127,6 +136,8 @@ public class ReportDAO {
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+		}finally{
+			close(ps,rs);
 		}
 		
 		return planning;
@@ -137,7 +148,7 @@ public class ReportDAO {
 	 * ad una commessa o ad una risorsa.
 	 */
 	
-	public ArrayList caricamentoAssociazioniCommessaRisorsa(ArrayList listaCommesse, int id_commessa, int id_risorsa, String dataInizio, String dataFine, Connection conn){
+	public ArrayList caricamentoAssociazioniCommessaRisorsa(ArrayList listaCommesse, int id_commessa, int id_risorsa, String dataInizio, String dataFine){
 		
 		if(id_commessa != 0 || id_risorsa != 0){
 			String sql = "select id_associazione,id_commessa,id_risorsa from tbl_associaz_risor_comm";
@@ -160,9 +171,10 @@ public class ReportDAO {
 			if(commessa || risorsa){
 				sql += "and data_inizio <= ? and data_fine >= ?";
 			}
-			
+			PreparedStatement ps=null;
+			ResultSet rs=null;
 			try {
-				ps = conn.prepareStatement(sql);
+				ps = connessione.prepareStatement(sql);
 				if(commessa){
 					ps.setInt(1, id_commessa);
 				}
@@ -183,7 +195,7 @@ public class ReportDAO {
 					ps.setString(4, dataFine);
 				}
 				System.out.println(sql);
-				ResultSet rs = ps.executeQuery();
+				rs = ps.executeQuery();
 				while(rs.next()){
 					Associaz_Risor_Comm asscommessa = new Associaz_Risor_Comm();
 					asscommessa.setId_associazione(rs.getInt(1));
@@ -194,15 +206,18 @@ public class ReportDAO {
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
+			}finally{
+				close(ps,rs);
 			}
 		}else{
 			String sql = "select id_associazione,id_commessa,id_risorsa from tbl_associaz_risor_comm where data_inizio <= ? and data_fine >= ?";
-			
+			PreparedStatement ps=null;
+			ResultSet rs=null;
 			try {
-				ps = conn.prepareStatement(sql);
+				ps = connessione.prepareStatement(sql);
 				ps.setString(1, formattaDataServer.format(formattaDataWeb.parse(dataInizio)));
 				ps.setString(2, formattaDataServer.format(formattaDataWeb.parse(dataFine)));
-				ResultSet rs = ps.executeQuery();
+				rs = ps.executeQuery();
 				while(rs.next()){
 					Associaz_Risor_Comm asscommessa = new Associaz_Risor_Comm();
 					asscommessa.setId_associazione(rs.getInt(1));
@@ -216,6 +231,8 @@ public class ReportDAO {
 			} catch (ParseException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
+			}finally{
+				close(ps,rs);
 			}
 			
 			
@@ -229,22 +246,25 @@ public class ReportDAO {
 	 * tramite questo metodo verifico se è presente il codice cliente
 	 */
 	
-	private String controlloCodiceCliente(int associazione,Connection conn){
+	private String controlloCodiceCliente(int associazione){
 		
 		String sql = "select commessa.id_cliente from tbl_associaz_risor_comm as asscommessa, tbl_commesse as commessa where asscommessa.id_associazione = ? and asscommessa.id_commessa = commessa.id_commessa";
 		
 		String codiceCliente = null;
-		
+		PreparedStatement ps=null;
+		ResultSet rs=null;
 		try {
-			ps = conn.prepareStatement(sql);
+			ps = connessione.prepareStatement(sql);
 			ps.setInt(1, associazione);
-			ResultSet rs = ps.executeQuery();
+			rs = ps.executeQuery();
 			if(rs.next()){
 				codiceCliente = rs.getString(1);
 			}
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+		}finally{
+			close(ps,rs);
 		}
 		
 		return codiceCliente;

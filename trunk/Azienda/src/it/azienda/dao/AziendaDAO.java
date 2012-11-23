@@ -7,11 +7,13 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class AziendaDAO {
+public class AziendaDAO extends BaseDao {
 
-	PreparedStatement ps = null;
-	
-	public String inserimentoAzienda(AziendaDTO azienda, Connection conn){
+	public AziendaDAO(Connection connessione) {
+		super(connessione);
+	}
+
+	public String inserimentoAzienda(AziendaDTO azienda){
 		
 		String sql = "insert into tbl_azienda (ragioneSociale,indirizzo,citta,provincia,cap,nazione,telefono,fax,mail,codiceFiscale,pIva,indirizzoLegale,cittaLegale,provinciaLegale,capLegale,nazioneLegale,referente,telefonoReferente,sito,trattamentoDati)" +
 				"values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
@@ -19,8 +21,9 @@ public class AziendaDAO {
 		String messaggio = "";
 		int esitoInserimentoAzienda = 0;
 		
+		PreparedStatement ps=null;
 		try {
-			ps = conn.prepareStatement(sql);
+			ps = connessione.prepareStatement(sql);
 			ps.setString(1, azienda.getRagioneSociale());
 			ps.setString(2, azienda.getIndirizzo());
 			ps.setString(3, azienda.getCitta());
@@ -45,6 +48,8 @@ public class AziendaDAO {
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			return "Siamo spiacenti, per via dei problemi tecnici la registrazione non avvenuta con successo. Contattare l'amministrazione";
+		}finally{
+			close(ps);
 		}
 		
 		if(esitoInserimentoAzienda == 1){
@@ -54,15 +59,15 @@ public class AziendaDAO {
 		return messaggio;
 	}
 	
-	public String modificaAzienda(AziendaDTO azienda, Connection conn){
+	public String modificaAzienda(AziendaDTO azienda){
 		
 		String sql = "update tbl_aziende set ragione_sociale = ?,indirizzo = ?, citta = ?, provincia = ?, cap = ?, nazione = ?, telefono = ?, fax = ?, mail = ?, codice_fiscale = ?, p_iva = ?, indirizzo_legale = ?, citta_legale = ?, provincia_legale = ?, cap_legale = ?, nazione_legale = ?, referente = ?, telefono_referente = ?, sito = ?, trattamento_dati = ? where id_azienda = ?";
 		
 		String messaggio = "";
 		int esitoInserimentoAzienda = 0;
-		
+		PreparedStatement ps=null;
 		try {
-			ps = conn.prepareStatement(sql);
+			ps = connessione.prepareStatement(sql);
 			ps.setString(1, azienda.getRagioneSociale());
 			ps.setString(2, azienda.getIndirizzo());
 			ps.setString(3, azienda.getCitta());
@@ -88,6 +93,8 @@ public class AziendaDAO {
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			return "Siamo spiacenti, per via dei problemi tecnici la registrazione non avvenuta con successo. Contattare l'amministrazione";
+		}finally{
+			close(ps);
 		}
 		
 		if(esitoInserimentoAzienda == 1){
@@ -101,20 +108,23 @@ public class AziendaDAO {
 	 * effettuo il caricamento dell'idAzienda
 	 */
 	
-	public int caricamentoIdAzienda(Connection conn){
+	public int caricamentoIdAzienda(){
 		
 		int idAzienda = 0;
 		String sql = "select max(id_azienda) from tbl_azienda";
-		
+		PreparedStatement ps=null;
+		ResultSet rs=null;
 		try {
-			ps = conn.prepareStatement(sql);
-			ResultSet rs = ps.executeQuery();
+			ps = connessione.prepareStatement(sql);
+			rs = ps.executeQuery();
 			while(rs.next()){
 				idAzienda = rs.getInt(1);
 			}
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+		}finally{
+			close(ps,rs);
 		}
 		
 		return idAzienda;
@@ -126,16 +136,17 @@ public class AziendaDAO {
 	 * è loggata
 	 * 
 	 */
-	public AziendaDTO visualizzaProfiloAzienda(int idAzienda, Connection conn){
+	public AziendaDTO visualizzaProfiloAzienda(int idAzienda){
 		
 		String sql = "select * from tbl_aziende where id_azienda = ?";
 		
 		AziendaDTO azienda = null;
-		
+		PreparedStatement ps=null;
+		ResultSet rs=null;
 		try {
-			ps = conn.prepareStatement(sql);
+			ps = connessione.prepareStatement(sql);
 			ps.setInt(1, idAzienda);
-			ResultSet rs = ps.executeQuery();
+			rs = ps.executeQuery();
 			if(rs.next()){
 				azienda = new AziendaDTO();
 				azienda.setIdAzienda(rs.getInt(1));
@@ -165,6 +176,8 @@ public class AziendaDAO {
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+		}finally{
+			close(ps,rs);
 		}
 		
 		return azienda;
@@ -174,17 +187,19 @@ public class AziendaDAO {
 	/*
 	 * con questo meotodo effettuo l'eliminazione logica dell'Azienda
 	 */
-	public void eliminaProfiloAzienda(int idAzienda,Connection conn){
+	public void eliminaProfiloAzienda(int idAzienda){
 		
 		String sql = "update tbl_login set utenteVisible = false where id_azienda = ?";
-		
+		PreparedStatement ps=null;
 		try {
-			ps = conn.prepareStatement(sql);
+			ps = connessione.prepareStatement(sql);
 			ps.setInt(1, idAzienda);
 			ps.executeUpdate();
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+		}finally{
+			close(ps);
 		}
 		
 	}
@@ -193,14 +208,14 @@ public class AziendaDAO {
 	 * tramite questo metodo effettuo il cambiamento della password
 	 */
 	
-	public String cambioPassword(String password,int idAzienda,Connection conn){
+	public String cambioPassword(String password,int idAzienda){
 		
 		String sql = "update tbl_login set password = ? where id_azienda = ?";
 		
 		int aggiornamentoPassword = 0;
-		
+		PreparedStatement ps=null;
 		try {
-			ps = conn.prepareStatement(sql);
+			ps = connessione.prepareStatement(sql);
 			ps.setString(1, MD5(password));
 			ps.setInt(2, idAzienda);
 			aggiornamentoPassword = ps.executeUpdate();
@@ -208,6 +223,8 @@ public class AziendaDAO {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 			return "Siamo spiacenti, il cambio password non è avvenuto con successo. Contattare l'amministrazione.";
+		}finally{
+			close(ps);
 		}
 		
 		if(aggiornamentoPassword == 1){
@@ -216,21 +233,18 @@ public class AziendaDAO {
 			return "Siamo spiacenti, il cambio password non è avvenuto con successo. Contattare l'amministrazione.";
 		}
 	}
-	
-	
-	public String MD5(String md5) {
-		
+
+	public String MD5(String md5) {//TODO UNIFICARE IN UN SOLO POSTO QUESTO METODO!
 		try {
-	        java.security.MessageDigest md = java.security.MessageDigest.getInstance("MD5");
-	        byte[] array = md.digest(md5.getBytes());
-	        StringBuffer sb = new StringBuffer();
-	        for (int i = 0; i < array.length; ++i) {
-	          sb.append(Integer.toHexString((array[i] & 0xFF) | 0x100).substring(1,3));
-	        }
-	        return sb.toString();
-	    } catch (java.security.NoSuchAlgorithmException e) {
-	    	
-	    }
-	    return null;
+			java.security.MessageDigest md = java.security.MessageDigest.getInstance("MD5");
+			byte[] array = md.digest(md5.getBytes());
+			StringBuffer sb = new StringBuffer();
+			for (int i = 0; i < array.length; ++i) {
+				sb.append(Integer.toHexString((array[i] & 0xFF) | 0x100).substring(1, 3));
+			}
+			return sb.toString();
+		} catch (java.security.NoSuchAlgorithmException e) {
+		}
+		return null;
 	}
 }

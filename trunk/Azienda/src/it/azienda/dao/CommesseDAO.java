@@ -14,20 +14,22 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 
-public class CommesseDAO {
+public class CommesseDAO extends BaseDao {
 	
 	
+	public CommesseDAO(Connection connessione) {
+		super(connessione);
+	}
+
 	//mi serve per castare le varie date_inizio e date_fine delle varie commesse
 	SimpleDateFormat formattaDataWeb = new SimpleDateFormat("dd-MM-yyyy");
 	
 	//mi serve per formattare le varie date_inizio e date_fine nel formato del DB
 	SimpleDateFormat formattaDataServer = new SimpleDateFormat("yyyy-MM-dd");
 	
-	PreparedStatement ps = null;
-	
 	//con questo metodo effettuo l'inserimento della commessa
 	
-	public String inserimentoCommessa(CommessaDTO commessa, String tipologia, Connection conn){
+	public String inserimentoCommessa(CommessaDTO commessa, String tipologia){
 		
 		int esitoInserimentoCommessa = 0;
 		
@@ -39,10 +41,11 @@ public class CommesseDAO {
 		 * Pertanto se la tipologia ha come valore diverso da 4 
 		 * effettuo la query normale altrimenti quella relativa alla commessa.
 		 */
+		PreparedStatement ps=null;
 		if(!tipologia.equals("4")){
 			sql = "insert into tbl_commesse (id_cliente,data_comm,oggetto_comm,descrizione,sede_lavoro,data_inizio,data_fine,importo,importo_lettere,al,pagamento,note,attiva,codice_commessa,totale_ore,stato,id_tipologia_commessa,id_trattativa) values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 			try {
-				ps = conn.prepareStatement(sql);
+				ps = connessione.prepareStatement(sql);
 				ps.setString(1, commessa.getId_cliente());
 				ps.setString(2, commessa.getData_offerta());
 				ps.setString(3, commessa.getOggetto_offerta());
@@ -72,7 +75,7 @@ public class CommesseDAO {
 		}else{
 			sql = "insert into tbl_commesse(descrizione,codice_commessa,note,id_tipologia_commessa,id_trattativa) values (?,?,?,?,?)"; 
 			try {
-				ps = conn.prepareStatement(sql);
+				ps = connessione.prepareStatement(sql);
 				ps.setString(1, commessa.getDescrizione());
 				ps.setString(2, commessa.getCodiceCommessa());
 				ps.setString(3, commessa.getNote());
@@ -91,6 +94,8 @@ public class CommesseDAO {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 			return "Siamo spiacenti l'inserimento della commessa non è avvenuta correttamente. Contattare l'amministratore.";
+		}finally{
+			close(ps);
 		}
 		
 		if(esitoInserimentoCommessa == 1){
@@ -104,21 +109,24 @@ public class CommesseDAO {
 	 * con questo metodo effettuo il recupero dell'idCommessa al momento dell'inserimento
 	 * di una nuova Commessa
 	 */
-	public int selectIdCommessa(Connection conn){
+	public int selectIdCommessa(){
 		
 		String sql = "select max(id_commessa) from tbl_commesse";
 		
 		int idCommessa = 0;
-		
+		PreparedStatement ps=null;
+		ResultSet rs=null;
 		try {
-			ps = conn.prepareStatement(sql);
-			ResultSet rs = ps.executeQuery();
+			ps = connessione.prepareStatement(sql);
+			rs = ps.executeQuery();
 			if(rs.next()){
 				idCommessa = rs.getInt(1);
 			}
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+		}finally{
+			close(ps,rs);
 		}
 		
 		return idCommessa;
@@ -128,15 +136,16 @@ public class CommesseDAO {
 	 * tramite questo metodo carico le tipologie di commessa che ci possono
 	 * essere. Le descrizioni vengono prese dalla tabella tbl_tipologiacommessa
 	 */
-	public ArrayList caricamentoTipologiaCommessa(Connection conn){
+	public ArrayList caricamentoTipologiaCommessa(){
 		
 		String sql = "select * from tbl_tipologie_commesse";
 		
 		ArrayList tipologie = new ArrayList();
-		
+		PreparedStatement ps=null;
+		ResultSet rs=null;
 		try {
-			ps = conn.prepareStatement(sql);
-			ResultSet rs = ps.executeQuery();
+			ps = connessione.prepareStatement(sql);
+			rs = ps.executeQuery();
 			while(rs.next()){
 				TipologiaCommessa tipologia = new TipologiaCommessa();
 				tipologia.setId_tipologia(rs.getInt(1));
@@ -146,6 +155,8 @@ public class CommesseDAO {
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+		}finally{
+			close(ps,rs);
 		}
 		
 		return tipologie;
@@ -156,14 +167,14 @@ public class CommesseDAO {
 	 * nella tabella Tbl_AssCommessaClienteRisorsa
 	 */
 	
-	public String inserimentoAssCommessa(Associaz_Risor_Comm asscommessa, Connection conn){
+	public String inserimentoAssCommessa(Associaz_Risor_Comm asscommessa){
 	
 		String sql = "insert into tbl_associaz_risor_comm (id_risorsa,id_commessa,data_inizio,data_fine,importo,al,attiva) values (?,?,?,?,?,?,?)";
 		
 		int esitoInserimentoCommessaClienteRisorsa = 0;
-		
+		PreparedStatement ps=null;
 		try {
-			ps = conn.prepareStatement(sql);
+			ps = connessione.prepareStatement(sql);
 			ps.setInt(1, asscommessa.getId_risorsa());
 			ps.setInt(2, asscommessa.getId_commessa());
 			ps.setString(3, asscommessa.getDataInizio());
@@ -176,6 +187,8 @@ public class CommesseDAO {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 			return "Siamo spiacenti l'associazione tra cliente e risorsa non è avvenuta correttamente. Contattare l'amministrazione.";
+		}finally{
+			close(ps);
 		}
 		
 		if(esitoInserimentoCommessaClienteRisorsa == 1){
@@ -189,23 +202,26 @@ public class CommesseDAO {
 	 * tramite questo metodo effettuo la creazione automatica del codice Commessa Esterna
 	 */
 	
-	public String creazioneCodiceCommessaEsterna(Connection conn){
+	public String creazioneCodiceCommessaEsterna(){
 		
 		String sql = "select max(codice_commessa) from tbl_commesse where id_tipologia_commessa = 1 or id_tipologia_commessa = 2 group by codice_commessa";
 		
 		String codiceCommessa = "CCE";
 		
 		int codCommessa = 0;
-		
+		PreparedStatement ps=null;
+		ResultSet rs=null;
 		try {
-			ps = conn.prepareStatement(sql);
-			ResultSet rs = ps.executeQuery();
+			ps = connessione.prepareStatement(sql);
+			rs = ps.executeQuery();
 			while(rs.next()){
 				codCommessa = Integer.parseInt(rs.getString(1).substring(4, 6));
 			}
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+		}finally{
+			close(ps,rs);
 		}
 		
 		codCommessa++;
@@ -225,23 +241,26 @@ public class CommesseDAO {
 	 * tramite questo metodo effettuo la creazione automatica del codice Commessa Interna
 	 */
 	
-	public String creazioneCodiceCommessaInterna(Connection conn){
+	public String creazioneCodiceCommessaInterna(){
 		
 		String sql = "select max(codice_commessa) from tbl_commesse where id_tipologia_commessa = 3 or id_tipologia_commessa = 4 group by codice_commessa";
 		
 		String codiceCommessa = "CCIN";
 		
 		int codCommessa = 0;
-		
+		PreparedStatement ps=null;
+		ResultSet rs=null;
 		try {
-			ps = conn.prepareStatement(sql);
-			ResultSet rs = ps.executeQuery();
+			ps = connessione.prepareStatement(sql);
+			rs = ps.executeQuery();
 			while(rs.next()){
 				codCommessa = Integer.parseInt(rs.getString(1).substring(5, 7));
 			}
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+		}finally{
+			close(ps,rs);
 		}
 		
 		codCommessa++;
@@ -262,7 +281,7 @@ public class CommesseDAO {
 	 * create nella tabella tbl_commessa a seconda di come 
 	 * viene effettuata la ricerca.
 	 */
-	public ArrayList caricamentoCommesse(CommessaDTO commessa, Connection conn){
+	public ArrayList caricamentoCommesse(CommessaDTO commessa){
 		
 		ArrayList listaCommesse = new ArrayList();
 		
@@ -313,9 +332,10 @@ public class CommesseDAO {
 		
 		
 		sql += " order by id_commessa";
-		
+		PreparedStatement ps=null;
+		ResultSet rs=null;
 		try {
-			ps = conn.prepareStatement(sql);
+			ps = connessione.prepareStatement(sql);
 			
 			if(codiceCommessa){
 				ps.setString(1, "%"+commessa.getCodiceCommessa()+"%");
@@ -352,13 +372,13 @@ public class CommesseDAO {
 			
 			System.out.println(sql);
 			
-			ResultSet rs = ps.executeQuery();
+			rs = ps.executeQuery();
 			while(rs.next()){
 				CommessaDTO commessaTrovata = new CommessaDTO();
 				commessaTrovata.setId_commessa(rs.getInt(1));
 				if(rs.getString(2) != null && !rs.getString(2).equals("")){
 					commessaTrovata.setId_cliente(rs.getString(2));
-					commessaTrovata.setDescrizioneCliente(caricamentoDescrizioneCliente(rs.getString(2), conn));
+					commessaTrovata.setDescrizioneCliente(caricamentoDescrizioneCliente(rs.getString(2)));
 				}else{
 					commessaTrovata.setId_cliente(rs.getString(2));
 					commessaTrovata.setDescrizioneCliente("");
@@ -385,6 +405,8 @@ public class CommesseDAO {
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+		}finally{
+			close(ps,rs);
 		}
 		return listaCommesse;
 	}
@@ -394,22 +416,25 @@ public class CommesseDAO {
 	 * relazionata alla commessa
 	 */
 	
-	private String caricamentoDescrizioneCliente(String codiceCliente, Connection conn){
+	private String caricamentoDescrizioneCliente(String codiceCliente){
 		
 		String sql = "select ragione_sociale from tbl_clienti where id_cliente = ?";
 		
 		String ragioneSociale = "";
-		
+		PreparedStatement ps=null;
+		ResultSet rs=null;
 		try {
-			ps = conn.prepareStatement(sql);
+			ps = connessione.prepareStatement(sql);
 			ps.setString(1, codiceCliente);
-			ResultSet rs = ps.executeQuery();
+			rs = ps.executeQuery();
 			while(rs.next()){
 				ragioneSociale = rs.getString(1);
 			}
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+		}finally{
+			close(ps,rs);
 		}
 		
 		return ragioneSociale;
@@ -420,22 +445,25 @@ public class CommesseDAO {
 	 * relazionata alla commessa
 	 */
 	
-	private String caricamentoDescrizioneRisorsa(int idRisorsa, Connection conn){
+	private String caricamentoDescrizioneRisorsa(int idRisorsa){
 		
 		String sql = "select cognome,nome from tbl_risorse where id_risorsa = ?";
 		
 		String anagrafica = "";
-		
+		PreparedStatement ps=null;
+		ResultSet rs=null;
 		try {
-			ps = conn.prepareStatement(sql);
+			ps = connessione.prepareStatement(sql);
 			ps.setInt(1, idRisorsa);
-			ResultSet rs = ps.executeQuery();
+			rs = ps.executeQuery();
 			while(rs.next()){
 				anagrafica = rs.getString(1) + " " + rs.getString(2);
 			}
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+		}finally{
+			close(ps,rs);
 		}
 		
 		return anagrafica;
@@ -445,23 +473,22 @@ public class CommesseDAO {
 	 * tramite questo metodo effettuo il caricamento della commessa che l'utente
 	 * vuole modificate nella tabella tbl_commessa
 	 */
-	public CommessaDTO aggiornoCommessa(int idCommessa, Connection conn){
-		
+	public CommessaDTO aggiornoCommessa(int idCommessa){
 		CommessaDTO commessa = null;
-		
 		String sql = "select * from tbl_commesse where id_commessa = ?";
-		
+		PreparedStatement ps=null;
+		ResultSet rs=null;
 		try {
-			ps = conn.prepareStatement(sql);
+			ps = connessione.prepareStatement(sql);
 			ps.setInt(1, idCommessa);
-			ResultSet rs = ps.executeQuery();
+			rs = ps.executeQuery();
 			if(rs.next()){
 				commessa = new CommessaDTO();
 				commessa.setId_commessa(rs.getInt(1));
 				
 				if(rs.getString(2) != null){
 					commessa.setId_cliente(rs.getString(2));
-					commessa.setDescrizioneCliente(caricamentoDescrizioneCliente(rs.getString(2), conn));
+					commessa.setDescrizioneCliente(caricamentoDescrizioneCliente(rs.getString(2)));
 				}else{
 					commessa.setId_cliente(rs.getString(2));
 					commessa.setDescrizioneCliente("");
@@ -487,6 +514,8 @@ public class CommesseDAO {
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+		}finally{
+			close(ps,rs);
 		}
 		return commessa;
 	}
@@ -495,14 +524,14 @@ public class CommesseDAO {
 	 * tramite questo metodo effettuo la modifica della commessa.
 	 */
 	
-	public String modificaCommessa(CommessaDTO commessa, Connection conn){
+	public String modificaCommessa(CommessaDTO commessa){
 		
 		String sql = "update tbl_commesse set id_cliente = ?, data_comm = ?, oggetto_comm = ?, descrizione = ?, sede_lavoro = ?, data_inizio = ?, data_fine = ?, importo = ?, importo_lettere = ?, al = ?, pagamento = ?, note = ?, attiva = ?, codice_commessa = ?, totale_ore = ?, stato = ?, id_tipologia_commessa = ? where id_commessa = ?";
 		
 		int esitoModificaCommessa = 0;
-		
+		PreparedStatement ps=null;
 		try {
-			ps = conn.prepareStatement(sql);
+			ps = connessione.prepareStatement(sql);
 			ps.setString(1, commessa.getId_cliente());
 			ps.setString(2, commessa.getData_offerta());
 			ps.setString(3, commessa.getOggetto_offerta());
@@ -526,6 +555,8 @@ public class CommesseDAO {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 			return "Siamo spiacenti l'inserimento della commessa non è avvenuta correttamente. Contattare l'amministratore.";
+		}finally{
+			close(ps);
 		}
 		
 		if(esitoModificaCommessa == 1){
@@ -539,7 +570,7 @@ public class CommesseDAO {
 	 * questo metodo serve per estrapolare i dati relativi alle associazioni
 	 * delle risorse alle commesse 
 	 */
-	public ArrayList caricamentoRisorseCommessa(int idCommessa, String tipologia,Connection conn){
+	public ArrayList caricamentoRisorseCommessa(int idCommessa, String tipologia){
 		
 		String sql = "";
 		
@@ -550,11 +581,12 @@ public class CommesseDAO {
 		}
 			
 		ArrayList listaRisorse = new ArrayList();
-		
+		PreparedStatement ps=null;
+		ResultSet rs=null;
 		try {
-			ps = conn.prepareStatement(sql);
+			ps = connessione.prepareStatement(sql);
 			ps.setInt(1, idCommessa);
-			ResultSet rs = ps.executeQuery();
+			rs = ps.executeQuery();
 			while(rs.next()){
 				Associaz_Risor_Comm assCommessa = new Associaz_Risor_Comm();
 				assCommessa.setId_associazione(rs.getInt(1));
@@ -573,6 +605,8 @@ public class CommesseDAO {
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+		}finally{
+			close(ps,rs);
 		}
 		
 		return listaRisorse;
@@ -583,22 +617,25 @@ public class CommesseDAO {
 	 * associate a una commessa
 	 */
 	
-	public ArrayList risorseAssociate(int idCommessa, Connection conn){
+	public ArrayList risorseAssociate(int idCommessa){
 		
 		String sql = "select id_risorsa from tbl_associaz_risor_comm where id_commessa = ? and attiva = true group by id_risorsa";
 		
 		ArrayList risorseAssociate = new ArrayList();
-		
+		PreparedStatement ps=null;
+		ResultSet rs=null;
 		try {
-			ps = conn.prepareStatement(sql);
+			ps = connessione.prepareStatement(sql);
 			ps.setInt(1, idCommessa);
-			ResultSet rs = ps.executeQuery();
+			rs = ps.executeQuery();
 			while(rs.next()){
 				risorseAssociate.add(rs.getInt(1));
 			}
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+		}finally{
+			close(ps,rs);
 		}
 		
 		return risorseAssociate;
@@ -609,22 +646,25 @@ public class CommesseDAO {
 	 * non sia gia presente nella tabella Tbl_Commessa
 	 */
 	
-	public boolean controlloCodiceCommessa(String codiceCommessa, Connection conn){
+	public boolean controlloCodiceCommessa(String codiceCommessa){
 		
 		boolean commessa = false;
 		
 		String sql = "select id_commessa from tbl_commessa where codiceCommessa = ?";
-		
+		PreparedStatement ps=null;
+		ResultSet rs=null;
 		try {
-			ps = conn.prepareStatement(sql);
+			ps = connessione.prepareStatement(sql);
 			ps.setString(1, codiceCommessa);
-			ResultSet rs = ps.executeQuery();
+			rs = ps.executeQuery();
 			if(rs.next()){
 				commessa = true;
 			}
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+		}finally{
+			close(ps,rs);
 		}
 		
 		return commessa;
@@ -635,7 +675,7 @@ public class CommesseDAO {
 	 * una commessa
 	 */
 	
-	public String dissociazioniRisorsa(int idRisorsa, int idCommessa, Connection conn){
+	public String dissociazioniRisorsa(int idRisorsa, int idCommessa){
 		
 		
 		Date data = new Date();
@@ -644,9 +684,9 @@ public class CommesseDAO {
 		String sql = "update tbl_associaz_risor_comm set data_fine = ?, attiva = ? where id_risorsa = ? and id_commessa = ?";
 		
 		int esitoQuery = 0;
-		
+		PreparedStatement ps=null;
 		try {
-			ps = conn.prepareStatement(sql);
+			ps = connessione.prepareStatement(sql);
 			ps.setString(1, dataOdierna);
 			ps.setBoolean(2, false);
 			ps.setInt(3, idRisorsa);
@@ -656,6 +696,8 @@ public class CommesseDAO {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 			return "Siamo spiacente la dissociazione della risorsa alla commmessa non è avvenuto con successo. Contattare l'amministrazione.";
+		}finally{
+			close(ps);
 		}
 		
 		if(esitoQuery == 1){
@@ -670,14 +712,14 @@ public class CommesseDAO {
 	 * con tipologia 4 cioè "Altro".
 	 */
 	
-	public String elimina_Associazione_Risorsa_con_Commessa_Altro(int idRisorsa, int idCommessa, Connection conn){
+	public String elimina_Associazione_Risorsa_con_Commessa_Altro(int idRisorsa, int idCommessa){
 		
 		String sql = "delete from tbl_associaz_risor_comm where id_risorsa = ? and id_commessa = ?";
 		
 		int esitoQuery = 0;
-		
+		PreparedStatement ps=null;
 		try {
-			ps = conn.prepareStatement(sql);
+			ps = connessione.prepareStatement(sql);
 			ps.setInt(1, idRisorsa);
 			ps.setInt(2, idCommessa);
 			esitoQuery = ps.executeUpdate();
@@ -685,6 +727,8 @@ public class CommesseDAO {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 			return "Siamo spiacente la dissociazione della risorsa alla commmessa non è avvenuto con successo. Contattare l'amministrazione.";
+		}finally{
+			close(ps);
 		}
 		
 		if(esitoQuery == 1){
@@ -695,7 +739,7 @@ public class CommesseDAO {
 	}
 	
 	
-	public String chiudiCommessa_Con_Data(int idCommessa, Connection conn){
+	public String chiudiCommessa_Con_Data(int idCommessa){
 		
 		
 		Date data = new Date();
@@ -704,9 +748,9 @@ public class CommesseDAO {
 		int esitoChiusuraCommessa = 0;
 		
 		String sql = "update tbl_commesse set data_fine = ?, stato = 'chiusa', attiva = false where id_commessa = ?";
-		
+		PreparedStatement ps=null;
 		try {
-			ps = conn.prepareStatement(sql);
+			ps = connessione.prepareStatement(sql);
 			ps.setString(1, dataOdierna);
 			ps.setInt(2, idCommessa);
 			esitoChiusuraCommessa = ps.executeUpdate();
@@ -714,6 +758,8 @@ public class CommesseDAO {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 			return "Siamo spiacenti la chiusura della commessa non è avvenuta correttamente. Contattare l'amministrazione";
+		}finally{
+			close(ps);
 		}
 		
 		if(esitoChiusuraCommessa == 1){
@@ -726,22 +772,24 @@ public class CommesseDAO {
 	/*
 	 * con questo metodo effettuo la chiusura dell'associazione della singola commessa alla risorsa
 	 */
-	public String chiudi_Associaz_Risors_Comm_Con_Data(int id_associazione, Connection conn){
+	public String chiudi_Associaz_Risors_Comm_Con_Data(int id_associazione){
 		
 		Date data = new Date();
 		String dataOdierna = formattaDataServer.format(data);
 		
 		int esitoChiusura = 0;
 		String sql = "update tbl_associaz_risor_comm set data_fine = ?, attiva = false where id_associazione = ?";
-		
+		PreparedStatement ps=null;
 		try {
-			ps = conn.prepareStatement(sql);
+			ps = connessione.prepareStatement(sql);
 			ps.setString(1, dataOdierna);
 			ps.setInt(2, id_associazione);
 			esitoChiusura = ps.executeUpdate();
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+		}finally{
+			close(ps);
 		}
 		
 		if(esitoChiusura == 1){
@@ -755,12 +803,12 @@ public class CommesseDAO {
 	/*
 	 * con questo metodo effettuo la chiusura dell'associazione della risorsa alla commessa
 	 */
-	public void chiudi_Associaz_Risors_Comm_Data_Fine_Antecedente(String data, int id_associazione, Connection conn){
+	public void chiudi_Associaz_Risors_Comm_Data_Fine_Antecedente(String data, int id_associazione){
 				
 		String sql = "update tbl_associaz_risor_comm set data_fine = ?, attiva = ? where id_associazione = ?";
-		
+		PreparedStatement ps=null;
 		try {
-			ps = conn.prepareStatement(sql);
+			ps = connessione.prepareStatement(sql);
 			ps.setString(1, data);
 			ps.setInt(2, 0);
 			ps.setInt(3, id_associazione);
@@ -768,6 +816,8 @@ public class CommesseDAO {
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+		}finally{
+			close(ps);
 		}
 		
 	}
@@ -775,18 +825,20 @@ public class CommesseDAO {
 	/*
 	 * con questo metodo effettuo il caricamento della nuova data fine dell'associazione della risorsa alla commessa.
 	 */
-	public void chiudi_Associaz_Risors_Comm_Data_Fine_Posticipata(String data, int id_associazione, Connection conn){
+	public void chiudi_Associaz_Risors_Comm_Data_Fine_Posticipata(String data, int id_associazione){
 				
 		String sql = "update tbl_associaz_risor_comm set data_fine = ? where id_associazione = ?";
-		
+		PreparedStatement ps=null;
 		try {
-			ps = conn.prepareStatement(sql);
+			ps = connessione.prepareStatement(sql);
 			ps.setString(1, data);
 			ps.setInt(2, id_associazione);
 			ps.executeUpdate();
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+		}finally{
+			close(ps);
 		}
 		
 	}
@@ -797,22 +849,25 @@ public class CommesseDAO {
 	 * tipologia 1, cioè commesse singole
 	 */
 	
-	public String descrizioneRisorsa(int idCommessa, Connection conn){
+	public String descrizioneRisorsa(int idCommessa){
 		
 		String sql = "select risorse.cognome,risorse.nome from tbl_associaz_risor_comm as asscommessa, tbl_risorse as risorse where asscommessa.id_risorsa = risorse.id_risorsa and asscommessa.id_commessa = ?";
 
 		String nomeCognome = "";
-		
+		PreparedStatement ps=null;
+		ResultSet rs=null;
 		try {
-			ps = conn.prepareStatement(sql);
+			ps = connessione.prepareStatement(sql);
 			ps.setInt(1, idCommessa);
-			ResultSet rs = ps.executeQuery();
+			rs = ps.executeQuery();
 			while(rs.next()){
 				nomeCognome = rs.getString(1) + " " + rs.getString(2);
 			}
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+		}finally{
+			close(ps,rs);
 		}
 		
 		return nomeCognome;
@@ -822,7 +877,7 @@ public class CommesseDAO {
 	 * tramite questo metodo effettuo il caricamento del calendario della risorsa
 	 */
 	
-	public void caricamentoCalendario(long differenzaGiorni, Calendar giornoIniziale, int idAssociazione,Connection conn){
+	public void caricamentoCalendario(long differenzaGiorni, Calendar giornoIniziale, int idAssociazione){
 		
 		
 		String sql = "insert into tbl_planning(data,id_associazione) values (?,?)";
@@ -832,9 +887,9 @@ public class CommesseDAO {
 				//calendario.setTime(date)
 				
 				int esito = 0;
-				
+				PreparedStatement ps=null;
 				try {
-					ps = conn.prepareStatement(sql);
+					ps = connessione.prepareStatement(sql);
 					ps.setString(1, formattaDataServer.format(giornoIniziale.getTime()));
 					ps.setInt(2, idAssociazione);
 					
@@ -842,6 +897,8 @@ public class CommesseDAO {
 				} catch (SQLException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
+				}finally{
+					close(ps);
 				}
 				
 				if(esito == 1){
@@ -856,21 +913,24 @@ public class CommesseDAO {
 	/*
 	 * recupero l'idAssociazione che mi serve per inserirlo poi nella tabella Tbl_Planning
 	 */
-	public int caricamentoIdAssociazione(Connection conn){
+	public int caricamentoIdAssociazione(){
 		
 		
 		String sql = "select max(id_associazione) from tbl_associaz_risor_comm";
 		int idAssociazione = 0;
-		
+		PreparedStatement ps=null;
+		ResultSet rs=null;
 		try {
-			ps = conn.prepareStatement(sql);
-			ResultSet rs = ps.executeQuery();
+			ps = connessione.prepareStatement(sql);
+			rs = ps.executeQuery();
 			if(rs.next()){
 				idAssociazione = rs.getInt(1);
 			}
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+		}finally{
+			close(ps,rs);
 		}
 		return idAssociazione;
 	}
@@ -885,10 +945,11 @@ public class CommesseDAO {
 		String sql = "select id_commessa,data_fine from tbl_commesse";
 		
 		ArrayList listaCommesse = new ArrayList();
-		
+		PreparedStatement ps=null;
+		ResultSet rs=null;
 		try {
-			ps = conn.prepareStatement(sql);
-			ResultSet rs = ps.executeQuery();
+			ps = connessione.prepareStatement(sql);
+			rs = ps.executeQuery();
 			while(rs.next()){
 				CommessaDTO commessa = new CommessaDTO();
 				commessa.setId_commessa(rs.getInt(1));
@@ -898,6 +959,8 @@ public class CommesseDAO {
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+		}finally{
+			close(ps,rs);
 		}
 		
 		return listaCommesse;
@@ -906,16 +969,17 @@ public class CommesseDAO {
 	 * tramite questo metodo mi carico tutte le associazioni che ci sono tra la risorsa
 	 * e la commessa.
 	 */
-	public ArrayList caricamento_Tutte_Associazione_Risorsa_Commessa(int idCommessa,Connection conn){
+	public ArrayList caricamento_Tutte_Associazione_Risorsa_Commessa(int idCommessa){
 		
 		String sql = "select asscommessa.id_associazione,asscommessa.id_risorsa,asscommessa.id_commessa,asscommessa.data_inizio,asscommessa.data_fine from tbl_associaz_risor_comm asscommessa, tbl_commesse as commessa where asscommessa.id_commessa = commessa.id_commessa and asscommessa.id_commessa = ? and commessa.id_tipologia_commessa <> 4";
 		
 		ArrayList lista_Associazioni_Risorsa_Commessa = new ArrayList();
-		
+		PreparedStatement ps=null;
+		ResultSet rs=null;
 		try {
-			ps = conn.prepareStatement(sql);
+			ps = connessione.prepareStatement(sql);
 			ps.setInt(1, idCommessa);
-			ResultSet rs = ps.executeQuery();
+			rs = ps.executeQuery();
 			while(rs.next()){
 				Associaz_Risor_Comm asscommessa = new Associaz_Risor_Comm();
 				asscommessa.setId_associazione(rs.getInt(1));
@@ -928,6 +992,8 @@ public class CommesseDAO {
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+		}finally{
+			close(ps,rs);
 		}
 		
 		return lista_Associazioni_Risorsa_Commessa;
@@ -938,17 +1004,18 @@ public class CommesseDAO {
 	 * tramite questo metodo mi carico la singola associazione che cè tra la risorsa
 	 * e la commessa.
 	 */
-	public Associaz_Risor_Comm caricamento_Singole_Associazione_Risorsa_Commessa(int idCommessa,int idRisorsa,Connection conn){
+	public Associaz_Risor_Comm caricamento_Singole_Associazione_Risorsa_Commessa(int idCommessa,int idRisorsa){
 		
 		String sql = "select * from tbl_associaz_risor_comm where id_commessa = ? and id_risorsa = ?";
 		
 		Associaz_Risor_Comm asscommessa = null;
-		
+		PreparedStatement ps=null;
+		ResultSet rs=null;
 		try {
-			ps = conn.prepareStatement(sql);
+			ps = connessione.prepareStatement(sql);
 			ps.setInt(1, idCommessa);
 			ps.setInt(2, idRisorsa);
-			ResultSet rs = ps.executeQuery();
+			rs = ps.executeQuery();
 			if(rs.next()){
 				asscommessa = new Associaz_Risor_Comm();
 				asscommessa.setId_associazione(rs.getInt(1));
@@ -962,25 +1029,29 @@ public class CommesseDAO {
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+		}finally{
+			close(ps,rs);
 		}
 		
 		return asscommessa;
 		
 	}
 	
-	public String aggiornaCalendarioChiusuraSingolo(String data,int id_associazione, Connection conn){
+	public String aggiornaCalendarioChiusuraSingolo(String data,int id_associazione){
 		
 		String sql = "update tbl_planning set num_ore=0,attivo = false where data = ? and id_associazione = ?";
 		int esito = 0;
-		
+		PreparedStatement ps=null;
 		try {
-			ps = conn.prepareStatement(sql);
+			ps = connessione.prepareStatement(sql);
 			ps.setString(1, data);
 			ps.setInt(2, id_associazione);
 			esito = ps.executeUpdate();
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+		}finally{
+			close(ps);
 		}
 		
 		if(esito == 1){
@@ -1026,19 +1097,21 @@ public class CommesseDAO {
 	 * sulla tabella Tbl_Planning
 	 */
 	
-	public void chiusuraMensilita(String data,Connection conn){
+	public void chiusuraMensilita(String data){
 		
 		String sql = "update tbl_planning set attivo = 0 where data = ?";
 		
 		int esito = 0;
-		
+		PreparedStatement ps=null;
 		try {
-			ps = conn.prepareStatement(sql);
+			ps = connessione.prepareStatement(sql);
 			ps.setString(1, data);
 			esito = ps.executeUpdate();
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+		}finally{
+			close(ps);
 		}
 		
 		if(esito == 1){
@@ -1048,16 +1121,17 @@ public class CommesseDAO {
 		}
 	}
 	
-	public ArrayList controlloChiusuraMensilitàCommessa(String data, Connection conn){
+	public ArrayList controlloChiusuraMensilitàCommessa(String data){
 		
 		String sql = "select id_associazione,id_risorsa,id_commessa from tbl_associaz_risor_comm where data_fine = ?";
 		
 		ArrayList commesseDaChiudere = new ArrayList();
-		
+		PreparedStatement ps=null;
+		ResultSet rs=null;
 		try {
-			ps = conn.prepareStatement(sql);
+			ps = connessione.prepareStatement(sql);
 			ps.setString(1, data);
-			ResultSet rs = ps.executeQuery();
+			rs = ps.executeQuery();
 			while(rs.next()){
 				Associaz_Risor_Comm asscommessa = new Associaz_Risor_Comm();
 				asscommessa.setId_associazione(rs.getInt(1));
@@ -1068,6 +1142,8 @@ public class CommesseDAO {
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+		}finally{
+			close(ps,rs);
 		}
 		
 		return commesseDaChiudere;
@@ -1076,18 +1152,20 @@ public class CommesseDAO {
 	}
 	
 	
-	public String chiudi_Associaz_Risors_Comm_Senza_Data(int id_associazione, Connection conn){
+	public String chiudi_Associaz_Risors_Comm_Senza_Data(int id_associazione){
 		
 		int esitoChiusura = 0;
 		String sql = "update tbl_associaz_risor_comm set attiva = false where id_associazione = ?";
-		
+		PreparedStatement ps=null;
 		try {
-			ps = conn.prepareStatement(sql);
+			ps = connessione.prepareStatement(sql);
 			ps.setInt(1, id_associazione);
 			esitoChiusura = ps.executeUpdate();
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+		}finally{
+			close(ps);
 		}
 		
 		if(esitoChiusura == 1){
@@ -1098,21 +1176,23 @@ public class CommesseDAO {
 		
 	}
 	
-	public String chiudiCommessa_Senza_Data(int idCommessa, Connection conn){
+	public String chiudiCommessa_Senza_Data(int idCommessa){
 		
 		
 		int esitoChiusuraCommessa = 0;
 		
 		String sql = "update tbl_commesse set stato = 'chiusa',attiva = false where id_commessa = ?";
-		
+		PreparedStatement ps=null;
 		try {
-			ps = conn.prepareStatement(sql);
+			ps = connessione.prepareStatement(sql);
 			ps.setInt(1, idCommessa);
 			esitoChiusuraCommessa = ps.executeUpdate();
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 			return "Siamo spiacenti la chiusura della commessa non è avvenuta correttamente. Contattare l'amministrazione";
+		}finally{
+			close(ps);
 		}
 		
 		if(esitoChiusuraCommessa == 1){
@@ -1122,7 +1202,7 @@ public class CommesseDAO {
 		}
 	}
 	
-	public String controlloDataCommessa(int idCommessa, String data, Connection conn){
+	public String controlloDataCommessa(int idCommessa, String data){
 		
 		//mi serve per castare le varie date_inizio e date_fine delle varie commesse
 		SimpleDateFormat formattaDataWeb = new SimpleDateFormat("dd-MM-yyyy");
@@ -1145,11 +1225,12 @@ public class CommesseDAO {
 		}
 		
 		String sql = "select data_inizio,data_fine from tbl_commesse where id_commessa = ?";
-		
+		PreparedStatement ps=null;
+		ResultSet rs=null;
 		try {
-			ps = conn.prepareStatement(sql);
+			ps = connessione.prepareStatement(sql);
 			ps.setInt(1, idCommessa);
-			ResultSet rs = ps.executeQuery();
+			rs = ps.executeQuery();
 			while(rs.next()){
 				dataInizio.setTime(formattaDataServer.parse(rs.getString(1)));
 				dataFine.setTime(formattaDataServer.parse(rs.getString(2)));
@@ -1161,6 +1242,8 @@ public class CommesseDAO {
 		} catch (ParseException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+		}finally{
+			close(ps,rs);
 		}
 		
 		if(dataCommessa.getTime().after(dataFine.getTime()) || dataCommessa.getTime().before(dataInizio.getTime())){
@@ -1171,7 +1254,7 @@ public class CommesseDAO {
 		
 	}
 	
-public String controlloDataInizio_Associazione(int idCommessa, String data, Connection conn){
+public String controlloDataInizio_Associazione(int idCommessa, String data){
 		
 		
 		String esitoChiusuraCommessa = "";
@@ -1188,11 +1271,12 @@ public String controlloDataInizio_Associazione(int idCommessa, String data, Conn
 		}
 		
 		String sql = "select data_inizio,data_fine from tbl_commesse where id_commessa = ?";
-		
+		PreparedStatement ps=null;
+		ResultSet rs=null;
 		try {
-			ps = conn.prepareStatement(sql);
+			ps = connessione.prepareStatement(sql);
 			ps.setInt(1, idCommessa);
-			ResultSet rs = ps.executeQuery();
+			rs = ps.executeQuery();
 			while(rs.next()){
 				dataInizio.setTime(formattaDataServer.parse(rs.getString(1)));
 				dataFine.setTime(formattaDataServer.parse(rs.getString(2)));
@@ -1204,6 +1288,8 @@ public String controlloDataInizio_Associazione(int idCommessa, String data, Conn
 		} catch (ParseException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+		}finally{
+			close(ps,rs);
 		}
 		
 		if(dataCommessa.getTime().before(dataInizio.getTime()) || dataCommessa.getTime().after(dataFine.getTime())){
@@ -1220,15 +1306,16 @@ public String controlloDataInizio_Associazione(int idCommessa, String data, Conn
 	 * verifico quelle che sono state già create.
 	 */
 	
-	public ArrayList caricamentoCommesseTipologiaAltro(Connection conn){
+	public ArrayList caricamentoCommesseTipologiaAltro(){
 		
 		String sql = "select id_commessa,descrizione from tbl_commesse where id_tipologia_commessa = 4 order by descrizione";
 		
 		ArrayList listaCommesse = new ArrayList();
-		
+		PreparedStatement ps=null;
+		ResultSet rs=null;
 		try {
-			ps = conn.prepareStatement(sql);
-			ResultSet rs = ps.executeQuery();
+			ps = connessione.prepareStatement(sql);
+			rs = ps.executeQuery();
 			while(rs.next()){
 				CommessaDTO commessa = new CommessaDTO();
 				commessa.setId_commessa(rs.getInt(1));
@@ -1238,6 +1325,8 @@ public String controlloDataInizio_Associazione(int idCommessa, String data, Conn
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+		}finally{
+			close(ps,rs);
 		}
 		
 		return listaCommesse;

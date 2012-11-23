@@ -1,9 +1,7 @@
 package it.azienda.dao;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.Connection;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.Properties;
 
@@ -18,7 +16,11 @@ import javax.mail.internet.MimeMessage;
 
 import org.apache.log4j.Logger;
 
-public class Email {
+public class Email extends BaseDao {
+
+	public Email(Connection connessione) {
+		super(connessione);
+	}
 
 	static String host = "smtp.gmail.com"; //tuo smtp
 	static String ccn = "roberto@dierreconsulting.com"; //destinatario 
