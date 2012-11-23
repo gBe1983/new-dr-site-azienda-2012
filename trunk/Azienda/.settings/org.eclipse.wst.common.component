@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?><project-modules id="moduleCoreId" project-version="1.5.0">
+    <wb-module deploy-name="Azienda">
+        <wb-resource deploy-path="/" source-path="/WebContent" tag="defaultRootSource"/>
+        <wb-resource deploy-path="/WEB-INF/classes" source-path="/src"/>
+        <dependent-module archiveName="jdom-1.0b8.jar" deploy-path="/WEB-INF/lib/" handle="module:/resource/jdom-1.0b8/jdom-1.0b8">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="mail.jar" deploy-path="/WEB-INF/lib/" handle="module:/resource/mail/mail">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="itextpdf-5.2.0-javadoc.jar" deploy-path="/WEB-INF/lib/" handle="module:/resource/itextpdf-5.2.0-javadoc/itextpdf-5.2.0-javadoc">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="cron4j-2.2.5.jar" deploy-path="/WEB-INF/lib/" handle="module:/resource/cron4j-2.2.5/cron4j-2.2.5">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="itext-xtra-5.2.0-sources.jar" deploy-path="/WEB-INF/lib/" handle="module:/resource/itext-xtra-5.2.0-sources/itext-xtra-5.2.0-sources">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="itextpdf-5.2.0.jar" deploy-path="/WEB-INF/lib/" handle="module:/resource/itextpdf-5.2.0/itextpdf-5.2.0">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="jaxen.jar" deploy-path="/WEB-INF/lib/" handle="module:/resource/jaxen/jaxen">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="mysql-connector-java-5.1.7-bin.jar" deploy-path="/WEB-INF/lib/" handle="module:/resource/mysql-connector-java-5.1.7-bin/mysql-connector-java-5.1.7-bin">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="saxpath.jar" deploy-path="/WEB-INF/lib/" handle="module:/resource/saxpath/saxpath">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="jaxen-jdom.jar" deploy-path="/WEB-INF/lib/" handle="module:/resource/jaxen-jdom/jaxen-jdom">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="mailapi.jar" deploy-path="/WEB-INF/lib/" handle="module:/resource/mailapi/mailapi">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="smtp.jar" deploy-path="/WEB-INF/lib/" handle="module:/resource/smtp/smtp">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="itext-xtra-5.2.0-javadoc.jar" deploy-path="/WEB-INF/lib/" handle="module:/resource/itext-xtra-5.2.0-javadoc/itext-xtra-5.2.0-javadoc">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="itextpdf-5.2.0-sources.jar" deploy-path="/WEB-INF/lib/" handle="module:/resource/itextpdf-5.2.0-sources/itextpdf-5.2.0-sources">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="jaxen-core.jar" deploy-path="/WEB-INF/lib/" handle="module:/resource/jaxen-core/jaxen-core">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="imap.jar" deploy-path="/WEB-INF/lib/" handle="module:/resource/imap/imap">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="pop3.jar" deploy-path="/WEB-INF/lib/" handle="module:/resource/pop3/pop3">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="dsn.jar" deploy-path="/WEB-INF/lib/" handle="module:/resource/dsn/dsn">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="displaytag-1.0.jar" deploy-path="/WEB-INF/lib/" handle="module:/resource/displaytag-1.0/displaytag-1.0">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="log4j-1.2.16.jar" deploy-path="/WEB-INF/lib/" handle="module:/resource/log4j-1.2.16/log4j-1.2.16">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="itext-xtra-5.2.0.jar" deploy-path="/WEB-INF/lib/" handle="module:/resource/itext-xtra-5.2.0/itext-xtra-5.2.0">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <property name="context-root" value="Azienda"/>
+        <property name="java-output-path" value="/Azienda/build/classes"/>
+    </wb-module>
+</project-modules>
