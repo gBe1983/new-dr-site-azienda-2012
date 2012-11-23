@@ -2,7 +2,6 @@
     pageEncoding="ISO-8859-1"%>
 <%@page import="it.azienda.dto.ClienteDTO"%>
 <%@page import="it.azienda.dao.ClienteDAO"%>
-<%@page import="it.azienda.connessione.Connessione"%>
 <%@page import="java.sql.Connection"%>
 
 
@@ -10,8 +9,7 @@
 HttpSession controlloUtenteLoggato = request.getSession();
 if(controlloUtenteLoggato.getAttribute("utenteLoggato") != null){
 
-	ClienteDAO clienteDAO = new ClienteDAO();
-	Connection conn = (Connection) controlloUtenteLoggato.getAttribute("connessione");
+	ClienteDAO clienteDAO = new ClienteDAO((Connection) controlloUtenteLoggato.getAttribute("connessione"));
 	if(request.getAttribute("cliente") == null){
 %>
 <div class="subtitle ">
@@ -30,7 +28,7 @@ if(controlloUtenteLoggato.getAttribute("utenteLoggato") != null){
 				<table>
 					<tr>
 						<td>Codice</td>
-						<td><input type="text" name="codiceCliente" id="codiceCliente" onblur="controlloCodiceCliente(this.value)" value="<%=clienteDAO.creazioneCodiceCliente(conn) %>" readonly="readonly" /></td>
+						<td><input type="text" name="codiceCliente" id="codiceCliente" onblur="controlloCodiceCliente(this.value)" value="<%=clienteDAO.creazioneCodiceCliente() %>" readonly="readonly" /></td>
 					</tr>
 					<tr>
 						<td>* Ragione Sociale</td>
