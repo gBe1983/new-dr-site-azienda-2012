@@ -9,11 +9,13 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
-public class TrattativeDAO {
+public class TrattativeDAO extends BaseDao {
 	
-	PreparedStatement ps = null;
-	
-	public ArrayList ricercaTrattative(String codiceCliente, int idRisorsa, int idTrattative, String esito, Connection conn){
+	public TrattativeDAO(Connection connessione) {
+		super(connessione);
+	}
+
+	public ArrayList ricercaTrattative(String codiceCliente, int idRisorsa, int idTrattative, String esito){
 		
 		/*
 		 * in questa effettuo i controlli dei paramtri "idRisorsa", "Codice, esito che sono 
@@ -26,7 +28,10 @@ public class TrattativeDAO {
 		ArrayList listaTrattativa = new ArrayList();
 		
 		String sql = "";
-		
+
+		PreparedStatement ps=null;
+		ResultSet rs=null;
+
 		if(codiceCliente != null && idRisorsa != 0 && esito == null){
 			
 			/* Codice <> "" e idRisorsa <> "" e esito == "" */
@@ -34,7 +39,7 @@ public class TrattativeDAO {
 			sql = "select * from v_trattative_per_cliente_dettaglio where id_cliente = ? and id_risorsa = ?";
 			
 			try {
-				ps = conn.prepareStatement(sql);
+				ps = connessione.prepareStatement(sql);
 				ps.setString(1, codiceCliente);
 				ps.setInt(2, idRisorsa);
 			} catch (SQLException e) {
@@ -49,7 +54,7 @@ public class TrattativeDAO {
 			sql = "select * from v_trattative_per_cliente_dettaglio where id_risorsa = ?";
 			
 			try {
-				ps = conn.prepareStatement(sql);
+				ps = connessione.prepareStatement(sql);
 				ps.setInt(1, idRisorsa);
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block
@@ -63,7 +68,7 @@ public class TrattativeDAO {
 			sql = "select * from v_trattative_per_cliente_dettaglio where id_cliente = ?";
 			
 			try {
-				ps = conn.prepareStatement(sql);
+				ps = connessione.prepareStatement(sql);
 				ps.setString(1, codiceCliente);
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block
@@ -79,7 +84,7 @@ public class TrattativeDAO {
 				sql = "select * from v_trattative_per_cliente_dettaglio where id_cliente = ? and id_risorsa = ? and esito = 'aperta'";
 			
 				try {
-					ps = conn.prepareStatement(sql);
+					ps = connessione.prepareStatement(sql);
 					ps.setString(1, codiceCliente);
 					ps.setInt(2, idRisorsa);
 				} catch (SQLException e) {
@@ -92,7 +97,7 @@ public class TrattativeDAO {
 				sql = "select * from v_trattative_per_cliente_dettaglio where id_cliente = ? and id_risorsa = ? and esito = 'persa'";
 				
 				try {
-					ps = conn.prepareStatement(sql);
+					ps = connessione.prepareStatement(sql);
 					ps.setString(1, codiceCliente);
 					ps.setInt(2, idRisorsa);
 				} catch (SQLException e) {
@@ -105,7 +110,7 @@ public class TrattativeDAO {
 				sql = "select * from v_trattative_per_cliente_dettaglio where id_cliente = ? and id_risorsa = ? and esito not in ('aperta','persa')";
 				
 				try {
-					ps = conn.prepareStatement(sql);
+					ps = connessione.prepareStatement(sql);
 					ps.setString(1, codiceCliente);
 					ps.setInt(2, idRisorsa);
 				} catch (SQLException e) {
@@ -123,7 +128,7 @@ public class TrattativeDAO {
 				sql = "select * from v_trattative_per_cliente_dettaglio where id_risorsa = ? and esito = 'aperta'";
 				
 				try {
-					ps = conn.prepareStatement(sql);
+					ps = connessione.prepareStatement(sql);
 					ps.setInt(1, idRisorsa);
 				} catch (SQLException e) {
 					// TODO Auto-generated catch block
@@ -135,7 +140,7 @@ public class TrattativeDAO {
 				sql = "select * from v_trattative_per_cliente_dettaglio where id_risorsa = ? and esito = 'persa'";
 				
 				try {
-					ps = conn.prepareStatement(sql);
+					ps = connessione.prepareStatement(sql);
 					ps.setInt(1, idRisorsa);
 				} catch (SQLException e) {
 					// TODO Auto-generated catch block
@@ -147,7 +152,7 @@ public class TrattativeDAO {
 				sql = "select * from v_trattative_per_cliente_dettaglio where id_risorsa = ? and esito = not in ('aperta','persa')";
 				
 				try {
-					ps = conn.prepareStatement(sql);
+					ps = connessione.prepareStatement(sql);
 					ps.setInt(1, idRisorsa);
 				} catch (SQLException e) {
 					// TODO Auto-generated catch block
@@ -164,7 +169,7 @@ public class TrattativeDAO {
 				sql = "select * from v_trattative_per_cliente_dettaglio where id_cliente = ? and esito = 'aperta'";
 				
 				try {
-					ps = conn.prepareStatement(sql);
+					ps = connessione.prepareStatement(sql);
 					ps.setString(1, codiceCliente);
 				} catch (SQLException e) {
 					// TODO Auto-generated catch block
@@ -176,7 +181,7 @@ public class TrattativeDAO {
 				sql = "select * from v_trattative_per_cliente_dettaglio where id_cliente = ? and esito = 'persa'";
 				
 				try {
-					ps = conn.prepareStatement(sql);
+					ps = connessione.prepareStatement(sql);
 					ps.setString(1, codiceCliente);
 				} catch (SQLException e) {
 					// TODO Auto-generated catch block
@@ -188,7 +193,7 @@ public class TrattativeDAO {
 				sql = "select * from v_trattative_per_cliente_dettaglio where id_cliente = ? and esito not in ('aperta','persa')";
 				
 				try {
-					ps = conn.prepareStatement(sql);
+					ps = connessione.prepareStatement(sql);
 					ps.setString(1, codiceCliente);
 				} catch (SQLException e) {
 					// TODO Auto-generated catch block
@@ -205,7 +210,7 @@ public class TrattativeDAO {
 				sql = "select * from v_trattative_per_cliente_dettaglio where esito = 'aperta'";
 				
 				try {
-					ps = conn.prepareStatement(sql);
+					ps = connessione.prepareStatement(sql);
 				} catch (SQLException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -216,7 +221,7 @@ public class TrattativeDAO {
 				sql = "select * from v_trattative_per_cliente_dettaglio where esito = 'persa'";
 				
 				try {
-					ps = conn.prepareStatement(sql);
+					ps = connessione.prepareStatement(sql);
 				} catch (SQLException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -227,7 +232,7 @@ public class TrattativeDAO {
 				sql = "select * from v_trattative_per_cliente_dettaglio where esito not in ('aperta','persa')";
 				
 				try {
-					ps = conn.prepareStatement(sql);
+					ps = connessione.prepareStatement(sql);
 				} catch (SQLException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -242,7 +247,7 @@ public class TrattativeDAO {
 			sql = "select * from v_trattative_per_cliente_dettaglio where id_trattativa = ?";
 			
 			try {
-				ps = conn.prepareStatement(sql);
+				ps = connessione.prepareStatement(sql);
 				ps.setInt(1, idTrattative);
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block
@@ -258,7 +263,7 @@ public class TrattativeDAO {
 			sql = "select * from v_trattative_per_cliente_dettaglio";
 			
 			try {
-				ps = conn.prepareStatement(sql);
+				ps = connessione.prepareStatement(sql);
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -269,7 +274,7 @@ public class TrattativeDAO {
 		System.out.println(sql);
 		
 		try {
-			ResultSet rs = ps.executeQuery();
+			rs = ps.executeQuery();
 			while(rs.next()){
 				TrattativeDTO trattative = new TrattativeDTO();
 				trattative.setId_cliente(rs.getString(1));
@@ -285,6 +290,8 @@ public class TrattativeDAO {
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+		}finally{
+			close(ps,rs);
 		}
 		
 		return listaTrattativa;
@@ -295,14 +302,14 @@ public class TrattativeDAO {
 	 * nella tabella tbl_trattative
 	 */
 	
-	public String inserimentoTrattative(TrattativeDTO trattativa, Connection conn){
+	public String inserimentoTrattative(TrattativeDTO trattativa){
 		
 		String sql = "insert into tbl_trattative (id_cliente,id_risorsa,contatto,data,oggetto,esito,id_tipologia_trattattiva) values (?,?,?,?,?,?,?)";
 		
 		int esitoInserimentoTrattative = 0;
-		
+		PreparedStatement ps=null;
 		try {
-			ps = conn.prepareStatement(sql);
+			ps = connessione.prepareStatement(sql);
 			ps.setString(1, trattativa.getId_cliente());
 			ps.setInt(2, trattativa.getId_risorsa());
 			ps.setString(3, trattativa.getContatto());
@@ -315,6 +322,8 @@ public class TrattativeDAO {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 			return "Siamo spiacenti l'inserimento della trattativa non è avvenuta con successo. Contattare l'amministrazione.";
+		}finally{
+			close(ps);
 		}
 		
 		if(esitoInserimentoTrattative == 1){
@@ -329,18 +338,20 @@ public class TrattativeDAO {
 	 * con questo metodo effettuo l'aggiornamento delle trattattive che l'utente 
 	 * ha deciso di chiudere
 	 */
-	public void chiusuraTrattativa(int idTrattativa, int idAzienda, Connection conn){
+	public void chiusuraTrattativa(int idTrattativa, int idAzienda){
 		
 		String sql = "update tbl_trattative set esito = 'chiusa', trattativa_chiusa = 0 where id_trattative = ? and id_azienda = ?";
-		
+		PreparedStatement ps=null;
 		try {
-			ps = conn.prepareStatement(sql);
+			ps = connessione.prepareStatement(sql);
 			ps.setInt(1, idTrattativa);
 			ps.setInt(2, idAzienda);
 			ps.executeUpdate();
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+		}finally{
+			close(ps);
 		}
 	}
 	
@@ -348,15 +359,17 @@ public class TrattativeDAO {
 	 * tramite questo metodo effettuo la ricerca del singola trattativa per poi visualizzare
 	 * i relativi dati nella pagina "Aggiungi Trattative"
 	 */
-	public TrattativeDTO aggiornaSingolaTrattativa(int idTrattativa, Connection conn){
+	public TrattativeDTO aggiornaSingolaTrattativa(int idTrattativa){
 		
 		String sql = "select cliente.ragione_sociale,trattative.* from tbl_trattative as trattative, tbl_clienti as cliente where cliente.id_cliente = trattative.id_cliente and trattative.id_trattativa = ?";
 		
 		TrattativeDTO trattativa = null;
+		PreparedStatement ps=null;
+		ResultSet rs=null;
 		try {
-			ps = conn.prepareStatement(sql);
+			ps = connessione.prepareStatement(sql);
 			ps.setInt(1, idTrattativa);
-			ResultSet rs = ps.executeQuery();
+			rs = ps.executeQuery();
 			if(rs.next()){
 				trattativa = new TrattativeDTO();
 				trattativa.setDescrizioneCliente(rs.getString(1));
@@ -373,6 +386,8 @@ public class TrattativeDAO {
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+		}finally{
+			close(ps,rs);
 		}
 		
 		return trattativa;
@@ -381,14 +396,14 @@ public class TrattativeDAO {
 	 * tramite questo metodo effettuo la modifica della trattativa
 	 * 
 	 */
-	public String modificaTrattativa(TrattativeDTO trattativa, Connection conn){
+	public String modificaTrattativa(TrattativeDTO trattativa){
 		
 		String sql = "update tbl_trattative set id_cliente = ?, id_risorsa = ?, contatto = ?, data = ?, oggetto = ?, esito = ?, id_tipologia_trattattiva = ? where id_trattativa = ?";
 		
 		int esitoModificaTrattativa = 0;
-		
+		PreparedStatement ps=null;
 		try {
-			ps = conn.prepareStatement(sql);
+			ps = connessione.prepareStatement(sql);
 			ps.setString(1, trattativa.getId_cliente());
 			ps.setInt(2, trattativa.getId_risorsa());
 			ps.setString(3, trattativa.getContatto());
@@ -402,6 +417,8 @@ public class TrattativeDAO {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 			return "Spiacenti le modifiche relative alla trattative non è avvenuta con successo. Contattare l'amministrazione";
+		}finally{
+			close(ps);
 		}
 		
 		if(esitoModificaTrattativa == 1){
@@ -413,16 +430,17 @@ public class TrattativeDAO {
 		
 	}
 	
-	public String ricercaCodiceCommessa(int idTrattative, Connection conn){
+	public String ricercaCodiceCommessa(int idTrattative){
 		
 		String sql = "select codice_commessa from tbl_commesse where id_trattativa = ?";
 		
 		String codiceCommessa = "";
-		
+		PreparedStatement ps=null;
+		ResultSet rs=null;
 		try {
-			ps = conn.prepareStatement(sql);
+			ps = connessione.prepareStatement(sql);
 			ps.setInt(1, idTrattative);
-			ResultSet rs = ps.executeQuery();
+			rs = ps.executeQuery();
 			if(rs.next()){
 				codiceCommessa = rs.getString(1);
 			}
@@ -430,21 +448,24 @@ public class TrattativeDAO {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 			return "Spiacenti le modifiche relative alla trattative non è avvenuta con successo. Contattare l'amministrazione";
+		}finally{
+			close(ps,rs);
 		}
 		
 		return codiceCommessa;
 	}
 	
-	public String ricercaDescrizioneRisorsa(int id_risorsa, Connection conn){
+	public String ricercaDescrizioneRisorsa(int id_risorsa){
 		
 		String sql = "select cognome, nome from tbl_trattative as trattative, tbl_risorse as risorse where trattative.id_risorsa = risorse.id_risorsa and trattative.id_risorsa = ?";
 		
 		String descrizioneRisorsa = "";
-		
+		PreparedStatement ps=null;
+		ResultSet rs=null;
 		try {
-			ps = conn.prepareStatement(sql);
+			ps = connessione.prepareStatement(sql);
 			ps.setInt(1, id_risorsa);
-			ResultSet rs = ps.executeQuery();
+			rs = ps.executeQuery();
 			if(rs.next()){
 				descrizioneRisorsa = rs.getString(1) + " " + rs.getString(2);
 			}
@@ -452,20 +473,23 @@ public class TrattativeDAO {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 			return "Spiacenti le modifiche relative alla trattative non è avvenuta con successo. Contattare l'amministrazione";
+		}finally{
+			close(ps,rs);
 		}
 		
 		return descrizioneRisorsa;
 	}
 	
-	public ArrayList caricamentoTipologie(Connection conn){
+	public ArrayList caricamentoTipologie(){
 		
 		String sql = "select * from tbl_tipologie_trattative";
 		
 		ArrayList listaTrattattive = new ArrayList();
-		
+		PreparedStatement ps=null;
+		ResultSet rs=null;
 		try {
-			ps = conn.prepareStatement(sql);
-			ResultSet rs = ps.executeQuery();
+			ps = connessione.prepareStatement(sql);
+			rs = ps.executeQuery();
 			while(rs.next()){
 				TipologiaTrattative trattattive = new TipologiaTrattative();
 				trattattive.setIdTrattattive(rs.getInt(1));
@@ -475,26 +499,31 @@ public class TrattativeDAO {
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+		}finally{
+			close(ps,rs);
 		}
 		
 		return listaTrattattive;
 	}
 	
-	public int caricamentoIdTrattativa(Connection conn){
+	public int caricamentoIdTrattativa(){
 		
 		String sql = "select max(id_trattativa) from tbl_trattative";
 		
 		int idTrattative = 0;
-		
+		PreparedStatement ps=null;
+		ResultSet rs=null;
 		try {
-			ps = conn.prepareStatement(sql);
-			ResultSet rs = ps.executeQuery();
+			ps = connessione.prepareStatement(sql);
+			rs = ps.executeQuery();
 			while(rs.next()){
 				idTrattative = rs.getInt(1);
 			}
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+		}finally{
+			close(ps,rs);
 		}
 		
 		return idTrattative;

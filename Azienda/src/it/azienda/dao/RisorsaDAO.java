@@ -9,25 +9,27 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
-public class RisorsaDAO {
+public class RisorsaDAO extends BaseDao {
 
-	PreparedStatement ps = null;
-	
+	public RisorsaDAO(Connection connessione) {
+		super(connessione);
+	}
+
 	/*
 	 * con questo metodo effettuo l'inserimento della risorsa 
 	 * nella tabella tbl_risorse
 	 */
 	
-	public String inserimentoRisorsa(RisorsaDTO risorsa, Connection conn){
+	public String inserimentoRisorsa(RisorsaDTO risorsa){
 		
 		String messaggio = "";
 		
 		int esitoInserimentoRisorsa = 0;
 		
 		String sql = "insert into tbl_risorse (cognome,nome,data_nascita,luogo_nascita,sesso,cod_fiscale,mail,telefono,cellulare,fax,indirizzo,citta,provincia,cap,nazione,servizio_militare,patente,costo,occupato,tipo_contratto,figura_professionale,seniority) values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
-		
+		PreparedStatement ps=null;
 		try {
-			ps = conn.prepareStatement(sql);
+			ps = connessione.prepareStatement(sql);
 			
 			//dati anagrafici
 			ps.setString(1, risorsa.getCognome());
@@ -63,6 +65,8 @@ public class RisorsaDAO {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 			return "Siamo spiacenti l'inserimento della risorsa non è avvenuta con successo. Contattare l'amministrazione";
+		}finally{
+			close(ps);
 		}
 			
 		if(esitoInserimentoRisorsa == 1){
@@ -78,7 +82,7 @@ public class RisorsaDAO {
 	 * con questo metodo effettuo la ricerca a seconda dei paramatri
 	 * inseriti dall'utente
 	 */
-	public ArrayList ricercaRisorse(RisorsaDTO risorsa,Connection conn){
+	public ArrayList ricercaRisorse(RisorsaDTO risorsa){
 		
 		ArrayList listaRisorse = new ArrayList();
 		
@@ -151,9 +155,10 @@ public class RisorsaDAO {
 			sql += " and visible = true order by cognome ASC";
 		}
 		System.out.println(sql);
-		
+		PreparedStatement ps=null;
+		ResultSet rs=null;
 		try {
-			ps = conn.prepareStatement(sql);
+			ps = connessione.prepareStatement(sql);
 			if(cognome){
 				ps.setString(1, "%"+risorsa.getCognome().trim()+"%");
 			}
@@ -213,7 +218,7 @@ public class RisorsaDAO {
 			}
 			
 			
-			ResultSet rs = ps.executeQuery();
+			rs = ps.executeQuery();
 			while(rs.next()){
 				RisorsaDTO risorseTrovate = new RisorsaDTO();
 				risorseTrovate.setIdRisorsa(rs.getInt(1));
@@ -249,6 +254,8 @@ public class RisorsaDAO {
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+		}finally{
+			close(ps,rs);
 		}
 		
 		return listaRisorse;
@@ -259,16 +266,17 @@ public class RisorsaDAO {
 	 * questo metodo serve per il profilo della risorsa
 	 */
 	
-	public RisorsaDTO caricamentoProfiloRisorsa(int idRisorsa, Connection conn){
+	public RisorsaDTO caricamentoProfiloRisorsa(int idRisorsa){
 		
 		RisorsaDTO risorsa = null;
 		
 		String sql = "select * from tbl_risorse where id_risorsa = ?";
-		
+		PreparedStatement ps=null;
+		ResultSet rs=null;
 		try {
-			ps = conn.prepareStatement(sql);
+			ps = connessione.prepareStatement(sql);
 			ps.setInt(1, idRisorsa);
-			ResultSet rs = ps.executeQuery();
+			rs = ps.executeQuery();
 			while(rs.next()){
 				risorsa = new RisorsaDTO();
 				risorsa.setIdRisorsa(rs.getInt(1));
@@ -301,20 +309,22 @@ public class RisorsaDAO {
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+		}finally{
+			close(ps,rs);
 		}
 		return risorsa;
 	}
 	
-	public String modificaRisorsa(RisorsaDTO risorsa, Connection conn){
+	public String modificaRisorsa(RisorsaDTO risorsa){
 		
 		String messaggio = "";
 		
 		int esitoModificaRisorsa = 0;
 		
 		String sql = "update tbl_risorse set cognome = ?, nome = ?, data_nascita = ?, luogo_nascita = ?, sesso = ?, cod_fiscale = ?, mail = ?, telefono = ?, cellulare = ?, fax = ?, indirizzo = ?, citta = ?, provincia = ?, cap = ?, nazione = ?, servizio_militare = ?, patente = ?, costo = ?, occupato = ?, tipo_contratto = ?, figura_professionale = ?, seniority = ? where id_risorsa = ?";
-		
+		PreparedStatement ps=null;
 		try {
-			ps = conn.prepareStatement(sql);
+			ps = connessione.prepareStatement(sql);
 			
 			//dati anagrafici
 			ps.setString(1, risorsa.getCognome());
@@ -352,6 +362,8 @@ public class RisorsaDAO {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 			return "Siamo spiacenti la modifica della risorsa non è avvenuta con successo. Contattare l'amministrazione";
+		}finally{
+			close(ps);
 		}
 			
 		if(esitoModificaRisorsa == 1){
@@ -363,16 +375,16 @@ public class RisorsaDAO {
 		return messaggio;
 	}
 	
-	public String eliminaRisorsa(int idRisorsa, Connection conn){
+	public String eliminaRisorsa(int idRisorsa){
 		
 		String messaggio = "";
 		
 		int esitoEliminaRisorsa = 0;
 		
 		String sql = "update tbl_risorse set visible = ? where id_risorsa = ?";
-		
+		PreparedStatement ps=null;
 		try {
-			ps = conn.prepareStatement(sql);
+			ps = connessione.prepareStatement(sql);
 			
 			ps.setBoolean(1, false);
 			ps.setInt(2, idRisorsa);
@@ -383,8 +395,10 @@ public class RisorsaDAO {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 			return "Siamo spiacenti la risorsa non è stata disibilitata con successo. Contattare l'amministrazione";
+		}finally{
+			close(ps);
 		}
-			
+
 		if(esitoEliminaRisorsa == 1){
 			messaggio = "La Risorsa è stata disabilitata con successo";
 		}else{
@@ -394,15 +408,16 @@ public class RisorsaDAO {
 		return messaggio;
 	}
 	
-	public ArrayList elencoRisorse(Connection conn){
+	public ArrayList elencoRisorse(){
 		
 		ArrayList listaRisorse = new ArrayList();
 		
 		String sql = "select id_risorsa, nome, cognome, costo, figura_professionale, seniority from tbl_risorse where visible = true order by cognome ASC";
-		
+		PreparedStatement ps=null;
+		ResultSet rs=null;
 		try {
-			ps = conn.prepareStatement(sql);
-			ResultSet rs = ps.executeQuery();
+			ps = connessione.prepareStatement(sql);
+			rs = ps.executeQuery();
 			while(rs.next()){
 				RisorsaDTO risorsa = new RisorsaDTO();
 				risorsa.setIdRisorsa(rs.getInt(1));
@@ -416,6 +431,8 @@ public class RisorsaDAO {
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+		}finally{
+			close(ps,rs);
 		}
 					
 		return listaRisorse;
@@ -426,38 +443,42 @@ public class RisorsaDAO {
 	 * le risorse associate a un cliente al momento della ricerca delle trattattive.
 	 */
 	
-	public String elencoTrattativeRisorse(String codiceCliente, Connection conn){
+	public String elencoTrattativeRisorse(String codiceCliente){
 		
 		String valori = "";
 		
 		String sql = "select risorse.id_risorsa, risorse.cognome, risorse.nome from tbl_risorse as risorse, tbl_trattative as trattative where trattative.id_risorsa = risorse.id_risorsa and trattative.id_cliente = ? and risorse.visible = true group by id_risorsa order by cognome ASC";
-		
+		PreparedStatement ps=null;
+		ResultSet rs=null;
 		try {
-			ps = conn.prepareStatement(sql);
+			ps = connessione.prepareStatement(sql);
 			ps.setString(1, codiceCliente);
-			ResultSet rs = ps.executeQuery();
+			rs = ps.executeQuery();
 			while(rs.next()){
 				valori = valori + rs.getInt(1) + "," + rs.getString(2) + "," + rs.getString(3) + ";";
 			}
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+		}finally{
+			close(ps,rs);
 		}
 					
 		return valori;
 	}
 	
 	
-	public UtenteDTO caricamentoCredenziali(int idRisorsa, Connection conn){
+	public UtenteDTO caricamentoCredenziali(int idRisorsa){
 		
 		String sql = "select risorsa.cognome, risorsa.nome, risorsa.mail, utenti.id_utente, utenti.username, utenti.password from tbl_utenti as utenti, tbl_risorse as risorsa where utenti.id_risorsa = risorsa.id_risorsa and utenti.id_risorsa = ?";
 		
 		UtenteDTO utente = null;
-		
+		PreparedStatement ps=null;
+		ResultSet rs=null;
 		try {
-			ps = conn.prepareStatement(sql);
+			ps = connessione.prepareStatement(sql);
 			ps.setInt(1, idRisorsa);
-			ResultSet rs = ps.executeQuery();
+			rs = ps.executeQuery();
 			if(rs.next()){
 				utente = new UtenteDTO();
 				utente.setDescrizioneRisorsa(rs.getString(1) + " " + rs.getString(2));
@@ -469,19 +490,21 @@ public class RisorsaDAO {
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+		}finally{
+			close(ps,rs);
 		}
 		
 		return utente;
 	}
 	
-	public String modificaCredenziali(String username,String password,int idUtente, Connection conn){
+	public String modificaCredenziali(String username,String password,int idUtente){
 		
 		String sql = "update tbl_utenti set username = ?, password = ? where id_utente = ?";
 		
 		int esitoModifica = 0;
-		
+		PreparedStatement ps=null;
 		try {
-			ps = conn.prepareStatement(sql);
+			ps = connessione.prepareStatement(sql);
 			ps.setString(1, username);
 			ps.setString(2, MD5(password));
 			ps.setInt(3, idUtente);
@@ -491,6 +514,8 @@ public class RisorsaDAO {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 			return "Siamo spiacenti la modifica delle credenziali della risorsa non sono avvenute con successo. Contattare l'amministrazione.";
+		}finally{
+			close(ps);
 		}
 		
 		if(esitoModifica == 1){
@@ -505,31 +530,31 @@ public class RisorsaDAO {
 	 * questo metodo serve per criptare le password
 	 */
 	
-	public String MD5(String md5) {
-		
+	public String MD5(String md5) {//TODO????
 		try {
-	        java.security.MessageDigest md = java.security.MessageDigest.getInstance("MD5");
-	        byte[] array = md.digest(md5.getBytes());
-	        StringBuffer sb = new StringBuffer();
-	        for (int i = 0; i < array.length; ++i) {
-	          sb.append(Integer.toHexString((array[i] & 0xFF) | 0x100).substring(1,3));
-	        }
-	        return sb.toString();
-	    } catch (java.security.NoSuchAlgorithmException e) {
-	    	
-	    }
-	    return null;
+			java.security.MessageDigest md = java.security.MessageDigest.getInstance("MD5");
+			byte[] array = md.digest(md5.getBytes());
+			StringBuffer sb = new StringBuffer();
+			for (int i = 0; i < array.length; ++i) {
+				sb.append(Integer.toHexString((array[i] & 0xFF) | 0x100).substring(1, 3));
+			}
+			return sb.toString();
+		} catch (java.security.NoSuchAlgorithmException e) {
+
+		}
+		return null;
 	}
 	
-	public ArrayList invioEmail(Connection conn){
+	public ArrayList invioEmail(){
 		
 		String sql = "select * from utente";
 		
 		ArrayList listaUtenti = new ArrayList();
-		
+		PreparedStatement ps=null;
+		ResultSet rs=null;
 		try {
-			ps = conn.prepareStatement(sql);
-			ResultSet rs = ps.executeQuery();
+			ps = connessione.prepareStatement(sql);
+			rs = ps.executeQuery();
 			while(rs.next()){
 				RisorsaDTO utente = new RisorsaDTO();
 				utente.setIdRisorsa(rs.getInt(1));
@@ -541,6 +566,8 @@ public class RisorsaDAO {
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+		}finally{
+			close(ps,rs);
 		}
 		
 		return listaUtenti;

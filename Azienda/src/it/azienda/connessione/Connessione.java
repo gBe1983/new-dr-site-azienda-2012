@@ -1,31 +1,100 @@
 package it.azienda.connessione;
 
+import it.util.log.MyLogger;
+
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
+import javax.servlet.ServletContext;
+
 public class Connessione {
-	
-	public Connection connessione(String dataBase){		
-		Connection con = null;		
+	private MyLogger log;
+	private Connection connection;
+	private String url;
+	private String userName;
+	private String password;
+
+	public Connessione(ServletContext servletContext) {
+		log =new MyLogger(this.getClass());
+		final String metodo="costruttore";
+		log.start(metodo);
 		try {
-			Class.forName("com.mysql.jdbc.Driver");
+			Class.forName(servletContext.getInitParameter("DB.driver"));
 		} catch (ClassNotFoundException e) {
-			System.out.println("driver non caricati");
-			e.printStackTrace();
-		}		
+			log.fatal(metodo, "driver non caricati", e);
+		}
+		url=servletContext.getInitParameter("DB.url");
+		userName=servletContext.getInitParameter("DB.userName");
+		password=servletContext.getInitParameter("DB.password");
 		try {
-			if(dataBase.equals("cvonline")){
-				con = DriverManager.getConnection("jdbc:mysql://151.1.159.238:3306/cvonline_Curriculum","cvonline_DiErre","DiErre2012");
-//				con = DriverManager.getConnection("jdbc:mysql://localhost:3306/cvonline_Curriculum","root","root");
-			}else if(dataBase.equals("drconsulting")){
-				con = DriverManager.getConnection("jdbc:mysql://151.1.159.238:3306/drcon860_curriculum","drcon860_DiErre","DiErre2012");
-//				con = DriverManager.getConnection("jdbc:mysql://localhost:3306/drcon860_curriculum","root","root");
-			}
+			connection = DriverManager.getConnection(url,userName,password);
 		} catch (SQLException e) {
-			System.out.println("connessione fallita");
-			e.printStackTrace();
-		}		
-		return con;
+			log.fatal(metodo, "connessione fallita", e);
+		}
+		log.end(metodo);
+	}
+
+	/**
+	 * distruttore
+	 */
+	protected void finalize(){
+		closeConnection();
+	}
+
+	/**
+	 *  close the Connection
+	 */
+	@Deprecated
+	public void closeConnection(){
+		final String metodo="closeConnection";
+		log.start(metodo);
+		if (connection!=null) {
+			try {
+				connection.close();
+			} catch (SQLException e) {
+				log.warn(metodo, "tentativo chiusura connessione db", e);
+			}
+		}
+		log.end(metodo);
+	}
+
+	/**
+	 * @return the connection
+	 */
+	public Connection getConnection() {
+		final String metodo="getConnection";
+		log.start(metodo);
+		if(connection!=null){
+			try {
+				if(connection.isClosed()){
+					log.info(metodo, "la connessione è chiusa");
+					try {
+						connection = DriverManager.getConnection(url,userName,password);
+					} catch (SQLException e) {
+						log.fatal(metodo, "connessione fallita", e);
+					}
+				}
+				if(!connection.isValid(60)){
+					log.info(metodo, "la connessione non è valida");
+					try {
+						connection = DriverManager.getConnection(url,userName,password);
+					} catch (SQLException e) {
+						log.fatal(metodo, "connessione fallita", e);
+					}
+				}
+			} catch (SQLException e) {
+				log.error(metodo, "verifica consistenza connessione", e);
+			}
+		}else{
+			log.warn(metodo, "connessione null");
+			try {
+				connection = DriverManager.getConnection(url,userName,password);
+			} catch (SQLException e) {
+				log.fatal(metodo, "connessione fallita", e);
+			}
+		}
+		log.end(metodo);
+		return connection;
 	}
 }
