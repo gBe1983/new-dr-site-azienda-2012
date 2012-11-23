@@ -1,0 +1,39 @@
+@CHARSET "ISO-8859-1";
+
+.bluetabs{
+border-bottom: 1px solid black;
+width: 100%;
+margin: 100px 0 5px 0;
+}
+
+.bluetabs ul{
+padding: 3px 0;
+margin-left: 0;
+margin-top: 1px;
+margin-bottom: 0;
+font: bold 12px Verdana;
+list-style-type: none;
+text-align: left; /*set to left, center, or right to align the menu as desired*/
+}
+
+.bluetabs li{
+display: inline;
+margin: 0;
+}
+
+.bluetabs li a{
+text-decoration: none;
+padding: 3px 7px;
+margin-right: 3px;
+border: 1px solid #778;
+color: #2d2b2b;
+}
+
+.bluetabs li a:visited{
+color: #2d2b2b;
+}
+
+.bluetabs li a:hover{
+text-decoration: underline;
+color: #2d2b2b;
+}

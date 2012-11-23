@@ -1,0 +1,9 @@
+@CHARSET "ISO-8859-1";
+
+td{
+	border-right: 1px solid black;	
+}
+
+label{
+	border-left: 1px solid black;
+}

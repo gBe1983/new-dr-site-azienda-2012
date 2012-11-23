@@ -1,0 +1,140 @@
+/*stili per il layout fisso*/
+html,body{margin: 0;padding:0;}
+body{font: 12px arial,sans-serif;color: #000;text-align:center}
+div#container{width: 1024px;margin: 20px auto ;text-align: left; background:#fff;border:1px solid #bbb}
+
+h1,h2{margin: 0;padding:0}
+h1{padding-left:0.5em;font: bold 1em/80px arial,serif;color: #000;}
+h2{color: #000;font-size: 1.5em}
+h3{color: #000;font-size: 1.2em}
+a{text-decoration: none;}
+a:hover{    color: #fff;    background:#bbb;-moz-border-radius: 10px;-webkit-border-radius: 10px;border-radius: 10px ;}
+img{margin: 0 auto;display:block;width:95%}
+/*stili generici, su header e footer*/
+div#header{width: 1024px;margin: 0px auto; color: #000;height:55px}
+
+/*stili specifici per il layout*/
+div#extra{float:left;width: 200px;margin:0 0 0 10px;}
+
+.newsbox{margin:15px 0px; width:200px;padding:0 5px;background:#eee;-moz-border-radius: 20px;-webkit-border-radius: 20px;border-radius: 20px ; font: bold 14px;}
+.newsbox ul{list-style-type:none; }
+.newsbox li{list-style-type:none;}
+.subtitle {font : bold 15px Verdana, Arial, Helvetica, sans-serif;	padding: 5px; text-align : center !important; border-bottom:1px solid #bbb}
+
+div#content{position:relative;float:left; width:1024px;margin:0px; padding:0px;}
+div#content_right{float:right;width: 780px;padding:5px;margin:0; /*border: 1px solid black;*/}
+
+div#footer{clear:both; text-align:center; padding: 0.5em; background:#eee; color: #000;border-top:1px solid #666 !important;}
+div#footer li{display:inline; list-style-type:none;padding:0 10px}
+.space {clear : both;}
+.blank {height: 20px;}
+
+/* shadow */
+.shadow {-moz-box-shadow: 0 0 10px 1px #CCC; -webkit-box-shadow: 0 0 10px 1px #CCC;box-shadow: 0 0 10px 1px #CCC;}
+
+/*CSS principale per il menu*/
+.logo {position:relative; float:left; background-image: url(../images/logo_DierreConsulting.bmp); background-repeat: no-repeat; width: 1024px; height: 120px;}
+.logo img{text-align:center;margin: 0 auto;}
+
+#nav {	position:relative; text-align:right; background:#eee; color: #000;border-top:1px solid #ccc !important;border-bottom:1px solid #ccc !important;height:40px; padding:0px}
+.menu ul{    margin: 0;    float: right}
+.menu ul li{    display: inline;}
+.menu ul li a{    float: left; text-decoration: none;    color: bbb;    padding: 10.5px 11px;  height:18px;}
+.menu ul li a:hover{    color: #fff;    background:#bbb;-moz-border-radius: 10px;-webkit-border-radius: 10px;border-radius: 10px ;}
+#on{  color: #fff;    background:#bbb;-moz-border-radius: 10px;-webkit-border-radius: 10px;border-radius: 10px ;}
+
+.creaCvVoci{visible:hidden;display: none;}
+
+.accordion {float:left;	list-style:none;	margin:0px;padding:0 0 0 10px;text-align:left!important;	background:#eee;-moz-border-radius: 20px;-webkit-border-radius: 20px;border-radius: 20px ; }
+.accordion li {	cursor:pointer;	padding:0;	color:#000;vertical-align:middle;list-style-type:none;	}
+.accordion ul {	list-style-type:none;	display:none;	margin:0;	padding:5px 0;	}
+.accordion ul>li {	background:none;padding-left:5px;	border:0; color:#000	}
+.accordion li, a {	text-decoration:none;	 font:normal 12px verdana, arial, sans-serif; color:#666;}
+.accordion ul>li a:hover {	color:#000;	}
+
+
+img.help{text-align:left; float:left;width:16px ; height:16px; border:none;}
+img.help:hover{cursor:pointer}
+
+#immagineCurriculum{ border: 1px solid black; width: 130px; height: 130px; position: absolute; top: 30; left: 700; padding: 0px; float: right; }
+
+#indice {margin-top: 10px; }
+
+#indice tr td{width: 10px; border: 1px solid black; padding: 0px 5px; background: #CCC;}
+
+#indice tr td a{color: black;}
+
+#tabellaTrattavive{width: 780px;}
+#tabellaTrattavive tr td {width: auto; padding: 0px 5px; text-align: center;}
+
+#benvenuto{float:right; color: bbb; margin: 0px; padding: 5px 11px;}
+#scrittaBenvenuto {color: 000;}
+#visualizzaRisorsa{width: 780px; border: 1px; text-align: center;}
+#nuovaCommessa{display: none;}
+#commessaEsistente{display: none;}
+
+#visualizzazioneTrattative{margin: 0px; padding: 0px;}
+
+#ricercaTrattative{margin: 0px; padding: 0px;}
+
+
+#visualizzaCommesse{width: 780px; text-align: center;}
+#visualizzaCommesse tr td {width: auto; padding: 0px 5px;}
+
+#visualizzaRisorseCommesse{width: 780px; text-align: center;}
+#visualizzaRisorseCommesse tr td {width: auto; padding: 0px 5px;}
+
+#visualizzaReport{width: 700px; text-align: center;}
+#visualizzaReport tr td {width: auto; padding: 0px 5px;}
+
+
+/* menu veloce presente in ogni pagina di ricerca */
+
+#flusso {/*border: 1px solid black;*/ width: 150px; height: 30px; float: right; margin: 20px;}
+#flusso img{width: 20px; height: 20px; float: left; border: 0px;}
+#flusso a{padding: 5px; float: right;}
+#flusso tr td{width: 70px;}
+
+#flussoCommessa {/*border: 1px solid black;*/ width: 220px; height: 30px; float: right; margin: 20px;}
+#flussoCommessa img{width: 20px; height: 20px; float: left; border: 0px;}
+#flussoCommessa a{padding: 5px; float: right;}
+#flussoCommessa tr td{width: 70px;}*/
+
+/*crea lo spazio */
+
+.spazio{margin-top: 70px;}
+#spazioMessaggio{font: red;}
+
+/*formattazione per le immagini dettaglio, modifica elimina */
+
+#dettaglio{width: 22px; height: 22px; border: 0px;}
+#modifica{width: 22px; height: 22px; border: 0px;}
+#disabilita{width: 18px; height: 18px; border: 0px;}
+#aggiungiRisorsa{width: 18px; height: 18px; border: 0px;}
+#dissociazioneRisorsa{width: 18px; height: 18px; border: 0px;}
+
+
+/*gestione form per l'inserimento delle commesse */
+
+#commessaEsternaMultipla{display:none;}
+#commessaEsternaSingola{display:none;}
+#commessaInterna{display:none;}
+#altro{display:none;}
+
+#sceltaTipologia{margin: 10px 0px;}
+
+/* gestione del menu a tendina nella sezione trattatamenti */
+
+#trattattivaMultipla{display: none;}
+#trattattivaSingola{display: none;}
+#creazioneCommessa{display: none;}
+#bottoni{display: none;}
+
+/* gestione del dettaglio commessa */
+
+.dettaglioCommessa tr td {width: 200px; }
+.dettaglioCommessa textarea{border: 0px; background: #FFF; color: black;}
+
+/* sezione trattative */
+#ricercaTrattattive {margin-top: 80px; }
+.modificaTrattative {margin-top: 80px; }

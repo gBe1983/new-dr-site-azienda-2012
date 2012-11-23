@@ -1,0 +1,31 @@
+
+#intestazione { width: 40%; padding-bottom: 55px; background: url(../images/logo.gif) no-repeat 95% 100%; padding-right: 0.5em; border-right: 1px solid; }
+
+#intestazione h1 { font-size: 16px; margin: 0; text-align: right; padding: 0px; }
+
+.fieldset {margin: 0; width: 100%;}
+
+.fieldset h3 { margin: 0; width: 40%; font-size: 1em;font-weight: bold; text-transform: uppercase;text-align: right;padding: 1em 0.5em 1em 0;border-right: 1px solid;}
+
+.fieldset {border:5px solid #09F;width:800px; height:550px;background:#fff;text-align: left; padding: 20px; }
+
+.bgCover { background:#000; position:absolute; left:0; top:0; display:none; overflow:hidden }
+
+#listaLink{list-style: none; padding: 0;	margin: 0;	}
+
+#listaLink li{ float: right;padding: 0 5px; }
+
+.row {margin: 0; width: 100%;}
+.row:after {content: "."; display: block; height: 0; clear: both;visibility: hidden; }
+.row span, .row label {float: left; margin: 0; width: 40%;}
+.row span {margin: 0;  border:none; padding: 0 5px;}
+.row label {text-align: right; border-right: 1px solid; padding-right: 0.5em;}
+.row label.heading {text-transform: uppercase;}
+.row label.heading.strong {font-weight: bold;}
+
+
+.rowEsperienze span, .rowEsperienze label {float: left; margin: 0; width: 40%;}
+.rowEsperienze span {margin: 0;  border-left: 1px solid; padding: 0 5px;}
+.rowEsperienze label {text-align: right; padding-right: 0.5em;}
+
+#immagineCurriculum{float: right; margin: 30px 150px 0 30px; padding: 0px; border: 1px solid black; width: 150px; height: 150px; }

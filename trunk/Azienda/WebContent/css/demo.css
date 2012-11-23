@@ -1,0 +1,49 @@
+body {	margin: 2em 0;	padding: 0;	font: 100%/normal "Arial Narrow", Arial, sans-serif;	}
+#cv-eu-it {		margin: 0 auto;		}
+#intestazione {
+width: 40%;
+background: url("img/logo.gif") no-repeat 95% 100%;
+padding-right: 0.5em;
+border-right: 1px solid;
+}
+
+
+#intestazione h1 {
+font-size: 1em;
+font-weight: bold;
+margin: 0;
+text-transform: uppercase;
+text-align: right;
+}
+
+.fieldset {margin: 0 auto; width: auto;}
+.fieldset h3 {
+margin: 0;
+width: 40%;
+font-size: 1em;
+font-weight: bold;
+text-transform: uppercase;
+text-align: right;
+padding: 1em 0.5em 1em 0;
+border-right: 1px solid;
+}
+
+.row {margin: 0; width: 100%;}
+
+.row:after {content: "."; display: block; height: 0; clear: both; visibility: hidden; }
+.row input, .row label {float: left; margin: 0; width: 40%;}
+.row input { margin: 0 0 0 0.5em; border: none; border-bottom: 1px solid #ccc; background: #FFF;}
+.row label {text-align: right; border-right: 1px solid; padding-right: 0.5em;}
+.row label.heading {text-transform: uppercase;}
+.row label.heading.strong {font-weight: bold;}
+
+
+.formInserimento input, .formInserimento label {float: left; margin: 0; width: 40%;}
+.formInserimento input,select{ margin: 0 0 0 0.5em; border: none; border-bottom: 1px solid #ccc; background: #FFF;}
+.formInserimento label {text-align: left!important; padding-right: 0.5em;}
+
+.bottom { border: 1px solid #CCC; }
+
+.row label.mod {float: right; text-align: right; width:auto; border:none; background: #EFEFF1; padding: 0.5em;}
+.row label.mod a {text-align: left; width: auto; border:none; line-height:20px; font:bold 13px;}
+
