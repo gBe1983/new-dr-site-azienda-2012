@@ -25,16 +25,8 @@ import javax.servlet.http.HttpSession;
 /**
  * Servlet implementation class GestioneAzienda
  */
-public class GestioneAzienda extends HttpServlet {
+public class GestioneAzienda extends BaseServlet{
 	private static final long serialVersionUID = 1L;
-       
-    /**
-     * @see HttpServlet#HttpServlet()
-     */
-    public GestioneAzienda() {
-        super();
-        // TODO Auto-generated constructor stub
-    }
 
 	/**
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
@@ -63,26 +55,26 @@ public class GestioneAzienda extends HttpServlet {
 		RequestDispatcher rd = null;
 		
 		//creo l'istanza della classe UtenteDAO
-		UtenteDAO uDAO = new UtenteDAO();
+		UtenteDAO uDAO = new UtenteDAO(conn.getConnection());
 		
 		//creo l'istanza della classe AziendaDAO
-		AziendaDAO aDAO = new AziendaDAO();
+		AziendaDAO aDAO = new AziendaDAO(conn.getConnection());
 		
 		//creo l'istanza della classe Connessione
-		Connessione connessione = new Connessione();
+//		Connessione connessione = new Connessione();
 		
-		Connection conn = null;
-		
-		//recupero la Connection
-		if(request.getParameter("connessione") != null){
-			conn = connessione.connessione(request.getParameter("connessione"));
-			sessione.setAttribute("modalitaDiConnessione", request.getParameter("connessione"));
-		}else{
-			conn = (Connection) sessione.getAttribute("connessione");
-		}
-		
+//		Connection conn = null;
+//		
+//		//recupero la Connection
+//		if(request.getParameter("connessione") != null){
+//			conn = connessione.connessione(request.getParameter("connessione"));
+//			sessione.setAttribute("modalitaDiConnessione", request.getParameter("connessione"));
+//		}else{
+//			conn = (Connection) sessione.getAttribute("connessione");
+//		}
+//		
 		//setto in sessione la connessione
-		sessione.setAttribute("connessione", conn);
+		sessione.setAttribute("connessione", conn.getConnection());//TODO VERIFICARE COME TOGLIERE IL PASSAGGIO DELLA CONNESSIONE ALLE 3 JSP CHE LA SFRUTTANO
 		
 		//recupero il valore che può assumere l'attributo "azione"
 		String azione = request.getParameter("azione");
@@ -113,7 +105,7 @@ public class GestioneAzienda extends HttpServlet {
 			azienda.setTrattamentoDati(true);
 			
 			if(azione.equals("registrazioneAzienda")){
-				messaggio = aDAO.inserimentoAzienda(azienda, conn);
+				messaggio = aDAO.inserimentoAzienda(azienda);
 				
 				if(messaggio.equals("")){
 					messaggio = "Siamo spiacenti, per via dei problemi tecnici la registrazione non avvenuta con successo. Contattare l'amministrazione";
@@ -121,13 +113,13 @@ public class GestioneAzienda extends HttpServlet {
 					
 					utente.setUsername(request.getParameter("username"));
 					utente.setPassword(request.getParameter("password"));
-					utente.setId_azienda(aDAO.caricamentoIdAzienda(conn));
+					utente.setId_azienda(aDAO.caricamentoIdAzienda());
 					utente.setData_registrazione((new SimpleDateFormat("dd-MM-yyyy HH:mm:ss").format(new Date())));
 					utente.setData_login((new SimpleDateFormat("dd-MM-yyyy HH:mm:ss").format(new Date())));
 					
-					uDAO.inserimentoUtente(utente, conn);
+					uDAO.inserimentoUtente(utente);
 				}
-				Email email = new Email();
+				Email email = new Email(conn.getConnection());
 				String testoEmail="<html>" +  "<head>" +
 			       " <title> Registrazione Account </title>" +
 			       "</head>" +  "<body>" +
@@ -148,7 +140,7 @@ public class GestioneAzienda extends HttpServlet {
 				
 				azienda.setIdAzienda(((UtenteDTO)sessione.getAttribute("utenteLoggato")).getId_azienda());
 				
-				messaggio = aDAO.modificaAzienda(azienda, conn);
+				messaggio = aDAO.modificaAzienda(azienda);
 				if(messaggio.equals("ok")){
 					messaggio = "Modifica Profilo Azienda avvenuta con successo.";
 				}
@@ -161,7 +153,7 @@ public class GestioneAzienda extends HttpServlet {
 			
 			int idAzienda = Integer.parseInt(request.getParameter("utente"));
 			
-			UtenteDTO utenteLoggato = uDAO.caricamentoAzienda(idAzienda, conn);
+			UtenteDTO utenteLoggato = uDAO.caricamentoAzienda(idAzienda);
 			
 			sessione.setAttribute("utenteLoggato", utenteLoggato);
 			response.sendRedirect("./index.jsp?azione=homePage");
@@ -174,7 +166,7 @@ public class GestioneAzienda extends HttpServlet {
 			/*
 			 * in questa sezione effettuo il caricamento del profilo dell'Azienda
 			 */
-			AziendaDTO azienda = aDAO.visualizzaProfiloAzienda(((UtenteDTO)sessione.getAttribute("utenteLoggato")).getId_azienda(), conn);
+			AziendaDTO azienda = aDAO.visualizzaProfiloAzienda(((UtenteDTO)sessione.getAttribute("utenteLoggato")).getId_azienda());
 			
 			request.setAttribute("profiloAzienda", azienda);
 			
@@ -210,7 +202,7 @@ public class GestioneAzienda extends HttpServlet {
 			 * in questa sezione effettuo l'eliminazione logica dell'azienda
 			 */
 			
-			aDAO.eliminaProfiloAzienda(((UtenteDTO)sessione.getAttribute("utenteLoggato")).getId_azienda(), conn);
+			aDAO.eliminaProfiloAzienda(((UtenteDTO)sessione.getAttribute("utenteLoggato")).getId_azienda());
 			
 			Enumeration enumerati = sessione.getAttributeNames();
 			while (enumerati.hasMoreElements())	{
@@ -227,7 +219,7 @@ public class GestioneAzienda extends HttpServlet {
 			 * in questa sezione effettuo l'eliminazione logica dell'azienda
 			 */
 			
-			String messaggioCambioPass = aDAO.cambioPassword(request.getParameter("nuovaPassword"),((UtenteDTO)sessione.getAttribute("utenteLoggato")).getId_azienda(), conn);
+			String messaggioCambioPass = aDAO.cambioPassword(request.getParameter("nuovaPassword"),((UtenteDTO)sessione.getAttribute("utenteLoggato")).getId_azienda());
 			if(messaggioCambioPass.equals("ok")){
 				request.setAttribute("messaggio", "Cambio della password avvenuta con successo");
 				rd = getServletContext().getRequestDispatcher("/index.jsp?azione=messaggio");

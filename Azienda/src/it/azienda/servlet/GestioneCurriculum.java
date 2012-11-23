@@ -13,7 +13,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringReader;
-import java.sql.Connection;
 import java.util.ArrayList;
 
 import javax.servlet.RequestDispatcher;
@@ -37,16 +36,8 @@ import com.itextpdf.text.pdf.PdfWriter;
 /**
  * Servlet implementation class GestioneCurriculum
  */
-public class GestioneCurriculum extends HttpServlet {
+public class GestioneCurriculum extends BaseServlet {
 	private static final long serialVersionUID = 1L;
-       
-    /**
-     * @see HttpServlet#HttpServlet()
-     */
-    public GestioneCurriculum() {
-        super();
-        // TODO Auto-generated constructor stub
-    }
 
 	/**
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
@@ -71,23 +62,18 @@ public class GestioneCurriculum extends HttpServlet {
 		HttpSession sessione = request.getSession();
 		
 		RequestDispatcher rd = null;
-		
-		//recupeto la Connection
-		Connection conn = (Connection)sessione.getAttribute("connessione");
-		
-		
-	
+
 	if(sessione.getAttribute("utenteLoggato") != null){	
 		//recupero il valore azione 
 		String azione = request.getParameter("azione");
 		
-		CurriculumDAO curriculum = new CurriculumDAO();
+		CurriculumDAO curriculum = new CurriculumDAO(conn.getConnection());
 		
 		if(azione.equals("creazioneCurriculum") || azione.equals("aggiornaCurriculum")){
 			
 			int idRisorsa = Integer.parseInt(request.getParameter("risorsa"));
 			
-			curriculum.creazioneFlagCreazioneCurriculum(idRisorsa, conn);
+			curriculum.creazioneFlagCreazioneCurriculum(idRisorsa);
 			
 			boolean flag_dettaglio_cv = false;
 			if(request.getParameter("dettaglio") != null){
@@ -108,7 +94,7 @@ public class GestioneCurriculum extends HttpServlet {
 				esperienze.setId_risorsa(idRisorsa);
 				
 				//effettuo l'inserimento dell'Esperienza
-				curriculum.inserimentoEsperienze(esperienze, conn);
+				curriculum.inserimentoEsperienze(esperienze);
 				
 				//valorizzo la variabile Esperienze a "TRUE" per l'avvenuto inserimento
 				request.setAttribute("esperienze", "true");
@@ -128,7 +114,7 @@ public class GestioneCurriculum extends HttpServlet {
 				dettaglio.setInteressi(request.getParameter("interessi"));
 				dettaglio.setId_risorsa(idRisorsa);
 				
-				curriculum.inserimentoDettaglio(dettaglio, conn);
+				curriculum.inserimentoDettaglio(dettaglio);
 				
 				if(azione.equals("creazioneCurriculum")){
 					request.setAttribute("dettaglioCv", "true");
@@ -145,7 +131,7 @@ public class GestioneCurriculum extends HttpServlet {
 			 */
 			
 			if(azione.equals("aggiornaCurriculum")){
-				ArrayList curriculumVitae = curriculum.caricamentoCurriculum(idRisorsa, conn);
+				ArrayList curriculumVitae = curriculum.caricamentoCurriculum(idRisorsa);
 			
 				//inserisco il curriculum caricato in sessione 
 				sessione.setAttribute("curriculumVitae", curriculumVitae);
@@ -170,7 +156,7 @@ public class GestioneCurriculum extends HttpServlet {
 			//effettuo il caricamento del curriculum della singola risorsa
 			int idRisorsa = Integer.parseInt(request.getParameter("risorsa"));
 			
-			ArrayList curriculumVitae = curriculum.caricamentoCurriculum(idRisorsa, conn);
+			ArrayList curriculumVitae = curriculum.caricamentoCurriculum(idRisorsa);
 			
 			/*
 			 * recupero questa tipo di parametro per differenziare la visualizzazione curriculum
@@ -213,10 +199,10 @@ public class GestioneCurriculum extends HttpServlet {
 				esperienze.setIdEsperienze(Integer.parseInt(request.getParameter("idEsperienze")));
 				
 				//effettuo la modifica concreta dell'Esperienza
-				String messaggio = curriculum.aggiornamentoEsperienza(esperienze, conn);
+				String messaggio = curriculum.aggiornamentoEsperienza(esperienze);
 				
 				if(messaggio.equals("ok")){
-					ArrayList curriculumVitae = curriculum.caricamentoCurriculum(idRisorsa, conn);
+					ArrayList curriculumVitae = curriculum.caricamentoCurriculum(idRisorsa);
 					//inserisco il curriculum caricato in sessione
 					sessione.setAttribute("curriculumVitae", curriculumVitae);
 					request.setAttribute("esperienzeModificata", "true");
@@ -240,9 +226,9 @@ public class GestioneCurriculum extends HttpServlet {
 				dettaglio.setId_risorsa(idRisorsa);
 				dettaglio.setId_dettaglio(Integer.parseInt(request.getParameter("id_dettaglio")));
 				
-				String messaggio = curriculum.aggiornamentoDettaglio(dettaglio, conn);
+				String messaggio = curriculum.aggiornamentoDettaglio(dettaglio);
 				if(messaggio.equals("ok")){
-					ArrayList curriculumVitae = curriculum.caricamentoCurriculum(idRisorsa, conn);
+					ArrayList curriculumVitae = curriculum.caricamentoCurriculum(idRisorsa);
 					//inserisco il curriculum caricato in sessione
 					sessione.setAttribute("curriculumVitae", curriculumVitae);
 					request.setAttribute("dettaglioModificato", "true");
@@ -261,11 +247,11 @@ public class GestioneCurriculum extends HttpServlet {
 				
 				int idEsperienze = Integer.parseInt(request.getParameter("idEsperienze"));
 				
-				curriculum.eliminazioneEsperienza(idEsperienze, conn);
+				curriculum.eliminazioneEsperienza(idEsperienze);
 				
 				int idRisorsa = Integer.parseInt(request.getParameter("risorsa"));
 				
-				ArrayList curriculumVitae = curriculum.caricamentoCurriculum(idRisorsa, conn);
+				ArrayList curriculumVitae = curriculum.caricamentoCurriculum(idRisorsa);
 				//inserisco il curriculum caricato in sessione
 				sessione.setAttribute("curriculumVitae", curriculumVitae);
 				
@@ -283,11 +269,11 @@ public class GestioneCurriculum extends HttpServlet {
 			
 			ArrayList curriculumVitae =new ArrayList();
 			
-			CurriculumDAO cDAO = new CurriculumDAO();
-			RisorsaDAO rDAO = new RisorsaDAO();
+			CurriculumDAO cDAO = new CurriculumDAO(conn.getConnection());
+			RisorsaDAO rDAO = new RisorsaDAO(conn.getConnection());
 			
-			curriculumVitae = cDAO.caricamentoCurriculum(idRisorsa, conn);
-			RisorsaDTO risorsa = rDAO.caricamentoProfiloRisorsa(idRisorsa, conn);
+			curriculumVitae = cDAO.caricamentoCurriculum(idRisorsa);
+			RisorsaDTO risorsa = rDAO.caricamentoProfiloRisorsa(idRisorsa);
 			
 			
 			File file = new File(getServletContext().getRealPath("/")+"CurriculumVitae"+ risorsa.getCognome() + risorsa.getNome() +".pdf");
