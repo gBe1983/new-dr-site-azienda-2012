@@ -16,21 +16,25 @@ public class TimeReport implements Serializable{
 	private String idCliente;
 	private String idRisorsa;
 	private String idCommessa;
+	private Calendar dtDa;
+	private Calendar dtA;
 
 	private HashMap<Integer,Risorsa>risorse;
 	private List<Integer>risorseKey;
 	private List<Calendar>days;
 
-	public TimeReport(Calendar from, Calendar to, String idCliente, String idRisorsa, String idCommessa){
+	public TimeReport(Calendar dtDa, Calendar dtA, String idCliente, String idRisorsa, String idCommessa){
 		log =new MyLogger(this.getClass());
 		final String metodo="costruttore";
 		log.start(metodo);
-		Calendar dayFrom = (Calendar)from.clone();
-		Calendar dayTo = (Calendar)to.clone();
+		Calendar dayFrom = (Calendar)dtDa.clone();
+		this.dtDa= (Calendar)dtDa.clone();
+		this.dtA = (Calendar)dtA.clone();
 		this.idCliente=idCliente; 
 		this.idRisorsa=idRisorsa; 
 		this.idCommessa=idCommessa;
-		while(dayFrom.before(dayTo)){
+		days=new ArrayList<Calendar>();
+		while(dayFrom.before(dtA)){
 			days.add((Calendar)dayFrom.clone());
 			dayFrom.add(Calendar.DAY_OF_MONTH,1);
 		}
