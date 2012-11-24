@@ -351,7 +351,7 @@ public class GestioneReport extends BaseServlet {
 						request.getParameter("cliente"),
 						request.getParameter("risorsa"),
 						request.getParameter("commessa")));
-				getServletContext().getRequestDispatcher("/index.jsp?azione=visualizzaConsuntivi").forward(request, response);
+				getServletContext().getRequestDispatcher("/main.jsp?azione=visualizzaConsuntivi").forward(request, response);
 			}
 //		}else{//TODO DA RIPRISTINARE
 //			sessioneScaduta(response);

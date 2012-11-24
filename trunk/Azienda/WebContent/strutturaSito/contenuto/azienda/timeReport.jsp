@@ -1,3 +1,7 @@
+<%@page import="it.bo.Day"%>
+<%@page import="java.util.Locale"%>
+<%@page import="java.text.SimpleDateFormat"%>
+<%@page import="java.util.Calendar"%>
 <%@page import="it.bo.azienda.TimeReport"%>
 <%@page import="java.util.List"%>
 <%@ page language="java" contentType="text/html; charset=ISO-8859-1"
@@ -26,12 +30,12 @@
 	String dtDa=(String)request.getAttribute("dtDa");
 	String dtA=(String)request.getAttribute("dtA");
 %>
-<div class="subtitle ">
+<div class="subtitle">
 	<h2>Visualizzazzione Consuntuvi</h2>
 </div>
 <form action="./GestioneReport" method="post" name="report">
 	<input type="hidden" name="azione" value="visualizzaConsuntivi">
-	<table>
+	<table class="filter">
 		<tr>
 			<td>Da:</td>
 			<td>
@@ -45,7 +49,7 @@
 		<tr>
 			<td>Clienti:</td>
 			<td>
-				<select name="cliente">
+				<select name="cliente" class="filter">
 					<option value="all">-- Tutti i Clienti --</option>
 <%
 	for(ClienteDTO cliente:clienti){
@@ -60,7 +64,7 @@
 			</td>
 			<td>Commesse:</td>
 			<td>
-				<select name="commessa">
+				<select name="commessa" class="filter">
 					<option value="all">
 						-- Tutte le Commesse --
 					</option>
@@ -79,7 +83,7 @@
 		<tr>
 			<td>Risorse:</td>
 			<td colspan="2">
-				<select name="risorsa">
+				<select name="risorsa" class="filter">
 					<option value="all">
 						-- Tutte le Risorse --
 					</option>
@@ -100,6 +104,30 @@
 		</tr>
 	</table>
 </form>
+<br>
+<div class="timeReport">
+<table class="timeReport">
+<tr>
+<td>&nbsp;</td>
+<%
+SimpleDateFormat sdfnd = new SimpleDateFormat("d");
+SimpleDateFormat sdfld = new SimpleDateFormat("E",Locale.ITALIAN);
+	for(Calendar day:tr.getDays()){
+%>
+<td class="<%=Day.getCssStyle(day)%>">
+<%=sdfnd.format(day.getTime())%>
+<br>
+<%=sdfld.format(day.getTime())%>
+</td>
+<%
+	}
+%>
+
+</tr>
 
 
+
+
+</table>
+</div>
 <!-- Ripristinare Controllo Sessione attiva -->
