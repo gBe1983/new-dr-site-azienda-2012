@@ -18,7 +18,7 @@
 	<link rel="stylesheet" type="text/css" href="css/demo.css">
 	<link rel="stylesheet" type="text/css" href="css/visualizzaCurriculum.css">
 	<link rel="stylesheet" type="text/css" href="css/jquery-ui-1.7.2.custom.css">
-	
+	<link rel="stylesheet" type="text/css" href="css/azienda/timeReport.css">
 	<!-- caricamento dei javascript -->
 	
 	<script type="text/javascript" src="script/controlloCodiceCommessa.js" ></script>

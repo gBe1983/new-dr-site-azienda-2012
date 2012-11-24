@@ -1,0 +1,153 @@
+table.filter{
+	font:normal 12px verdana, arial, sans-serif;
+	border-style:solid;
+	width:95%;
+	border-color:#A1A1A1;
+	align:center;
+}
+
+select.filter{
+	margin-left: 0;
+}
+
+div.timeReport{
+	margin-left:2px;
+	overflow:auto;
+	width:1020px;
+}
+
+table.timeReport{
+	border-style:solid;
+	width:100%;
+	border-color:#A1A1A1;
+}
+
+th.weekHeader{
+	font:bold 12px verdana, arial, sans-serif;
+	color:#A1A1A1;
+	background-color:#CCC;
+}
+
+th.noCommesse{
+	font:bold 12px verdana, arial, sans-serif;
+	color:red;
+	background-color:#CCC;
+}
+
+th.commesseHeader{
+	font:normal 12px verdana, arial, sans-serif;
+	color:#A1A1A1;
+}
+
+th.commesse{
+	font:normal 12px verdana, arial, sans-serif;
+	color:blue;
+	background-color:#E7D6B6;
+}
+
+th.holiday{
+	font:normal 10px verdana, arial, sans-serif;
+	color:red;
+	background-color:#CCD;
+	text-align:center;
+	vertical-align:top;
+	width: 250px;
+}
+
+td.holiday{
+	font:normal 10px verdana, arial, sans-serif;
+	color:red;
+	background-color:#CCD;
+	text-align:center;
+	vertical-align:top;
+}
+
+input.holiday{
+	font:normal 10px verdana, arial, sans-serif;
+	color:red;
+	background-color:#CCD;
+	text-align:center;
+	vertical-align:top;
+	width: 60px;
+}
+
+th.workDay{
+	font:normal 10px verdana, arial, sans-serif;
+	color:black;
+	background-color:#E7D6B6;
+	text-align:center;
+	vertical-align:top;
+	width: 250px;
+}
+
+td.workDay{
+	font:normal 10px verdana, arial, sans-serif;
+	color:black;
+	background-color:#E7D6B6;
+	text-align:center;
+	vertical-align:top;
+}
+
+input.workDay{
+	font:normal 10px verdana, arial, sans-serif;
+	color:black;
+	background-color:white;
+	text-align:center;
+	vertical-align:top;
+	width: 60px;
+}
+
+th.disabledDay{
+	font:normal 10px verdana, arial, sans-serif;
+	color:#A1A1A1;
+	background-color:#DDD;
+	text-align:center;
+	vertical-align:top;
+	width: 250px;
+}
+
+td.disabledDay{
+	background-color:#DDD;
+}
+
+td.save{
+	width:100%;
+	background-color:#DDD;
+	text-align: right;
+}
+
+input.save{
+	font:normal 12px verdana, arial, sans-serif;
+	border-radius: 8px;
+	-moz-border-radius: 8px;
+	-webkit-border-radius: 8px;
+	border: 1px solid #006;
+	background-color:#DDD;
+}
+
+input.save:hover {
+	font:normal 12px verdana, arial, sans-serif;
+	border-radius: 8px;
+	-moz-border-radius: 8px;
+	-webkit-border-radius: 8px;
+	border: 1px solid #f00;
+	background: #eef;
+}
+
+input.search{
+	font:normal 12px verdana, arial, sans-serif;
+	border-radius: 8px;
+	-moz-border-radius: 8px;
+	-webkit-border-radius: 8px;
+	border: 1px solid #006;
+	background-color:#DDD;
+}
+
+input.search:hover {
+	font:normal 12px verdana, arial, sans-serif;
+	border-radius: 8px;
+	-moz-border-radius: 8px;
+	-webkit-border-radius: 8px;
+	border: 1px solid #f00;
+	background: #eef;
+}

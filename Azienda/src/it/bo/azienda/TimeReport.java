@@ -34,7 +34,7 @@ public class TimeReport implements Serializable{
 		this.idRisorsa=idRisorsa; 
 		this.idCommessa=idCommessa;
 		days=new ArrayList<Calendar>();
-		while(dayFrom.before(dtA)){
+		while(dayFrom.compareTo(dtA)<=0){
 			days.add((Calendar)dayFrom.clone());
 			dayFrom.add(Calendar.DAY_OF_MONTH,1);
 		}
