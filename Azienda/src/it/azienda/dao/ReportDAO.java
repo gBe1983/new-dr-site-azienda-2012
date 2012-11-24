@@ -11,6 +11,7 @@ import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.List;
 
 public class ReportDAO extends BaseDao {
 
@@ -24,11 +25,11 @@ public class ReportDAO extends BaseDao {
 	//mi serve per formattare le varie date_inizio e date_fine nel formato del DB
 	SimpleDateFormat formattaDataServer = new SimpleDateFormat("yyyy-MM-dd");
 	
-	public ArrayList caricamentoCommessa(){
+	public List<CommessaDTO> caricamentoCommessa(){
 		 
 		String sql = "select id_commessa,descrizione,codice_commessa from tbl_commesse";
 		
-		ArrayList listaCommesse = new ArrayList();
+		List<CommessaDTO> listaCommesse = new ArrayList<CommessaDTO>();
 		PreparedStatement ps=null;
 		ResultSet rs=null;
 		try {

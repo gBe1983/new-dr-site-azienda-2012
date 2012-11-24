@@ -7,6 +7,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.List;
 
 public class ClienteDAO extends BaseDao {
 
@@ -209,9 +210,8 @@ public class ClienteDAO extends BaseDao {
 	
 	
 	//con questo metodo estrapolo tutti i Clienti legati all'azienda
-	public ArrayList caricamentoClienti(){
-		
-		ArrayList listaClienti = new ArrayList();
+	public List<ClienteDTO>caricamentoClienti(){
+		List<ClienteDTO>listaClienti = new ArrayList<ClienteDTO>();
 		String sql = "select id_cliente,ragione_sociale from tbl_clienti where attivo = true order by ragione_sociale ASC";
 		PreparedStatement ps=null;
 		ResultSet rs=null;
