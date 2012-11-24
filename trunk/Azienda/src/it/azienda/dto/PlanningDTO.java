@@ -7,6 +7,8 @@ public class PlanningDTO {
 	private String ragione_sociale;
 	private String codice_commessa;
 	private int numero_ore;
+	private double straordinari;
+
 	private String descrizione_commessa;
 	
 	public String getDescrizione_commessa() {
@@ -45,5 +47,4 @@ public class PlanningDTO {
 	public void setNumero_ore(int numero_ore) {
 		this.numero_ore = numero_ore;
 	}
-	
 }

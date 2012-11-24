@@ -34,7 +34,103 @@ public class RisorsaDTO {
 	private boolean visible;
 	private boolean flaCreazioneCurriculum;
 	private boolean cv_visibile;
-	
+
+	public RisorsaDTO() {}//TODO ... RIMUOVERE!
+
+	/**
+	 * @param idRisorsa
+	 * @param cognome
+	 * @param nome
+	 */
+	public RisorsaDTO(int idRisorsa, String cognome, String nome) {
+		super();
+		this.idRisorsa = idRisorsa;
+		this.cognome = cognome;
+		this.nome = nome;
+	}
+
+	/**
+	 * @param idRisorsa
+	 * @param cognome
+	 * @param nome
+	 * @param dataNascita
+	 * @param luogoNascita
+	 * @param sesso
+	 * @param codiceFiscale
+	 * @param email
+	 * @param telefono
+	 * @param cellulare
+	 * @param fax
+	 * @param indirizzo
+	 * @param citta
+	 * @param provincia
+	 * @param cap
+	 * @param nazione
+	 * @param servizioMilitare
+	 * @param patente
+	 * @param costo
+	 * @param occupato
+	 * @param tipoContratto
+	 * @param figuraProfessionale
+	 * @param seniority
+	 * @param visible
+	 * @param flaCreazioneCurriculum
+	 * @param cv_visibile
+	 */
+	public RisorsaDTO(int idRisorsa,
+			String cognome,
+			String nome,
+			String dataNascita,
+			String luogoNascita,
+			String sesso,
+			String codiceFiscale,
+			String email,
+			String telefono,
+			String cellulare,
+			String fax,
+			String indirizzo,
+			String citta,
+			String provincia,
+			String cap,
+			String nazione,
+			String servizioMilitare,
+			String patente,
+			String costo,
+			boolean occupato,
+			String tipoContratto,
+			String figuraProfessionale,
+			String seniority,
+			boolean visible,
+			boolean flaCreazioneCurriculum,
+			boolean cv_visibile) {
+		super();
+		this.idRisorsa = idRisorsa;
+		this.cognome = cognome;
+		this.nome = nome;
+		this.dataNascita = dataNascita;
+		this.luogoNascita = luogoNascita;
+		this.sesso = sesso;
+		this.codiceFiscale = codiceFiscale;
+		this.email = email;
+		this.telefono = telefono;
+		this.cellulare = cellulare;
+		this.fax = fax;
+		this.indirizzo = indirizzo;
+		this.citta = citta;
+		this.provincia = provincia;
+		this.cap = cap;
+		this.nazione = nazione;
+		this.servizioMilitare = servizioMilitare;
+		this.patente = patente;
+		this.costo = costo;
+		this.occupato = occupato;
+		this.tipoContratto = tipoContratto;
+		this.figuraProfessionale = figuraProfessionale;
+		this.seniority = seniority;
+		this.visible = visible;
+		this.flaCreazioneCurriculum = flaCreazioneCurriculum;
+		this.cv_visibile = cv_visibile;
+	}
 	public String getCellulare() {
 		return cellulare;
 	}

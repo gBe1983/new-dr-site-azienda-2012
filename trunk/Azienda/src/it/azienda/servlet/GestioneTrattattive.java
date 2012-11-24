@@ -5,6 +5,7 @@ import it.azienda.dao.CommesseDAO;
 import it.azienda.dao.RisorsaDAO;
 import it.azienda.dao.TrattativeDAO;
 import it.azienda.dto.Associaz_Risor_Comm;
+import it.azienda.dto.ClienteDTO;
 import it.azienda.dto.CommessaDTO;
 import it.azienda.dto.TrattativeDTO;
 
@@ -15,6 +16,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -80,7 +82,6 @@ public class GestioneTrattattive extends BaseServlet {
 		if (azione.equals("ricercaTrattativaCliente")) {
 
 			ArrayList listaRisorse = rDAO.elencoRisorse();
-			ArrayList listaClienti = cDAO.caricamentoClienti();
 			ArrayList listaTrattattive = null;
 
 			/*
@@ -235,7 +236,7 @@ public class GestioneTrattattive extends BaseServlet {
 			}
 
 			request.setAttribute("listaTrattattive", listaTrattattive);
-			request.setAttribute("listaClienti", listaClienti);
+			request.setAttribute("listaClienti",cDAO.caricamentoClienti());
 			request.setAttribute("listaRisorse", listaRisorse);
 
 			/*
@@ -268,31 +269,28 @@ public class GestioneTrattattive extends BaseServlet {
 			 */
 			if (azione.equals("aggiungiTrattative")) {
 				ArrayList listaRisorse = rDAO.elencoRisorse();
-				ArrayList listaClienti = cDAO.caricamentoClienti();
 				ArrayList listaTrattattative = tDAO.caricamentoTipologie();
 				
-				request.setAttribute("listaClienti", listaClienti);
+				request.setAttribute("listaClienti",cDAO.caricamentoClienti());
 				request.setAttribute("listaRisorse", listaRisorse);
 				request.setAttribute("listaTrattattive", listaTrattattative);
 
 			} else if (azione.equals("aggiungiCommessa")) {
 
 				ArrayList listaRisorse = rDAO.elencoRisorse();
-				ArrayList listaClienti = cDAO.caricamentoClienti();
 				ArrayList tipologie = commesseDAO.caricamentoTipologiaCommessa();
 				ArrayList altreCommesse = commesseDAO.caricamentoCommesseTipologiaAltro();
 				
 				
-				request.setAttribute("listaClienti", listaClienti);
+				request.setAttribute("listaClienti",cDAO.caricamentoClienti());
 				request.setAttribute("listaRisorse", listaRisorse);
 				request.setAttribute("tipologiaCommessa", tipologie);
 				request.setAttribute("listaCommesseTipologiaAltro", altreCommesse);
 
 			} else if (azione.equals("ricercaCommessa")) {
-				ArrayList listaClienti = cDAO.caricamentoClienti();
 				ArrayList tipologie = commesseDAO.caricamentoTipologiaCommessa();
 
-				request.setAttribute("listaClienti", listaClienti);
+				request.setAttribute("listaClienti",cDAO.caricamentoClienti());
 				request.setAttribute("tipologiaCommessa", tipologie);
 			}
 			/*
@@ -670,7 +668,6 @@ public class GestioneTrattattive extends BaseServlet {
 		  
 		 TrattativeDTO trattativa = tDAO.aggiornaSingolaTrattativa(Integer.parseInt(request.getParameter("trattativa")));
 		 ArrayList listaRisorse = rDAO.elencoRisorse();
-		 ArrayList listaClienti = cDAO.caricamentoClienti();
 		 
 		 /*
 		 * effettuo questo ciclo sulle trattative per caricare la descrizione
@@ -684,7 +681,7 @@ public class GestioneTrattattive extends BaseServlet {
 		 
 		 
 		 request.setAttribute("trattativa", trattativa);
-		 request.setAttribute("listaClienti", listaClienti);
+		 request.setAttribute("listaClienti",cDAO.caricamentoClienti());
 		 request.setAttribute("listaRisorse", listaRisorse);
 		 
 		 /*

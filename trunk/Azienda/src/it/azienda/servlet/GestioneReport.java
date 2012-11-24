@@ -3,16 +3,19 @@ package it.azienda.servlet;
 import it.azienda.dao.ClienteDAO;
 import it.azienda.dao.ReportDAO;
 import it.azienda.dao.RisorsaDAO;
+import it.azienda.dao.RisorseDAO;
 import it.azienda.dto.Associaz_Risor_Comm;
+import it.azienda.dto.ClienteDTO;
 import it.azienda.dto.CommessaDTO;
 import it.azienda.dto.PlanningDTO;
+import it.util.log.MyLogger;
 
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -26,45 +29,56 @@ import javax.servlet.http.HttpSession;
  */
 public class GestioneReport extends BaseServlet {
 	private static final long serialVersionUID = 1L;
+	private MyLogger log;
+
+	public GestioneReport() {
+		super();
+		log =new MyLogger(this.getClass());
+	}
 
 	/**
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		// TODO Auto-generated method stub
+		final String metodo="doGet";
+		log.start(metodo);
 		processRequest(request, response);
+		log.end(metodo);
 	}
 
 	/**
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		// TODO Auto-generated method stub
+		final String metodo="doPost";
+		log.start(metodo);
 		processRequest(request, response);
+		log.end(metodo);
 	}
 	
 	private void processRequest(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		// TODO Auto-generated method stub
-		
+		final String metodo="processRequest";
+		log.start(metodo);
 		// mi carico la sessione
 		HttpSession sessione = request.getSession();
 
 		RequestDispatcher rd = null;
 
-		ReportDAO rDAO = new ReportDAO(conn.getConnection());
 		
-		if(sessione.getAttribute("utenteLoggato") != null){
+		
+		//if(sessione.getAttribute("utenteLoggato") != null){//TODO DA RIPRISTINARE
 			
 			String azione = request.getParameter("azione");
 			
-			if(azione.equals("visualizzaReport")){
+			if("visualizzaReport".equals(azione)){
 				
+				ReportDAO rDAO = new ReportDAO(conn.getConnection());
 				RisorsaDAO risDAO = new RisorsaDAO(conn.getConnection());
 				ClienteDAO cDAO = new ClienteDAO(conn.getConnection());
 				
-				ArrayList listaCommesse = rDAO.caricamentoCommessa();
+				List<CommessaDTO> listaCommesse = rDAO.caricamentoCommessa();
 				ArrayList listaRisorse = risDAO.elencoRisorse();
-				ArrayList listaCliente = cDAO.caricamentoClienti();
+				List<ClienteDTO> listaCliente = cDAO.caricamentoClienti();
 				
 				request.setAttribute("listaCommesse", listaCommesse);
 				request.setAttribute("listaRisorse", listaRisorse);
@@ -73,7 +87,7 @@ public class GestioneReport extends BaseServlet {
 				rd = getServletContext().getRequestDispatcher("/index.jsp?azione=visualizzaReport&dispositiva=report");			
 				rd.forward(request, response);
 				
-			}else if(azione.equals("ricercaReport")){
+			}else if("ricercaReport".equals(azione)){
 				
 				SimpleDateFormat formatDate = new SimpleDateFormat("dd-MM-yyyy");
 				SimpleDateFormat formattazione = new SimpleDateFormat("yyyy-MM-dd");
@@ -112,6 +126,7 @@ public class GestioneReport extends BaseServlet {
 				/*
 				 * cliente != null && risorsa == null && commessa == ""
 				 */
+				ReportDAO rDAO = new ReportDAO(conn.getConnection());
 				if(!cliente.equals("") && risorsa.equals("") && commessa.equals("")){
 					
 					ArrayList listaCommesseCliente = rDAO.caricamentoCommesseCliente(cliente);
@@ -288,47 +303,16 @@ public class GestioneReport extends BaseServlet {
 				}
 				
 				request.setAttribute("report",report);
-				rd = getServletContext().getRequestDispatcher("/index.jsp?azione=visualizzaReport&dispositiva=report");			
-				rd.forward(request, response);
+				getServletContext().getRequestDispatcher("/index.jsp?azione=visualizzaReport&dispositiva=report").forward(request, response);
+			}else if("visualizzaConsuntivi".equals(azione)){
+				request.setAttribute("commesse",new ReportDAO(conn.getConnection()).caricamentoCommessa());
+				request.setAttribute("risorse",new RisorseDAO(conn.getConnection()).getRisorse());
+				request.setAttribute("clienti",new ClienteDAO(conn.getConnection()).caricamentoClienti());
+				
+				getServletContext().getRequestDispatcher("/index.jsp?azione=visualizzaConsuntivi").forward(request, response);
 			}
-		}else{
-			response.setContentType("text/html");
-	        PrintWriter out = response.getWriter();
-			try {
-				out = response.getWriter();
-				out.print("<html>" +
-						"<head>" +
-						"</head>" +
-						"<body>" +
-						"<script type=\"text/javascript\">" +
-						"alert(\"La sessione è scaduta. Rieffettuare la login\");" +
-						"url = window.location.href;" +
-						"var variabiliUrl = url.split(\"/\");" +
-						"for(a=0; a < variabiliUrl.length; a++){" +
-						"		if(a == 2){" +
-						"			var localVariabili = variabiliUrl[a].split(\":\");" +
-						"			for(x=0; x < localVariabili.length; x++){" +
-						"				if(localVariabili[x] == \"localhost\"){" +
-						"					window.location = \"http://localhost/dr\";" +
-						"				}if(localVariabili[x] == \"cvonline\"){" +
-						"					window.location.href = \"http://cvonline.tv\";" +
-						"				}if(localVariabili[x] == \"drconsulting\"){" +
-						"					window.location.href= \"http://drconsulting.tv\";" +
-						"				}" +
-						"			}" +
-						"		}else{" +
-						"			continue;" +
-						"		}" +
-						"}" +
-						"</script>" +
-						"</body>" +
-						"</html>");
-				out.flush();
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
+//		}else{//TODO DA RIPRISTINARE
+//			sessioneScaduta(response);
+//		}
 	}
-
 }
