@@ -2,8 +2,8 @@
 <!DOCTYPE log4j:configuration SYSTEM "log4j.dtd">
 <log4j:configuration xmlns:log4j='http://jakarta.apache.org/log4j/'>
 
-	<appender name="FA" class="org.apache.log4j.RollingFileAppender">
-		<param name="File" value="azienda.log"/>
+	<appender name="AziendaAppender" class="org.apache.log4j.RollingFileAppender">
+		<param name="File" value="/nfs_home/drcon860/public_html/Azienda/WEB-INF/logs/azienda.log"/>
 		<param name="Append" value="true"/>
 		<param name="MaxFileSize" value="1MB"/>
 		<param name="MaxBackupIndex" value="10"/>
@@ -12,7 +12,7 @@
 		</layout>
 	</appender>
 	<root>
-		<level value="TRACE" />
-		<appender-ref ref="FA" />
+		<level value="WARN"/>
+		<appender-ref ref="AziendaAppender"/>
 	</root>
 </log4j:configuration>
