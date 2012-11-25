@@ -3,6 +3,8 @@ package it.azienda.dao;
 import it.azienda.dto.Associaz_Risor_Comm;
 import it.azienda.dto.CommessaDTO;
 import it.azienda.dto.PlanningDTO;
+import it.bo.azienda.TimeReport;
+import it.util.log.MyLogger;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -11,12 +13,15 @@ import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 public class ReportDAO extends BaseDao {
+	private MyLogger log;
 
 	public ReportDAO(Connection connessione) {
 		super(connessione);
+		log=new MyLogger(this.getClass());
 	}
 
 	//mi serve per castare le varie date_inizio e date_fine delle varie commesse
@@ -25,11 +30,12 @@ public class ReportDAO extends BaseDao {
 	//mi serve per formattare le varie date_inizio e date_fine nel formato del DB
 	SimpleDateFormat formattaDataServer = new SimpleDateFormat("yyyy-MM-dd");
 	
-	public List<CommessaDTO> caricamentoCommessa(){
-		 
+	public List<CommessaDTO>caricamentoCommessa(){
+		final String metodo="caricamentoCommessa";
+		log.start(metodo);
 		String sql = "select id_commessa,descrizione,codice_commessa from tbl_commesse";
-		
-		List<CommessaDTO> listaCommesse = new ArrayList<CommessaDTO>();
+		log.debug(metodo, sql);
+		List<CommessaDTO>listaCommesse = new ArrayList<CommessaDTO>();
 		PreparedStatement ps=null;
 		ResultSet rs=null;
 		try {
@@ -43,20 +49,19 @@ public class ReportDAO extends BaseDao {
 				listaCommesse.add(commessa);
 			}
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			log.error(metodo, "select tbl_commesse", e);
 		}finally{
 			close(ps,rs);
+			log.end(metodo);
 		}
-		
 		return listaCommesse;
-		
 	}
-	
+
 	public ArrayList caricamentoCommesseCliente(String id_cliente){
-		
+		final String metodo="caricamentoCommesseCliente";
+		log.start(metodo);
 		String sql = "select id_commessa from tbl_commesse where id_cliente = ?";
-		
+		log.debug(metodo, sql);
 		ArrayList listaCommesse = new ArrayList();
 		PreparedStatement ps=null;
 		ResultSet rs=null;
@@ -70,45 +75,45 @@ public class ReportDAO extends BaseDao {
 				listaCommesse.add(commessa);
 			}
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			log.error(metodo, "select tbl_commesse", e);
 		}finally{
 			close(ps,rs);
+			log.end(metodo);
 		}
-		
 		return listaCommesse;
 	}
-	
-	
-	/*
+
+	/**
 	 * tramite questo metodo effettuo la somma delle ore di ogni commessa
+	 * @param id_associazione
+	 * @param dataInizio
+	 * @param dataFine
+	 * @return
 	 */
-	
 	public PlanningDTO caricamentoPlanning(int id_associazione,String dataInizio, String dataFine){
-		
+		final String metodo="caricamentoPlanning";
+		log.start(metodo);
 		String sql = "";
-		
 		String codiceCliente = controlloCodiceCliente(id_associazione);
 		if(codiceCliente != null){
-		
-			sql = "select sum(num_ore), risorsa.cognome, risorsa.nome, cliente.ragione_sociale, commessa.codice_commessa, commessa.descrizione" +
-                  " from tbl_planning as planning, tbl_associaz_risor_comm as asscommessa, tbl_risorse as risorsa, tbl_commesse as commessa, tbl_clienti as cliente" +
-                  " where planning.id_associazione = ?" +
-                  " and planning.id_associazione =  asscommessa.id_associazione" +
-				  " and asscommessa.id_risorsa =  risorsa.id_risorsa" +
-				  " and asscommessa.id_commessa = commessa.id_commessa" +
-				  " and commessa.id_cliente = cliente.id_cliente" +
-				  " and planning.data between ? and ?";
+			sql =	"select sum(num_ore), risorsa.cognome, risorsa.nome, cliente.ragione_sociale, commessa.codice_commessa, commessa.descrizione" +
+					" from tbl_planning as planning, tbl_associaz_risor_comm as asscommessa, tbl_risorse as risorsa, tbl_commesse as commessa, tbl_clienti as cliente" +
+					" where planning.id_associazione = ?" +
+					" and planning.id_associazione =  asscommessa.id_associazione" +
+					" and asscommessa.id_risorsa =  risorsa.id_risorsa" +
+					" and asscommessa.id_commessa = commessa.id_commessa" +
+					" and commessa.id_cliente = cliente.id_cliente" +
+					" and planning.data between ? and ?";
 		}else{
-			sql = "select if(sum(num_ore) is null,0,sum(num_ore)) as numero_ore, risorsa.cognome, risorsa.nome, commessa.codice_commessa, commessa.descrizione" +
-			      " from tbl_planning as planning, tbl_associaz_risor_comm as asscommessa, tbl_risorse as risorsa, tbl_commesse as commessa" +
-			      "	where planning.id_associazione = ?" +
-			      "	and planning.id_associazione =  asscommessa.id_associazione" +
-			      "	and asscommessa.id_risorsa =  risorsa.id_risorsa " +
-			      " and asscommessa.id_commessa = commessa.id_commessa" +
-			      " and planning.data between ? and ?";
+			sql =	"select if(sum(num_ore) is null,0,sum(num_ore)) as numero_ore, risorsa.cognome, risorsa.nome, commessa.codice_commessa, commessa.descrizione" +
+					" from tbl_planning as planning, tbl_associaz_risor_comm as asscommessa, tbl_risorse as risorsa, tbl_commesse as commessa" +
+					"	where planning.id_associazione = ?" +
+					"	and planning.id_associazione =  asscommessa.id_associazione" +
+					"	and asscommessa.id_risorsa =  risorsa.id_risorsa " +
+					" and asscommessa.id_commessa = commessa.id_commessa" +
+					" and planning.data between ? and ?";
 		}
-		
+		log.debug(metodo, sql);
 		PlanningDTO planning = null;
 		PreparedStatement ps=null;
 		ResultSet rs=null;
@@ -135,28 +140,30 @@ public class ReportDAO extends BaseDao {
 				
 			}
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			log.error(metodo, "select tbl_planning,tbl_associaz_risor_comm,tbl_risorse,tbl_commesse", e);
 		}finally{
 			close(ps,rs);
+			log.end(metodo);
 		}
-		
 		return planning;
 	}
-	
-	/*
-	 * tramite questo metodo effettuo il caricamento delle associazione legate
-	 * ad una commessa o ad una risorsa.
+
+	/**
+	 * tramite questo metodo effettuo il caricamento delle associazione legate ad una commessa o ad una risorsa.
+	 * @param listaCommesse
+	 * @param id_commessa
+	 * @param id_risorsa
+	 * @param dataInizio
+	 * @param dataFine
+	 * @return
 	 */
-	
 	public ArrayList caricamentoAssociazioniCommessaRisorsa(ArrayList listaCommesse, int id_commessa, int id_risorsa, String dataInizio, String dataFine){
-		
+		final String metodo="caricamentoAssociazioniCommessaRisorsa";
+		log.start(metodo);
 		if(id_commessa != 0 || id_risorsa != 0){
 			String sql = "select id_associazione,id_commessa,id_risorsa from tbl_associaz_risor_comm";
-			
 			boolean commessa = false;
 			boolean risorsa = false;
-			
 			if(id_commessa != 0){
 				sql += " where id_commessa = ? ";
 				commessa = true;
@@ -168,7 +175,6 @@ public class ReportDAO extends BaseDao {
 				sql += " and id_risorsa = ?";
 				risorsa = true;
 			}
-			
 			if(commessa || risorsa){
 				sql += "and data_inizio <= ? and data_fine >= ?";
 			}
@@ -184,7 +190,6 @@ public class ReportDAO extends BaseDao {
 				}else if(risorsa){
 					ps.setInt(1, id_risorsa);
 				}
-				
 				if(commessa && !risorsa){
 					ps.setString(2, dataInizio);
 					ps.setString(3, dataFine);
@@ -195,7 +200,7 @@ public class ReportDAO extends BaseDao {
 					ps.setString(3, dataInizio);
 					ps.setString(4, dataFine);
 				}
-				System.out.println(sql);
+				log.debug(metodo, sql);
 				rs = ps.executeQuery();
 				while(rs.next()){
 					Associaz_Risor_Comm asscommessa = new Associaz_Risor_Comm();
@@ -205,15 +210,16 @@ public class ReportDAO extends BaseDao {
 					listaCommesse.add(asscommessa);
 				}
 			} catch (SQLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				log.error(metodo, "id_commessa != 0 || id_risorsa != 0", e);
 			}finally{
 				close(ps,rs);
+				log.end(metodo);
 			}
 		}else{
 			String sql = "select id_associazione,id_commessa,id_risorsa from tbl_associaz_risor_comm where data_inizio <= ? and data_fine >= ?";
 			PreparedStatement ps=null;
 			ResultSet rs=null;
+			log.debug(metodo, sql);
 			try {
 				ps = connessione.prepareStatement(sql);
 				ps.setString(1, formattaDataServer.format(formattaDataWeb.parse(dataInizio)));
@@ -227,30 +233,27 @@ public class ReportDAO extends BaseDao {
 					listaCommesse.add(asscommessa);
 				}
 			} catch (SQLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				log.error(metodo, "else", e);
 			} catch (ParseException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				log.error(metodo, "else", e);
 			}finally{
 				close(ps,rs);
+				log.end(metodo);
 			}
-			
-			
 		}
-		
-		
 		return listaCommesse;
 	}
-	
-	/*
+
+	/**
 	 * tramite questo metodo verifico se è presente il codice cliente
+	 * @param associazione
+	 * @return
 	 */
-	
 	private String controlloCodiceCliente(int associazione){
-		
+		final String metodo="caricamentoPlanning";
+		log.start(metodo);
 		String sql = "select commessa.id_cliente from tbl_associaz_risor_comm as asscommessa, tbl_commesse as commessa where asscommessa.id_associazione = ? and asscommessa.id_commessa = commessa.id_commessa";
-		
+		log.debug(metodo, sql);
 		String codiceCliente = null;
 		PreparedStatement ps=null;
 		ResultSet rs=null;
@@ -262,16 +265,19 @@ public class ReportDAO extends BaseDao {
 				codiceCliente = rs.getString(1);
 			}
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			log.error(metodo, "select tbl_associaz_risor_comm,tbl_commesse", e);
 		}finally{
 			close(ps,rs);
+			log.end(metodo);
 		}
-		
 		return codiceCliente;
 	}
-	
-	
-	
-	
+
+	public TimeReport getTimeReport(Calendar dtDa, Calendar dtA, String idCliente, String idRisorsa, String idCommessa){
+		final String metodo="getTimeReport";
+		log.start(metodo);
+		TimeReport tr = new TimeReport(dtDa, dtA, idCliente, idRisorsa, idCommessa);;
+		log.end(metodo);
+		return tr;
+	}
 }
