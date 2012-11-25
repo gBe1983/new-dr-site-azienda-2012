@@ -8,7 +8,6 @@ import it.azienda.dto.Associaz_Risor_Comm;
 import it.azienda.dto.ClienteDTO;
 import it.azienda.dto.CommessaDTO;
 import it.azienda.dto.PlanningDTO;
-import it.bo.azienda.TimeReport;
 import it.util.log.MyLogger;
 
 import java.io.IOException;
@@ -307,7 +306,8 @@ public class GestioneReport extends BaseServlet {
 				request.setAttribute("report",report);
 				getServletContext().getRequestDispatcher("/index.jsp?azione=visualizzaReport&dispositiva=report").forward(request, response);
 			}else if("visualizzaConsuntivi".equals(azione)){
-				request.setAttribute("commesse",new ReportDAO(conn.getConnection()).caricamentoCommessa());
+				ReportDAO reportDAO=new ReportDAO(conn.getConnection());
+				request.setAttribute("commesse",reportDAO.caricamentoCommessa());
 				request.setAttribute("risorse",new RisorseDAO(conn.getConnection()).getRisorse());
 				request.setAttribute("clienti",new ClienteDAO(conn.getConnection()).caricamentoClienti());
 				
@@ -345,7 +345,7 @@ public class GestioneReport extends BaseServlet {
 
 				request.setAttribute(
 					"timeReport",
-					new TimeReport(
+					reportDAO.getTimeReport(
 						dtDa,
 						dtA,
 						request.getParameter("cliente"),
