@@ -71,7 +71,7 @@
 <%
 	for(CommessaDTO commessa:commesse){
 %>
-					<option value="<%=commessa.getId_commessa() %>">
+					<option value="<%=commessa.getId_commessa() %>"<%if(tr.getIdCommessa()!=null&&tr.getIdCommessa().equals(commessa.getId_commessa()+"")){%> selected="selected"<%}%>>
 						<%=commessa.getCodiceCommessa() + " - " + commessa.getDescrizione() %>
 					</option>
 <%
@@ -89,8 +89,8 @@
 					</option>
 <%
 	for(RisorsaDTO risorsa:risorse){
-%><!-- AGGIUNGERE SELECTED -->
-					<option value="<%=risorsa.getIdRisorsa()%>">
+%>
+					<option value="<%=risorsa.getIdRisorsa()%>"<%if(tr.getIdRisorsa()!=null&&tr.getIdRisorsa().equals(risorsa.getIdRisorsa()+"")){%> selected="selected"<%}%>>
 						<%=risorsa.getCognome()%> <%=risorsa.getNome()%>
 					</option>
 <%
