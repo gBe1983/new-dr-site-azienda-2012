@@ -3,6 +3,7 @@ package it.azienda.dao;
 import it.azienda.dto.Associaz_Risor_Comm;
 import it.azienda.dto.CommessaDTO;
 import it.azienda.dto.PlanningDTO;
+import it.azienda.dto.RisorsaDTO;
 import it.bo.azienda.TimeReport;
 import it.util.log.MyLogger;
 
@@ -276,8 +277,72 @@ public class ReportDAO extends BaseDao {
 	public TimeReport getTimeReport(Calendar dtDa, Calendar dtA, String idCliente, String idRisorsa, String idCommessa){
 		final String metodo="getTimeReport";
 		log.start(metodo);
-		TimeReport tr = new TimeReport(dtDa, dtA, idCliente, idRisorsa, idCommessa);;
-		log.end(metodo);
+		TimeReport tr = new TimeReport(dtDa, dtA, idCliente, idRisorsa, idCommessa);
+		StringBuilder sql = new StringBuilder("SELECT ");
+		sql	.append("planning.data,planning.num_ore,planning.straordinari,")
+			.append("commessa.descrizione,")
+			.append("risorse.id_risorsa,risorse.cognome,risorse.nome ")
+			.append("FROM tbl_planning planning,tbl_associaz_risor_comm asscommessa,tbl_commesse commessa,tbl_risorse risorse ")
+			.append("WHERE planning.id_associazione=asscommessa.id_associazione ")
+			.append("AND asscommessa.id_commessa=commessa.id_commessa ")
+			.append("AND asscommessa.id_risorsa=risorse.id_risorsa ")
+			.append("AND planning.data >=? ")
+			.append("AND planning.data <=? ");
+
+		if(isValidFilter(idCliente)){
+			sql.append("AND commessa.id_cliente=? ");
+		}
+
+		if(isValidFilter(idRisorsa)){
+			sql.append("AND risorse.id_risorsa=? ");
+		}
+
+		if(isValidFilter(idCommessa)){
+			sql.append("AND commessa.id_commessa=? ");
+		}
+
+		sql.append("ORDER BY data");
+
+		PreparedStatement ps=null;
+		ResultSet rs=null;
+		log.debug(metodo, sql.toString());
+		int i=1;
+		try {
+			ps = connessione.prepareStatement(sql.toString());
+			ps.setString(i++, formattaDataServer.format(dtDa.getTime()));
+			ps.setString(i++, formattaDataServer.format(dtA.getTime()));
+			if(isValidFilter(idCliente)){
+				ps.setString(i++, idCliente);
+			}
+			if(isValidFilter(idRisorsa)){
+				ps.setInt(i++, Integer.parseInt(idRisorsa));
+			}
+			if(isValidFilter(idCommessa)){
+				ps.setInt(i++, Integer.parseInt(idCommessa));
+			}
+			rs = ps.executeQuery();
+			while(rs.next()){
+				tr.addPlanningDTO(
+					new PlanningDTO(
+						rs.getDate("data"),
+						rs.getDouble("num_ore"),
+						rs.getDouble("straordinari"),
+						rs.getString("descrizione")),
+					new RisorsaDTO(
+						rs.getInt("id_risorsa"),
+						rs.getString("cognome"),
+						rs.getString("nome")));
+			}
+		} catch (SQLException e) {
+			log.error(metodo, "", e);
+		}finally{
+			close(ps,rs);
+			log.end(metodo);
+		}
 		return tr;
+	}
+
+	private boolean isValidFilter(String v){
+		return v!=null&&!"".equals(v)&&!"all".equals(v);
 	}
 }

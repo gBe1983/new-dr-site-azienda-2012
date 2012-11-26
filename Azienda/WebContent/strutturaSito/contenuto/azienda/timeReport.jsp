@@ -4,8 +4,7 @@
 <%@page import="java.util.Calendar"%>
 <%@page import="it.bo.azienda.TimeReport"%>
 <%@page import="java.util.List"%>
-<%@ page language="java" contentType="text/html; charset=ISO-8859-1"
-    pageEncoding="ISO-8859-1"%>
+<%@ page language="java" contentType="text/html; charset=ISO-8859-1" pageEncoding="ISO-8859-1"%>
 <%@page import="java.util.ArrayList"%>
 <%@page import="it.azienda.dto.ClienteDTO"%>
 <%@page import="it.azienda.dto.RisorsaDTO"%>
@@ -105,29 +104,91 @@
 	</table>
 </form>
 <br>
+
 <div class="timeReport">
 <table class="timeReport">
 <tr>
 <td>&nbsp;</td>
 <%
-SimpleDateFormat sdfnd = new SimpleDateFormat("d");
-SimpleDateFormat sdfld = new SimpleDateFormat("E",Locale.ITALIAN);
-	for(Calendar day:tr.getDays()){
+	SimpleDateFormat sdfnd = new SimpleDateFormat("d");
+	SimpleDateFormat sdfld = new SimpleDateFormat("E",Locale.ITALIAN);
+	for(Day d:tr.getDays()){
 %>
-<td class="<%=Day.getCssStyle(day)%>">
-<%=sdfnd.format(day.getTime())%>
+<td class="<%=d.getCssStyle()%>">
+<%=sdfnd.format(d.getDay().getTime())%>
 <br>
-<%=sdfld.format(day.getTime())%>
+<%=sdfld.format(d.getDay().getTime())%>
 </td>
 <%
 	}
 %>
-
 </tr>
+<%
+	double totaleOreOrdinarie=0;
+	double totaleOreSraordinarie=0;
+	for(Integer risorseKey:tr.getRisorseKey()){
+		totaleOreOrdinarie=0;
+		totaleOreSraordinarie=0;
+		tr.resetHours();
+%>
+<tr>
+<td class="Risorsa" colspan="<%=tr.getDays().size()+1%>">
+<%=tr.getRisorse().get(risorseKey).getRisorsaDTO().getNome()%>&nbsp;<%=tr.getRisorse().get(risorseKey).getRisorsaDTO().getCognome()%>
+</td>
+</tr>
+<%
+		for(String commessaKey:tr.getRisorse().get(risorseKey).getCommesse().keySet()){
+%>
+<tr class="commesse">
+<td class="Commessa"><%=commessaKey%></td>
+<%
+			for(Day d:tr.getDays()){
+%>
+<td class="<%=d.getCssStyle()%>">
+<%
+				for(PlanningDTO p:tr.getRisorse().get(risorseKey).getCommesse().get(commessaKey)){
+					if(	p.getData().get(Calendar.DAY_OF_YEAR)==d.getDay().get(Calendar.DAY_OF_YEAR)&&
+							p.getData().get(Calendar.YEAR)==d.getDay().get(Calendar.YEAR)){
+						totaleOreOrdinarie+=p.getNumeroOre();
+						d.addOreOrdinarie(p.getNumeroOre());
+						totaleOreSraordinarie+=p.getStraordinari();
+						d.addOreSraordinarie(p.getStraordinari());
+%>
+<div class="OreOrdinarie"><%=p.getNumeroOre()%></div>
+<br>
+<div class="OreStraordinarie"><%=p.getStraordinari()%></div>
+<%
+						break;
+					}
+				}
+%>
+</td>
+<%
+			}
+%>
+</tr>
+<%
+		}
+%>
+<tr class="totali">
+<td class="Totali">
+<div class="OreOrdinarie"><%=totaleOreOrdinarie%></div>
+<br>
+<div class="OreStraordinarie"><%=totaleOreSraordinarie%></div>
+</td>
+<%
+		for(Day d:tr.getDays()){
+%>
+<td class="<%=d.getCssStyle()%>">
 
-
-
-
+</td>
+<%
+		}
+%>
+</tr>
+<%
+	}
+%>
 </table>
 </div>
 <!-- Ripristinare Controllo Sessione attiva -->
