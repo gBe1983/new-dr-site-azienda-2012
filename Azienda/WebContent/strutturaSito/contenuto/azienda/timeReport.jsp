@@ -180,7 +180,9 @@
 		for(Day d:tr.getDays()){
 %>
 <td class="<%=d.getCssStyle()%>">
-
+<div class="OreOrdinarie"><%=d.getOreOrdinarie()%></div>
+<br>
+<div class="OreStraordinarie"><%=d.getOreSraordinarie()%></div>
 </td>
 <%
 		}

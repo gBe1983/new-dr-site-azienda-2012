@@ -301,7 +301,7 @@ public class ReportDAO extends BaseDao {
 			sql.append("AND commessa.id_commessa=? ");
 		}
 
-		sql.append("ORDER BY data");
+		sql.append("ORDER BY cognome,data");
 
 		PreparedStatement ps=null;
 		ResultSet rs=null;
