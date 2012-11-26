@@ -3,6 +3,7 @@ package it.bo.azienda;
 
 import it.azienda.dto.PlanningDTO;
 import it.azienda.dto.RisorsaDTO;
+import it.bo.Day;
 import it.util.log.MyLogger;
 
 import java.io.Serializable;
@@ -21,7 +22,7 @@ public class TimeReport implements Serializable{
 
 	private HashMap<Integer,Risorsa>risorse;
 	private List<Integer>risorseKey;
-	private List<Calendar>days;
+	private List<Day>days;
 
 	public TimeReport(Calendar dtDa, Calendar dtA, String idCliente, String idRisorsa, String idCommessa){
 		log =new MyLogger(this.getClass());
@@ -33,9 +34,9 @@ public class TimeReport implements Serializable{
 		this.idCliente=idCliente; 
 		this.idRisorsa=idRisorsa; 
 		this.idCommessa=idCommessa;
-		days=new ArrayList<Calendar>();
+		days=new ArrayList<Day>();
 		while(dayFrom.compareTo(dtA)<=0){
-			days.add((Calendar)dayFrom.clone());
+			days.add(new Day((Calendar)dayFrom.clone()));
 			dayFrom.add(Calendar.DAY_OF_MONTH,1);
 		}
 		risorse = new HashMap<Integer,Risorsa>();
@@ -96,7 +97,16 @@ public class TimeReport implements Serializable{
 	/**
 	 * @return the days
 	 */
-	public List<Calendar> getDays() {
+	public List<Day> getDays() {
 		return days;
+	}
+
+	/**
+	 * reset deli totali giornalieri
+	 */
+	public void resetHours(){
+		for (Day d : days) {
+			d.resetHours();
+		}
 	}
 }

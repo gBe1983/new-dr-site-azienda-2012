@@ -1,5 +1,8 @@
 package it.azienda.dto;
 
+import java.sql.Date;
+import java.util.Calendar;
+
 public class PlanningDTO {
 
 	private String cognome;
@@ -7,10 +10,44 @@ public class PlanningDTO {
 	private String ragione_sociale;
 	private String codice_commessa;
 	private int numero_ore;
+	private String descrizione_commessa;
+
+	private Calendar data;
+	private double numeroOre;
 	private double straordinari;
 
-	private String descrizione_commessa;
-	
+	public PlanningDTO() {}
+
+	public PlanningDTO(	Date data,
+								double numeroOre,
+								double straordinari,
+								String descrizione_commessa){
+		this.data=Calendar.getInstance();
+		this.data.setTime(data);
+		this.numeroOre=numeroOre;
+		this.straordinari=straordinari;
+		this.descrizione_commessa=descrizione_commessa;
+	}
+
+	/**
+	 * @return the data
+	 */
+	public Calendar getData() {
+		return data;
+	}
+	/**
+	 * @return the numeroOre
+	 */
+	public double getNumeroOre() {
+		return numeroOre;
+	}
+	/**
+	 * @return the straordinari
+	 */
+	public double getStraordinari() {
+		return straordinari;
+	}
+
 	public String getDescrizione_commessa() {
 		return descrizione_commessa;
 	}
