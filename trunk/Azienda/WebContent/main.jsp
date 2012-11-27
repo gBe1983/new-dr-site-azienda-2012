@@ -46,11 +46,11 @@ if(azione.equals("homePage")){
 %>
 <%@include file="strutturaSito/contenuto/azienda/timeReport.jsp"%>
 <%
-}
 }else{
 %>
 <%@include file="strutturaSito/contenuto/homePage.jsp"%>
 <%
+}
 }
 %>
 </div>

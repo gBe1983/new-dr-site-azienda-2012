@@ -154,8 +154,8 @@ if(tr.getRisorseKey().isEmpty()){
 <td class="<%=d.getCssStyle()%>">
 <%
 				for(PlanningDTO p:tr.getRisorse().get(risorseKey).getCommesse().get(commessaKey)){
-					if(	p.getData().get(Calendar.DAY_OF_YEAR)==d.getDay().get(Calendar.DAY_OF_YEAR)&&
-							p.getData().get(Calendar.YEAR)==d.getDay().get(Calendar.YEAR)){
+					if(	(p.getData().get(Calendar.DAY_OF_YEAR))==(d.getDay().get(Calendar.DAY_OF_YEAR))&&
+							(p.getData().get(Calendar.YEAR))==(d.getDay().get(Calendar.YEAR))){
 						totaleOreOrdinarie+=p.getNumeroOre();
 						d.addOreOrdinarie(p.getNumeroOre());
 						totaleOreSraordinarie+=p.getStraordinari();
