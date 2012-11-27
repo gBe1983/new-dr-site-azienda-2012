@@ -104,11 +104,18 @@
 	</table>
 </form>
 <br>
-
+<%
+if(tr.getRisorseKey().isEmpty()){
+%>
+<p align="center">Nessun Risultato per i criteri di filtro impostati</p>
+<%
+}else{
+%>
 <div class="timeReport">
 <table class="timeReport">
 <tr>
-<td>&nbsp;</td>
+<td>
+</td>
 <%
 	SimpleDateFormat sdfnd = new SimpleDateFormat("d");
 	SimpleDateFormat sdfld = new SimpleDateFormat("E",Locale.ITALIAN);
@@ -139,7 +146,7 @@
 <%
 		for(String commessaKey:tr.getRisorse().get(risorseKey).getCommesse().keySet()){
 %>
-<tr class="commesse">
+<tr class="Commessa">
 <td class="Commessa"><%=commessaKey%></td>
 <%
 			for(Day d:tr.getDays()){
@@ -170,7 +177,7 @@
 <%
 		}
 %>
-<tr class="totali">
+<tr class="Totali">
 <td class="Totali">
 <div class="OreOrdinarie"><%=totaleOreOrdinarie%></div>
 <br>
@@ -193,4 +200,7 @@
 %>
 </table>
 </div>
+<%
+}
+%>
 <!-- Ripristinare Controllo Sessione attiva -->

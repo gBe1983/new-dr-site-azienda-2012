@@ -151,3 +151,17 @@ input.search:hover {
 	border: 1px solid #f00;
 	background: #eef;
 }
+
+tr.Commessa{
+	
+}
+
+div.OreOrdinarie{
+	font:normal 12px verdana, arial, sans-serif;
+	color:black;
+}
+
+div.OreStraordinarie{
+	font:normal 12px verdana, arial, sans-serif;
+	color:red;
+}
