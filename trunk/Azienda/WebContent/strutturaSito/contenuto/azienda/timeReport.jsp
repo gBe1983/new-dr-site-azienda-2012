@@ -21,7 +21,7 @@
 </script>
 
 <%
-//if(request.getSession().getAttribute("utenteLoggato") != null){
+if(request.getSession().getAttribute("utenteLoggato") != null){
 	List<CommessaDTO>commesse=(List<CommessaDTO>)request.getAttribute("commesse");
 	List<RisorsaDTO>risorse=(List<RisorsaDTO>)request.getAttribute("risorse");
 	List<ClienteDTO>clienti=(List<ClienteDTO>)request.getAttribute("clienti");
@@ -202,5 +202,11 @@ if(tr.getRisorseKey().isEmpty()){
 </div>
 <%
 }
+}else{
 %>
-<!-- Ripristinare Controllo Sessione attiva -->
+	<script type="text/javascript">
+		controlloSessioneAttiva();
+	</script>
+<%
+}
+%>
