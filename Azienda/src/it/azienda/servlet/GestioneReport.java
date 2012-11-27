@@ -63,11 +63,7 @@ public class GestioneReport extends BaseServlet {
 		// mi carico la sessione
 		HttpSession sessione = request.getSession();
 
-		RequestDispatcher rd = null;
-
-		
-		
-		//if(sessione.getAttribute("utenteLoggato") != null){//TODO DA RIPRISTINARE
+		if(sessione.getAttribute("utenteLoggato") != null){
 			
 			String azione = request.getParameter("azione");
 			
@@ -85,9 +81,7 @@ public class GestioneReport extends BaseServlet {
 				request.setAttribute("listaRisorse", listaRisorse);
 				request.setAttribute("listaCliente", listaCliente);
 				
-				rd = getServletContext().getRequestDispatcher("/index.jsp?azione=visualizzaReport&dispositiva=report");			
-				rd.forward(request, response);
-				
+				getServletContext().getRequestDispatcher("/index.jsp?azione=visualizzaReport&dispositiva=report").forward(request, response);
 			}else if("ricercaReport".equals(azione)){
 				
 				SimpleDateFormat formatDate = new SimpleDateFormat("dd-MM-yyyy");
@@ -353,8 +347,8 @@ public class GestioneReport extends BaseServlet {
 						request.getParameter("commessa")));
 				getServletContext().getRequestDispatcher("/main.jsp?azione=visualizzaConsuntivi").forward(request, response);
 			}
-//		}else{//TODO DA RIPRISTINARE
-//			sessioneScaduta(response);
-//		}
+		}else{
+			sessioneScaduta(response);
+		}
 	}
 }
