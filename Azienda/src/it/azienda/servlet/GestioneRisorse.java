@@ -351,6 +351,30 @@ public class GestioneRisorse extends BaseServlet {
 				rd.forward(request, response);
 			}
 			
+		}else if(azione.equals("listaRisorseDaAbilitare")){
+			
+			ArrayList listaRisorsaDaAbilitare = rDAO.listaRisorseDaAbilitare();
+			
+			request.setAttribute("listaRisorseDaAbilitare", listaRisorsaDaAbilitare);
+			rd = getServletContext().getRequestDispatcher("/index.jsp?azione=listaRisorseDaAbilitare&dispositiva=risorsa");
+			rd.forward(request, response);
+			
+		}else if(azione.equals("abilitaRisorsa")){
+			
+			int idRisorsa = Integer.parseInt(request.getParameter("risorsa"));
+			
+			String messaggio = rDAO.abilitaRisorsa(idRisorsa);
+			
+			if(messaggio.equals("ok")){
+				request.setAttribute("messaggio", "L'abilitazione della Risorsa è avvenuta con successo");
+				rd = getServletContext().getRequestDispatcher("/index.jsp?azione=messaggio");
+				rd.forward(request, response);
+			}else {
+				request.setAttribute("messaggio", messaggio);
+				rd = getServletContext().getRequestDispatcher("/index.jsp?azione=messaggio");
+				rd.forward(request, response);
+			}
+			
 		}
 	  }else{
 		  	response.setContentType("text/html");

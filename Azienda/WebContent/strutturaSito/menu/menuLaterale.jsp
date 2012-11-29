@@ -58,8 +58,9 @@ if(request.getParameter("azione").equals("cliente") || dispositiva.equals("clien
 %>	
  		<div class="newsbox">
  			<div class="subtitle">Gestione Area</div><br/>
- 			<li><a href="index.jsp?azione=aggiungiRisorsa&dispositiva=risorsa">Aggiungi risorsa</a></li>
- 			<li><a href="index.jsp?azione=ricercaRisorse&dispositiva=risorsa">Ricerca risorse</a></li>
+	 			<li><a href="index.jsp?azione=aggiungiRisorsa&dispositiva=risorsa">Aggiungi risorsa</a></li>
+	 			<li><a href="index.jsp?azione=ricercaRisorse&dispositiva=risorsa">Ricerca risorse</a></li>
+				<li><a href="./GestioneRisorse?azione=listaRisorseDaAbilitare">Riabilitazione Risorsa</a></li>
  			<div class="blank"></div>
 		</div>
  	<%

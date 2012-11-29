@@ -1,6 +1,5 @@
 package it.azienda.servlet;
 
-import it.azienda.connessione.Connessione;
 import it.azienda.dao.AziendaDAO;
 import it.azienda.dao.Email;
 import it.azienda.dao.UtenteDAO;
@@ -9,7 +8,6 @@ import it.azienda.dto.UtenteDTO;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.sql.Connection;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Enumeration;
@@ -182,20 +180,13 @@ public class GestioneAzienda extends BaseServlet{
 			
 			Enumeration attrNames = sessione.getAttributeNames();
 			while (attrNames.hasMoreElements())	{		  
-				String valoriSessione = (String) attrNames.nextElement();// Stampa i nomi di tutti gli attributi di sessione
-				if(valoriSessione.equals("modalitaDiConnessione")){
-					continue;
-				}else{
+					String valoriSessione = (String) attrNames.nextElement();// Stampa i nomi di tutti gli attributi di sessione
 					sessione.removeAttribute(valoriSessione);
 					System.out.println(valoriSessione);
-				}
+
 			}
 			
-			if(sessione.getAttribute("modalitaDiConnessione").equals("cvonline")){;
-				response.sendRedirect("http://cvonline.tv");
-			}else{
-				response.sendRedirect("http://drconsulting.tv");
-			}
+			response.sendRedirect("http://drconsulting.tv");
 		
 		}else if(azione.equals("eliminaProfilo")){
 			/*

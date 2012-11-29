@@ -527,6 +527,66 @@ public class RisorsaDAO extends BaseDao {
 	}
 	
 	/*
+	 * caricamento di tutte le risorse non più abilitate
+	 */
+	
+	public ArrayList listaRisorseDaAbilitare(){
+		
+		String sql = "select id_risorsa,cognome,nome from tbl_risorse where visible = false";
+		
+		ArrayList listaRisorse = new ArrayList();
+		
+		PreparedStatement ps = null;
+		ResultSet rs = null;
+		try {
+			ps = connessione.prepareStatement(sql);
+			rs = ps.executeQuery();
+			while(rs.next()){
+				RisorsaDTO risorsa = new RisorsaDTO();
+				risorsa.setIdRisorsa(rs.getInt(1));
+				risorsa.setCognome(rs.getString(2));
+				risorsa.setNome(rs.getString(3));
+				listaRisorse.add(risorsa);
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}finally{
+			close(ps, rs);
+		}
+		
+		return listaRisorse;
+	}
+	
+	public String abilitaRisorsa(int id_risorsa){
+		
+		String sql = "update tbl_risorse as risorsa,tbl_utenti as utente set risorsa.visible = 1,utente.utente_visible = 1 where risorsa.id_risorsa = ?";
+		
+		PreparedStatement ps = null;
+		
+		int esito = 0;
+		
+		try {
+			ps = connessione.prepareStatement(sql);
+			ps.setInt(1, id_risorsa);
+			esito = ps.executeUpdate();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return "errore comando sql "+e.getMessage();
+		}
+		
+		if(esito > 0){
+			return "ok";
+		}else{
+			return "Impossibile abilitare la risorsa. Contattare l'amministratore.";
+		}
+		
+		
+	}
+	
+	
+	/*
 	 * questo metodo serve per criptare le password
 	 */
 	
