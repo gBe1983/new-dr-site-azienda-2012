@@ -161,12 +161,16 @@
     					}else if(azione.equals("visualizzaReport")){
     			%>	
 							<%@include file="strutturaSito/contenuto/visualizzaReport.jsp" %>
-<%
-							}else if(azione.equals("visualizzaConsuntivi")){
-%>
-<%@include file="strutturaSito/contenuto/azienda/timeReport.jsp"%>
-<%
-							}
+				<%
+						}else if(azione.equals("visualizzaConsuntivi")){
+				%>
+							<%@include file="strutturaSito/contenuto/azienda/timeReport.jsp"%>
+				<%
+						}else if(azione.equals("listaRisorseDaAbilitare")){
+				%>
+							<%@include file="strutturaSito/contenuto/listaRisorseDaAbilitare.jsp"%>
+				<%
+						}
 					}else{
 				%>
 						<%@include file="strutturaSito/contenuto/homePage.jsp" %>

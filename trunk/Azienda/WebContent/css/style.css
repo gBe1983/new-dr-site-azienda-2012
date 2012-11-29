@@ -103,6 +103,7 @@ img.help:hover{cursor:pointer}
 /*crea lo spazio */
 
 .spazio{margin-top: 70px;}
+.spazioUltra{margin-top: 40px;}
 #spazioMessaggio{font: red;}
 
 /*formattazione per le immagini dettaglio, modifica elimina */
