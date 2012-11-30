@@ -381,14 +381,12 @@ public class RisorsaDAO extends BaseDao {
 		
 		int esitoEliminaRisorsa = 0;
 		
-		String sql = "update tbl_risorse set visible = ? where id_risorsa = ?";
+		String sql = "update tbl_risorse as risorsa,tbl_utenti as utente set risorsa.visible = 0,utente.utente_visible = 0 where risorsa.id_risorsa = ? and utente.id_risorsa = ?";
 		PreparedStatement ps=null;
 		try {
 			ps = connessione.prepareStatement(sql);
-			
-			ps.setBoolean(1, false);
+			ps.setInt(1, idRisorsa);
 			ps.setInt(2, idRisorsa);
-			
 			esitoEliminaRisorsa = ps.executeUpdate();
 			
 		} catch (SQLException e) {
@@ -399,7 +397,7 @@ public class RisorsaDAO extends BaseDao {
 			close(ps);
 		}
 
-		if(esitoEliminaRisorsa == 1){
+		if(esitoEliminaRisorsa > 0){
 			messaggio = "La Risorsa è stata disabilitata con successo";
 		}else{
 			messaggio = "Siamo spiacenti l'eliminazione della risorsa non è avvenuta con successo. Contattare l'amministrazione";
@@ -560,7 +558,7 @@ public class RisorsaDAO extends BaseDao {
 	
 	public String abilitaRisorsa(int id_risorsa){
 		
-		String sql = "update tbl_risorse as risorsa,tbl_utenti as utente set risorsa.visible = 1,utente.utente_visible = 1 where risorsa.id_risorsa = ?";
+		String sql = "update tbl_risorse as risorsa,tbl_utenti as utente set risorsa.visible = 1,utente.utente_visible = 1 where risorsa.id_risorsa = ? and utente.id_risorsa = ?";
 		
 		PreparedStatement ps = null;
 		
@@ -569,6 +567,7 @@ public class RisorsaDAO extends BaseDao {
 		try {
 			ps = connessione.prepareStatement(sql);
 			ps.setInt(1, id_risorsa);
+			ps.setInt(2, id_risorsa);
 			esito = ps.executeUpdate();
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
