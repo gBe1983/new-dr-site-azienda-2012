@@ -1,6 +1,7 @@
 package it.azienda.dao;
 
 import it.azienda.dto.UtenteDTO;
+import it.util.log.MyLogger;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -8,15 +9,18 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class UtenteDAO extends BaseDao {
+	private MyLogger log;
 
 	public UtenteDAO(Connection connessione) {
 		super(connessione);
+		log=new MyLogger(this.getClass());
 	}
 
 	public String inserimentoUtente(UtenteDTO utente){
-		
-		String sql = "insert into tbl_utenti (username,password,id_azienda,data_registrazione,data_login,id_risorsa) values (?,?,?,?,?,?)";
-		
+		final String metodo="inserimentoUtente";
+		log.start(metodo);
+		String sql = "INSERT INTO tbl_utenti(username,password,id_azienda,data_registrazione,data_login,id_risorsa)VALUES(?,?,?,?,?,?)";
+		log.debug(metodo,sql);
 		int esito = 0; 
 		PreparedStatement ps=null;
 		try {
@@ -29,24 +33,22 @@ public class UtenteDAO extends BaseDao {
 			ps.setInt(6, utente.getId_risorsa());
 			ps.executeUpdate();
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			log.error(metodo,"insert into tbl_utenti",e);
 			return "Siamo spiacenti l'inserimento della risorsa non è avvenuto correttamente. Contattare l'amministrazione";
 		}finally{
 			close(ps);
+			log.end(metodo);
 		}
-		
-		if(esito == 1){
-			return "ok";
-		}else{
-			return "Siamo spiacenti l'inserimento della risorsa non è avvenuto correttamente. Contattare l'amministrazione";
-		}
+		return (esito == 1)?
+			"ok":
+			"Siamo spiacenti l'inserimento della risorsa non è avvenuto correttamente. Contattare l'amministrazione";
 	}
-	
+
 	public int caricamentoIdRisorsa(){
-		
+		final String metodo="caricamentoIdRisorsa";
+		log.start(metodo);
 		String sql = "select max(id_risorsa) from tbl_risorse";
-		
+		log.debug(metodo,sql);
 		int idRisorsa = 0;
 		PreparedStatement ps=null;
 		ResultSet rs=null;
@@ -57,20 +59,20 @@ public class UtenteDAO extends BaseDao {
 				idRisorsa = rs.getInt(1);
 			}
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			log.error(metodo,"max(id_risorsa) tbl_risorse",e);
 		}finally{
 			close(ps,rs);
+			log.end(metodo);
 		}
-		
 		return idRisorsa;
 	}
-	
+
 	public UtenteDTO caricamentoAzienda(int idAzienda){
-		
+		final String metodo="caricamentoAzienda";
+		log.start(metodo);
 		UtenteDTO utente = null;
-		
-		String sql = "select * from tbl_utenti where id_azienda = ?";
+		String sql = "select * from tbl_utenti where id_azienda = ?";//TODO *
+		log.debug(metodo,sql);
 		PreparedStatement ps=null;
 		ResultSet rs=null;
 		try {
@@ -89,20 +91,20 @@ public class UtenteDAO extends BaseDao {
 				utente.setId_risorsa(rs.getInt(8));
 			}
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			log.error(metodo,"select tbl_utenti",e);
 		}finally{
 			close(ps,rs);
+			log.end(metodo);
 		}
-		
 		return utente;
 	}
-	
+
 	public UtenteDTO login(String username, String password){
-		
-		UtenteDTO utente = null;
-		
+		final String metodo="login";
+		log.start(metodo);
+		UtenteDTO utente = null;//TODO *
 		String sql = "select login.* from tbl_utenti as login, tbl_azienda as azienda where login.username = ? and login.password = ? and login.id_azienda = azienda.id_azienda and azienda.attivo = true and login.utente_visible = true";
+		log.debug(metodo,sql);
 		PreparedStatement ps=null;
 		ResultSet rs=null;
 		try {
@@ -122,16 +124,15 @@ public class UtenteDAO extends BaseDao {
 				utente.setId_risorsa(rs.getInt(8));
 			}
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			log.error(metodo,"select tbl_utenti,tbl_azienda",e);
 		}finally{
 			close(ps,rs);
+			log.end(metodo);
 		}
-		
 		return utente;
 	}
 
-	public String MD5(String md5) {
+	public String MD5(String md5) {//TODO CENTRALIZZARE
 		try {
 			java.security.MessageDigest md = java.security.MessageDigest.getInstance("MD5");
 			byte[] array = md.digest(md5.getBytes());
