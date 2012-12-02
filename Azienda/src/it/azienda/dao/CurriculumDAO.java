@@ -2,6 +2,7 @@ package it.azienda.dao;
 
 import it.azienda.dto.Dettaglio_Cv_DTO;
 import it.azienda.dto.EsperienzeDTO;
+import it.util.log.MyLogger;
 
 import java.io.IOException;
 import java.sql.Connection;
@@ -11,9 +12,11 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 
 public class CurriculumDAO extends BaseDao {
-	
+	private MyLogger log;
+
 	public CurriculumDAO(Connection connessione) {
 		super(connessione);
+		log=new MyLogger(this.getClass());
 	}
 
 	//tramite questo metodo effettuiamo l'abilitazione del flag curriculum 

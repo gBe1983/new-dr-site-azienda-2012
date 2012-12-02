@@ -1,12 +1,11 @@
 package it.azienda.dto;
 
-/*
+/**
  * questo classe corrisponde alla tabella "Tbl_Cliente" 
+ * @author Dr
+ *
  */
-
-
 public class ClienteDTO {
-
 	private String id_cliente;
 	private String ragioneSociale;
 	private String indirizzo;
@@ -23,7 +22,58 @@ public class ClienteDTO {
 	private boolean attivo;
 	private String codFiscale;
 	private int id_banca;
-	
+
+	public ClienteDTO() {}
+
+	/**
+	 * @param id_cliente
+	 * @param ragioneSociale
+	 */
+	public ClienteDTO(String id_cliente, String ragioneSociale) {
+		this.id_cliente = id_cliente;
+		this.ragioneSociale = ragioneSociale;
+	}
+
+	/**
+	 * @param id_cliente
+	 * @param ragioneSociale
+	 * @param indirizzo
+	 * @param cap
+	 * @param citta
+	 * @param provincia
+	 * @param pIva
+	 * @param referente
+	 * @param telefono
+	 * @param cellulare
+	 * @param fax
+	 * @param email
+	 * @param sito
+	 * @param attivo
+	 * @param codFiscale
+	 * @param id_banca
+	 */
+	public ClienteDTO(String id_cliente, String ragioneSociale,
+			String indirizzo, String cap, String citta, String provincia,
+			String pIva, String referente, String telefono, String cellulare,
+			String fax, String email, String sito, boolean attivo,
+			String codFiscale, int id_banca) {
+		this(id_cliente, ragioneSociale);
+		this.indirizzo = indirizzo;
+		this.cap = cap;
+		this.citta = citta;
+		this.provincia = provincia;
+		this.pIva = pIva;
+		this.referente = referente;
+		this.telefono = telefono;
+		this.cellulare = cellulare;
+		this.fax = fax;
+		this.email = email;
+		this.sito = sito;
+		this.attivo = attivo;
+		this.codFiscale = codFiscale;
+		this.id_banca = id_banca;
+	}
+
 	public String getTelefono() {
 		return telefono;
 	}
@@ -120,5 +170,4 @@ public class ClienteDTO {
 	public void setId_banca(int id_banca) {
 		this.id_banca = id_banca;
 	}
-	
 }

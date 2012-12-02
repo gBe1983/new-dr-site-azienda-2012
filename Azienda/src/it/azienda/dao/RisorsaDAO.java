@@ -2,6 +2,8 @@ package it.azienda.dao;
 
 import it.azienda.dto.RisorsaDTO;
 import it.azienda.dto.UtenteDTO;
+import it.util.log.MyLogger;
+import it.util.password.MD5;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -10,9 +12,11 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 
 public class RisorsaDAO extends BaseDao {
+	private MyLogger log;
 
 	public RisorsaDAO(Connection connessione) {
 		super(connessione);
+		log=new MyLogger(this.getClass());
 	}
 
 	/*
@@ -504,7 +508,7 @@ public class RisorsaDAO extends BaseDao {
 		try {
 			ps = connessione.prepareStatement(sql);
 			ps.setString(1, username);
-			ps.setString(2, MD5(password));
+			ps.setString(2, MD5.encript(password));
 			ps.setInt(3, idUtente);
 			esitoModifica = ps.executeUpdate();
 			
@@ -585,24 +589,7 @@ public class RisorsaDAO extends BaseDao {
 	}
 	
 	
-	/*
-	 * questo metodo serve per criptare le password
-	 */
-	
-	public String MD5(String md5) {//TODO????
-		try {
-			java.security.MessageDigest md = java.security.MessageDigest.getInstance("MD5");
-			byte[] array = md.digest(md5.getBytes());
-			StringBuffer sb = new StringBuffer();
-			for (int i = 0; i < array.length; ++i) {
-				sb.append(Integer.toHexString((array[i] & 0xFF) | 0x100).substring(1, 3));
-			}
-			return sb.toString();
-		} catch (java.security.NoSuchAlgorithmException e) {
 
-		}
-		return null;
-	}
 	
 	public ArrayList invioEmail(){
 		

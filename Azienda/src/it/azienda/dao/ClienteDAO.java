@@ -1,6 +1,7 @@
 package it.azienda.dao;
 
 import it.azienda.dto.ClienteDTO;
+import it.util.log.MyLogger;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -10,20 +11,30 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ClienteDAO extends BaseDao {
+	private MyLogger log;
 
 	public ClienteDAO(Connection connessione) {
 		super(connessione);
+		log=new MyLogger(this.getClass());
 	}
 
-	//tramite questo metodo effettuo l'inserimento del Cliente
+	/**
+	 * tramite questo metodo effettuo l'inserimento del Cliente
+	 * @param cliente
+	 * @return
+	 */
 	public String inserimentoCliente(ClienteDTO cliente){
-		
-		String sql = "insert into tbl_clienti (id_cliente,ragione_sociale,indirizzo,cap,citta,provincia,p_iva,referente,telefono,cellulare,fax,email,sito,cod_Fiscale) values (?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
-		
+		final String metodo="";
+		log.start(metodo);
+		StringBuilder sql = new StringBuilder("insert into tbl_clienti");
+		sql	.append("(id_cliente,ragione_sociale,indirizzo,cap,citta,provincia,p_iva,referente,telefono,")
+				.append("cellulare,fax,email,sito,cod_Fiscale)")
+				.append("VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?)");
+		log.debug(metodo, sql.toString());
 		int esitoInserimentoCliente = 0;
 		PreparedStatement ps=null;
 		try {
-			ps = connessione.prepareStatement(sql);
+			ps = connessione.prepareStatement(sql.toString());
 			ps.setString(1, cliente.getId_cliente());
 			ps.setString(2, cliente.getRagioneSociale());
 			ps.setString(3, cliente.getIndirizzo());
@@ -40,29 +51,34 @@ public class ClienteDAO extends BaseDao {
 			ps.setString(14, cliente.getCodFiscale());
 			esitoInserimentoCliente = ps.executeUpdate();
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			log.error(metodo, "", e);
 			return "Siamo spiacenti ma l'inserimento del Cliente non è avvenuta con successo. Contattare l'amministrazione.";
 		}finally{
 			close(ps);
+			log.end(metodo);
 		}
-		if(esitoInserimentoCliente == 1){
-			return "ok";
-		}else{
-			return "Siamo spiacenti ma l'inserimento del Cliente non è avvenuta con successo. Contattare l'amministrazione.";
-		}
+		return (esitoInserimentoCliente == 1)?
+			"ok":
+			"Siamo spiacenti ma l'inserimento del Cliente non è avvenuta con successo. Contattare l'amministrazione.";
 	}
-	
-	//tramite questo metodo effettuo la modifica del Cliente
+
+	/**
+	 * tramite questo metodo effettuo la modifica del Cliente
+	 * @param cliente
+	 * @return
+	 */
 	public String modificaCliente(ClienteDTO cliente){
-		
-		String sql = "update tbl_clienti set ragione_sociale = ?,indirizzo = ?,cap = ?, citta = ?, provincia = ?, p_iva = ?, referente = ?, telefono = ?, cellulare = ?, fax = ?, email = ?, sito = ?, cod_fiscale = ? where id_cliente = ?";
-		
-		
-		int esitoInserimentoCliente = 0;
+		final String metodo="modificaCliente";
+		log.start(metodo);
+		StringBuilder sql = new StringBuilder("UPDATE tbl_clienti ");
+		sql	.append("SET ragione_sociale=?,indirizzo=?,cap=?,citta=?,provincia=?,p_iva=?,")
+				.append("referente=?,telefono=?,cellulare=?,fax=?,email=?,sito=?,cod_fiscale=? ")
+				.append("WHERE id_cliente=?");
+		log.debug(metodo, sql.toString());
+		int esitoModificaCliente = 0;
 		PreparedStatement ps=null;
 		try {
-			ps = connessione.prepareStatement(sql);
+			ps = connessione.prepareStatement(sql.toString());
 			ps.setString(1, cliente.getRagioneSociale());
 			ps.setString(2, cliente.getIndirizzo());
 			ps.setString(3, cliente.getCap());
@@ -77,172 +93,167 @@ public class ClienteDAO extends BaseDao {
 			ps.setString(12, cliente.getSito());
 			ps.setString(13, cliente.getCodFiscale());
 			ps.setString(14, cliente.getId_cliente());
-			esitoInserimentoCliente = ps.executeUpdate();
-			
+			esitoModificaCliente = ps.executeUpdate();
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			log.error(metodo, "UPDATE tbl_clienti", e);
 			return "Siamo spiacenti ma la modifica del Cliente non è avvenuta con successo. Contattare l'amministrazione.";
 		}finally{
 			close(ps);
+			log.end(metodo);
 		}
-		
-		if(esitoInserimentoCliente == 1){
-			return "ok";
-		}else{
-			return "Siamo spiacenti ma la modifica del Cliente non è avvenuta con successo. Contattare l'amministrazione.";
-		}
+		return(esitoModificaCliente == 1)?
+			"ok":
+			"Siamo spiacenti ma la modifica del Cliente non è avvenuta con successo. Contattare l'amministrazione.";
 	}
-	
-	//con questo metodo carico tutti i nomitivi di tutti i clienti
-	public ArrayList caricamentoNominativiCliente(){
-		
-		ArrayList listaNominativi = new ArrayList();
-		
-		String sql = "select ragione_sociale from tbl_clienti where attivo = 1 order by ragione_sociale ASC";
+
+	/**
+	 * con questo metodo carico tutti i nomitivi di tutti i clienti
+	 * @return
+	 */
+	public List<String>caricamentoNominativiCliente(){
+		final String metodo="caricamentoNominativiCliente";
+		log.start(metodo);
+		List<String>listaNominativi = new ArrayList<String>();
+		String sql = "SELECT ragione_sociale FROM tbl_clienti WHERE attivo=1 ORDER BY ragione_sociale ASC";
+		log.debug(metodo, sql.toString());
 		PreparedStatement ps=null;
 		ResultSet rs=null;
 		try {
 			ps = connessione.prepareStatement(sql);
 			rs = ps.executeQuery();
 			while(rs.next()){
-				listaNominativi.add(rs.getString(1));
+				listaNominativi.add(rs.getString("ragione_sociale"));
 			}
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			log.error(metodo, "SELECT tbl_clienti attivo=1", e);
 		}finally{
 			close(ps,rs);
+			log.end(metodo);
 		}
-		
 		return listaNominativi;
 	}
-	
-	//con questo metodo carico tutti i nomitivi di tutti i clienti
-	public ArrayList caricamentoNominativiClienteDisabilitati(){
-		
-		ArrayList listaNominativi = new ArrayList();
-		
-		String sql = "select ragione_sociale from tbl_clienti where attivo = 0";
+
+	/**
+	 * con questo metodo carico tutti i nomitivi di tutti i clienti
+	 * @return
+	 */
+	public List<String>caricamentoNominativiClienteDisabilitati(){
+		final String metodo="caricamentoNominativiClienteDisabilitati";
+		log.start(metodo);
+		List<String>listaNominativi = new ArrayList<String>();
+		String sql = "SELECT ragione_sociale FROM tbl_clienti WHERE attivo=0";
+		log.debug(metodo, sql.toString());
 		PreparedStatement ps=null;
 		ResultSet rs=null;
 		try {
 			ps = connessione.prepareStatement(sql);
 			rs = ps.executeQuery();
 			while(rs.next()){
-				listaNominativi.add(rs.getString(1));
+				listaNominativi.add(rs.getString("ragione_sociale"));
 			}
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			log.error(metodo, "SELECT tbl_clienti attivo=0", e);
 		}finally{
 			close(ps,rs);
+			log.end(metodo);
 		}
-		
 		return listaNominativi;
 	}
-	
-	
-	/*
-	 * con questo metodo effettuo il caricamento del profilo del Cliente
-	 * attraverso due tipologie che sono:
-	 * - Nominativo: che avviene quando effettuo la "Ricerca Cliente" dove mi viene passato 
-	 * 				 il nominativo del Cliente
-	 * - CodiceCliente: a fronte della visualizzazione, quando effettuiamo "Modifica Cliente" 
-	 * 					ricerco il cliente per il suo "CodiceCliente"
+
+	/**
+	 * con questo metodo effettuo il caricamento del profilo del Cliente attraverso due tipologie che sono:
+	 * - Nominativo: che avviene quando effettuo la "Ricerca Cliente" dove mi viene passato il nominativo del Cliente
+	 * - CodiceCliente: a fronte della visualizzazione, quando effettuiamo "Modifica Cliente" ricerco il cliente per il suo "CodiceCliente"
+	 * @param codiceCliente
+	 * @param nominativo
+	 * @return
 	 */
 	public ClienteDTO caricamentoCliente(String codiceCliente, String nominativo){
-		
-		ClienteDTO cliente = null;
-		String sql = "";
+		final String metodo="caricamentoCliente";
+		log.start(metodo);
+		StringBuilder sql = new StringBuilder("SELECT id_cliente,ragione_sociale,indirizzo,cap,citta,");
+		sql	.append("provincia,p_iva,referente,telefono,cellulare,fax,email,")
+				.append("sito,attivo,cod_fiscale,id_conto_corrente")
+				.append("FROM tbl_clienti WHERE ")
+				.append(((codiceCliente == null)?"ragione_sociale":"id_cliente"))
+				.append("=?");
+		log.debug(metodo, sql.toString());
 		PreparedStatement ps=null;
 		ResultSet rs=null;
-		if(codiceCliente == null){
-			sql = "select * from tbl_clienti where ragione_sociale = ?";
-			try {
-				ps = connessione.prepareStatement(sql);
-				ps.setString(1, nominativo);
-			} catch (SQLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}else{
-			sql = "select * from tbl_clienti where id_cliente = ?";
-			try {
-				ps = connessione.prepareStatement(sql);
-				ps.setString(1, codiceCliente);
-			} catch (SQLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
-
+		ClienteDTO cliente = null;
 		try {
+			ps = connessione.prepareStatement(sql.toString());
+			ps.setString(1,((codiceCliente == null)?nominativo:codiceCliente));
 			rs = ps.executeQuery();
 			if(rs.next()){
-				cliente = new ClienteDTO();
-				cliente.setId_cliente(rs.getString(1));
-				cliente.setRagioneSociale(rs.getString(2));
-				cliente.setIndirizzo(rs.getString(3));
-				cliente.setCap(rs.getString(4));
-				cliente.setCitta(rs.getString(5));
-				cliente.setProvincia(rs.getString(6));
-				cliente.setPIva(rs.getString(7));
-				cliente.setReferente(rs.getString(8));
-				cliente.setTelefono(rs.getString(9));
-				cliente.setCellulare(rs.getString(10));
-				cliente.setFax(rs.getString(11));
-				cliente.setEmail(rs.getString(12));
-				cliente.setSito(rs.getString(13));
-				cliente.setAttivo(rs.getBoolean(14));
-				cliente.setCodFiscale(rs.getString(15));
-				cliente.setId_banca(rs.getInt(16));
+				cliente =
+					new ClienteDTO(
+						rs.getString("id_cliente"),
+						rs.getString("ragione_sociale"),
+						rs.getString("indirizzo"),
+						rs.getString("cap"),
+						rs.getString("citta"),
+						rs.getString("provincia"),
+						rs.getString("p_iva"),
+						rs.getString("referente"),
+						rs.getString("telefono"),
+						rs.getString("cellulare"),
+						rs.getString("fax"),
+						rs.getString("email"),
+						rs.getString("sito"),
+						rs.getBoolean("attivo"),
+						rs.getString("cod_fiscale"),
+						rs.getInt("id_conto_corrente"));
 			}
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			log.error(metodo, "SELECT tbl_clienti for codiceCliente:"+codiceCliente+" nominativo:"+nominativo, e);
 		}finally{
 			close(ps,rs);
+			log.end(metodo);
 		}
-		
 		return cliente;
 	}
-	
-	
-	//con questo metodo estrapolo tutti i Clienti legati all'azienda
+
+	/**
+	 * con questo metodo estrapolo tutti i Clienti legati all'azienda
+	 * @return
+	 */
 	public List<ClienteDTO>caricamentoClienti(){
+		final String metodo="caricamentoClienti";
+		log.start(metodo);
 		List<ClienteDTO>listaClienti = new ArrayList<ClienteDTO>();
-		String sql = "select id_cliente,ragione_sociale from tbl_clienti where attivo = true order by ragione_sociale ASC";
+		String sql = "SELECT id_cliente,ragione_sociale FROM tbl_clienti WHERE attivo=true ORDER BY ragione_sociale ASC";
+		log.debug(metodo, sql.toString());
 		PreparedStatement ps=null;
 		ResultSet rs=null;
 		try {
 			ps = connessione.prepareStatement(sql);
 			rs = ps.executeQuery();
 			while(rs.next()){
-				ClienteDTO cliente = new ClienteDTO();
-				cliente.setId_cliente(rs.getString(1));
-				cliente.setRagioneSociale(rs.getString(2));
-				listaClienti.add(cliente);
+				listaClienti.add(
+					new ClienteDTO(
+						rs.getString("id_cliente"),
+						rs.getString("ragione_sociale")));
 			}
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			log.error(metodo, "SELECT tbl_clienti attivo=true", e);
 		}finally{
 			close(ps,rs);
+			log.end(metodo);
 		}
-		
 		return listaClienti;
 	}
-	
-	/*
-	 * con questo metodo effettuo l'eliminazione logica
-	 * del Cliente che l'Utente ha deciso di eliminare.
+
+	/**
+	 * con questo metodo effettuo l'eliminazione logica del Cliente che l'Utente ha deciso di eliminare.
+	 * @param codiceCliente
+	 * @return
 	 */
-	
 	public String disabilitaCliente(String codiceCliente){
-		
-		String sql = "update tbl_clienti set attivo = 0 where id_cliente = ?";
-		
+		final String metodo="disabilitaCliente";
+		log.start(metodo);
+		String sql = "UPDATE tbl_clienti SET attivo=0 WHERE id_cliente=?";
+		log.debug(metodo, sql.toString());
 		int esitoEliminazioneCliente = 0;
 		PreparedStatement ps=null;
 		try {
@@ -250,24 +261,22 @@ public class ClienteDAO extends BaseDao {
 			ps.setString(1, codiceCliente);
 			esitoEliminazioneCliente = ps.executeUpdate();
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			log.error(metodo, "UPDATE tbl_clienti for codiceCliente:"+codiceCliente, e);
 			return "Siamo spiacenti ma l'eliminazione del Cliente non è avvenuta con successo. Contattare l'amministrazione.";
 		}finally{
 			close(ps);
+			log.end(metodo);
 		}
-		
-		if(esitoEliminazioneCliente != 0){
-			return "ok";
-		}else{
-			return "Siamo spiacenti ma l'eliminazione del Cliente non è avvenuta con successo. Contattare l'amministrazione.";
-		}
+		return (esitoEliminazioneCliente != 0)?
+			"ok":
+			"Siamo spiacenti ma l'eliminazione del Cliente non è avvenuta con successo. Contattare l'amministrazione.";
 	}
-	
+
 	public boolean controlloCodiceCliente(String codiceCliente){
-		
-		String sql = "select * from tbl_cliente where codiceCliente = ?";
-		
+		final String metodo="controlloCodiceCliente";
+		log.start(metodo);
+		String sql = "SELECT ragioneSociale FROM tbl_cliente WHERE codiceCliente=?";
+		log.debug(metodo, sql.toString());
 		boolean esitoControlloCodiceCliente = false;
 		PreparedStatement ps=null;
 		ResultSet rs=null;
@@ -279,25 +288,23 @@ public class ClienteDAO extends BaseDao {
 				esitoControlloCodiceCliente = true;
 			}
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			log.error(metodo, "SELECT tbl_cliente for codiceCliente:"+codiceCliente, e);
 		}finally{
 			close(ps,rs);
+			log.end(metodo);
 		}
-		
 		return esitoControlloCodiceCliente;
 	}
-	
-	/*
-	 * tramite questo metodo effettuo il caricamento dinamico 
-	 * del codice cliente al momento dell'inserimento del cliente
+
+	/**
+	 * tramite questo metodo effettuo il caricamento dinamico del codice cliente al momento dell'inserimento del cliente
+	 * @return
 	 */
 	public String creazioneCodiceCliente(){
-		
-		String sql = "select max(id_cliente) from tbl_clienti order by id_cliente";
-		
-		String codiceCliente = "CL";
-		
+		final String metodo="creazioneCodiceCliente";
+		log.start(metodo);
+		String sql = "SELECT MAX(id_cliente)max_id_cliente FROM tbl_clienti ORDER BY id_cliente";
+		log.debug(metodo, sql.toString());
 		int codCliente = 0;
 		PreparedStatement ps=null;
 		ResultSet rs=null;
@@ -305,34 +312,34 @@ public class ClienteDAO extends BaseDao {
 			ps = connessione.prepareStatement(sql);
 			rs = ps.executeQuery();
 			if(rs.next()){
-				if(rs.getString(1) != null)
-					codCliente = Integer.parseInt(rs.getString(1).substring(3, 5));
+				if(rs.getString(1) != null){
+					codCliente = Integer.parseInt(rs.getString("max_id_cliente").substring(3, 5));
+				}
 			}
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			log.error(metodo, "SELECT MAX(id_cliente) tbl_clienti", e);
 		}finally{
 			close(ps,rs);
+			log.end(metodo);
 		}
-		
 		codCliente++;
+		String codiceCliente = "CL";
 		if(codCliente < 10){
-			codiceCliente = codiceCliente + "00" + String.valueOf(codCliente);
+			codiceCliente += "00" + String.valueOf(codCliente);
 		}else if(codCliente >= 10 && codCliente < 100){
-			codiceCliente = codiceCliente + "0" + String.valueOf(codCliente);
+			codiceCliente += "0" + String.valueOf(codCliente);
 		}else if(codCliente >= 100){
-			codiceCliente = codiceCliente + String.valueOf(codCliente);
+			codiceCliente += String.valueOf(codCliente);
 		}
-		
-		
 		return codiceCliente;
 	}
-	
-	public ArrayList caricamentoNominativiClienteDisabilitato(int idAzienda){
-		
-		ArrayList listaNominativi = new ArrayList();
-		
-		String sql = "select ragioneSociale from tbl_cliente where id_azienda = ? and attivo = 0";
+
+	public List<String>caricamentoNominativiClienteDisabilitato(int idAzienda){
+		final String metodo="caricamentoNominativiClienteDisabilitato";
+		log.start(metodo);
+		List<String>listaNominativi = new ArrayList<String>();
+		String sql = "SELECT ragioneSociale FROM tbl_cliente WHERE id_azienda=? and attivo=0";
+		log.debug(metodo, sql.toString());
 		PreparedStatement ps=null;
 		ResultSet rs=null;
 		try {
@@ -340,46 +347,42 @@ public class ClienteDAO extends BaseDao {
 			ps.setInt(1, idAzienda);
 			rs = ps.executeQuery();
 			while(rs.next()){
-				listaNominativi.add(rs.getString(1));
+				listaNominativi.add(rs.getString("ragioneSociale"));
 			}
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			log.error(metodo, "SELECT tbl_cliente for idAzienda:"+idAzienda, e);
 		}finally{
 			close(ps,rs);
+			log.end(metodo);
 		}
-		
 		return listaNominativi;
 	}
-	
-	/*
-	 * con questo metodo effettuo l'eliminazione logica
-	 * del Cliente che l'Utente ha deciso di eliminare.
+
+	/**
+	 * con questo metodo effettuo l'eliminazione logica del Cliente che l'Utente ha deciso di eliminare.
+	 * @param codiceCliente
+	 * @return
 	 */
-	
 	public String abilitaCliente(String codiceCliente){
-		
-		String sql = "update tbl_clienti set attivo = 1 where id_cliente = ?";
-		
-		int esitoEliminazioneCliente = 0;
+		final String metodo="abilitaCliente";
+		log.start(metodo);
+		String sql = "UPDATE tbl_clienti SET attivo=1 WHERE id_cliente=?";
+		log.debug(metodo, sql.toString());
+		int esitoAbilitazioneCliente = 0;
 		PreparedStatement ps=null;
 		try {
 			ps = connessione.prepareStatement(sql);
 			ps.setString(1, codiceCliente);
-			esitoEliminazioneCliente = ps.executeUpdate();
+			esitoAbilitazioneCliente = ps.executeUpdate();
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			log.error(metodo, "UPDATE tbl_clienti for id_cliente:"+codiceCliente, e);
 			return "Siamo spiacenti ma l'abilitazione del Cliente non è avvenuta con successo. Contattare l'amministrazione.";
 		}finally{
 			close(ps);
+			log.end(metodo);
 		}
-		
-		if(esitoEliminazioneCliente != 0){
-			return "ok";
-		}else{
-			return "Siamo spiacenti ma l'abilitazione del Cliente non è avvenuta con successo. Contattare l'amministrazione.";
-		}
+		return (esitoAbilitazioneCliente != 0)?
+			"ok":
+			"Siamo spiacenti ma l'abilitazione del Cliente non è avvenuta con successo. Contattare l'amministrazione.";
 	}
-	
 }

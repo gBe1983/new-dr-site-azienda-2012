@@ -1,5 +1,7 @@
 package it.azienda.dao;
 
+import it.util.log.MyLogger;
+
 import java.sql.Connection;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -17,9 +19,11 @@ import javax.mail.internet.MimeMessage;
 import org.apache.log4j.Logger;
 
 public class Email extends BaseDao {
+	private MyLogger log;
 
 	public Email(Connection connessione) {
 		super(connessione);
+		log=new MyLogger(this.getClass());
 	}
 
 	static String host = "smtp.gmail.com"; //tuo smtp

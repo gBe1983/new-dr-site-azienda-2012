@@ -3,6 +3,7 @@ package it.azienda.dao;
 import it.azienda.dto.Associaz_Risor_Comm;
 import it.azienda.dto.CommessaDTO;
 import it.azienda.dto.TipologiaCommessa;
+import it.util.log.MyLogger;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -15,10 +16,11 @@ import java.util.Calendar;
 import java.util.Date;
 
 public class CommesseDAO extends BaseDao {
-	
-	
+	private MyLogger log;
+
 	public CommesseDAO(Connection connessione) {
 		super(connessione);
+		log=new MyLogger(this.getClass());
 	}
 
 	//mi serve per castare le varie date_inizio e date_fine delle varie commesse
