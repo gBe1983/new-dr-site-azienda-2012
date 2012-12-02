@@ -16,7 +16,33 @@ public class TrattativeDTO {
 	private String descrizioneRisorsa;
 	private String descrizioneAzienda;
 	private String descrizioneCliente;
-	
+
+	public TrattativeDTO(){}
+
+	/**
+	 * @param idTrattative
+	 * @param id_cliente
+	 * @param id_risorsa
+	 * @param data
+	 * @param oggetto
+	 * @param esito
+	 * @param descrizioneRisorsa
+	 * @param descrizioneCliente
+	 */
+	public TrattativeDTO(int idTrattative, String id_cliente, int id_risorsa,
+			String data, String oggetto, String esito,
+			String descrizioneRisorsa, String descrizioneCliente) {
+		super();
+		this.idTrattative = idTrattative;
+		this.id_cliente = id_cliente;
+		this.id_risorsa = id_risorsa;
+		this.data = data;
+		this.oggetto = oggetto;
+		this.esito = esito;
+		this.descrizioneRisorsa = descrizioneRisorsa;
+		this.descrizioneCliente = descrizioneCliente;
+	}
+
 	public String getId_tipologiaTrattative() {
 		return id_tipologiaTrattative;
 	}
@@ -95,5 +121,4 @@ public class TrattativeDTO {
 	public void setTrattativa_chiusa(boolean trattativa_chiusa) {
 		this.trattativa_chiusa = trattativa_chiusa;
 	}
-	
 }

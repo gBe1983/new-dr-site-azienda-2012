@@ -1,10 +1,18 @@
 package it.azienda.dto;
 
 public class TipologiaTrattative {
-	
 	private int idTrattattive;
 	private String descrizione;
-	
+
+	/**
+	 * @param idTrattattive
+	 * @param descrizione
+	 */
+	public TipologiaTrattative(int idTrattattive, String descrizione) {
+		this.idTrattattive = idTrattattive;
+		this.descrizione = descrizione;
+	}
+
 	public int getIdTrattattive() {
 		return idTrattattive;
 	}
@@ -17,7 +25,4 @@ public class TipologiaTrattative {
 	public void setDescrizione(String descrizione) {
 		this.descrizione = descrizione;
 	}
-	
-	
-
 }
