@@ -117,20 +117,17 @@ function controlloInserisciModificaRisorsa(){
 	var luogoNascita = document.risorsa.luogoNascita.value;
 	var email = document.risorsa.mail.value;
 	var cellulare = document.risorsa.cellulare.value;
-	 
+	
+	var username = "";
 	if(document.risorsa.username != undefined){
-		var username = document.risorsa.username.value;
-	}else{
-		var username = "";
+		username = document.risorsa.username.value;
 	}
-	
+
+	var password = "";
 	if(document.risorsa.password != undefined){
-		var password = document.risorsa.password.value;
-	}else{
-		var password = "";
+		password = document.risorsa.password.value;
 	}
-	
-	
+
 	if(cognome == "" || cognome == null){
 		alert("Valorizzare correttamente il campo \"Cognome\"");
 		return false;
@@ -624,7 +621,7 @@ function controlloInserisciCommessa(tipologia){
 		
 	  tipologia_Commessa = document.commessa.altro_descrizione;
 	  var controlloSelezione = false;
-	  for(i=0;i<tipologia_Commessa.length;i++){
+	  for(var i=0;i<tipologia_Commessa.length;i++){
 	    if(tipologia_Commessa[i].checked){
 	    	controlloSelezione = true;
 	    }
@@ -991,7 +988,7 @@ function controlloModificaCommessa(tipologia){
 		 */
 		
 	  ff = document.commessa.altro_descrizione;
-	  for(i=0;i<ff.length;i++){
+	  for(var i=0;i<ff.length;i++){
 	    if(ff[i].checked){
 	    	return true;
 	    }else{
@@ -1730,7 +1727,7 @@ function controlloDateReport(){
 	}
 	
 	if(dateInizio > dateFine){
-		alert("Data Inizio maggiore della Data Fine")
+		alert("Data Inizio maggiore della Data Fine");
 		return false;
 	}
 	
@@ -1743,14 +1740,14 @@ function controlloSessioneAttiva(){
 	alert("La sessione è scaduta. Rieffettuare la login");
 	url = window.location.href;
 	var variabiliUrl = url.split("/");
-	for(a=0; a < variabiliUrl.length; a++){
+	for(var a=0; a < variabiliUrl.length; a++){
 			if(a == 2){
 				var localVariabili = "";
 				if(variabiliUrl[a].indexOf(":")){
 					localVariabili = variabiliUrl[a].split(":");
 				}
 				
-				for(x=0; x < localVariabili.length; x++){
+				for(var x=0; x < localVariabili.length; x++){
 					if(localVariabili[x] == "localhost"){
 						window.location = "http://localhost/dr";
 					}if(localVariabili[x] == "cvonline.tv"){
