@@ -1,6 +1,8 @@
 package it.azienda.dao;
 
 import it.azienda.dto.AziendaDTO;
+import it.util.log.MyLogger;
+import it.util.password.MD5;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -8,22 +10,26 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class AziendaDAO extends BaseDao {
+	private MyLogger log;
 
 	public AziendaDAO(Connection connessione) {
 		super(connessione);
+		log=new MyLogger(this.getClass());
 	}
 
 	public String inserimentoAzienda(AziendaDTO azienda){
-		
-		String sql = "insert into tbl_azienda (ragioneSociale,indirizzo,citta,provincia,cap,nazione,telefono,fax,mail,codiceFiscale,pIva,indirizzoLegale,cittaLegale,provinciaLegale,capLegale,nazioneLegale,referente,telefonoReferente,sito,trattamentoDati)" +
-				"values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
-		
-		String messaggio = "";
+		final String metodo="inserimentoAzienda";
+		log.start(metodo);
+		StringBuilder sql = new StringBuilder("INSERT INTO tbl_azienda");
+		sql	.append("(ragioneSociale,indirizzo,citta,provincia,cap,nazione,telefono,fax,mail,")
+				.append("codiceFiscale,pIva,indirizzoLegale,cittaLegale,provinciaLegale,")
+				.append("capLegale,nazioneLegale,referente,telefonoReferente,sito,trattamentoDati)")
+				.append("VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)");
+		log.debug(metodo, sql.toString());
 		int esitoInserimentoAzienda = 0;
-		
 		PreparedStatement ps=null;
 		try {
-			ps = connessione.prepareStatement(sql);
+			ps = connessione.prepareStatement(sql.toString());
 			ps.setString(1, azienda.getRagioneSociale());
 			ps.setString(2, azienda.getIndirizzo());
 			ps.setString(3, azienda.getCitta());
@@ -46,28 +52,31 @@ public class AziendaDAO extends BaseDao {
 			ps.setBoolean(20, azienda.isTrattamentoDati());
 			esitoInserimentoAzienda = ps.executeUpdate();
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
+			log.error(metodo, "INSERT INTO tbl_azienda", e);
 			return "Siamo spiacenti, per via dei problemi tecnici la registrazione non avvenuta con successo. Contattare l'amministrazione";
 		}finally{
 			close(ps);
+			log.end(metodo);
 		}
-		
-		if(esitoInserimentoAzienda == 1){
-			messaggio = "Registrazione avvenuta con successo";
-		}
-		
-		return messaggio;
+		return (esitoInserimentoAzienda == 1)?
+			"Registrazione avvenuta con successo":
+			"";
 	}
-	
+
 	public String modificaAzienda(AziendaDTO azienda){
-		
-		String sql = "update tbl_aziende set ragione_sociale = ?,indirizzo = ?, citta = ?, provincia = ?, cap = ?, nazione = ?, telefono = ?, fax = ?, mail = ?, codice_fiscale = ?, p_iva = ?, indirizzo_legale = ?, citta_legale = ?, provincia_legale = ?, cap_legale = ?, nazione_legale = ?, referente = ?, telefono_referente = ?, sito = ?, trattamento_dati = ? where id_azienda = ?";
-		
-		String messaggio = "";
-		int esitoInserimentoAzienda = 0;
+		final String metodo="modificaAzienda";
+		log.start(metodo);
+		StringBuilder sql = new StringBuilder("UPDATE tbl_aziende");
+		sql	.append("SET ragione_sociale=?,indirizzo=?,citta=?,provincia=?,cap=?,nazione=?,")
+				.append("telefono=?,fax=?,mail=?,codice_fiscale=?,p_iva=?,indirizzo_legale=?,")
+				.append("citta_legale=?,provincia_legale=?,cap_legale=?,nazione_legale=?,referente=?,")
+				.append("telefono_referente=?,sito=?,trattamento_dati=? ")
+				.append("WHERE id_azienda=?");
+		log.debug(metodo, sql.toString());
+		int esitoAggiornametoAzienda = 0;
 		PreparedStatement ps=null;
 		try {
-			ps = connessione.prepareStatement(sql);
+			ps = connessione.prepareStatement(sql.toString());
 			ps.setString(1, azienda.getRagioneSociale());
 			ps.setString(2, azienda.getIndirizzo());
 			ps.setString(3, azienda.getCitta());
@@ -89,162 +98,152 @@ public class AziendaDAO extends BaseDao {
 			ps.setString(19, azienda.getSito());
 			ps.setBoolean(20, azienda.isTrattamentoDati());
 			ps.setInt(21, azienda.getIdAzienda());
-			esitoInserimentoAzienda = ps.executeUpdate();
+			esitoAggiornametoAzienda = ps.executeUpdate();
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
+			log.error(metodo, "UPDATE tbl_aziende", e);
 			return "Siamo spiacenti, per via dei problemi tecnici la registrazione non avvenuta con successo. Contattare l'amministrazione";
 		}finally{
 			close(ps);
+			log.end(metodo);
 		}
-		
-		if(esitoInserimentoAzienda == 1){
-			messaggio = "ok";
-		}
-		
-		return messaggio;
+		return (esitoAggiornametoAzienda == 1)?
+			"ok":
+			"";
 	}
-	
-	/*
+
+	/**
 	 * effettuo il caricamento dell'idAzienda
+	 * @return
 	 */
-	
 	public int caricamentoIdAzienda(){
-		
+		final String metodo="caricamentoIdAzienda";
+		log.start(metodo);
 		int idAzienda = 0;
-		String sql = "select max(id_azienda) from tbl_azienda";
+		String sql = "SELECT MAX(id_azienda)max_id_azienda FROM tbl_azienda";
+		log.debug(metodo, sql);
 		PreparedStatement ps=null;
 		ResultSet rs=null;
 		try {
 			ps = connessione.prepareStatement(sql);
 			rs = ps.executeQuery();
 			while(rs.next()){
-				idAzienda = rs.getInt(1);
+				idAzienda = rs.getInt("max_id_azienda");
 			}
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			log.error(metodo, "SELECT MAX(id_azienda) tbl_azienda", e);
 		}finally{
 			close(ps,rs);
+			log.end(metodo);
 		}
-		
 		return idAzienda;
 	}
-	
-	
-	/*
-	 * Con questo metodo effettuo il caricamento del profilo dell'azienda che al momento 
-	 * è loggata
-	 * 
+
+	/**
+	 * Con questo metodo effettuo il caricamento del profilo dell'azienda che al momento è loggata
+	 * @param idAzienda
+	 * @return
 	 */
 	public AziendaDTO visualizzaProfiloAzienda(int idAzienda){
-		
-		String sql = "select * from tbl_aziende where id_azienda = ?";
-		
+		final String metodo="visualizzaProfiloAzienda";
+		log.start(metodo);
+		StringBuilder sql = new StringBuilder("SELECT id_azienda,ragione_sociale,indirizzo,citta,");
+		sql	.append("provincia,cap,nazione,telefono,fax,mail,codice_fiscale,p_iva,indirizzo_legale,")
+				.append("citta_legale,provincia_legale,cap_legale,nazione_legale,referente,")
+				.append("telefono_referente,sito,trattamento_dati,visible,attivo ")
+				.append("FROM tbl_aziende ")
+				.append("WHERE id_azienda=?");
+		log.debug(metodo, sql.toString());
 		AziendaDTO azienda = null;
 		PreparedStatement ps=null;
 		ResultSet rs=null;
 		try {
-			ps = connessione.prepareStatement(sql);
+			ps = connessione.prepareStatement(sql.toString());
 			ps.setInt(1, idAzienda);
 			rs = ps.executeQuery();
 			if(rs.next()){
 				azienda = new AziendaDTO();
-				azienda.setIdAzienda(rs.getInt(1));
-				azienda.setRagioneSociale(rs.getString(2));
-				azienda.setIndirizzo(rs.getString(3));
-				azienda.setCitta(rs.getString(4));
-				azienda.setProvincia(rs.getString(5));
-				azienda.setCap(rs.getString(6));
-				azienda.setNazione(rs.getString(7));
-				azienda.setTelefono(rs.getString(8));
-				azienda.setFax(rs.getString(9));
-				azienda.setMail(rs.getString(10));
-				azienda.setCodiceFiscale(rs.getString(11));
-				azienda.setPIva(rs.getString(12));
-				azienda.setIndirizzoLegale(rs.getString(13));
-				azienda.setCittaLegale(rs.getString(14));
-				azienda.setProvinciaLegale(rs.getString(15));
-				azienda.setCapLegale(rs.getString(16));
-				azienda.setNazioneLegale(rs.getString(17));
-				azienda.setReferente(rs.getString(18));
-				azienda.setTelefonoReferente(rs.getString(19));
-				azienda.setSito(rs.getString(20));
-				azienda.setTrattamentoDati(rs.getBoolean(21));
-				azienda.setVisible(rs.getBoolean(22));
-				azienda.setAttivo(rs.getBoolean(23));
+				azienda.setIdAzienda(rs.getInt("id_azienda"));
+				azienda.setRagioneSociale(rs.getString("ragione_sociale"));
+				azienda.setIndirizzo(rs.getString("indirizzo"));
+				azienda.setCitta(rs.getString("citta"));
+				azienda.setProvincia(rs.getString("provincia"));
+				azienda.setCap(rs.getString("cap"));
+				azienda.setNazione(rs.getString("nazione"));
+				azienda.setTelefono(rs.getString("telefono"));
+				azienda.setFax(rs.getString("fax"));
+				azienda.setMail(rs.getString("mail"));
+				azienda.setCodiceFiscale(rs.getString("codice_fiscale"));
+				azienda.setPIva(rs.getString("p_iva"));
+				azienda.setIndirizzoLegale(rs.getString("indirizzo_legale"));
+				azienda.setCittaLegale(rs.getString("citta_legale"));
+				azienda.setProvinciaLegale(rs.getString("provincia_legale"));
+				azienda.setCapLegale(rs.getString("cap_legale"));
+				azienda.setNazioneLegale(rs.getString("nazione_legale"));
+				azienda.setReferente(rs.getString("referente"));
+				azienda.setTelefonoReferente(rs.getString("telefono_referente"));
+				azienda.setSito(rs.getString("sito"));
+				azienda.setTrattamentoDati(rs.getBoolean("trattamento_dati"));
+				azienda.setVisible(rs.getBoolean("visible"));
+				azienda.setAttivo(rs.getBoolean("attivo"));
 			}
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			log.error(metodo, "SELECT tbl_aziende for idAzienda:"+idAzienda, e);
 		}finally{
 			close(ps,rs);
+			log.end(metodo);
 		}
-		
 		return azienda;
 	}
-	
-	
-	/*
+
+	/**
 	 * con questo meotodo effettuo l'eliminazione logica dell'Azienda
+	 * @param idAzienda
 	 */
 	public void eliminaProfiloAzienda(int idAzienda){
-		
-		String sql = "update tbl_login set utenteVisible = false where id_azienda = ?";
+		final String metodo="eliminaProfiloAzienda";
+		log.start(metodo);
+		String sql = "UPDATE tbl_login SET utenteVisible=false WHERE id_azienda=?";
+		log.debug(metodo, sql);
 		PreparedStatement ps=null;
 		try {
 			ps = connessione.prepareStatement(sql);
 			ps.setInt(1, idAzienda);
 			ps.executeUpdate();
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			log.error(metodo, "UPDATE tbl_login for idAzienda:"+idAzienda, e);
 		}finally{
 			close(ps);
+			log.end(metodo);
 		}
-		
 	}
-	
-	/*
+
+	/**
 	 * tramite questo metodo effettuo il cambiamento della password
+	 * @param password
+	 * @param idAzienda
+	 * @return
 	 */
-	
 	public String cambioPassword(String password,int idAzienda){
-		
-		String sql = "update tbl_login set password = ? where id_azienda = ?";
-		
+		final String metodo="cambioPassword";
+		log.start(metodo);
+		String sql = "UPDATE tbl_login SET password=? WHERE id_azienda=?";
+		log.debug(metodo, sql);
 		int aggiornamentoPassword = 0;
 		PreparedStatement ps=null;
 		try {
 			ps = connessione.prepareStatement(sql);
-			ps.setString(1, MD5(password));
+			ps.setString(1, MD5.encript(password));
 			ps.setInt(2, idAzienda);
 			aggiornamentoPassword = ps.executeUpdate();
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			log.error(metodo, "UPDATE tbl_login for idAzienda:"+idAzienda, e);
 			return "Siamo spiacenti, il cambio password non è avvenuto con successo. Contattare l'amministrazione.";
 		}finally{
 			close(ps);
+			log.end(metodo);
 		}
-		
-		if(aggiornamentoPassword == 1){
-			return "ok";
-		}else{
-			return "Siamo spiacenti, il cambio password non è avvenuto con successo. Contattare l'amministrazione.";
-		}
-	}
-
-	public String MD5(String md5) {//TODO UNIFICARE IN UN SOLO POSTO QUESTO METODO!
-		try {
-			java.security.MessageDigest md = java.security.MessageDigest.getInstance("MD5");
-			byte[] array = md.digest(md5.getBytes());
-			StringBuffer sb = new StringBuffer();
-			for (int i = 0; i < array.length; ++i) {
-				sb.append(Integer.toHexString((array[i] & 0xFF) | 0x100).substring(1, 3));
-			}
-			return sb.toString();
-		} catch (java.security.NoSuchAlgorithmException e) {
-		}
-		return null;
+		return (aggiornamentoPassword == 1)?
+			"ok":
+			"Siamo spiacenti, il cambio password non è avvenuto con successo. Contattare l'amministrazione.";
 	}
 }
