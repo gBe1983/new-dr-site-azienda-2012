@@ -2,6 +2,7 @@ package it.azienda.dao;
 
 import it.azienda.dto.UtenteDTO;
 import it.util.log.MyLogger;
+import it.util.password.MD5;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -26,7 +27,7 @@ public class UtenteDAO extends BaseDao {
 		try {
 			ps = connessione.prepareStatement(sql);
 			ps.setString(1, utente.getUsername());
-			ps.setString(2, MD5(utente.getPassword()));
+			ps.setString(2, MD5.encript(utente.getPassword()));
 			ps.setInt(3, utente.getId_azienda());
 			ps.setString(4, utente.getData_registrazione());
 			ps.setString(5, utente.getData_login());
@@ -110,7 +111,7 @@ public class UtenteDAO extends BaseDao {
 		try {
 			ps = connessione.prepareStatement(sql);
 			ps.setString(1, username);
-			ps.setString(2, MD5(password));
+			ps.setString(2, MD5.encript(password));
 			rs = ps.executeQuery();
 			while(rs.next()){
 				utente = new UtenteDTO();
@@ -130,19 +131,5 @@ public class UtenteDAO extends BaseDao {
 			log.end(metodo);
 		}
 		return utente;
-	}
-
-	public String MD5(String md5) {//TODO CENTRALIZZARE
-		try {
-			java.security.MessageDigest md = java.security.MessageDigest.getInstance("MD5");
-			byte[] array = md.digest(md5.getBytes());
-			StringBuffer sb = new StringBuffer();
-			for (int i = 0; i < array.length; ++i) {
-				sb.append(Integer.toHexString((array[i] & 0xFF) | 0x100).substring(1, 3));
-			}
-			return sb.toString();
-		} catch (java.security.NoSuchAlgorithmException e) {
-		}
-		return null;
 	}
 }
