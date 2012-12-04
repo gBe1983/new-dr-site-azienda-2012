@@ -8,11 +8,15 @@ public class Day{
 	private double oreSraordinarie=0;
 	private Calendar day;
 
+	
+	public Day() {
+		
+	}
+
 	/**
 	 * @param day
 	 */
 	public Day(Calendar day) {
-		super();
 		this.day = day;
 	}
 
@@ -58,5 +62,9 @@ public class Day{
 
 	public String getCssStyle() {
 		return (day!=null)?((day.get(Calendar.DAY_OF_WEEK)==Calendar.SATURDAY||day.get(Calendar.DAY_OF_WEEK)==Calendar.SUNDAY)?"holiday":"workDay"):"disabledDay";
+	}
+	
+	public String getCssStyle(Calendar data) {
+		return (data!=null)?((data.get(Calendar.DAY_OF_WEEK)==Calendar.SATURDAY||data.get(Calendar.DAY_OF_WEEK)==Calendar.SUNDAY)?"holiday":"workDay"):"disabledDay";
 	}
 }

@@ -1707,8 +1707,9 @@ function cancellaCampoTextArea(campoForm,valore){
 
 function controlloDateReport(){
 	
-	var dataInizio = document.report.da.value;
-	var dataFine = document.report.a.value;
+	var dataInizio = document.report.dtDa.value;
+	var dataFine = document.report.dtA.value;
+	var tipologiaReport = document.report.tipologiaReport.value;
 	
 	var slipt_DataInizio = dataInizio.split('-');
 	var split_DataFine = dataFine.split('-');
@@ -1728,6 +1729,11 @@ function controlloDateReport(){
 	
 	if(dateInizio > dateFine){
 		alert("Data Inizio maggiore della Data Fine");
+		return false;
+	}
+	
+	if(tipologiaReport == ""){
+		alert("Valorizzare la tipologia Report");
 		return false;
 	}
 	

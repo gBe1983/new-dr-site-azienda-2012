@@ -26,6 +26,7 @@ public class RisorseDAO extends BaseDao{
 		StringBuilder sql = new StringBuilder("SELECT ");
 		sql	.append("id_risorsa,cognome,nome ")
 				.append("FROM tbl_risorse ")
+				.append("where visible = true ")
 				.append("ORDER BY cognome");
 		log.debug(metodo,"sql:"+sql.toString());
 		List<RisorsaDTO>ris=new ArrayList<RisorsaDTO>();

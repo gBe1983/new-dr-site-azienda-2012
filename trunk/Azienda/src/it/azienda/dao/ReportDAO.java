@@ -1,6 +1,7 @@
 package it.azienda.dao;
 
 import it.azienda.dto.Associaz_Risor_Comm;
+import it.azienda.dto.ClienteDTO;
 import it.azienda.dto.CommessaDTO;
 import it.azienda.dto.PlanningDTO;
 import it.azienda.dto.RisorsaDTO;
@@ -341,8 +342,158 @@ public class ReportDAO extends BaseDao {
 		}
 		return tr;
 	}
+	
+	public ArrayList<PlanningDTO> getTimeReportCommessaPerCliente(Calendar dtDa, Calendar dtA,int idRisorsa,int id_commessa){
+		
+		ArrayList<PlanningDTO> listaGiornate = new ArrayList<PlanningDTO>();
+		
+		final String metodo="getTimeReport";
+		log.start(metodo);
+		
+		String sql = "SELECT planning.data,planning.num_ore,planning.straordinari " +
+				" FROM tbl_planning planning,tbl_associaz_risor_comm asscommessa,tbl_commesse commessa,tbl_risorse risorse, tbl_clienti cliente " +
+				" WHERE planning.id_associazione=asscommessa.id_associazione " +
+				" AND asscommessa.id_commessa=commessa.id_commessa " +
+				" AND commessa.id_cliente=commessa.id_cliente " +
+				" AND asscommessa.id_risorsa=risorse.id_risorsa " +
+				" AND planning.data >= ? " +
+				" AND planning.data <= ? " +
+				" AND asscommessa.id_risorsa = ? " +
+				" AND commessa.id_commessa = ? group by data";
+
+		PreparedStatement ps=null;
+		ResultSet rs=null;
+		log.debug(metodo, sql.toString());
+		int i=1;
+		try {
+			ps = connessione.prepareStatement(sql.toString());
+			ps.setString(i++, formattaDataServer.format(dtDa.getTime()));
+			ps.setString(i++, formattaDataServer.format(dtA.getTime()));
+			ps.setInt(i++, idRisorsa);
+			ps.setInt(i++, id_commessa);
+			
+			
+			rs = ps.executeQuery();
+			while(rs.next()){
+				PlanningDTO planning = new PlanningDTO(
+								rs.getDate("data"),
+								rs.getDouble("num_ore"),
+								rs.getDouble("straordinari"),
+								null
+				);
+				
+				listaGiornate.add(planning);
+			}
+		} catch (SQLException e) {
+			log.error(metodo, "", e);
+		}finally{
+			close(ps,rs);
+			log.end(metodo);
+		}
+		return listaGiornate;
+	}
+	
+	public ArrayList<Associaz_Risor_Comm> caricamentoAssociazioni(String dataDa, String dataA, String id_cliente, String id_risorsa, String id_commessa){
+		
+		String sql = "SELECT cliente.ragione_sociale, commessa.id_commessa,risorse.id_risorsa, risorse.nome, risorse.cognome " +
+				" FROM tbl_planning planning, tbl_associaz_risor_comm asscommessa,tbl_commesse commessa,tbl_risorse risorse, tbl_clienti cliente " +
+				" WHERE asscommessa.id_commessa=commessa.id_commessa " +
+				" AND planning.id_associazione=asscommessa.id_associazione " +
+				" AND commessa.id_cliente=cliente.id_cliente " +
+				" AND asscommessa.id_risorsa=risorse.id_risorsa " +
+				" AND planning.data >= ? " +
+				" AND planning.data <= ? ";
+				
+				if(isValidFilter(id_cliente)){
+					sql += " and cliente.id_cliente = ?";
+				}
+				if(isValidFilter(id_risorsa)){
+					sql += " and asscommessa.id_risorsa = ?";
+				}
+				if(isValidFilter(id_commessa)){
+					sql += " and asscommessa.id_commessa = ?";
+				}
+				
+				sql += " group by commessa.id_commessa ORDER BY ragione_sociale";
+		
+		ArrayList<Associaz_Risor_Comm> listaAssociazioni = new ArrayList<Associaz_Risor_Comm>();
+		
+		PreparedStatement ps=null;
+		ResultSet rs=null;
+		
+		int i = 1;
+		try {
+			ps = connessione.prepareStatement(sql);
+			ps.setString(i++, dataDa);
+			ps.setString(i++, dataA);
+			
+			if(isValidFilter(id_cliente)){
+				ps.setString(i++, id_cliente);
+			}
+			if(isValidFilter(id_risorsa)){
+				ps.setInt(i++, Integer.parseInt(id_risorsa));
+			}
+			if(isValidFilter(id_commessa)){
+				ps.setInt(i++, Integer.parseInt(id_commessa));
+			}
+			
+			rs = ps.executeQuery();
+			while(rs.next()){
+				Associaz_Risor_Comm asscommessa = new Associaz_Risor_Comm();
+				asscommessa.setDescrizioneCliente(rs.getString("ragione_sociale"));
+				asscommessa.setId_commessa(rs.getInt("id_commessa"));
+				asscommessa.setId_risorsa(rs.getInt("id_risorsa"));
+				asscommessa.setDescrizioneRisorsa(rs.getString("cognome") + " " + rs.getString("nome"));
+				listaAssociazioni.add(asscommessa);
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return listaAssociazioni;
+		
+	}
+	
+	public ArrayList<ClienteDTO> caricamentoClienti(String dataDa, String dataA){
+		
+		String sql = "SELECT cliente.ragione_sociale" +
+				" FROM tbl_planning planning, tbl_associaz_risor_comm asscommessa,tbl_commesse commessa, tbl_clienti cliente " +
+				" WHERE asscommessa.id_commessa=commessa.id_commessa " +
+				" AND planning.id_associazione=asscommessa.id_associazione " +
+				" AND commessa.id_cliente=cliente.id_cliente " +
+				" AND planning.data >= ? " +
+				" AND planning.data <= ? " +
+				" group by ragione_sociale ORDER BY ragione_sociale";
+		
+		ArrayList<ClienteDTO> listaClienti = new ArrayList<ClienteDTO>();
+		
+		PreparedStatement ps=null;
+		ResultSet rs=null;
+		
+		try {
+			ps = connessione.prepareStatement(sql);
+			ps.setString(1, dataDa);
+			ps.setString(2, dataA);
+			rs = ps.executeQuery();
+			while(rs.next()){
+				ClienteDTO cliente = new ClienteDTO();
+				cliente.setRagioneSociale(rs.getString("ragione_sociale"));
+				listaClienti.add(cliente);
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return listaClienti;
+		
+	}
+	
+	
 
 	private boolean isValidFilter(String v){
 		return v!=null&&!"".equals(v)&&!"all".equals(v);
 	}
+
 }

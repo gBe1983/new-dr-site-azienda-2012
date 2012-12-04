@@ -1,6 +1,7 @@
 package it.bo.azienda;
 
 
+import it.azienda.dto.Associaz_Risor_Comm;
 import it.azienda.dto.PlanningDTO;
 import it.azienda.dto.RisorsaDTO;
 import it.bo.Day;
@@ -23,7 +24,12 @@ public class TimeReport implements Serializable{
 	private HashMap<Integer,Risorsa>risorse;
 	private List<Integer>risorseKey;
 	private List<Day>days;
-
+	
+	public TimeReport() {
+		// TODO Auto-generated constructor stub
+	}
+	
+	
 	public TimeReport(Calendar dtDa, Calendar dtA, String idCliente, String idRisorsa, String idCommessa){
 		log =new MyLogger(this.getClass());
 		final String metodo="costruttore";
@@ -44,6 +50,20 @@ public class TimeReport implements Serializable{
 		log.end(metodo);
 	}
 
+	public void setDays(Calendar dtDa, Calendar dtA){
+		days=new ArrayList<Day>();
+		Calendar dayFrom = (Calendar)dtDa.clone();
+		this.dtDa= (Calendar)dtDa.clone();
+		this.dtA = (Calendar)dtA.clone();
+		
+		while(dayFrom.compareTo(dtA)<=0){
+			days.add(new Day((Calendar)dayFrom.clone()));
+			dayFrom.add(Calendar.DAY_OF_MONTH,1);
+		}
+		
+	}
+	
+	
 	/**
 	 * cerco la settimana a cui aggiungere la commessa, una volta trovata la gli passo la commessa da aggiungere
 	 * @param p
