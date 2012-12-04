@@ -186,7 +186,9 @@ public class GestioneAzienda extends BaseServlet{
 
 			}
 			
+			//TODO ricordarsi di cambiare ogni volta per i due ambienti
 			response.sendRedirect("http://drconsulting.tv");
+			//response.sendRedirect("http://cvonline.tv");
 		
 		}else if(azione.equals("eliminaProfilo")){
 			/*

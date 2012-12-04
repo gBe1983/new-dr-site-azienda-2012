@@ -1,6 +1,7 @@
 package it.azienda.dto;
 
 import java.sql.Date;
+import java.util.ArrayList;
 import java.util.Calendar;
 
 public class PlanningDTO {
@@ -15,6 +16,9 @@ public class PlanningDTO {
 	private Calendar data;
 	private double numeroOre;
 	private double straordinari;
+	
+	private String descrizioneRisorsa;
+	ArrayList<PlanningDTO> listaGiornate = new ArrayList<PlanningDTO>();
 
 	public PlanningDTO() {}
 
@@ -47,7 +51,23 @@ public class PlanningDTO {
 	public double getStraordinari() {
 		return straordinari;
 	}
+	
+	public ArrayList<PlanningDTO> getListaGiornate() {
+		return listaGiornate;
+	}
 
+	public void setListaGiornate(ArrayList<PlanningDTO> listaGiornate) {
+		this.listaGiornate = listaGiornate;
+	}
+	
+	public String getDescrizioneRisorsa() {
+		return descrizioneRisorsa;
+	}
+
+	public void setDescrizioneRisorsa(String descrizioneRisorsa) {
+		this.descrizioneRisorsa = descrizioneRisorsa;
+	}
+	
 	public String getDescrizione_commessa() {
 		return descrizione_commessa;
 	}

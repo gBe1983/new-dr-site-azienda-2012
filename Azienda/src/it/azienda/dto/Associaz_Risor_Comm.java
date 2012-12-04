@@ -14,6 +14,15 @@ public class Associaz_Risor_Comm {
 	private String descrizioneCliente;
 	private String descrizioneRisorsa;
 	
+	public Associaz_Risor_Comm() {
+		// TODO Auto-generated constructor stub
+	}
+	
+	public Associaz_Risor_Comm(String descrizioneCliente, String descrizioneRisorsa) {
+		// TODO Auto-generated constructor stub
+		this.descrizioneCliente = descrizioneCliente;
+		this.descrizioneRisorsa = descrizioneRisorsa;
+	}
 
 	public String getAl() {
 		return al;

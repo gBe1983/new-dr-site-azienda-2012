@@ -38,21 +38,39 @@
 <%
 String azione = request.getParameter("azione");
 if(azione!=null){
-if(azione.equals("homePage")){
+	if(azione.equals("homePage")){
 %>
-<%@include file="strutturaSito/contenuto/homePage.jsp"%>
+		<%@include file="strutturaSito/contenuto/homePage.jsp"%>
 <%
 }else if(azione.equals("visualizzaConsuntivi")){
+		if(request.getParameter("tipologia") != null){
+			String tipologia = request.getParameter("tipologia");
+			if(tipologia.equals("1")){
+		%>
+				
+		<%
+			}else if(tipologia.equals("2")){
+		%>		
+				<%@include file="strutturaSito/contenuto/azienda/timeReportCommessaPerCliente.jsp"%>
+		<%		
+			}else if(tipologia.equals("3")){
+		%>
+				<%@include file="strutturaSito/contenuto/azienda/timeReport.jsp"%>
+		<%
+			}
+		}else{
+		%>
+			<%@include file="strutturaSito/contenuto/azienda/timeReport.jsp"%>
+		<%
+		}
+	}else{
 %>
-<%@include file="strutturaSito/contenuto/azienda/timeReport.jsp"%>
+	<%@include file="strutturaSito/contenuto/homePage.jsp"%>
 <%
-}else{
-%>
-<%@include file="strutturaSito/contenuto/homePage.jsp"%>
-<%
-}
+	}
 }
 %>
+
 </div>
 <div id="footer" class="space">
 <ul>

@@ -8,6 +8,7 @@ import it.azienda.dto.Associaz_Risor_Comm;
 import it.azienda.dto.ClienteDTO;
 import it.azienda.dto.CommessaDTO;
 import it.azienda.dto.PlanningDTO;
+import it.bo.azienda.TimeReport;
 import it.util.log.MyLogger;
 
 import java.io.IOException;
@@ -298,11 +299,112 @@ public class GestioneReport extends BaseServlet {
 				
 				request.setAttribute("report",report);
 				getServletContext().getRequestDispatcher("/index.jsp?azione=visualizzaReport&dispositiva=report").forward(request, response);
+			
 			}else if("visualizzaConsuntivi".equals(azione)){
+				
 				ReportDAO reportDAO=new ReportDAO(conn.getConnection());
 				request.setAttribute("commesse",reportDAO.caricamentoCommessa());
 				request.setAttribute("risorse",new RisorseDAO(conn.getConnection()).getRisorse());
 				request.setAttribute("clienti",new ClienteDAO(conn.getConnection()).caricamentoClienti());
+				request.setAttribute("tipologiaReport", request.getParameter("tipologiaReport"));
+				
+				String tipologiaReport = request.getParameter("tipologiaReport");
+				
+				SimpleDateFormat sdf=new SimpleDateFormat("dd-MM-yyyy");
+				
+				SimpleDateFormat formattazioneSql=new SimpleDateFormat("yyyy-MM-dd");
+				
+				Calendar dtDa=Calendar.getInstance();
+				String dataDa=request.getParameter("dtDa");
+				if(dataDa!=null){
+					try {
+						dtDa.setTime(sdf.parse(dataDa));
+					} catch (ParseException e) {
+						log.warn(metodo, "dataDa", e);
+					}
+				}else{
+					while(dtDa.get(Calendar.DAY_OF_MONTH)!=1){
+						dtDa.add(Calendar.DAY_OF_MONTH,-1);
+					}
+				}
+				request.setAttribute("dtDa",sdf.format(dtDa.getTime()));
+
+				Calendar dtA=Calendar.getInstance();
+				String dataA=request.getParameter("dtA");
+				if(dataA!=null){
+					try {
+						dtA.setTime(sdf.parse(dataA));
+					} catch (ParseException e) {
+						log.warn(metodo, "dataA", e);
+					}
+				}else{
+					int actualMaximum=dtA.getActualMaximum(Calendar.DAY_OF_MONTH);
+					while(dtA.get(Calendar.DAY_OF_MONTH)!=actualMaximum){
+						dtA.add(Calendar.DAY_OF_MONTH,1);
+					}
+				}
+				request.setAttribute("dtA",sdf.format(dtA.getTime()));
+				
+				if(tipologiaReport.equals("1")){
+					
+										
+				}else if(tipologiaReport.equals("2")){
+					
+ArrayList<ClienteDTO> listaClienti = new ReportDAO(conn.getConnection()).caricamentoClienti(formattazioneSql.format(dtDa.getTime()),formattazioneSql.format(dtA.getTime()));
+					
+					ArrayList<Associaz_Risor_Comm> listaAssociazioni = 
+						new ReportDAO(conn.getConnection()).caricamentoAssociazioni(
+												formattazioneSql.format(dtDa.getTime()),
+												formattazioneSql.format(dtA.getTime()),
+												request.getParameter("cliente"), 
+												request.getParameter("risorsa"), 
+												request.getParameter("commessa"));
+					
+					request.setAttribute("listaClienti", listaClienti);
+					request.setAttribute("listaAssCommessa", listaAssociazioni);
+					
+					ArrayList<PlanningDTO> listaGiornate = new ArrayList<PlanningDTO>();
+					
+					//
+					for(int x = 0; x < listaClienti.size(); x++){
+						ClienteDTO cliente = (ClienteDTO) listaClienti.get(x);
+						
+						for(int y = 0; y < listaAssociazioni.size(); y++){
+							Associaz_Risor_Comm asscomm = (Associaz_Risor_Comm)listaAssociazioni.get(y);
+							if(asscomm.getDescrizioneCliente().equals(cliente.getRagioneSociale())){
+								PlanningDTO planning = new PlanningDTO();
+								planning.setDescrizioneRisorsa(asscomm.getDescrizioneRisorsa());
+								planning.setRagione_sociale(asscomm.getDescrizioneCliente());
+								planning.setListaGiornate(new ReportDAO(conn.getConnection()).getTimeReportCommessaPerCliente(dtDa, dtA, asscomm.getId_risorsa(),asscomm.getId_commessa()));
+								listaGiornate.add(planning);
+							}
+						}
+					}
+					
+					TimeReport timeReport = new TimeReport();
+					timeReport.setDays(dtDa, dtA);
+					
+					request.setAttribute("timeReport", timeReport);
+					request.setAttribute("listaGiornate", listaGiornate);
+					
+					getServletContext().getRequestDispatcher("/main.jsp?azione=visualizzaConsuntivi&tipologia=2").forward(request, response);
+
+					
+				}else if(tipologiaReport.equals("3")){
+					
+					request.setAttribute(
+						"timeReport",
+						reportDAO.getTimeReport(
+							dtDa,
+							dtA,
+							request.getParameter("cliente"),
+							request.getParameter("risorsa"),
+							request.getParameter("commessa")));
+					
+					getServletContext().getRequestDispatcher("/main.jsp?azione=visualizzaConsuntivi&tipologia=3").forward(request, response);
+				}
+				
+			}else if("caricamentoReport".equals(azione)){
 				
 				SimpleDateFormat sdf=new SimpleDateFormat("dd-MM-yyyy");
 				Calendar dtDa=Calendar.getInstance();
@@ -335,15 +437,12 @@ public class GestioneReport extends BaseServlet {
 					}
 				}
 				request.setAttribute("dtA",sdf.format(dtA.getTime()));
-
-				request.setAttribute(
-					"timeReport",
-					reportDAO.getTimeReport(
-						dtDa,
-						dtA,
-						request.getParameter("cliente"),
-						request.getParameter("risorsa"),
-						request.getParameter("commessa")));
+				
+				ReportDAO reportDAO=new ReportDAO(conn.getConnection());
+				request.setAttribute("commesse",reportDAO.caricamentoCommessa());
+				request.setAttribute("risorse",new RisorseDAO(conn.getConnection()).getRisorse());
+				request.setAttribute("clienti",new ClienteDAO(conn.getConnection()).caricamentoClienti());
+				
 				getServletContext().getRequestDispatcher("/main.jsp?azione=visualizzaConsuntivi").forward(request, response);
 			}
 		}else{
