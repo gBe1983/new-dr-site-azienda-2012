@@ -185,19 +185,36 @@ if(tr != null && listaGiornate.size() > 0){
 								planning.getRagione_sociale().equals(client.getRagioneSociale())){
 								
 								ArrayList<PlanningDTO> listaGiorni = planning.getListaGiornate();
+								
+								boolean spazioVuoto = false;
+								
 								for(int i = 0; i < listaGiorni.size(); i++){
 									PlanningDTO plan = (PlanningDTO)listaGiorni.get(i);
 									Day day = new Day(plan.getData());
 									totaleOrdinarie += plan.getNumeroOre();
 									totaleStraordinario += plan.getStraordinari();
+									for(Day data:tr.getDays()){
+										
+										if(data.getDay().getTime().equals(plan.getData().getTime())){
+											spazioVuoto = true;
 	%>
-									<td class="<%=day.getCssStyle()%>">
-										<div class="OreOrdinarie"><%=plan.getNumeroOre()%></div>
-										<br>
-										<div class="OreStraordinarie"><%=plan.getStraordinari()%></div>
-									</td>
-	
+											<td class="<%=day.getCssStyle()%>">
+												<div class="OreOrdinarie"><%=plan.getNumeroOre()%></div>
+												<br>
+												<div class="OreStraordinarie"><%=plan.getStraordinari()%></div>
+											</td>
 	<%						
+											break;
+										}else if(!spazioVuoto){
+	%>
+											<td class="<%=day.getCssStyle()%>">
+												<div class="OreOrdinarie"><br></div>
+												<br>
+												<div class="OreStraordinarie"><br></div>
+											</td>
+	<%
+										}
+									}
 								}
 							}
 						}
@@ -212,7 +229,6 @@ if(tr != null && listaGiornate.size() > 0){
 	<%	
 				}
 			}
-
 		}
 	%>
 		</table>
@@ -224,9 +240,7 @@ if(tr != null && listaGiornate.size() > 0){
 		<p align="center">Non ci sono report per il tipo di ricerca effettuata</p>
   <%		
 	}
-  %>
-	
-<%
+
 }else{
 	%>
 	<script type="text/javascript">
