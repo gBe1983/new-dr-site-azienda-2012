@@ -47,20 +47,20 @@ if(azione!=null){
 			String tipologia = request.getParameter("tipologia");
 			if(tipologia.equals("1")){
 		%>
-				
+				<%@include file="strutturaSito/contenuto/azienda/timeReportOrePerCliente.jsp"%>
 		<%
 			}else if(tipologia.equals("2")){
 		%>		
-				<%@include file="strutturaSito/contenuto/azienda/timeReportCommessaPerCliente.jsp"%>
+				<%@include file="strutturaSito/contenuto/azienda/timeReportOrePerCommessa.jsp"%>
 		<%		
 			}else if(tipologia.equals("3")){
 		%>
-				<%@include file="strutturaSito/contenuto/azienda/timeReport.jsp"%>
+				<%@include file="strutturaSito/contenuto/azienda/timeReportOrePerDipendente.jsp"%>
 		<%
 			}
 		}else{
 		%>
-			<%@include file="strutturaSito/contenuto/azienda/timeReport.jsp"%>
+			<%@include file="strutturaSito/contenuto/azienda/timeReportOrePerDipendente.jsp"%>
 		<%
 		}
 	}else{

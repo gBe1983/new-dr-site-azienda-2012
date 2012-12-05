@@ -82,6 +82,7 @@ public class GestioneReport extends BaseServlet {
 				request.setAttribute("listaCliente", listaCliente);
 				
 				getServletContext().getRequestDispatcher("/index.jsp?azione=visualizzaReport&dispositiva=report").forward(request, response);
+				
 			}else if("ricercaReport".equals(azione)){
 				
 				SimpleDateFormat formatDate = new SimpleDateFormat("dd-MM-yyyy");
@@ -347,10 +348,78 @@ public class GestioneReport extends BaseServlet {
 				
 				if(tipologiaReport.equals("1")){
 					
+					ArrayList<ClienteDTO> listaClienti = 
+						new ReportDAO(
+								conn.getConnection()).caricamentoClienti(
+										formattazioneSql.format(dtDa.getTime()),
+												formattazioneSql.format(dtA.getTime()));
+					
+					
+					
+					ArrayList<PlanningDTO> listaGiornatePerCliente = new ArrayList<PlanningDTO>();
+					
+					if(request.getParameter("cliente").equals("all")){
+						
+						for(int y = 0; y < listaClienti.size(); y++){
+							ClienteDTO cliente = (ClienteDTO) listaClienti.get(y);
+							
+							PlanningDTO planning = new PlanningDTO();
+							planning.setRagione_sociale(cliente.getRagioneSociale());
+							try {
+								dtDa.setTime(sdf.parse(request.getParameter("dtDa")));
+								dtA.setTime(sdf.parse(request.getParameter("dtA")));
+								dtA.add(Calendar.DATE,1);
+							} catch (ParseException e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+							}
+							
+							planning.setListaGiornate(reportDAO.caricamentoGiornatePerCliente(dtDa,dtA,cliente.getId_cliente(), request.getParameter("risorsa"), request.getParameter("commessa")));
+ 							listaGiornatePerCliente.add(planning);
+						}
+					}else{
+						
+						PlanningDTO planning = new PlanningDTO();
+						planning.setRagione_sociale(new ClienteDAO(conn.getConnection()).caricamentoNominativo(request.getParameter("cliente")));
+						try {
+							dtDa.setTime(sdf.parse(request.getParameter("dtDa")));
+							dtA.setTime(sdf.parse(request.getParameter("dtA")));
+							dtA.add(Calendar.DATE,1);
+						} catch (ParseException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+						
+						planning.setListaGiornate(reportDAO.caricamentoGiornatePerCliente(dtDa,dtA,request.getParameter("cliente"), request.getParameter("risorsa"), request.getParameter("commessa")));
+						listaGiornatePerCliente.add(planning);
+						
+					}
+					
+					try {
+						dtDa.setTime(sdf.parse(request.getParameter("dtDa")));
+						dtA.setTime(sdf.parse(request.getParameter("dtA")));
+					} catch (ParseException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					
+					TimeReport timeReport = new TimeReport();
+					timeReport.setDays(dtDa, dtA);
+					
+					request.setAttribute("timeReport", timeReport);
+					request.setAttribute("listaClienti", listaClienti);
+					request.setAttribute("listaGiornate", listaGiornatePerCliente);
+					
+					getServletContext().getRequestDispatcher("/main.jsp?azione=visualizzaConsuntivi&tipologia=1").forward(request, response);
 										
 				}else if(tipologiaReport.equals("2")){
 					
-ArrayList<ClienteDTO> listaClienti = new ReportDAO(conn.getConnection()).caricamentoClienti(formattazioneSql.format(dtDa.getTime()),formattazioneSql.format(dtA.getTime()));
+					ArrayList<ClienteDTO> listaClienti = 
+						new ReportDAO(
+								conn.getConnection()).caricamentoClienti(
+										formattazioneSql.format(
+												dtDa.getTime()),
+												formattazioneSql.format(dtA.getTime()));
 					
 					ArrayList<Associaz_Risor_Comm> listaAssociazioni = 
 						new ReportDAO(conn.getConnection()).caricamentoAssociazioni(
