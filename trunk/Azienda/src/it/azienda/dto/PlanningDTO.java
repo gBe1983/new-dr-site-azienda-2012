@@ -52,6 +52,18 @@ public class PlanningDTO {
 		return straordinari;
 	}
 	
+	public void setData(Calendar data) {
+		this.data = data;
+	}
+
+	public void setNumeroOre(double numeroOre) {
+		this.numeroOre = numeroOre;
+	}
+
+	public void setStraordinari(double straordinari) {
+		this.straordinari = straordinari;
+	}
+	
 	public ArrayList<PlanningDTO> getListaGiornate() {
 		return listaGiornate;
 	}

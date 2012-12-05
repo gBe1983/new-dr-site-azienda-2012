@@ -455,9 +455,92 @@ public class ReportDAO extends BaseDao {
 		
 	}
 	
+	public ArrayList<PlanningDTO> caricamentoGiornatePerCliente(Calendar dtDa, Calendar dtA, String id_cliente, String id_risorsa, String id_commessa){
+		
+		Calendar dataDa = dtDa;
+		
+		/*
+		 * recupero i giorni di differenza tra dtDa e dtA
+		 */
+		double giorni = dataDa.getTimeInMillis() - dtA.getTimeInMillis();
+		
+		long giornieffettivi = Math.round(Math.round(giorni / 1000 / 60 / 60 / 24));
+		giornieffettivi = Math.abs(giornieffettivi);
+		
+		log.info("processRequest - GestioneReport", String.valueOf(giornieffettivi));
+		
+		ArrayList<PlanningDTO> listaGiornate = new ArrayList<PlanningDTO>();
+		
+		for(int x = 0; x < giornieffettivi; x++){
+		
+			String sql = "SELECT planning.data, sum(planning.num_ore), sum(planning.straordinari) " +
+					" FROM tbl_planning planning, tbl_associaz_risor_comm asscommessa,tbl_commesse commessa, tbl_clienti cliente,tbl_risorse risorsa " +
+					" WHERE asscommessa.id_commessa=commessa.id_commessa " +
+					" AND asscommessa.id_risorsa = risorsa.id_risorsa " +
+					" AND planning.id_associazione=asscommessa.id_associazione " +
+					" AND commessa.id_cliente=cliente.id_cliente " +
+					" AND planning.data = ? " +
+					" AND cliente.id_cliente = ?";
+			
+					if(isValidFilter(id_risorsa)){
+						sql += " and asscommessa.id_risorsa = ?";
+					}
+					if(isValidFilter(id_commessa)){
+						sql += " and asscommessa.id_commessa = ?";
+					}
+			
+			PlanningDTO planning = new PlanningDTO();
+			planning.setNumeroOre(0.0);
+			planning.setStraordinari(0.0);
+			
+			Calendar calendar = Calendar.getInstance();
+			
+			PreparedStatement ps=null;
+			ResultSet rs=null;
+			
+			int i = 1;
+			try {
+				ps = connessione.prepareStatement(sql);
+				ps.setString(i++, formattaDataServer.format(dtDa.getTime()));
+				ps.setString(i++, id_cliente);
+				
+				if(isValidFilter(id_risorsa)){
+					ps.setInt(i++, Integer.parseInt(id_risorsa));
+				}
+				if(isValidFilter(id_commessa)){
+					ps.setInt(i++, Integer.parseInt(id_commessa));
+				}
+				
+				rs = ps.executeQuery();
+				while(rs.next()){
+					if(rs.getString(1) != null){
+						calendar.setTime(formattaDataWeb.parse(formattaDataWeb.format(formattaDataServer.parse(rs.getString(1)))));
+					}else{
+						calendar.setTime(dtDa.getTime());
+					}
+					planning.setData(calendar);
+					planning.setNumeroOre(rs.getDouble(2));
+					planning.setStraordinari(rs.getDouble(3));
+					listaGiornate.add(planning);
+				}
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (ParseException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+			dataDa.add(Calendar.DATE, 1);
+		}
+		
+		return listaGiornate;
+		
+	}
+	
 	public ArrayList<ClienteDTO> caricamentoClienti(String dataDa, String dataA){
 		
-		String sql = "SELECT cliente.ragione_sociale" +
+		String sql = "SELECT cliente.id_cliente, cliente.ragione_sociale" +
 				" FROM tbl_planning planning, tbl_associaz_risor_comm asscommessa,tbl_commesse commessa, tbl_clienti cliente " +
 				" WHERE asscommessa.id_commessa=commessa.id_commessa " +
 				" AND planning.id_associazione=asscommessa.id_associazione " +
@@ -478,6 +561,7 @@ public class ReportDAO extends BaseDao {
 			rs = ps.executeQuery();
 			while(rs.next()){
 				ClienteDTO cliente = new ClienteDTO();
+				cliente.setId_cliente(rs.getString("id_cliente"));
 				cliente.setRagioneSociale(rs.getString("ragione_sociale"));
 				listaClienti.add(cliente);
 			}

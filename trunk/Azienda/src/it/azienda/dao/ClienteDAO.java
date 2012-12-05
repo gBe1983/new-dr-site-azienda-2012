@@ -385,4 +385,31 @@ public class ClienteDAO extends BaseDao {
 			"ok":
 			"Siamo spiacenti ma l'abilitazione del Cliente non è avvenuta con successo. Contattare l'amministrazione.";
 	}
+	
+	public String caricamentoNominativo(String id_cliente){
+		final String metodo="abilitaCliente";
+		log.start(metodo);
+		String sql = "Select ragione_sociale from tbl_clienti WHERE id_cliente=?";
+		log.debug(metodo, sql.toString());
+		
+		String nominativo = null;
+		
+		PreparedStatement ps=null;
+		ResultSet rs = null;
+		try {
+			ps = connessione.prepareStatement(sql);
+			ps.setString(1, id_cliente);
+			rs = ps.executeQuery();
+			while(rs.next()){
+				nominativo = rs.getString(1);
+			}
+		} catch (SQLException e) {
+			log.error(metodo, "UPDATE tbl_clienti for id_cliente:"+id_cliente, e);
+		}finally{
+			close(ps);
+			log.end(metodo);
+		}
+		
+		return nominativo;
+	}
 }
