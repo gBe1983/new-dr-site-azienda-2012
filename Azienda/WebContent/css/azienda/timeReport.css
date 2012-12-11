@@ -198,3 +198,9 @@ div.OreTotali{
 	background: #DDD;
 	text-align: center;
 }
+
+.totaliOre{
+	font:12px verdana, arial, sans-serif;
+	color: red;
+	text-align: center;
+}

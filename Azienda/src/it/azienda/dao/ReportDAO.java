@@ -395,7 +395,7 @@ public class ReportDAO extends BaseDao {
 	
 	public ArrayList<Associaz_Risor_Comm> caricamentoAssociazioni(String dataDa, String dataA, String id_cliente, String id_risorsa, String id_commessa){
 		
-		String sql = "SELECT cliente.ragione_sociale, asscommessa.id_associazione, commessa.descrizione, commessa.id_commessa,risorse.id_risorsa, risorse.nome, risorse.cognome " +
+		String sql = "SELECT cliente.ragione_sociale, commessa.descrizione, commessa.id_commessa,risorse.id_risorsa, risorse.nome, risorse.cognome " +
 				" FROM tbl_planning planning, tbl_associaz_risor_comm asscommessa,tbl_commesse commessa,tbl_risorse risorse, tbl_clienti cliente " +
 				" WHERE asscommessa.id_commessa=commessa.id_commessa " +
 				" AND planning.id_associazione=asscommessa.id_associazione " +
@@ -419,7 +419,7 @@ public class ReportDAO extends BaseDao {
 					sql += " and asscommessa.id_commessa = ?";
 				}
 				
-				sql += " group by commessa.id_commessa ORDER BY ragione_sociale";
+				sql += " group by ragione_sociale ORDER BY ragione_sociale";
 		
 		ArrayList<Associaz_Risor_Comm> listaAssociazioni = new ArrayList<Associaz_Risor_Comm>();
 		
@@ -446,7 +446,6 @@ public class ReportDAO extends BaseDao {
 			while(rs.next()){
 				Associaz_Risor_Comm asscommessa = new Associaz_Risor_Comm();
 				asscommessa.setDescrizioneCliente(rs.getString("ragione_sociale"));
-				asscommessa.setId_associazione(rs.getInt("id_associazione"));
 				asscommessa.setDescrizioneCommessa(rs.getString("descrizione"));
 				asscommessa.setId_commessa(rs.getInt("id_commessa"));
 				asscommessa.setId_risorsa(rs.getInt("id_risorsa"));

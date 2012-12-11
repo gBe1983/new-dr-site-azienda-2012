@@ -15,7 +15,7 @@ public class PlanningDTO {
 
 	private Calendar data;
 	private double numeroOre;
-	private double straordinari;
+	private double straordinari;	
 	
 	private String descrizioneRisorsa;
 	ArrayList<PlanningDTO> listaGiornate = new ArrayList<PlanningDTO>();

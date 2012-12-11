@@ -463,6 +463,7 @@ public class GestioneReport extends BaseServlet {
 								}
 								
 								PlanningDTO planning = new PlanningDTO();
+								
 								planning.setRagione_sociale(asscomm.getDescrizioneCliente());
 								planning.setDescrizione_commessa(asscomm.getDescrizioneCommessa());
 								planning.setListaGiornate(new ReportDAO(conn.getConnection()).caricamentoOrePerCliente(
