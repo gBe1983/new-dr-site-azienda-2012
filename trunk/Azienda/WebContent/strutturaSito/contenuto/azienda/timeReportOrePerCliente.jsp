@@ -188,19 +188,19 @@ if(request.getSession().getAttribute("utenteLoggato") != null){
 								
 								for(int i = 0; i < listaGiorni.size(); i++){
 									PlanningDTO plan = (PlanningDTO)listaGiorni.get(i);
-									totaliOre += plan.getNumeroOre() + plan.getStraordinari();
-									
-	%>
-									<td>
-										<div class="totale"><%=plan.getNumeroOre() + plan.getStraordinari()%></div>
-									</td>
-	<%						
+										totaliOre += plan.getNumeroOre() + plan.getStraordinari();
+										
+		%>
+										<td>
+											<div class="totale"><%=plan.getNumeroOre() + plan.getStraordinari()%></div>
+										</td>
+		<%						
 								}
 							}
 						}
 	%>				
 							<td>
-								<div class="totale"><%=totaliOre %></div>
+								<div class="totaliOre"><%=totaliOre %></div>
 							</td>
 					</tr>
 										
