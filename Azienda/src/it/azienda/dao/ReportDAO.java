@@ -395,7 +395,7 @@ public class ReportDAO extends BaseDao {
 	
 	public ArrayList<Associaz_Risor_Comm> caricamentoAssociazioni(String dataDa, String dataA, String id_cliente, String id_risorsa, String id_commessa){
 		
-		String sql = "SELECT cliente.ragione_sociale, commessa.descrizione, commessa.id_commessa,risorse.id_risorsa, risorse.nome, risorse.cognome " +
+		String sql = "SELECT cliente.ragione_sociale, asscommessa.id_associazione, commessa.descrizione, commessa.id_commessa,risorse.id_risorsa, risorse.nome, risorse.cognome " +
 				" FROM tbl_planning planning, tbl_associaz_risor_comm asscommessa,tbl_commesse commessa,tbl_risorse risorse, tbl_clienti cliente " +
 				" WHERE asscommessa.id_commessa=commessa.id_commessa " +
 				" AND planning.id_associazione=asscommessa.id_associazione " +
@@ -446,6 +446,7 @@ public class ReportDAO extends BaseDao {
 			while(rs.next()){
 				Associaz_Risor_Comm asscommessa = new Associaz_Risor_Comm();
 				asscommessa.setDescrizioneCliente(rs.getString("ragione_sociale"));
+				asscommessa.setId_associazione(rs.getInt("id_associazione"));
 				asscommessa.setDescrizioneCommessa(rs.getString("descrizione"));
 				asscommessa.setId_commessa(rs.getInt("id_commessa"));
 				asscommessa.setId_risorsa(rs.getInt("id_risorsa"));
@@ -461,7 +462,7 @@ public class ReportDAO extends BaseDao {
 		
 	}
 	
-	public ArrayList<PlanningDTO> caricamentoOrePerCliente(Calendar dtDa, Calendar dtA, int mesi,String id_cliente, String id_risorsa, String id_commessa){
+	public ArrayList<PlanningDTO> caricamentoOrePerCliente(Calendar dtDa, Calendar dtA, int mesi, String descrizione){
 		
 		SimpleDateFormat formatoGiorni = new SimpleDateFormat("dd");
 		
@@ -470,23 +471,13 @@ public class ReportDAO extends BaseDao {
 
 		//verifico i mesi di differenza che ci sono tra la data inizio e la data fine
 		if(mesi == 0){
-			String sql = "SELECT commessa.descrizione, sum(planning.num_ore), sum(planning.straordinari) " +
-					" FROM tbl_planning planning, tbl_associaz_risor_comm asscommessa,tbl_commesse commessa, tbl_clienti cliente,tbl_risorse risorsa " +
-					" WHERE asscommessa.id_commessa=commessa.id_commessa " +
-					" AND asscommessa.id_risorsa = risorsa.id_risorsa " +
-					" AND planning.id_associazione=asscommessa.id_associazione " +
-					" AND commessa.id_cliente=cliente.id_cliente " +
-					" AND planning.data >= ? " +
-					" AND planning.data <= ?" +
-					" AND cliente.id_cliente = ?";
+				String sql = "SELECT commessa.descrizione, sum(planning.num_ore), sum(planning.straordinari)  " +
+							 " FROM tbl_planning planning, tbl_associaz_risor_comm asscommessa,tbl_commesse commessa " +
+							 " WHERE asscommessa.id_commessa=commessa.id_commessa  " +
+							 " AND planning.id_associazione=asscommessa.id_associazione " +
+							 " AND planning.data >= ?  AND planning.data <= ? " +
+							 " AND commessa.descrizione = ?";
 			
-					if(isValidFilter(id_risorsa)){
-						sql += " and asscommessa.id_risorsa = ?";
-					}
-					
-					if(isValidFilter(id_commessa)){
-						sql += " and asscommessa.id_commessa = ?";
-					}
 			
 				PreparedStatement ps=null;
 				ResultSet rs=null;
@@ -496,14 +487,7 @@ public class ReportDAO extends BaseDao {
 					ps = connessione.prepareStatement(sql);
 					ps.setString(i++, formattaDataServer.format(dtDa.getTime()));
 					ps.setString(i++, formattaDataServer.format(dtA.getTime()));
-					ps.setString(i++, id_cliente);
-					
-					if(isValidFilter(id_risorsa)){
-						ps.setInt(i++, Integer.parseInt(id_risorsa));
-					}
-					if(isValidFilter(id_commessa)){
-						ps.setInt(i++, Integer.parseInt(id_commessa));
-					}
+					ps.setString(i++, descrizione);
 					
 					rs = ps.executeQuery();
 					while(rs.next()){
@@ -537,22 +521,12 @@ public class ReportDAO extends BaseDao {
 					dataFine.add(Calendar.DAY_OF_MONTH, differenzaGiorni);
 					
 						
-					String sql = "SELECT commessa.descrizione, sum(planning.num_ore), sum(planning.straordinari) " +
-					" FROM tbl_planning planning, tbl_associaz_risor_comm asscommessa,tbl_commesse commessa, tbl_clienti cliente,tbl_risorse risorsa " +
-					" WHERE asscommessa.id_commessa=commessa.id_commessa " +
-					" AND asscommessa.id_risorsa = risorsa.id_risorsa " +
-					" AND planning.id_associazione=asscommessa.id_associazione " +
-					" AND commessa.id_cliente=cliente.id_cliente " +
-					" AND planning.data >= ? " +
-					" AND planning.data <= ?" +
-					" AND cliente.id_cliente = ?";
-			
-					if(isValidFilter(id_risorsa)){
-						sql += " and asscommessa.id_risorsa = ?";
-					}
-					if(isValidFilter(id_commessa)){
-						sql += " and asscommessa.id_commessa = ?";
-					}
+					String sql = "SELECT commessa.descrizione, sum(planning.num_ore), sum(planning.straordinari)  " +
+							" FROM tbl_planning planning, tbl_associaz_risor_comm asscommessa,tbl_commesse commessa " +
+							" WHERE asscommessa.id_commessa=commessa.id_commessa  " +
+							" AND planning.id_associazione=asscommessa.id_associazione " +
+							" AND planning.data >= ?  AND planning.data <= ? " +
+							" AND commessa.descrizione = ?";
 			
 					PreparedStatement ps=null;
 					ResultSet rs=null;
@@ -571,14 +545,7 @@ public class ReportDAO extends BaseDao {
 						}else{
 							ps.setString(i++, formattaDataServer.format(dataFine.getTime()));
 						}
-						ps.setString(i++, id_cliente);
-						
-						if(isValidFilter(id_risorsa)){
-							ps.setInt(i++, Integer.parseInt(id_risorsa));
-						}
-						if(isValidFilter(id_commessa)){
-							ps.setInt(i++, Integer.parseInt(id_commessa));
-						}
+						ps.setString(i++, descrizione);
 						
 						rs = ps.executeQuery();
 						while(rs.next()){

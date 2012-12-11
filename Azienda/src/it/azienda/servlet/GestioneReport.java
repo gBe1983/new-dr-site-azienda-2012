@@ -448,20 +448,19 @@ public class GestioneReport extends BaseServlet {
 					for(int x = 0; x < listaClienti.size(); x++){
 						ClienteDTO cliente = (ClienteDTO) listaClienti.get(x);
 						
-						try {
-							dtDa.setTime(formatoWeb.parse(request.getParameter("dtDa")));
-							dtA.setTime(formatoWeb.parse(request.getParameter("dtA")));
-						} catch (ParseException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						}
-						
 						
 						for(int y = 0; y < listaAssociazioni.size(); y++){
 							Associaz_Risor_Comm asscomm = (Associaz_Risor_Comm)listaAssociazioni.get(y);
 							if(asscomm.getDescrizioneCliente().equals(cliente.getRagioneSociale())){
 								
 								//mi carico tutte le giornate di quel determinato periodo
+								try {
+									dtDa.setTime(formatoWeb.parse(request.getParameter("dtDa")));
+									dtA.setTime(formatoWeb.parse(request.getParameter("dtA")));
+								} catch (ParseException e) {
+									// TODO Auto-generated catch block
+									e.printStackTrace();
+								}
 								
 								PlanningDTO planning = new PlanningDTO();
 								planning.setRagione_sociale(asscomm.getDescrizioneCliente());
@@ -470,11 +469,8 @@ public class GestioneReport extends BaseServlet {
 										dtDa,
 										dtA,
 										mese,
-										cliente.getId_cliente(),
-										//recupero il valore dal parameter perchè potrebbe essere facoltativo
-										request.getParameter("risorsa"),
-										String.valueOf(asscomm.getId_commessa()
-								)));
+										asscomm.getDescrizioneCommessa()
+								));
 								listaGiornate.add(planning);
 							}
 						}
