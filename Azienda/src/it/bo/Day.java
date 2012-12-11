@@ -60,11 +60,8 @@ public class Day{
 		oreSraordinarie=0;
 	}
 
-	public String getCssStyle() {
-		return (day!=null)?((day.get(Calendar.DAY_OF_WEEK)==Calendar.SATURDAY||day.get(Calendar.DAY_OF_WEEK)==Calendar.SUNDAY)?"holiday":"workDay"):"disabledDay";
+	public String getCssStyle(String tipologia) {
+		return (day!=null)?((!tipologia.equals("riepilogo"))?(day.get(Calendar.DAY_OF_WEEK)==Calendar.SATURDAY||day.get(Calendar.DAY_OF_WEEK)==Calendar.SUNDAY)?"holiday":"workDay":"riepologo"):"disabledDay";
 	}
 	
-	public String getCssStyle(Calendar data) {
-		return (data!=null)?((data.get(Calendar.DAY_OF_WEEK)==Calendar.SATURDAY||data.get(Calendar.DAY_OF_WEEK)==Calendar.SUNDAY)?"holiday":"workDay"):"disabledDay";
-	}
 }

@@ -13,6 +13,8 @@ public class Associaz_Risor_Comm {
 	
 	private String descrizioneCliente;
 	private String descrizioneRisorsa;
+	private String descrizioneCommessa;
+	
 	
 	public Associaz_Risor_Comm() {
 		// TODO Auto-generated constructor stub
@@ -23,7 +25,14 @@ public class Associaz_Risor_Comm {
 		this.descrizioneCliente = descrizioneCliente;
 		this.descrizioneRisorsa = descrizioneRisorsa;
 	}
+	
+	public String getDescrizioneCommessa() {
+		return descrizioneCommessa;
+	}
 
+	public void setDescrizioneCommessa(String descrizioneCommessa) {
+		this.descrizioneCommessa = descrizioneCommessa;
+	}
 	public String getAl() {
 		return al;
 	}

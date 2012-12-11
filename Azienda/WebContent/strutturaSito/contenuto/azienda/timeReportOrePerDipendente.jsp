@@ -107,7 +107,7 @@ if(tr != null){
 			<td>Tipologia: </td>
 			<td>
 				<select name="tipologiaReport">
-					<option selected="selected">-- Seleziona la Tipologia -- </option>
+					<option value="" selected="selected">-- Seleziona la Tipologia -- </option>
 					<option value="1">Commessa Per Cliente</option>
 					<option value="2">Ore per Commessa</option>
 					<option value="3">Ore per Dipendente</option>
@@ -207,7 +207,7 @@ if(tr != null){
 			SimpleDateFormat sdfld = new SimpleDateFormat("E",Locale.ITALIAN);
 			for(Day d:tr.getDays()){
 		%>
-				<td class="<%=d.getCssStyle()%>">
+				<td class="<%=d.getCssStyle("")%>">
 					<%=sdfnd.format(d.getDay().getTime())%>
 					<br>
 					<%=sdfld.format(d.getDay().getTime())%>
@@ -243,7 +243,7 @@ if(tr != null){
 						<%
 									for(Day d:tr.getDays()){
 						%>
-						<td class="<%=d.getCssStyle()%>">
+						<td class="<%=d.getCssStyle("")%>">
 	<%
 					for(PlanningDTO p:tr.getRisorse().get(risorseKey).getCommesse().get(commessaKey)){
 						if(	(p.getData().get(Calendar.DAY_OF_YEAR))==(d.getDay().get(Calendar.DAY_OF_YEAR))&&
@@ -280,7 +280,7 @@ if(tr != null){
 		<%
 				for(Day d:tr.getDays()){
 		%>
-						<td class="<%=d.getCssStyle()%>">
+						<td class="<%=d.getCssStyle("riepilogo")%>">
 							<div class="OreOrdinarie"><%=d.getOreOrdinarie()%></div>
 						<br>
 							<div class="OreStraordinarie"><%=d.getOreSraordinarie()%></div>

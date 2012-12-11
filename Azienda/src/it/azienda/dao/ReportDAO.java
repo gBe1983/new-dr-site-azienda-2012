@@ -395,7 +395,7 @@ public class ReportDAO extends BaseDao {
 	
 	public ArrayList<Associaz_Risor_Comm> caricamentoAssociazioni(String dataDa, String dataA, String id_cliente, String id_risorsa, String id_commessa){
 		
-		String sql = "SELECT cliente.ragione_sociale, commessa.id_commessa,risorse.id_risorsa, risorse.nome, risorse.cognome " +
+		String sql = "SELECT cliente.ragione_sociale, commessa.descrizione, commessa.id_commessa,risorse.id_risorsa, risorse.nome, risorse.cognome " +
 				" FROM tbl_planning planning, tbl_associaz_risor_comm asscommessa,tbl_commesse commessa,tbl_risorse risorse, tbl_clienti cliente " +
 				" WHERE asscommessa.id_commessa=commessa.id_commessa " +
 				" AND planning.id_associazione=asscommessa.id_associazione " +
@@ -404,12 +404,17 @@ public class ReportDAO extends BaseDao {
 				" AND planning.data >= ? " +
 				" AND planning.data <= ? ";
 				
+				//if(id_cliente != null && id_cliente != "" && id_cliente != "all");
 				if(isValidFilter(id_cliente)){
 					sql += " and cliente.id_cliente = ?";
 				}
+				
+				//if(id_risorsa != null && id_risorsa != "" && id_risorsa != "all");
 				if(isValidFilter(id_risorsa)){
 					sql += " and asscommessa.id_risorsa = ?";
 				}
+				
+				//if(id_commessa != null && id_commessa != "" && id_commessa != "all");
 				if(isValidFilter(id_commessa)){
 					sql += " and asscommessa.id_commessa = ?";
 				}
@@ -441,6 +446,7 @@ public class ReportDAO extends BaseDao {
 			while(rs.next()){
 				Associaz_Risor_Comm asscommessa = new Associaz_Risor_Comm();
 				asscommessa.setDescrizioneCliente(rs.getString("ragione_sociale"));
+				asscommessa.setDescrizioneCommessa(rs.getString("descrizione"));
 				asscommessa.setId_commessa(rs.getInt("id_commessa"));
 				asscommessa.setId_risorsa(rs.getInt("id_risorsa"));
 				asscommessa.setDescrizioneRisorsa(rs.getString("cognome") + " " + rs.getString("nome"));
@@ -455,31 +461,90 @@ public class ReportDAO extends BaseDao {
 		
 	}
 	
-	public ArrayList<PlanningDTO> caricamentoGiornatePerCliente(Calendar dtDa, Calendar dtA, String id_cliente, String id_risorsa, String id_commessa){
+	public ArrayList<PlanningDTO> caricamentoOrePerCliente(Calendar dtDa, Calendar dtA, int mesi,String id_cliente, String id_risorsa, String id_commessa){
 		
-		Calendar dataDa = dtDa;
+		SimpleDateFormat formatoGiorni = new SimpleDateFormat("dd");
 		
-		/*
-		 * recupero i giorni di differenza tra dtDa e dtA
-		 */
-		double giorni = dataDa.getTimeInMillis() - dtA.getTimeInMillis();
-		
-		long giornieffettivi = Math.round(Math.round(giorni / 1000 / 60 / 60 / 24));
-		giornieffettivi = Math.abs(giornieffettivi);
-		
-		log.info("processRequest - GestioneReport", String.valueOf(giornieffettivi));
-		
+		//creo l'array list per caricare le giornate
 		ArrayList<PlanningDTO> listaGiornate = new ArrayList<PlanningDTO>();
-		
-		for(int x = 0; x < giornieffettivi; x++){
-		
-			String sql = "SELECT planning.data, sum(planning.num_ore), sum(planning.straordinari) " +
+
+		//verifico i mesi di differenza che ci sono tra la data inizio e la data fine
+		if(mesi == 0){
+			String sql = "SELECT commessa.descrizione, sum(planning.num_ore), sum(planning.straordinari) " +
 					" FROM tbl_planning planning, tbl_associaz_risor_comm asscommessa,tbl_commesse commessa, tbl_clienti cliente,tbl_risorse risorsa " +
 					" WHERE asscommessa.id_commessa=commessa.id_commessa " +
 					" AND asscommessa.id_risorsa = risorsa.id_risorsa " +
 					" AND planning.id_associazione=asscommessa.id_associazione " +
 					" AND commessa.id_cliente=cliente.id_cliente " +
-					" AND planning.data = ? " +
+					" AND planning.data >= ? " +
+					" AND planning.data <= ?" +
+					" AND cliente.id_cliente = ?";
+			
+					if(isValidFilter(id_risorsa)){
+						sql += " and asscommessa.id_risorsa = ?";
+					}
+					
+					if(isValidFilter(id_commessa)){
+						sql += " and asscommessa.id_commessa = ?";
+					}
+			
+				PreparedStatement ps=null;
+				ResultSet rs=null;
+				
+				int i = 1;
+				try {
+					ps = connessione.prepareStatement(sql);
+					ps.setString(i++, formattaDataServer.format(dtDa.getTime()));
+					ps.setString(i++, formattaDataServer.format(dtA.getTime()));
+					ps.setString(i++, id_cliente);
+					
+					if(isValidFilter(id_risorsa)){
+						ps.setInt(i++, Integer.parseInt(id_risorsa));
+					}
+					if(isValidFilter(id_commessa)){
+						ps.setInt(i++, Integer.parseInt(id_commessa));
+					}
+					
+					rs = ps.executeQuery();
+					while(rs.next()){
+						PlanningDTO planning = new PlanningDTO();
+						planning.setDescrizione_commessa(rs.getString(1));
+						planning.setNumeroOre(rs.getDouble(2));
+						planning.setStraordinari(rs.getDouble(3));
+						listaGiornate.add(planning);
+					}
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}finally{
+					close(ps, rs);
+				}
+			}else{
+				
+				for(int x = 0; x <= mesi; x++){
+					
+					//calcolo il giorno iniziale
+					int giornoDiPartenza = Integer.parseInt(formatoGiorni.format(dtDa.getTime()));
+					
+					//calcolo i giorni massimi di un mese
+					int giorniMassimi = dtDa.getActualMaximum(Calendar.DAY_OF_MONTH);
+					
+					//effettuo la differenza tra il giorno iniale e il massimo dei giorni
+					int differenzaGiorni = giorniMassimi - giornoDiPartenza;
+					
+					//creo un clone della data
+					Calendar dataFine = (Calendar)dtDa.clone();
+					dataFine.add(Calendar.DAY_OF_MONTH, differenzaGiorni);
+					
+						
+					String sql = "SELECT commessa.descrizione, sum(planning.num_ore), sum(planning.straordinari) " +
+					" FROM tbl_planning planning, tbl_associaz_risor_comm asscommessa,tbl_commesse commessa, tbl_clienti cliente,tbl_risorse risorsa " +
+					" WHERE asscommessa.id_commessa=commessa.id_commessa " +
+					" AND asscommessa.id_risorsa = risorsa.id_risorsa " +
+					" AND planning.id_associazione=asscommessa.id_associazione " +
+					" AND commessa.id_cliente=cliente.id_cliente " +
+					" AND planning.data >= ? " +
+					" AND planning.data <= ?" +
 					" AND cliente.id_cliente = ?";
 			
 					if(isValidFilter(id_risorsa)){
@@ -489,53 +554,52 @@ public class ReportDAO extends BaseDao {
 						sql += " and asscommessa.id_commessa = ?";
 					}
 			
-			PlanningDTO planning = new PlanningDTO();
-			planning.setNumeroOre(0.0);
-			planning.setStraordinari(0.0);
-			
-			Calendar calendar = Calendar.getInstance();
-			
-			PreparedStatement ps=null;
-			ResultSet rs=null;
-			
-			int i = 1;
-			try {
-				ps = connessione.prepareStatement(sql);
-				ps.setString(i++, formattaDataServer.format(dtDa.getTime()));
-				ps.setString(i++, id_cliente);
-				
-				if(isValidFilter(id_risorsa)){
-					ps.setInt(i++, Integer.parseInt(id_risorsa));
-				}
-				if(isValidFilter(id_commessa)){
-					ps.setInt(i++, Integer.parseInt(id_commessa));
-				}
-				
-				rs = ps.executeQuery();
-				while(rs.next()){
-					if(rs.getString(1) != null){
-						calendar.setTime(formattaDataWeb.parse(formattaDataWeb.format(formattaDataServer.parse(rs.getString(1)))));
-					}else{
-						calendar.setTime(dtDa.getTime());
+					PreparedStatement ps=null;
+					ResultSet rs=null;
+					
+					int i = 1;
+					try {
+						ps = connessione.prepareStatement(sql);
+						ps.setString(i++, formattaDataServer.format(dtDa.getTime()));
+						
+						/*
+						 * verifico che la data fine che mi sono calcolato non sia maggiore della data
+						 * fine impostata nella ricerca
+						 */
+						if(dataFine.getTime().after(dtA.getTime())){
+							ps.setString(i++, formattaDataServer.format(dtA.getTime()));
+						}else{
+							ps.setString(i++, formattaDataServer.format(dataFine.getTime()));
+						}
+						ps.setString(i++, id_cliente);
+						
+						if(isValidFilter(id_risorsa)){
+							ps.setInt(i++, Integer.parseInt(id_risorsa));
+						}
+						if(isValidFilter(id_commessa)){
+							ps.setInt(i++, Integer.parseInt(id_commessa));
+						}
+						
+						rs = ps.executeQuery();
+						while(rs.next()){
+							PlanningDTO planning = new PlanningDTO();
+							planning.setDescrizione_commessa(rs.getString(1));
+							planning.setNumeroOre(rs.getDouble(2));
+							planning.setStraordinari(rs.getDouble(3));
+							listaGiornate.add(planning);
+						}
+					} catch (SQLException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}finally{
+						close(ps, rs);
 					}
-					planning.setData(calendar);
-					planning.setNumeroOre(rs.getDouble(2));
-					planning.setStraordinari(rs.getDouble(3));
-					listaGiornate.add(planning);
+					//aggiungo i giorni alla data iniziale
+					dtDa.add(Calendar.DAY_OF_MONTH, differenzaGiorni+1);
 				}
-			} catch (SQLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (ParseException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
 			}
-			
-			dataDa.add(Calendar.DATE, 1);
-		}
 		
 		return listaGiornate;
-		
 	}
 	
 	public ArrayList<ClienteDTO> caricamentoClienti(String dataDa, String dataA){
@@ -574,7 +638,34 @@ public class ReportDAO extends BaseDao {
 		
 	}
 	
-	
+	public int differenzaMesi(Calendar dataDa, Calendar dataA){
+		
+		SimpleDateFormat formato = new SimpleDateFormat("yyyyMM");
+		
+		String sql = "select period_diff(?,?) as differenzaMesi";
+		
+		int differenzaMesi = 0;
+		
+		PreparedStatement ps=null;
+		ResultSet rs=null;
+		
+		try {
+			ps = connessione.prepareStatement(sql);
+			ps.setString(1, formato.format(dataA.getTime()));
+			ps.setString(2, formato.format(dataDa.getTime()));
+			rs = ps.executeQuery();
+			while(rs.next()){
+				differenzaMesi = rs.getInt(1);
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}finally{
+			close(ps, rs);
+		}
+		
+		return differenzaMesi;
+	}
 
 	private boolean isValidFilter(String v){
 		return v!=null&&!"".equals(v)&&!"all".equals(v);

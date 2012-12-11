@@ -32,11 +32,13 @@ if(request.getSession().getAttribute("utenteLoggato") != null){
 	List<CommessaDTO>commesse=(List<CommessaDTO>)request.getAttribute("commesse");
 	List<RisorsaDTO>risorse=(List<RisorsaDTO>)request.getAttribute("risorse");
 	List<ClienteDTO>clienti=(List<ClienteDTO>)request.getAttribute("clienti");
-	TimeReport tr=(TimeReport)request.getAttribute("timeReport");
 	String dtDa=(String)request.getAttribute("dtDa");
 	String dtA=(String)request.getAttribute("dtA");
+	ArrayList<String> mesi = (ArrayList<String>) request.getAttribute("calendario");
 	ArrayList<ClienteDTO> listaClienti = (ArrayList<ClienteDTO>) request.getAttribute("listaClienti");
+	ArrayList<Associaz_Risor_Comm> listaAssociazioni = (ArrayList<Associaz_Risor_Comm>) request.getAttribute("listaAssCommessa");
 	ArrayList<PlanningDTO> listaGiornate = (ArrayList<PlanningDTO>) request.getAttribute("listaGiornate");
+
 %>
 <div class="subtitle">
 	<h2>Visualizzazzione Consuntuvi</h2>
@@ -63,7 +65,7 @@ if(request.getSession().getAttribute("utenteLoggato") != null){
 <%
 	for(ClienteDTO cliente:clienti){
 %>
-					<option value="<%=cliente.getId_cliente()%>"<%if(cliente.getId_cliente().equals(tr.getIdCliente())){%> selected="selected"<%}%>>
+					<option value="<%=cliente.getId_cliente()%>">
 						<%=cliente.getRagioneSociale()%>
 					</option>
 <%
@@ -80,7 +82,7 @@ if(request.getSession().getAttribute("utenteLoggato") != null){
 <%
 	for(CommessaDTO commessa:commesse){
 %>
-					<option value="<%=commessa.getId_commessa() %>"<%if(tr.getIdCommessa()!=null&&tr.getIdCommessa().equals(commessa.getId_commessa()+"")){%> selected="selected"<%}%>>
+					<option value="<%=commessa.getId_commessa() %>">
 						<%=commessa.getCodiceCommessa() + " - " + commessa.getDescrizione() %>
 					</option>
 <%
@@ -99,7 +101,7 @@ if(request.getSession().getAttribute("utenteLoggato") != null){
 <%
 	for(RisorsaDTO risorsa:risorse){
 %>
-					<option value="<%=risorsa.getIdRisorsa()%>"<%if(tr.getIdRisorsa()!=null&&tr.getIdRisorsa().equals(risorsa.getIdRisorsa()+"")){%> selected="selected"<%}%>>
+					<option value="<%=risorsa.getIdRisorsa()%>">
 						<%=risorsa.getCognome()%> <%=risorsa.getNome()%>
 					</option>
 <%
@@ -125,78 +127,96 @@ if(request.getSession().getAttribute("utenteLoggato") != null){
 <br>
 
 <%
-if(tr != null && listaGiornate.size() > 0){
+	if(listaGiornate.size() > 0){
 	
 	%>
-	<div class="timeReport">
-	<table class="timeReport">
-		<tr>
-			<td>
-			</td>
-		<%
-			SimpleDateFormat sdfnd = new SimpleDateFormat("d");
-			SimpleDateFormat sdfld = new SimpleDateFormat("E",Locale.ITALIAN);
-			for(Day d:tr.getDays()){
-		%>
-				<td class="<%=d.getCssStyle()%>">
-					<%=sdfnd.format(d.getDay().getTime())%>
-					<br>
-					<%=sdfld.format(d.getDay().getTime())%>
+		<div class="timeReport">
+		<table class="timeReport" border="0">
+			<tr>
+				<td class="intestazioni">
+					<span>Cliente/Commessa</span>
 				</td>
-		<%
-			}
-		%>
-		</tr>
-		
-	<%
-				
-				for(int k = 0; k < listaGiornate.size(); k++){
-					double totaleOrdinarie = 0;
-					double totaleStraordinario = 0;
-					PlanningDTO planning = (PlanningDTO) listaGiornate.get(k);
-	%>
-					<tr>
-						<td colspan="<%=tr.getDays().size() %>">
-							<br>
+				<%
+					for(String mese:mesi){
+				%>		
+						<td  class="intestazioni">	
+							<span><%=mese %></span>
 						</td>
-					<tr>
-					<tr>
-						<td class="cliente" ><%=planning.getRagione_sociale() %></td>			
-<%				
-						ArrayList<PlanningDTO> listaGiorni = planning.getListaGiornate();
-						
-						for(int i = 0; i < listaGiorni.size(); i++){
-							PlanningDTO plan = (PlanningDTO)listaGiorni.get(i);
-							Day day = new Day(plan.getData());
-							totaleOrdinarie += plan.getNumeroOre();
-							totaleStraordinario += plan.getStraordinari();
-%>
-								<td class="<%=day.getCssStyle()%>">
-									<div class="OreOrdinarie"><%=plan.getNumeroOre()%></div>
-									<br>
-									<div class="OreStraordinarie"><%=plan.getStraordinari()%></div>
-								</td>
-<%
-						}
-%>		
-						<tr>
-							<td colspan="<%=tr.getDays().size() %>" class="risorsa">
-								Totale Ore: <%=totaleOrdinarie + totaleStraordinario %>
-							</td>
-						</tr>
-					</tr>			
-<%			
-				}
-%>				
+				<%		
+					}
+				%>
+				<td  class="intestazioni">
+					<span>Totale Ore</span>
+				</td>
+			</tr>
+			
+			<%
+			for(int y = 0; y < listaClienti.size(); y++){
+				ClienteDTO client = (ClienteDTO) listaClienti.get(y);
 				
+				boolean cliente = false;
+				
+				for(int x = 0; x < listaAssociazioni.size(); x++){
+					Associaz_Risor_Comm asscomm = (Associaz_Risor_Comm)listaAssociazioni.get(x);
+					if(asscomm.getDescrizioneCliente().equals(client.getRagioneSociale())){
+			%>		
+				<tr>
+					<td colspan="<%=mesi.size()+2 %>">
+						<br>
+					</td>
+				<tr>
+				<tr>
+					<%
+						if(!cliente){
+							cliente = true;
+					%>
+							<td class="cliente" ><%=client.getRagioneSociale() %></td>
+					<%
+						}	
+					%>
+				</tr>
+				<tr>	
+					  <td class="Commessa"><p><%=asscomm.getDescrizioneCommessa() %></p></td>
+	<%
+						double totaliOre = 0;
+						for(int k = 0; k < listaGiornate.size(); k++){
+							PlanningDTO planning = (PlanningDTO) listaGiornate.get(k);
+							if(planning.getDescrizione_commessa().equals(asscomm.getDescrizioneCommessa()) &&
+								planning.getRagione_sociale().equals(client.getRagioneSociale())){
+								
+								ArrayList<PlanningDTO> listaGiorni = planning.getListaGiornate();
+								
+								for(int i = 0; i < listaGiorni.size(); i++){
+									PlanningDTO plan = (PlanningDTO)listaGiorni.get(i);
+									totaliOre += plan.getNumeroOre() + plan.getStraordinari();
+									
+	%>
+									<td>
+										<div class="totale"><%=plan.getNumeroOre() + plan.getStraordinari()%></div>
+									</td>
+	<%						
+								}
+							}
+						}
+	%>				
+							<td>
+								<div class="totale"><%=totaliOre %></div>
+							</td>
+					</tr>
+										
+	<%	
+				}
+			}
+		}
+	%>
+			
 		</table>
-	</div>
-
-  <%
+		</div>	
+	<%
 	}else{
-  %>	
+	%>	
 		<p align="center">Non ci sono report per il tipo di ricerca effettuata</p>
-  <%		
+ 	<%		
 	}
 
 }else{
