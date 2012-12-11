@@ -74,7 +74,7 @@ input.holiday{
 th.workDay{
 	font:normal 10px verdana, arial, sans-serif;
 	color:black;
-	background-color:#FFF;
+	background-color:#E7D6B6;
 	text-align:center;
 	vertical-align:top;
 	width: 250px;
@@ -83,7 +83,7 @@ th.workDay{
 td.workDay{
 	font:normal 10px verdana, arial, sans-serif;
 	color:black;
-	background-color:#FFF;
+	background-color:#E7D6B6;
 	text-align:center;
 	vertical-align:top;
 }
@@ -161,6 +161,13 @@ div.OreOrdinarie{
 	color:black;
 }
 
+.totale{
+	font:normal 12px verdana, arial, sans-serif;
+	color: black;
+	text-align: center;
+}
+
+
 div.OreStraordinarie{
 	font:normal 12px verdana, arial, sans-serif;
 	color:red;
@@ -175,7 +182,19 @@ div.OreTotali{
 	font-size: 14px;
 }
 
+.Commessa{
+	font-size: 14px;
+}
+
 .cliente{
 	font-size: 14px;
 	color: red;
+}
+
+.intestazioni{
+	width: 80px;
+	font:normal 14px verdana, arial, sans-serif;
+	color:black;
+	background: #DDD;
+	text-align: center;
 }

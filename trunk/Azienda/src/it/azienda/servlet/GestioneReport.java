@@ -348,67 +348,142 @@ public class GestioneReport extends BaseServlet {
 				
 				if(tipologiaReport.equals("1")){
 					
+					//creo il formato per recuperare il mese
+					SimpleDateFormat formatoMese = new SimpleDateFormat("MM");
+					
+					//creo il formato per recuperare l'anno
+					SimpleDateFormat formatoAnno = new SimpleDateFormat("yyyy");
+					
+					//creo il formato per recuperare il mese
+					SimpleDateFormat formatoWeb = new SimpleDateFormat("dd-MM-yyyy");
+					
+					ArrayList<String> mesi = new ArrayList<String>();
+					
+					ArrayList<PlanningDTO> listaGiornate = new ArrayList<PlanningDTO>();
+
+					//recupero la differenza dei mesi
+					int diffMesi = reportDAO.differenzaMesi(dtDa, dtA);
+					
+					//creo un clone della differenza dei mesi
+					int mese = diffMesi;
+					
+					//recupero il mese e anno dalla data iniziale
+					int meseIniziale = Integer.parseInt(formatoMese.format(dtDa.getTime()));
+					int annoIniziale = Integer.parseInt(formatoAnno.format(dtDa.getTime()));
+					
+					/*
+					 * tramite questo switch effettuo la stampa dei mesi di differenza
+					 * che ci sono tra la data iniziale da quella finale.
+					 */
+					do{
+						switch(meseIniziale){
+							case 1:
+								mesi.add("Gennaio "+annoIniziale);
+								break;
+							case 2:
+								mesi.add("Febbraio "+annoIniziale);
+								break;
+							case 3:
+								mesi.add("Marzo "+annoIniziale);
+								break;
+							case 4:
+								mesi.add("Aprile "+annoIniziale);
+								break;
+							case 5:
+								mesi.add("Maggio "+annoIniziale);
+								break;
+							case 6:
+								mesi.add("Giugno "+annoIniziale);
+								break;
+							case 7:
+								mesi.add("Luglio "+annoIniziale);
+								break;
+							case 8:
+								mesi.add("Agosto "+annoIniziale);
+								break;
+							case 9:
+								mesi.add("Settembre "+annoIniziale);
+								break;
+							case 10:
+								mesi.add("Ottobre "+annoIniziale);
+								break;
+							case 11:
+								mesi.add("Novembre "+annoIniziale);
+								break;
+							case 12:
+								mesi.add("Dicembre "+annoIniziale);
+								break;
+						}
+						dtDa.add(Calendar.MONTH, 1);
+						meseIniziale = Integer.parseInt(formatoMese.format(dtDa.getTime()));
+						annoIniziale = Integer.parseInt(formatoAnno.format(dtDa.getTime()));
+						diffMesi--;
+						
+					}while (diffMesi >= 0);
+					
+					//ricarico la variabile dtDa in quanto modificata in precedenza
+					try {
+						dtDa.setTime(sdf.parse(request.getParameter("dtDa")));
+					} catch (Exception e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					
+					//carico tutti i clienti di quel determinato periodo
 					ArrayList<ClienteDTO> listaClienti = 
 						new ReportDAO(
 								conn.getConnection()).caricamentoClienti(
 										formattazioneSql.format(dtDa.getTime()),
 												formattazioneSql.format(dtA.getTime()));
 					
+					//carico tutte le associazioni relative al quel determinato periodo
+					ArrayList<Associaz_Risor_Comm> listaAssociazioni = 
+						new ReportDAO(conn.getConnection()).caricamentoAssociazioni(
+												formattazioneSql.format(dtDa.getTime()),
+												formattazioneSql.format(dtA.getTime()),
+												request.getParameter("cliente"), 
+												request.getParameter("risorsa"), 
+												request.getParameter("commessa"));
 					
-					
-					ArrayList<PlanningDTO> listaGiornatePerCliente = new ArrayList<PlanningDTO>();
-					
-					if(request.getParameter("cliente").equals("all")){
+					for(int x = 0; x < listaClienti.size(); x++){
+						ClienteDTO cliente = (ClienteDTO) listaClienti.get(x);
 						
-						for(int y = 0; y < listaClienti.size(); y++){
-							ClienteDTO cliente = (ClienteDTO) listaClienti.get(y);
-							
-							PlanningDTO planning = new PlanningDTO();
-							planning.setRagione_sociale(cliente.getRagioneSociale());
-							try {
-								dtDa.setTime(sdf.parse(request.getParameter("dtDa")));
-								dtA.setTime(sdf.parse(request.getParameter("dtA")));
-								dtA.add(Calendar.DATE,1);
-							} catch (ParseException e) {
-								// TODO Auto-generated catch block
-								e.printStackTrace();
-							}
-							
-							planning.setListaGiornate(reportDAO.caricamentoGiornatePerCliente(dtDa,dtA,cliente.getId_cliente(), request.getParameter("risorsa"), request.getParameter("commessa")));
- 							listaGiornatePerCliente.add(planning);
-						}
-					}else{
-						
-						PlanningDTO planning = new PlanningDTO();
-						planning.setRagione_sociale(new ClienteDAO(conn.getConnection()).caricamentoNominativo(request.getParameter("cliente")));
 						try {
-							dtDa.setTime(sdf.parse(request.getParameter("dtDa")));
-							dtA.setTime(sdf.parse(request.getParameter("dtA")));
-							dtA.add(Calendar.DATE,1);
+							dtDa.setTime(formatoWeb.parse(request.getParameter("dtDa")));
+							dtA.setTime(formatoWeb.parse(request.getParameter("dtA")));
 						} catch (ParseException e) {
 							// TODO Auto-generated catch block
 							e.printStackTrace();
 						}
 						
-						planning.setListaGiornate(reportDAO.caricamentoGiornatePerCliente(dtDa,dtA,request.getParameter("cliente"), request.getParameter("risorsa"), request.getParameter("commessa")));
-						listaGiornatePerCliente.add(planning);
 						
+						for(int y = 0; y < listaAssociazioni.size(); y++){
+							Associaz_Risor_Comm asscomm = (Associaz_Risor_Comm)listaAssociazioni.get(y);
+							if(asscomm.getDescrizioneCliente().equals(cliente.getRagioneSociale())){
+								
+								//mi carico tutte le giornate di quel determinato periodo
+								
+								PlanningDTO planning = new PlanningDTO();
+								planning.setRagione_sociale(asscomm.getDescrizioneCliente());
+								planning.setDescrizione_commessa(asscomm.getDescrizioneCommessa());
+								planning.setListaGiornate(new ReportDAO(conn.getConnection()).caricamentoOrePerCliente(
+										dtDa,
+										dtA,
+										mese,
+										cliente.getId_cliente(),
+										//recupero il valore dal parameter perchè potrebbe essere facoltativo
+										request.getParameter("risorsa"),
+										String.valueOf(asscomm.getId_commessa()
+								)));
+								listaGiornate.add(planning);
+							}
+						}
 					}
 					
-					try {
-						dtDa.setTime(sdf.parse(request.getParameter("dtDa")));
-						dtA.setTime(sdf.parse(request.getParameter("dtA")));
-					} catch (ParseException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-					
-					TimeReport timeReport = new TimeReport();
-					timeReport.setDays(dtDa, dtA);
-					
-					request.setAttribute("timeReport", timeReport);
+					request.setAttribute("listaGiornate", listaGiornate);
+					request.setAttribute("listaAssCommessa", listaAssociazioni);
 					request.setAttribute("listaClienti", listaClienti);
-					request.setAttribute("listaGiornate", listaGiornatePerCliente);
+					request.setAttribute("calendario", mesi);
 					
 					getServletContext().getRequestDispatcher("/main.jsp?azione=visualizzaConsuntivi&tipologia=1").forward(request, response);
 										

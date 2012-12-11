@@ -42,6 +42,7 @@ if(request.getSession().getAttribute("utenteLoggato") != null){
 <div class="subtitle">
 	<h2>Visualizzazzione Consuntuvi</h2>
 </div>
+
 <form action="./GestioneReport" method="post" name="report">
 	<input type="hidden" name="azione" value="visualizzaConsuntivi">
 	<table class="filter">
@@ -139,7 +140,7 @@ if(tr != null && listaGiornate.size() > 0){
 			SimpleDateFormat sdfld = new SimpleDateFormat("E",Locale.ITALIAN);
 			for(Day d:tr.getDays()){
 		%>
-				<td class="<%=d.getCssStyle()%>">
+				<td class="<%=d.getCssStyle("")%>">
 					<%=sdfnd.format(d.getDay().getTime())%>
 					<br>
 					<%=sdfld.format(d.getDay().getTime())%>
@@ -198,7 +199,7 @@ if(tr != null && listaGiornate.size() > 0){
 										if(data.getDay().getTime().equals(plan.getData().getTime())){
 											spazioVuoto = true;
 	%>
-											<td class="<%=day.getCssStyle()%>">
+											<td class="<%=day.getCssStyle("")%>">
 												<div class="OreOrdinarie"><%=plan.getNumeroOre()%></div>
 												<br>
 												<div class="OreStraordinarie"><%=plan.getStraordinari()%></div>
@@ -207,7 +208,7 @@ if(tr != null && listaGiornate.size() > 0){
 											break;
 										}else if(!spazioVuoto){
 	%>
-											<td class="<%=day.getCssStyle()%>">
+											<td class="<%=day.getCssStyle("riepilogo")%>">
 												<div class="OreOrdinarie"><br></div>
 												<br>
 												<div class="OreStraordinarie"><br></div>
