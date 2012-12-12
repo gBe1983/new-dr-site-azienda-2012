@@ -419,7 +419,7 @@ public class ReportDAO extends BaseDao {
 					sql += " and asscommessa.id_commessa = ?";
 				}
 				
-				sql += " group by ragione_sociale ORDER BY ragione_sociale";
+				sql += " group by descrizione ORDER BY ragione_sociale";
 		
 		ArrayList<Associaz_Risor_Comm> listaAssociazioni = new ArrayList<Associaz_Risor_Comm>();
 		
