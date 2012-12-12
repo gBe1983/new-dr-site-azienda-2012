@@ -560,7 +560,7 @@ if(controlloUtenteLoggato.getAttribute("utenteLoggato") != null){
 <table>
 	<tr>
 		<td>
-			<input type="submit" value="inserisci trattativa" id="inserisciTrattativa" onclick="return controlloModificaTrattativa('<%=trattativa.getId_tipologiaTrattative() %>')"/>
+			<input type="submit" value="modifica trattativa" id="inserisciTrattativa" onclick="return controlloModificaTrattativa('<%=trattativa.getId_tipologiaTrattative() %>')"/>
 		</td>
 		<td>
 			<input type="reset" value="svuota campi" />

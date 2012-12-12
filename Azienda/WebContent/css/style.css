@@ -1,7 +1,7 @@
 /*stili per il layout fisso*/
 html,body{margin: 0;padding:0;}
 body{font: 12px arial,sans-serif;color: #000;text-align:center}
-div#container{width: 1024px;margin: 20px auto ;text-align: left; background:#fff;border:1px solid #bbb}
+div#container{width: 1100px;margin: 20px auto ;text-align: left; background:#fff;border:1px solid #bbb}
 
 h1,h2{margin: 0;padding:0}
 h1{padding-left:0.5em;font: bold 1em/80px arial,serif;color: #000;}
@@ -11,7 +11,7 @@ a{text-decoration: none;}
 a:hover{    color: #fff;    background:#bbb;-moz-border-radius: 10px;-webkit-border-radius: 10px;border-radius: 10px ;}
 img{margin: 0 auto;display:block;width:95%}
 /*stili generici, su header e footer*/
-div#header{width: 1024px;margin: 0px auto; color: #000;height:55px}
+div#header{width: 1100px;margin: 0px auto; color: #000;height:55px}
 
 /*stili specifici per il layout*/
 div#extra{float:left;width: 200px;margin:0 0 0 10px;}
@@ -21,8 +21,8 @@ div#extra{float:left;width: 200px;margin:0 0 0 10px;}
 .newsbox li{list-style-type:none;}
 .subtitle {font : bold 15px Verdana, Arial, Helvetica, sans-serif;	padding: 5px; text-align : center !important; border-bottom:1px solid #bbb}
 
-div#content{position:relative;float:left; width:1024px;margin:0px; padding:0px;}
-div#content_right{float:right;width: 780px;padding:5px;margin:0; /*border: 1px solid black;*/}
+div#content{position:relative;float:left; width:1100px;margin:0px; padding:0px;}
+div#content_right{float:right;width: 870px;padding:5px;margin:0; /*border: 1px solid black;*/}
 
 div#footer{clear:both; text-align:center; padding: 0.5em; background:#eee; color: #000;border-top:1px solid #666 !important;}
 div#footer li{display:inline; list-style-type:none;padding:0 10px}
@@ -64,12 +64,9 @@ img.help:hover{cursor:pointer}
 
 #indice tr td a{color: black;}
 
-#tabellaTrattavive{width: 780px;}
-#tabellaTrattavive tr td {width: auto; padding: 0px 5px; text-align: center;}
-
 #benvenuto{float:right; color: bbb; margin: 0px; padding: 5px 11px;}
 #scrittaBenvenuto {color: 000;}
-#visualizzaRisorsa{width: 780px; border: 1px; text-align: center;}
+
 #nuovaCommessa{display: none;}
 #commessaEsistente{display: none;}
 
@@ -77,9 +74,6 @@ img.help:hover{cursor:pointer}
 
 #ricercaTrattative{margin: 0px; padding: 0px;}
 
-
-#visualizzaCommesse{width: 780px; text-align: center;}
-#visualizzaCommesse tr td {width: auto; padding: 0px 5px;}
 
 #visualizzaRisorseCommesse{width: 780px; text-align: center;}
 #visualizzaRisorseCommesse tr td {width: auto; padding: 0px 5px;}
@@ -108,9 +102,9 @@ img.help:hover{cursor:pointer}
 
 /*formattazione per le immagini dettaglio, modifica elimina */
 
-#dettaglio{width: 22px; height: 22px; border: 0px;}
-#modifica{width: 22px; height: 22px; border: 0px;}
-#disabilita{width: 18px; height: 18px; border: 0px;}
+#dettaglio{width: 17px; height: 17px; border: 0px;}
+#modifica{width: 17px; height: 17px; border: 0px;}
+#disabilita{width: 10px; height: 10px; border: 0px;}
 #aggiungiRisorsa{width: 18px; height: 18px; border: 0px;}
 #dissociazioneRisorsa{width: 18px; height: 18px; border: 0px;}
 
@@ -139,3 +133,26 @@ img.help:hover{cursor:pointer}
 /* sezione trattative */
 #ricercaTrattattive {margin-top: 80px; }
 .modificaTrattative {margin-top: 80px; }
+
+/*gestione tabelle */
+
+#visualizzaRisorsa{ }
+
+.visualizzaChannel { /*border: 1px solid #black;*/ margin-top: 80px; width: 700px;}
+
+.visualizzaChannel h3 { margin: 0; width: 40%; font-size: 1em;font-weight: bold; text-transform: uppercase;text-align: right;padding: 1em 0.5em 1em 0;border-right: 1px solid;}
+
+.visualizzaChannel {background:#fff; text-align: center; padding: 20px; }
+
+#channel{ font-family: "Lucida Sans Unicode", "Lucida Grande", Sans-Serif; font-size: 12px; margin: 45px;width: 840px; text-align: center; border-collapse: collapse; margin: auto; }
+
+#channel th{ font-size: 13px; font-weight: normal; padding: 8px; background: #b9c9fe url(../images/gradhead.png) repeat-x; border-top: 2px solid #d3ddff; border-bottom: 1px solid #fff; color: #039; }
+
+#channel td{ padding: 8px;  border-bottom: 1px solid #fff; color: #669; border-top: 1px solid #fff; background: #e8edff url(../images/gradback.png) repeat-x; }
+
+#channel tfoot tr td{ background: #e8edff; font-size: 12px; color: #99c; }
+
+#channel tbody tr:hover td{ background: #d0dafd url(../images/gradhover.png) repeat-x; color: #339; }
+
+
+/* fine gestione tabelle */

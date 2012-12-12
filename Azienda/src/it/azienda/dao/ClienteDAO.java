@@ -173,9 +173,9 @@ public class ClienteDAO extends BaseDao {
 		log.start(metodo);
 		StringBuilder sql = new StringBuilder("SELECT id_cliente,ragione_sociale,indirizzo,cap,citta,");
 		sql	.append("provincia,p_iva,referente,telefono,cellulare,fax,email,")
-				.append("sito,attivo,cod_fiscale,id_conto_corrente")
-				.append("FROM tbl_clienti WHERE ")
-				.append(((codiceCliente == null)?"ragione_sociale":"id_cliente"))
+				.append("sito,attivo,cod_fiscale,id_conto_corrente ")
+				.append(" FROM tbl_clienti WHERE ")
+				.append(((codiceCliente == null)?" ragione_sociale":"id_cliente"))
 				.append("=?");
 		log.debug(metodo, sql.toString());
 		PreparedStatement ps=null;
