@@ -15,7 +15,8 @@
 		</tr>
 	</table>
 </div>
-
+<div class="spazio">
+	<div class="visualizzaChannel">
 <% 
 HttpSession sessioneRisorse = request.getSession();
 if(sessioneRisorse.getAttribute("utenteLoggato") != null){
@@ -24,16 +25,14 @@ if(sessioneRisorse.getAttribute("utenteLoggato") != null){
 		listaRisorse = (ArrayList) sessioneRisorse.getAttribute("listaRisorse");
 		if(listaRisorse.size() > 0){
 %>
-		<table id="visualizzaRisorsa">
+		<table id="channel">
 			<th>Cognome</th>
 			<th>Nome</th>
 			<th>Costo</th>
 			<th>Figura Professionale</th>
 			<th>Seniority</th>
 			<th>Città</th>
-			<tr>
-				<td colspan="8" /><hr size="1"></td>
-			</tr>
+			<th colspan="2">Scelta</th>
 <%
 		for(int x = 0; x < listaRisorse.size(); x++){
 			
@@ -67,4 +66,6 @@ if(sessioneRisorse.getAttribute("utenteLoggato") != null){
 <%
 }
 %>
-</table>
+		</table>
+	</div>
+</div>

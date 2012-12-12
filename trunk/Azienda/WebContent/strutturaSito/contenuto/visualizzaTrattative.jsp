@@ -102,17 +102,16 @@ if(controlloUtenteLoggato.getAttribute("utenteLoggato") != null){
 	if(request.getAttribute("listaTrattattive") != null){
 		if(((ArrayList) request.getAttribute("listaTrattattive")).size() > 0 && request.getParameter("dettaglioTrattativa") == null){
 			ArrayList listaTrattative = (ArrayList) request.getAttribute("listaTrattattive");
-			
-	%>	
-			<table id="tabellaTrattavive">
+
+	%>
+	<div class="visualizzaChannel">
+			<table id="channel">
 				<th>Cliente</th>
 				<th>Risorsa</th>
 				<th>Data</th>
 				<th>Oggetto</th>
 				<th>Esito/CodiceCommessa</th>
-				<tr>
-					<td colspan="10" /><hr size="1"></td>
-				</tr>
+				<th colspan="2"> Scelta </th>
 					
 				
 	<%
@@ -183,6 +182,12 @@ if(controlloUtenteLoggato.getAttribute("utenteLoggato") != null){
 							<%		
 									}
 								}
+							}else{
+							%>	
+								<td>
+									<br>
+								</td>
+							<%
 							}
 							%>
 						</tr>		
@@ -190,6 +195,7 @@ if(controlloUtenteLoggato.getAttribute("utenteLoggato") != null){
 				}
 	%>
 		</table>
+	</div>
 	<%
 			}else if(((ArrayList) request.getAttribute("listaTrattattive")).size() == 1 && request.getParameter("dettaglioTrattativa") != null){
 				TrattativeDTO trattative = (TrattativeDTO) ((ArrayList) request.getAttribute("listaTrattattive")).get(0);

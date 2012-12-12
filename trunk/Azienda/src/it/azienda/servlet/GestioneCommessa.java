@@ -27,7 +27,7 @@ import javax.servlet.http.HttpSession;
  */
 public class GestioneCommessa extends BaseServlet {
 	private static final long serialVersionUID = 1L;
-	private MyLogger log;
+	private MyLogger log = new MyLogger(GestioneCommessa.class);
 
 	// mi serve per castare le varie date_inizio e date_fine delle varie
 	// commesse

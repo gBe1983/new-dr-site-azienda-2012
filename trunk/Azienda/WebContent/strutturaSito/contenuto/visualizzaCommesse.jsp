@@ -20,7 +20,7 @@
 		</tr>
 	</table>
 </div>
-
+<div class="visualizzaChannel" >
 <%
 	if(request.getAttribute("chiusuraCommessa") != null){
 		out.print("<p align=\"center\" class=\"spazio\">"+request.getAttribute("chiusuraCommessa").toString()+"</p>");
@@ -28,9 +28,10 @@
 
 	if(request.getAttribute("listaCommesse") != null){
 		ArrayList listaCommesse = (ArrayList) request.getAttribute("listaCommesse");
-		if(listaCommesse.size() > 0){		
+		if(listaCommesse.size() > 0){
+			
 %>
-		<table id="visualizzaCommesse">
+		<table id="channel">
 			<th>Cliente</th>
 			<th>Codice Commessa</th>
 			<th>Data Inizio</th>
@@ -38,9 +39,7 @@
 			<th>Importo Commessa</th>
 			<th>Stato</th>
 			<th>Tipologia</th>
-			<tr>
-				<td colspan="9"><hr size="1"></td>
-			</tr>
+			<th colspan="2">Scelta</th>
 <%
 		for(int x = 0; x < listaCommesse.size(); x++){
 			CommessaDTO visualizzaCommessa = (CommessaDTO)listaCommesse.get(x);
@@ -118,15 +117,27 @@
 											<a href="./GestioneCommessa?azione=chiudiCommessa&parametro=<%=visualizzaCommessa.getId_commessa() %>" onclick="return confirm('Vuoi chiudere questa commessa?');"><img src="images/elimina.jpg" alt="dettaglio risorsa" id="disabilita"/></a>
 										</td>
 							<%
+									}else{
+							%>
+										<td>
+											<br>
+										</td>
+							<%
 									}
+								}else{
+							%>
+									<td>
+										<br>
+									</td>
+							<%
 								}
 							%>
-						
 					</tr>
 <%
 		}
 %>
 			</table>
+		</div>
 <%	
 		}else{
 %>
