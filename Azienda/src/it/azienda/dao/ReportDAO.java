@@ -278,6 +278,7 @@ public class ReportDAO extends BaseDao {
 	public TimeReport getTimeReport(Calendar dtDa, Calendar dtA, String idCliente, String idRisorsa, String idCommessa){
 		final String metodo="getTimeReport";
 		log.start(metodo);
+		
 		TimeReport tr = new TimeReport(dtDa, dtA, idCliente, idRisorsa, idCommessa);
 		StringBuilder sql = new StringBuilder("SELECT ");
 		sql	.append("planning.data,planning.num_ore,planning.straordinari,")
@@ -393,7 +394,24 @@ public class ReportDAO extends BaseDao {
 		return listaGiornate;
 	}
 	
+	/**
+	 * 
+	 * @param dataDa
+	 * @param dataA
+	 * @param id_cliente
+	 * @param id_risorsa
+	 * @param id_commessa
+	 * @return ArrayList<Associaz_Risor_Comm>
+	 * 
+	 * tramite questo metodo effettuo il caricamento delle associazioni, a seconda di come vengono
+	 * valorizzati i parametri id_cliente, id_risorsa, id_commessa.
+	 * 
+	 */
+	
 	public ArrayList<Associaz_Risor_Comm> caricamentoAssociazioni(String dataDa, String dataA, String id_cliente, String id_risorsa, String id_commessa){
+		
+		final String metodo="caricamentoAssociazioni";
+		log.start(metodo);
 		
 		String sql = "SELECT cliente.ragione_sociale, commessa.descrizione, commessa.id_commessa,risorse.id_risorsa, risorse.nome, risorse.cognome " +
 				" FROM tbl_planning planning, tbl_associaz_risor_comm asscommessa,tbl_commesse commessa,tbl_risorse risorse, tbl_clienti cliente " +
@@ -454,14 +472,32 @@ public class ReportDAO extends BaseDao {
 			}
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			log.error(metodo, "", e);
+		}finally{
+			close(ps,rs);
+			log.end(metodo);
 		}
 		
 		return listaAssociazioni;
 		
 	}
 	
+	/**
+	 * 
+	 * @param dtDa
+	 * @param dtA
+	 * @param mesi
+	 * @param descrizione
+	 * @return ArrayList<PlanningDTO>
+	 * 
+	 * questo metodo mi serve per il calcolo delle ore totali di un determinato mese
+	 *  
+	 */
+	
 	public ArrayList<PlanningDTO> caricamentoOrePerCliente(Calendar dtDa, Calendar dtA, int mesi, String descrizione){
+		
+		final String metodo="caricamentoOrePerCliente";
+		log.start(metodo);
 		
 		SimpleDateFormat formatoGiorni = new SimpleDateFormat("dd");
 		
@@ -498,9 +534,10 @@ public class ReportDAO extends BaseDao {
 					}
 				} catch (SQLException e) {
 					// TODO Auto-generated catch block
-					e.printStackTrace();
+					log.error(metodo, "", e);
 				}finally{
-					close(ps, rs);
+					close(ps,rs);
+					log.end(metodo);
 				}
 			}else{
 				
@@ -556,9 +593,10 @@ public class ReportDAO extends BaseDao {
 						}
 					} catch (SQLException e) {
 						// TODO Auto-generated catch block
-						e.printStackTrace();
+						log.error(metodo, "", e);
 					}finally{
-						close(ps, rs);
+						close(ps,rs);
+						log.end(metodo);
 					}
 					//aggiungo i giorni alla data iniziale
 					dtDa.add(Calendar.DAY_OF_MONTH, differenzaGiorni+1);
@@ -568,7 +606,19 @@ public class ReportDAO extends BaseDao {
 		return listaGiornate;
 	}
 	
+	/**
+	 * 
+	 * @param dataDa
+	 * @param dataA
+	 * @return ArrayList<ClienteDTO>
+	 * 
+	 * questo metodo mi serve per ricavarmi in maniera ordinata
+	 * tutti i clienti presenti in un determinato periodo
+	 */
+	
 	public ArrayList<ClienteDTO> caricamentoClienti(String dataDa, String dataA){
+		final String metodo="caricamentoClienti";
+		log.start(metodo);
 		
 		String sql = "SELECT cliente.id_cliente, cliente.ragione_sociale" +
 				" FROM tbl_planning planning, tbl_associaz_risor_comm asscommessa,tbl_commesse commessa, tbl_clienti cliente " +
@@ -597,14 +647,29 @@ public class ReportDAO extends BaseDao {
 			}
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			log.error(metodo, "", e);
+		}finally{
+			close(ps, rs);
+			log.end(metodo);
 		}
 		
 		return listaClienti;
 		
 	}
 	
+	/**
+	 * 
+	 * @param dataDa
+	 * @param dataA
+	 * @return int
+	 * 
+	 * Questo metodo serve per calcolare la differenza di mesi
+	 * che cè tra la dataDa e dataA
+	 */
+	
 	public int differenzaMesi(Calendar dataDa, Calendar dataA){
+		final String metodo="caricamentoClienti";
+		log.start(metodo);
 		
 		SimpleDateFormat formato = new SimpleDateFormat("yyyyMM");
 		
@@ -625,9 +690,10 @@ public class ReportDAO extends BaseDao {
 			}
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			log.error(metodo, "", e);
 		}finally{
-			close(ps, rs);
+			close(ps,rs);
+			log.end(metodo);
 		}
 		
 		return differenzaMesi;
