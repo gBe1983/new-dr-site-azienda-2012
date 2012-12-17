@@ -429,14 +429,20 @@ public class GestioneReport extends BaseServlet {
 						e.printStackTrace();
 					}
 					
-					//carico tutti i clienti di quel determinato periodo
+					/*
+					 * effettuo il caricamento della lista di tutti i clienti in maniera ordinata 
+					 * di quel determinato periodo per avere un indice di partenza da cui partire
+					 */
 					ArrayList<ClienteDTO> listaClienti = 
 						new ReportDAO(
 								conn.getConnection()).caricamentoClienti(
 										formattazioneSql.format(dtDa.getTime()),
 												formattazioneSql.format(dtA.getTime()));
 					
-					//carico tutte le associazioni relative al quel determinato periodo
+					/*
+					 * effettuo il caricamento di tutte le associazioni di un determinato periodo,
+					 * a seconda di come viene effettua la ricerca.
+					 */
 					ArrayList<Associaz_Risor_Comm> listaAssociazioni = 
 						new ReportDAO(conn.getConnection()).caricamentoAssociazioni(
 												formattazioneSql.format(dtDa.getTime()),
@@ -445,10 +451,15 @@ public class GestioneReport extends BaseServlet {
 												request.getParameter("risorsa"), 
 												request.getParameter("commessa"));
 					
+					/*
+					 * effettuo il ciclo sui clienti caricati
+					 */
 					for(int x = 0; x < listaClienti.size(); x++){
 						ClienteDTO cliente = (ClienteDTO) listaClienti.get(x);
 						
-						
+						/*
+						 * effettuo il ciclo sulle associazioni caricati
+						 */
 						for(int y = 0; y < listaAssociazioni.size(); y++){
 							Associaz_Risor_Comm asscomm = (Associaz_Risor_Comm)listaAssociazioni.get(y);
 							if(asscomm.getDescrizioneCliente().equals(cliente.getRagioneSociale())){

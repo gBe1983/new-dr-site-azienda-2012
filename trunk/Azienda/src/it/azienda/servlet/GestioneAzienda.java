@@ -159,6 +159,7 @@ public class GestioneAzienda extends BaseServlet{
 		}
 		
 	if(sessione.getAttribute("utenteLoggato") != null){
+		
 		if(azione.equals("visualizzaAzienda") || azione.equals("aggiornaAzienda")){
 			
 			/*
@@ -187,8 +188,8 @@ public class GestioneAzienda extends BaseServlet{
 			}
 			
 			//TODO ricordarsi di cambiare ogni volta per i due ambienti
-			response.sendRedirect("http://drconsulting.tv");
-			//response.sendRedirect("http://cvonline.tv");
+			//response.sendRedirect("http://drconsulting.tv");
+			response.sendRedirect("http://cvonline.tv");
 		
 		}else if(azione.equals("eliminaProfilo")){
 			/*
