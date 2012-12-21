@@ -591,31 +591,26 @@ public class RisorsaDAO extends BaseDao {
 	
 
 	
-	public ArrayList invioEmail(){
-		
+	public ArrayList<RisorsaDTO>invioEmail(){
+		final String metodo="caricamentoCommessa";
+		log.start(metodo);
 		String sql = "select * from utente";
-		
-		ArrayList listaUtenti = new ArrayList();
+		log.debug(metodo, sql);
+		ArrayList<RisorsaDTO>listaUtenti = new ArrayList<RisorsaDTO>();
 		PreparedStatement ps=null;
 		ResultSet rs=null;
 		try {
 			ps = connessione.prepareStatement(sql);
 			rs = ps.executeQuery();
 			while(rs.next()){
-				RisorsaDTO utente = new RisorsaDTO();
-				utente.setIdRisorsa(rs.getInt(1));
-				utente.setNome(rs.getString(2));
-				utente.setCognome(rs.getString(3));
-				utente.setEmail(rs.getString(4));
-				listaUtenti.add(utente);
+				listaUtenti.add(new RisorsaDTO(rs.getInt(1),rs.getString(2),rs.getString(3),rs.getString(4)));
 			}
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			log.error(metodo, "select utente", e);
 		}finally{
 			close(ps,rs);
+			log.end(metodo);
 		}
-		
 		return listaUtenti;
 	}
 }

@@ -1,10 +1,10 @@
 package it.azienda.servlet;
 
-import it.azienda.dao.Email;
 import it.azienda.dao.RisorsaDAO;
 import it.azienda.dao.UtenteDAO;
 import it.azienda.dto.RisorsaDTO;
 import it.azienda.dto.UtenteDTO;
+import it.mail.Email;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -12,7 +12,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
-import javax.mail.MessagingException;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -125,8 +124,7 @@ public class GestioneRisorse extends BaseServlet {
 					String messaggioUtenteRisorsa = uDAO.inserimentoUtente(utente);
 				
 					if(messaggio.equals("ok")){
-						Email email = new Email(conn.getConnection());
-
+						Email email = new Email();
 						if(sessione.getAttribute("modalitaDiConnessione").equals("cvonline")){
 								String testoEmail = "<html>"
 									+ "<head>"
@@ -150,7 +148,7 @@ public class GestioneRisorse extends BaseServlet {
 									email.sendMail(risorsa.getEmail(),
 											"info.drconsulting@gmail.com",
 											"Iscrizione Account Aziendale", testoEmail);
-								} catch (MessagingException e) {
+								} catch (Exception e) {
 									// TODO Auto-generated catch block
 									e.printStackTrace();
 								}
@@ -177,7 +175,7 @@ public class GestioneRisorse extends BaseServlet {
 									email.sendMail(risorsa.getEmail(),
 											"info.drconsulting@gmail.com",
 											"Iscrizione Account Aziendale", testoEmail);
-								} catch (MessagingException e) {
+								} catch (Exception e) {
 									// TODO Auto-generated catch block
 									e.printStackTrace();
 								}
@@ -309,7 +307,6 @@ public class GestioneRisorse extends BaseServlet {
 			String messaggio = rDAO.modificaCredenziali(request.getParameter("username"), request.getParameter("password"), Integer.parseInt(request.getParameter("utente")));
 			
 			if(messaggio.equals("ok")){
-				Email email = new Email(conn.getConnection());
 				String testoEmail = "<html>"
 						+ "<head>"
 						+ " <title> Modifica Credenziali</title>"
@@ -328,10 +325,10 @@ public class GestioneRisorse extends BaseServlet {
 						+ "<br><p>Cordiali Saluti <br>Roberto Camarca</p>"
 						+ "</body>" + "</html>";
 				try {
-					email.sendMail(((UtenteDTO)sessione.getAttribute("credenziali")).getEmail(),
+					new Email().sendMail(((UtenteDTO)sessione.getAttribute("credenziali")).getEmail(),
 							"info.drconsulting@gmail.com",
 							"Modifica Credenziali", testoEmail);
-				} catch (MessagingException e) {
+				} catch (Exception e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}

@@ -1,16 +1,15 @@
 package it.azienda.servlet;
 
-import it.azienda.connessione.Connessione;
-import it.azienda.dao.Email;
 import it.azienda.dao.RisorsaDAO;
 import it.azienda.dto.RisorsaDTO;
+import it.mail.Email;
 import it.sauronsoftware.cron4j.Scheduler;
+import it.util.log.MyLogger;
 
 import java.io.IOException;
-import java.sql.Connection;
 import java.util.ArrayList;
 
-import javax.mail.MessagingException;
+import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -21,16 +20,23 @@ import javax.servlet.http.HttpServletResponse;
  */
 public class StartScheduler extends BaseServlet {
 	private static final long serialVersionUID = 1L;
+	private MyLogger log;
+//TODO PER FAR FUNZIONARE QUESTO SCHEDULATORE OCCORRE DECIDERE OGNI QUANTO TEMPO DEVE GIRARE,OPPURE SE FARE UNA PAGINA DOVE CLICCANDO INVIA LA MAIL DI REMAINDER gBe
+	public StartScheduler() {
+		super();
+		log=new MyLogger(this.getClass());
+	}
 
-	public void init(HttpServletRequest request, HttpServletResponse response)throws ServletException {
-		// TODO Auto-generated method stub
-		super.init();
-
+	public void init(ServletConfig config) throws ServletException {
+		final String metodo="init";
+		log.start(metodo);
+		super.init(config);
 		try {
-			processRequest(request, response);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			//startScheduler();
+		} catch (Exception e) {
+			log.error(metodo, "schedulatore remainder consuntivo fallito", e);
+		}finally{
+			log.end(metodo);
 		}
 	}
 
@@ -38,66 +44,54 @@ public class StartScheduler extends BaseServlet {
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		// TODO Auto-generated method stub
+		final String metodo="doGet";
+		log.start(metodo);
+		//startScheduler();
+		log.end(metodo);
 	}
-	
 
 	/**
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		// TODO Auto-generated method stub
+		final String metodo="doPost";
+		log.start(metodo);
+		//startScheduler();
+		log.end(metodo);
 	}
 
-	private void processRequest(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		// TODO Auto-generated method stub
-		
-		//oggetto connessione
-		//Connessione connessione = new Connessione();
-		
-		//oggetto Connection
-		//final Connection conn = connessione.connessione(request.getParameter("connessione"));
-		
-		System.out.println("sono passato di qui!!!!");
-		
+	private void startScheduler(){
+		final String metodo="startScheduler";
+		log.start(metodo);
 		final RisorsaDAO risorsa = new RisorsaDAO(conn.getConnection());
-		
 		Scheduler s = new Scheduler();
 		// Schedula un task, che sarà eseguito ogni minuto.
 		s.schedule("44 11 08 * *", new Runnable() {
 			public void run() {
-				ArrayList listaEmail = risorsa.invioEmail();
-				for(int x = 0; x < listaEmail.size(); x++){
-					RisorsaDTO risorsa = (RisorsaDTO) listaEmail.get(x);
-					System.out.println("nome " + risorsa.getNome());
-					System.out.println("cognome " + risorsa.getCognome());
-					Email email = new Email(conn.getConnection());
-					String testoEmail = "<html>"
-							+ "<head>"
-							+ " <title> Registrazione Account Azienda</title>"
-							+ "</head>"
-							+ "<body>"
-							+ "Gentile " + risorsa.getCognome() + " " + risorsa.getNome() +",<br>"
-							+ "<p> Ti ricordiamo che entro il fine del mese bisogna ricordarsi di compilare il Time Report.<br>"
-							+ "Per effettuare la login cliccare su questo <a href=\"http://drconsulting.tv/index.php?azione=login\"> Login </a>." 
-							+ "<br><br> I dati d'accesso al portale sono:"
-							+ "<br>"
-							+ "<br><br/> <p>Cordiali Saluti <br>Roberto Camarca</p>"
-							+ "</body>" + "</html>";
+				ArrayList<RisorsaDTO>listaEmail = risorsa.invioEmail();
+				Email email = new Email();
+				StringBuilder testoEmail;
+				for (RisorsaDTO risorsa : listaEmail) {
+					log.debug(metodo, "nome " + risorsa.getNome());
+					log.debug(metodo, "cognome " + risorsa.getCognome());
+					testoEmail = new StringBuilder("<html>");
+					testoEmail	.append("<head><title>Remainder consuntivazione mensile</title></head>")
+								.append("<body>Gentile ")
+								.append(risorsa.getCognome())
+								.append(" ")
+								.append(risorsa.getNome())
+								.append(",<br><p>Ti ricordiamo che entro fine del mese bisogna compilare il Time Report.<br>")
+								.append("Per effettuare la login cliccare su questo <a href=\"http://drconsulting.tv/index.php?azione=login\"> Login </a>.")
+								.append("<br><br><br/><p>Cordiali Saluti <br>Roberto Camarca</p></body></html>");
 					try {
-						email.sendMail(risorsa.getEmail(),
-								"info.drconsulting@gmail.com",
-								"Iscrizione Account Aziendale", testoEmail);
-					} catch (MessagingException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
+						email.sendMail(risorsa.getEmail(),"info.drconsulting@gmail.com","Remainder consuntivazione mensile", testoEmail.toString());
+					} catch (Exception e) {
+						log.error(metodo, "invio mail Remainder fallita", e);
 					}
 				}
 			}
 		});
-		// Avvia lo scheduler.
 		s.start();
-		
-		
+		log.end(metodo);
 	}
 }

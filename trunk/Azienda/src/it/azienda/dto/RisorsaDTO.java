@@ -53,6 +53,17 @@ public class RisorsaDTO {
 	 * @param idRisorsa
 	 * @param cognome
 	 * @param nome
+	 * @param email
+	 */
+	public RisorsaDTO(int idRisorsa, String cognome, String nome, String email) {
+		this(idRisorsa, cognome, nome);
+		this.email = email;
+	}
+
+	/**
+	 * @param idRisorsa
+	 * @param cognome
+	 * @param nome
 	 * @param dataNascita
 	 * @param luogoNascita
 	 * @param sesso
@@ -103,15 +114,11 @@ public class RisorsaDTO {
 			boolean visible,
 			boolean flaCreazioneCurriculum,
 			boolean cv_visibile) {
-		super();
-		this.idRisorsa = idRisorsa;
-		this.cognome = cognome;
-		this.nome = nome;
+		this(idRisorsa, cognome, nome, email);
 		this.dataNascita = dataNascita;
 		this.luogoNascita = luogoNascita;
 		this.sesso = sesso;
 		this.codiceFiscale = codiceFiscale;
-		this.email = email;
 		this.telefono = telefono;
 		this.cellulare = cellulare;
 		this.fax = fax;
