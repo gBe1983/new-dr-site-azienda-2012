@@ -1,10 +1,10 @@
 package it.azienda.servlet;
 
 import it.azienda.dao.AziendaDAO;
-import it.azienda.dao.Email;
 import it.azienda.dao.UtenteDAO;
 import it.azienda.dto.AziendaDTO;
 import it.azienda.dto.UtenteDTO;
+import it.mail.Email;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -12,7 +12,6 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Enumeration;
 
-import javax.mail.MessagingException;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -117,7 +116,6 @@ public class GestioneAzienda extends BaseServlet{
 					
 					uDAO.inserimentoUtente(utente);
 				}
-				Email email = new Email(conn.getConnection());
 				String testoEmail="<html>" +  "<head>" +
 			       " <title> Registrazione Account </title>" +
 			       "</head>" +  "<body>" +
@@ -129,8 +127,8 @@ public class GestioneAzienda extends BaseServlet{
 			       "</body>" +
 			       "</html>";
 				try {
-					email.sendMail(azienda.getMail(), "info.drconsulting@gmail.com", "Iscrizione Nuovo Utente Aziendale", testoEmail);
-				} catch (MessagingException e) {
+					new Email().sendMail(azienda.getMail(), "info.drconsulting@gmail.com", "Iscrizione Nuovo Utente Aziendale", testoEmail);
+				} catch (Exception e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
