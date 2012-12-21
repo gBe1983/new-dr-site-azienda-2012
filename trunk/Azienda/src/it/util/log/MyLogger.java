@@ -9,7 +9,7 @@ public class MyLogger {
 	private final static String START="START";
 	private final static String END="END";
 
-	public MyLogger(Class clazz) {
+	public MyLogger(@SuppressWarnings("rawtypes") Class clazz) {
 		log = Logger.getLogger(clazz);
 	}
 

@@ -11,8 +11,28 @@
 			<param name="ConversionPattern" value="[%d{ISO8601}][%-5p][%t][%c]%m%n" />
 		</layout>
 	</appender>
+
+	<appender name="SmtpAppender" class="org.apache.log4j.net.SMTPAppender">
+		<param name="SMTPProtocol" value="smtps"/>
+		<param name="SMTPPort" value="465"/>
+		<param name="SMTPHost" value="smtp.gmail.com"/>
+		<param name="SMTPUsername" value="logwebapp@gmail.com"/>
+		<param name="SMTPPassword" value="2013Dr2013"/>
+		<param name="From" value="logwebapp@gmail.com"/>
+		<param name="To" value="gabriele.bertaina+webappazienda@gmail.com,emmanuel.devita+webappazienda@gmail.com"/>
+		<param name="Cc" value="roberto.camarca+webappazienda@gmail.com,davicam21+webappazienda@gmail.com"/>
+		<param name="Subject" value="Log Web Application Azienda"/>
+		<param name="BufferSize" value="5"/>
+		<param name="EvaluatorClass" value="it.util.log.TriggerLogEvent"/>
+		<layout class="org.apache.log4j.PatternLayout">
+			<param name="ConversionPattern"
+			value="[%d{ISO8601}][%-5p][%t][%c]%m%n" />
+		</layout>
+	</appender>
+
 	<root>
 		<level value="WARN"/>
 		<appender-ref ref="AziendaAppender"/>
+		<appender-ref ref="SmtpAppender"/>
 	</root>
 </log4j:configuration>
