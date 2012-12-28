@@ -13,8 +13,6 @@ import javax.mail.URLName;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 
-import org.apache.log4j.Logger;
-
 public class Email{
 	private MyLogger log;
 
@@ -23,14 +21,11 @@ public class Email{
 	}
 
 	private final static String host = "smtp.gmail.com";
-	//private final static String ccn = "roberto@dierreconsulting.com";
 	private final static String user = "info.drconsulting@gmail.com";
 	private final static String pass = "R0bert01";
 
-	static Logger logger = Logger.getLogger(Email.class);
-
 	public void sendMail(String dest, String mitt, String oggetto, String testoEmail){
-		final String metodo = "inserimentoEsperienze";
+		final String metodo = "sendMail";
 		log.start(metodo);
 		try {
 			Properties props = System.getProperties();
