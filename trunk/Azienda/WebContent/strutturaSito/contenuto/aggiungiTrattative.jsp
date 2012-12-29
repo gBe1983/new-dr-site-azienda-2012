@@ -4,13 +4,6 @@
 <%@page import="it.azienda.dto.ClienteDTO"%>
 <%@page import="it.azienda.dto.RisorsaDTO"%>
 <%@page import="it.azienda.dto.TrattativeDTO"%>
-<%@page import="it.azienda.dto.UtenteDTO"%>
-<%@page import="java.util.Calendar"%>
-<%@page import="java.util.GregorianCalendar"%>
-<%@page import="it.azienda.dto.CommessaDTO"%>
-<%@page import="it.azienda.dao.CommesseDAO"%>
-<%@page import="java.sql.Connection"%>
-
 
 <%@page import="it.azienda.dto.TipologiaTrattative"%><script type="text/javascript"> 
 	$(function() {
@@ -26,7 +19,7 @@
 HttpSession controlloUtenteLoggato = request.getSession();
 if(controlloUtenteLoggato.getAttribute("utenteLoggato") != null){
 
-	CommesseDAO commessaDAO = new CommesseDAO((Connection) controlloUtenteLoggato.getAttribute("connessione"));
+	String newCodCommessaEsterna = (String) request.getAttribute("newCodCommessaEsterna");
 
 	ArrayList listaTipologie = (ArrayList) request.getAttribute("listaTrattattive");
 	ArrayList listaClienti = (ArrayList) request.getAttribute("listaClienti");
@@ -225,7 +218,7 @@ if(controlloUtenteLoggato.getAttribute("utenteLoggato") != null){
 <table>
 	<tr>
 		<td>Codice Commessa</td>
-		<td><input type="text" name="codiceCommessa" id="codiceCommessa" value="<%=commessaDAO.creazioneCodiceCommessaEsterna() %>" readonly="readonly" /></td>
+		<td><input type="text" name="codiceCommessa" id="codiceCommessa" value="<%=newCodCommessaEsterna%>" readonly="readonly" /></td>
 	</tr>
 	<tr>
 		<td>* Data</td>
@@ -485,7 +478,7 @@ if(controlloUtenteLoggato.getAttribute("utenteLoggato") != null){
 			<table>
 				<tr>
 					<td>* Codice Commessa</td>
-					<td><input type="text" name="codiceCommessa" id="codiceCommessa" onblur="controlloCodiceCommessa(this.value)" value="<%=commessaDAO.creazioneCodiceCommessaEsterna() %>" readonly="readonly" /></td>
+					<td><input type="text" name="codiceCommessa" id="codiceCommessa" onblur="controlloCodiceCommessa(this.value)" value="<%=newCodCommessaEsterna%>" readonly="readonly" /></td>
 				</tr>
 				<tr>
 					<td>* Data</td>
