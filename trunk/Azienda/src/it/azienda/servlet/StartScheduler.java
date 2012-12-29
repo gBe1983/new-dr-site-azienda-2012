@@ -2,7 +2,6 @@ package it.azienda.servlet;
 
 import it.azienda.dao.RisorsaDAO;
 import it.azienda.dto.RisorsaDTO;
-import it.mail.Email;
 import it.sauronsoftware.cron4j.Scheduler;
 import it.util.log.MyLogger;
 
@@ -69,7 +68,6 @@ public class StartScheduler extends BaseServlet {
 		s.schedule("44 11 08 * *", new Runnable() {
 			public void run() {
 				ArrayList<RisorsaDTO>listaEmail = risorsa.invioEmail();
-				Email email = new Email();
 				StringBuilder testoEmail;
 				for (RisorsaDTO risorsa : listaEmail) {
 					log.debug(metodo, "nome " + risorsa.getNome());
@@ -81,10 +79,12 @@ public class StartScheduler extends BaseServlet {
 								.append(" ")
 								.append(risorsa.getNome())
 								.append(",<br><p>Ti ricordiamo che entro fine del mese bisogna compilare il Time Report.<br>")
-								.append("Per effettuare la login cliccare su questo <a href=\"http://drconsulting.tv/index.php?azione=login\"> Login </a>.")
+								.append("Per effettuare la login cliccare su questo <a href=\"")
+								.append(prop.getProperty("siteUrl"))
+								.append("/index.php?azione=login\"> Login </a>.")
 								.append("<br><br><br/><p>Cordiali Saluti <br>Roberto Camarca</p></body></html>");
 					try {
-						email.sendMail(risorsa.getEmail(),"info.drconsulting@gmail.com","Remainder consuntivazione mensile", testoEmail.toString());
+						mail.sendMail(risorsa.getEmail(),"Remainder consuntivazione mensile", testoEmail.toString());
 					} catch (Exception e) {
 						log.error(metodo, "invio mail Remainder fallita", e);
 					}
