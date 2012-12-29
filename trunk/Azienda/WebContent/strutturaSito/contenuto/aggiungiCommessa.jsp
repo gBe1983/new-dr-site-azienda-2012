@@ -1,16 +1,11 @@
  <%@ page language="java" contentType="text/html; charset=ISO-8859-1"
 	pageEncoding="ISO-8859-1"%>
-<%@page import="java.util.Calendar"%>
-<%@page import="java.util.GregorianCalendar"%>
 <%@page import="java.util.ArrayList"%>
 <%@page import="it.azienda.dto.ClienteDTO"%>
 <%@page import="it.azienda.dto.RisorsaDTO"%>
-<%@page import="it.azienda.dao.CommesseDAO"%>
-<%@page import="java.sql.Connection"%>
 <%@page import="it.azienda.dto.CommessaDTO"%>
 <%@page import="it.azienda.dto.TipologiaCommessa"%>
 <%@page import="java.text.SimpleDateFormat"%>
-
 
 <script type="text/javascript"> 
 	$(function() {
@@ -31,10 +26,9 @@ SimpleDateFormat formattaDataServer = new SimpleDateFormat("yyyy-MM-dd");
 HttpSession controlloUtenteLoggato = request.getSession();
 if(controlloUtenteLoggato.getAttribute("utenteLoggato") != null){
 	
-	CommesseDAO commessaDAO = new CommesseDAO((Connection) controlloUtenteLoggato.getAttribute("connessione"));
-	
+	String newCodCommessaEsterna = (String) request.getAttribute("newCodCommessaEsterna");
+	String newCodCommessaInterna = (String) request.getAttribute("newCodCommessaInterna");
 	CommessaDTO commessa = null;
-	
 	if(request.getAttribute("commessa") != null){
 		commessa = (CommessaDTO) request.getAttribute("commessa");
 	}
@@ -124,7 +118,7 @@ if(controlloUtenteLoggato.getAttribute("utenteLoggato") != null){
 	</tr>
 	<tr>
 		<td>Codice</td>
-		<td><input type="text" name="commessaEsternaSingola_codiceCommessa" id="codiceCommessa" value="<%=commessaDAO.creazioneCodiceCommessaEsterna() %>" readonly="readonly" /></td>
+		<td><input type="text" name="commessaEsternaSingola_codiceCommessa" id="codiceCommessa" value="<%=newCodCommessaEsterna%>" readonly="readonly" /></td>
 	</tr>
 	<tr>
 		<td>* Data</td>
@@ -239,7 +233,7 @@ if(controlloUtenteLoggato.getAttribute("utenteLoggato") != null){
 	</tr>
 	<tr>
 		<td>Codice</td>
-		<td><input type="text" name="codiceCommessa" id="codiceCommessa" value="<%=commessaDAO.creazioneCodiceCommessaEsterna() %>" readonly="readonly" /></td>
+		<td><input type="text" name="codiceCommessa" id="codiceCommessa" value="<%=newCodCommessaEsterna%>" readonly="readonly" /></td>
 	</tr>
 	<tr>
 		<td>* Data</td>
@@ -330,7 +324,7 @@ if(controlloUtenteLoggato.getAttribute("utenteLoggato") != null){
 <table>
 	<tr>
 		<td>Codice</td>
-		<td><input type="text" name="commessaInterna_codiceCommessa" id="codiceCommessa" value="<%=commessaDAO.creazioneCodiceCommessaInterna() %>" readonly="readonly" /></td>
+		<td><input type="text" name="commessaInterna_codiceCommessa" id="codiceCommessa" value="<%=newCodCommessaInterna%>" readonly="readonly" /></td>
 	</tr>
 	<tr>
 		<td>* Data</td>
@@ -459,7 +453,7 @@ if(controlloUtenteLoggato.getAttribute("utenteLoggato") != null){
 		<table>
 			<tr>
 				<td>Codice</td>
-				<td><input type="text" name="altro_codiceCommessa" id="codiceCommessa" value="<%=commessaDAO.creazioneCodiceCommessaInterna() %>" readonly="readonly"/></td>
+				<td><input type="text" name="altro_codiceCommessa" id="codiceCommessa" value="<%=newCodCommessaInterna%>" readonly="readonly"/></td>
 			</tr>
 			<tr>
 				<td>* Tipologia Commessa:</td>
