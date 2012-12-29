@@ -15,6 +15,8 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 
+import org.apache.commons.lang3.StringUtils;
+
 public class CommesseDAO extends BaseDao {
 	private MyLogger log;
 
@@ -28,9 +30,13 @@ public class CommesseDAO extends BaseDao {
 	
 	//mi serve per formattare le varie date_inizio e date_fine nel formato del DB
 	SimpleDateFormat formattaDataServer = new SimpleDateFormat("yyyy-MM-dd");
-	
-	//con questo metodo effettuo l'inserimento della commessa
-	
+
+	/**
+	 * inserimento della commessa
+	 * @param commessa
+	 * @param tipologia
+	 * @return
+	 */
 	public String inserimentoCommessa(CommessaDTO commessa, String tipologia){
 		final String metodo = "inserimentoCommessa";
 		log.start(metodo);
@@ -98,17 +104,14 @@ public class CommesseDAO extends BaseDao {
 			close(ps);
 			log.end(metodo);
 		}
-		
-		if(esitoInserimentoCommessa == 1){
-			return "ok";
-		}else{
-			return "Siamo spiacenti l'inserimento della commessa non è avvenuta correttamente. Contattare l'amministratore.";
-		}
+		return (esitoInserimentoCommessa == 1)?
+			"ok":
+			"Siamo spiacenti l'inserimento della commessa non è avvenuta correttamente. Contattare l'amministratore.";
 	}
-	
-	/*
-	 * con questo metodo effettuo il recupero dell'idCommessa al momento dell'inserimento
-	 * di una nuova Commessa
+
+	/**
+	 * recupero dell'idCommessa al momento dell'inserimento di una nuova Commessa
+	 * @return
 	 */
 	public int selectIdCommessa(){
 		final String metodo = "selectIdCommessa";
@@ -133,27 +136,23 @@ public class CommesseDAO extends BaseDao {
 		
 		return idCommessa;
 	}
-	
-	/*
-	 * tramite questo metodo carico le tipologie di commessa che ci possono
-	 * essere. Le descrizioni vengono prese dalla tabella tbl_tipologiacommessa
+
+	/**
+	 * restituisce le tipologie di commessa possibili, leggendo da tbl_tipologiacommessa
+	 * @return
 	 */
-	public ArrayList caricamentoTipologiaCommessa(){
+	public ArrayList<TipologiaCommessa>caricamentoTipologiaCommessa(){
 		final String metodo = "caricamentoTipologiaCommessa";
 		log.start(metodo);
-		String sql = "select * from tbl_tipologie_commesse";
-		
-		ArrayList tipologie = new ArrayList();
+		String sql = "select id_tipologia_commessa,descrizione from tbl_tipologie_commesse";
+		ArrayList<TipologiaCommessa>tipologie = new ArrayList<TipologiaCommessa>();
 		PreparedStatement ps=null;
 		ResultSet rs=null;
 		try {
 			ps = connessione.prepareStatement(sql);
 			rs = ps.executeQuery();
 			while(rs.next()){
-				TipologiaCommessa tipologia = new TipologiaCommessa();
-				tipologia.setId_tipologia(rs.getInt(1));
-				tipologia.setDescrizione(rs.getString(2));
-				tipologie.add(tipologia);
+				tipologie.add(new TipologiaCommessa(rs.getInt("id_tipologia_commessa"),rs.getString("descrizione")));
 			}
 		} catch (SQLException e) {
 			log.error(metodo, "", e);
@@ -161,10 +160,9 @@ public class CommesseDAO extends BaseDao {
 			close(ps,rs);
 			log.end(metodo);
 		}
-		
 		return tipologie;
 	}
-	
+
 	/*
 	 * con questo metodo effettuo l'inserimento dell'associazione tra la commessa il cliente e la risorsa
 	 * nella tabella Tbl_AssCommessaClienteRisorsa
@@ -201,87 +199,54 @@ public class CommesseDAO extends BaseDao {
 			return "Siamo spiacenti l'inserimento della commessa non è avvenuta correttamente. Contattare l'amministratore.";
 		}
 	}
-	
-	/*
-	 * tramite questo metodo effettuo la creazione automatica del codice Commessa Esterna
+
+	/**
+	 * @return next cod commessa esterna
 	 */
-	
 	public String creazioneCodiceCommessaEsterna(){
+		return creazioneCodiceCommessa("CCE");
+	}
+
+	/**
+	 * @return next cod commessa interna
+	 */
+	public String creazioneCodiceCommessaInterna(){
+		return creazioneCodiceCommessa("CCIN");
+	}
+
+	/**
+	 * @param codiceCommessa
+	 * @return next cod commessa
+	 */
+	private String creazioneCodiceCommessa(String codiceCommessa){
 		final String metodo = "creazioneCodiceCommessaEsterna";
 		log.start(metodo);
-		String sql = "select max(codice_commessa) from tbl_commesse where id_tipologia_commessa = 1 or id_tipologia_commessa = 2 group by codice_commessa";
-		
-		String codiceCommessa = "CCE";
-		
+		int numberPartSize=4;
+		int year = Calendar.getInstance().get(Calendar.YEAR)-2000;
+		StringBuilder sql = new StringBuilder("SELECT MAX(codice_commessa)maxCodCommessa");
+		sql	.append("FROM tbl_commesse ")
+			.append("WHERE codice_commessa like ?");
 		int codCommessa = 0;
 		PreparedStatement ps=null;
 		ResultSet rs=null;
 		try {
-			ps = connessione.prepareStatement(sql);
+			ps = connessione.prepareStatement(sql.toString());
+			ps.setString(1, codiceCommessa+year+"%");
 			rs = ps.executeQuery();
-			while(rs.next()){
-				codCommessa = Integer.parseInt(rs.getString(1).substring(4, 6));
+			if(rs.next()){
+				String maxCodCommessa = rs.getString("maxCodCommessa");
+				codCommessa = Integer.parseInt(maxCodCommessa.substring(maxCodCommessa.length()-numberPartSize));
 			}
 		} catch (SQLException e) {
-			log.error(metodo, "", e);
+			log.error(metodo, "durante lettura max codice commessa", e);
 		}finally{
 			close(ps,rs);
 			log.end(metodo);
 		}
-		
 		codCommessa++;
-		if(codCommessa < 10){
-			codiceCommessa = codiceCommessa + "00" + String.valueOf(codCommessa);
-		}else if(codCommessa >= 10 && codCommessa < 100){
-			codiceCommessa = codiceCommessa + "0" + String.valueOf(codCommessa);
-		}else if(codCommessa >= 100){
-			codiceCommessa = codiceCommessa + String.valueOf(codCommessa);
-		}
-		
-		
-		return codiceCommessa;
+		return codiceCommessa + year + StringUtils.leftPad(codCommessa+"", numberPartSize, '0');
 	}
-	
-	/*
-	 * tramite questo metodo effettuo la creazione automatica del codice Commessa Interna
-	 */
-	
-	public String creazioneCodiceCommessaInterna(){
-		final String metodo = "creazioneCodiceCommessaInterna";
-		log.start(metodo);
-		String sql = "select max(codice_commessa) from tbl_commesse where id_tipologia_commessa = 3 or id_tipologia_commessa = 4 group by codice_commessa";
-		
-		String codiceCommessa = "CCIN";
-		
-		int codCommessa = 0;
-		PreparedStatement ps=null;
-		ResultSet rs=null;
-		try {
-			ps = connessione.prepareStatement(sql);
-			rs = ps.executeQuery();
-			while(rs.next()){
-				codCommessa = Integer.parseInt(rs.getString(1).substring(5, 7));
-			}
-		} catch (SQLException e) {
-			log.error(metodo, "", e);
-		}finally{
-			close(ps,rs);
-			log.end(metodo);
-		}
-		
-		codCommessa++;
-		if(codCommessa < 10){
-			codiceCommessa = codiceCommessa + "00" + String.valueOf(codCommessa);
-		}else if(codCommessa >= 10 && codCommessa < 100){
-			codiceCommessa = codiceCommessa + "0" + String.valueOf(codCommessa);
-		}else if(codCommessa >= 100){
-			codiceCommessa = codiceCommessa + String.valueOf(codCommessa);
-		}
-		
-		
-		return codiceCommessa;
-	}
-	
+
 	/*
 	 * tramite questo metodo effettuo il caricamento di tutte le commesse
 	 * create nella tabella tbl_commessa a seconda di come 
