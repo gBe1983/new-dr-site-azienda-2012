@@ -138,6 +138,54 @@
 		<param-value>DiErre2012</param-value>
 	</context-param>
 
+	<context-param>
+		<param-name>mail.protocol</param-name>
+		<param-value>smtp</param-value>
+	</context-param>
+	<context-param>
+		<param-name>mail.host</param-name>
+		<param-value>smtp.gmail.com</param-value>
+	</context-param>
+	<context-param>
+		<param-name>mail.port</param-name>
+		<param-value>465</param-value>
+	</context-param>
+	<context-param>
+		<param-name>mail.folder</param-name>
+		<param-value>INBOX</param-value>
+	</context-param>
+	<context-param>
+		<param-name>mail.userName</param-name>
+		<param-value>info.drconsulting@gmail.com</param-value>
+	</context-param>
+	<context-param>
+		<param-name>mail.password</param-name>
+		<param-value>R0bert01</param-value>
+	</context-param>
+	<context-param>
+		<param-name>mail.debug</param-name>
+		<param-value>false</param-value>
+	</context-param>
+	<context-param>
+		<param-name>mail.smtp.auth</param-name>
+		<param-value>true</param-value>
+	</context-param>
+	<context-param>
+		<param-name>mail.smtp.starttls.enable</param-name>
+		<param-value>true</param-value>
+	</context-param>
+	<context-param>
+		<param-name>mail.smtp.socketFactory.class</param-name>
+		<param-value>javax.net.ssl.SSLSocketFactory</param-value>
+	</context-param>
+
+
+	<context-param>
+		<param-name>siteUrl</param-name>
+		<param-value>http://drconsulting.tv</param-value>
+		<!-- <param-value>http://cvonline.tv</param-value> -->
+	</context-param>
+
 <!--
 prod 1
 	<context-param>
