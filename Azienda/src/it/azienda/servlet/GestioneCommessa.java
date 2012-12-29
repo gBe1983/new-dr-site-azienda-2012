@@ -26,7 +26,7 @@ import javax.servlet.http.HttpSession;
  * Servlet implementation class GestioneCommessa
  */
 public class GestioneCommessa extends BaseServlet {
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = -7191888491109702174L;
 	private MyLogger log = new MyLogger(GestioneCommessa.class);
 
 	// mi serve per castare le varie date_inizio e date_fine delle varie
@@ -1199,34 +1199,7 @@ public class GestioneCommessa extends BaseServlet {
 
 			}// qui terminano gli if();
 		} else {
-			response.setContentType("text/html");
-			PrintWriter out = response.getWriter();
-			try {
-				out = response.getWriter();
-				out.print("<html>"
-						+ "<head>"
-						+ "</head>"
-						+ "<body>"
-						+ "<script type=\"text/javascript\">"
-						+ "alert(\"La sessione è scaduta. Rieffettuare la login\");"
-						+ "url = window.location.href;"
-						+ "var variabiliUrl = url.split(\"/\");"
-						+ "for(a=0; a < variabiliUrl.length; a++){"
-						+ "		if(a == 2){"
-						+ "			var localVariabili = variabiliUrl[a].split(\":\");"
-						+ "			for(x=0; x < localVariabili.length; x++){"
-						+ "				if(localVariabili[x] == \"localhost\"){"
-						+ "					window.location = \"http://localhost/dr\";"
-						+ "				}if(localVariabili[x] == \"cvonline\"){"
-						+ "					window.location.href = \"http://cvonline.tv\";"
-						+ "				}if(localVariabili[x] == \"drconsulting\"){"
-						+ "					window.location.href= \"http://drconsulting.tv\";"
-						+ "				}" + "			}" + "		}else{" + "			continue;"
-						+ "		}" + "}" + "</script>" + "</body>" + "</html>");
-				out.flush();
-			} catch (IOException e) {
-				log.error(metodo, "IOException", e);
-			}
+			sessioneScaduta(response);
 		}
 		log.end(metodo);
 	}
