@@ -223,7 +223,7 @@ public class CommesseDAO extends BaseDao {
 		log.start(metodo);
 		int numberPartSize=4;
 		int year = Calendar.getInstance().get(Calendar.YEAR)-2000;
-		StringBuilder sql = new StringBuilder("SELECT MAX(codice_commessa)maxCodCommessa");
+		StringBuilder sql = new StringBuilder("SELECT MAX(codice_commessa)maxCodCommessa ");
 		sql	.append("FROM tbl_commesse ")
 			.append("WHERE codice_commessa like ?");
 		int codCommessa = 0;
