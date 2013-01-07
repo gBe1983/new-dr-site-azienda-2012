@@ -248,7 +248,7 @@ if(controlloUtenteLoggato.getAttribute("utenteLoggato") != null){
 			%>	
 					<div id="bluemenu" class="bluetabs">
 						<ul>
-							<li><a href="./GestioneCommessa?azione=visualizzaCommessa&codiceCommessa=<%=trattative.getEsito() %>&dispositiva=commessa">Modifica Trattativa</a></li>
+							<li><a href="./GestioneCommessa?azione=visualizzaCommessa&codiceCommessa=<%=trattative.getEsito() %>&dispositiva=commessa">Visualizza Commessa</a></li>
 						</ul>
 					</div>
 			<%
