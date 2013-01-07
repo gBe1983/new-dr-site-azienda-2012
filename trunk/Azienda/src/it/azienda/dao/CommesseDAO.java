@@ -62,7 +62,7 @@ public class CommesseDAO extends BaseDao {
 				ps.setString(5, commessa.getSede_lavoro());
 				ps.setString(6, commessa.getData_inizio());
 				ps.setString(7, commessa.getData_fine());
-				ps.setInt(8, commessa.getImporto());
+				ps.setDouble(8, commessa.getImporto());
 				ps.setString(9, commessa.getImporto_lettere());
 				ps.setString(10, commessa.getAl());
 				ps.setString(11,commessa.getPagamento());
@@ -181,7 +181,7 @@ public class CommesseDAO extends BaseDao {
 			ps.setInt(2, asscommessa.getId_commessa());
 			ps.setString(3, asscommessa.getDataInizio());
 			ps.setString(4, asscommessa.getDataFine());
-			ps.setInt(5, asscommessa.getTotaleImporto());
+			ps.setDouble(5, asscommessa.getTotaleImporto());
 			ps.setString(6, asscommessa.getAl());
 			ps.setBoolean(7, asscommessa.isAttiva());
 			esitoInserimentoCommessaClienteRisorsa = ps.executeUpdate();
@@ -224,8 +224,8 @@ public class CommesseDAO extends BaseDao {
 		int numberPartSize=4;
 		int year = Calendar.getInstance().get(Calendar.YEAR)-2000;
 		StringBuilder sql = new StringBuilder("SELECT MAX(codice_commessa)maxCodCommessa ");
-		sql	.append("FROM tbl_commesse ")
-			.append("WHERE codice_commessa like ?");
+		sql	.append(" FROM tbl_commesse ")
+			.append(" WHERE codice_commessa like ?");
 		int codCommessa = 0;
 		PreparedStatement ps=null;
 		ResultSet rs=null;
@@ -235,7 +235,9 @@ public class CommesseDAO extends BaseDao {
 			rs = ps.executeQuery();
 			if(rs.next()){
 				String maxCodCommessa = rs.getString("maxCodCommessa");
-				codCommessa = Integer.parseInt(maxCodCommessa.substring(maxCodCommessa.length()-numberPartSize));
+				if(maxCodCommessa != null){
+					codCommessa = Integer.parseInt(maxCodCommessa.substring(maxCodCommessa.length()-numberPartSize));
+				}
 			}
 		} catch (SQLException e) {
 			log.error(metodo, "durante lettura max codice commessa", e);
@@ -252,7 +254,7 @@ public class CommesseDAO extends BaseDao {
 	 * create nella tabella tbl_commessa a seconda di come 
 	 * viene effettuata la ricerca.
 	 */
-	public ArrayList caricamentoCommesse(CommessaDTO commessa){
+	public ArrayList caricamentoCommesse(CommessaDTO commessa, int anno){
 		final String metodo = "caricamentoCommesse";
 		log.start(metodo);
 		ArrayList listaCommesse = new ArrayList();
@@ -266,28 +268,30 @@ public class CommesseDAO extends BaseDao {
 		boolean stato = false;
 		boolean tipologia = false;
 		
+		
 		if(commessa.getCodiceCommessa() != null && !commessa.getCodiceCommessa().equals("")){
 			sql += " where codice_commessa like ?";
 			codiceCommessa = true;
+		}else{
+			if(anno == 0){
+				Calendar calendar = Calendar.getInstance();
+				int annoCorrente = calendar.get(Calendar.YEAR) - 2000;
+				sql += " where commessa.codice_commessa like 'CCE"+annoCorrente+"%' or commessa.codice_commessa like 'CCIN"+annoCorrente+"%'";
+			}else{
+				sql += " where commessa.codice_commessa like 'CCE"+anno+"%' or commessa.codice_commessa like 'CCIN"+anno+"%'";
+			}
 		}
 		
 		if(commessa.getId_cliente() != null && !commessa.getId_cliente().equals("")){
 			if(codiceCommessa){
 				sql += "and id_cliente = ? ";
 				codiceCliente = true;
-			}else{
-				sql += " where id_cliente = ?";
-				codiceCliente = true;
 			}
-			
 		}
 		
 		if(commessa.getStato() != null && !commessa.getStato().equals("")){
 			if(codiceCommessa || codiceCliente){
 				sql += " and stato = ? ";
-				stato = true;
-			}else{
-				sql += " where stato = ?";
 				stato = true;
 			}
 		}
@@ -295,9 +299,6 @@ public class CommesseDAO extends BaseDao {
 		if(commessa.getTipologia() != null && !commessa.getTipologia().equals("0")){
 			if(codiceCommessa || codiceCliente || stato){
 				sql += " and id_tipologia_commessa = ? ";
-				tipologia = true;
-			}else{
-				sql += " where id_tipologia_commessa = ?";
 				tipologia = true;
 			}
 		}
@@ -309,37 +310,24 @@ public class CommesseDAO extends BaseDao {
 		try {
 			ps = connessione.prepareStatement(sql);
 			
+			int contatore = 1;
 			if(codiceCommessa){
-				ps.setString(1, "%"+commessa.getCodiceCommessa()+"%");
+				ps.setString(contatore, "%"+commessa.getCodiceCommessa()+"%");
+				contatore++;
 			}
 			
-			if(codiceCliente && codiceCommessa){
-				ps.setString(2, commessa.getId_cliente());
-			}else if(codiceCliente && !codiceCommessa){
-				ps.setString(1, commessa.getId_cliente());
+			if(codiceCliente){
+				ps.setString(contatore, commessa.getId_cliente());
+				contatore++;
 			}
 			
-			if(codiceCommessa && codiceCliente && stato){
-				ps.setString(3, commessa.getStato());
-			}else if(!codiceCommessa && codiceCliente && stato ||
-					  codiceCommessa && !codiceCliente && stato){
-				ps.setString(2, commessa.getStato());
-			}else if(!codiceCommessa && !codiceCliente && stato){
-				ps.setString(1, commessa.getStato());
+			if(stato){
+				ps.setString(contatore, commessa.getStato());
+				contatore++;
 			}
 			
-			if(codiceCommessa && codiceCliente && stato && tipologia){
-				ps.setString(4, commessa.getTipologia());
-			}else if(!codiceCommessa && codiceCliente && stato && tipologia||
-					  codiceCommessa && !codiceCliente && stato && tipologia ||
-					  codiceCommessa && codiceCliente && !stato && tipologia){
-				ps.setString(3, commessa.getTipologia());
-			}else if(!codiceCommessa && !codiceCliente &&  stato && tipologia ||
-					 !codiceCommessa &&  codiceCliente && !stato && tipologia ||
-					  codiceCommessa && !codiceCliente && !stato && tipologia){
-				ps.setString(2, commessa.getTipologia());
-			}else if(!codiceCommessa && !codiceCliente && !stato && tipologia){
-				ps.setString(1, commessa.getTipologia());
+			if(tipologia){
+				ps.setString(contatore, commessa.getTipologia());
 			}
 			
 			log.debug(metodo, sql);
@@ -359,9 +347,17 @@ public class CommesseDAO extends BaseDao {
 				commessaTrovata.setOggetto_offerta(rs.getString(4));
 				commessaTrovata.setDescrizione(rs.getString(5));
 				commessaTrovata.setSede_lavoro(rs.getString(6));
-				commessaTrovata.setData_inizio(rs.getString(7));
-				commessaTrovata.setData_fine(rs.getString(8));
-				commessaTrovata.setImporto(rs.getInt(9));
+				if(rs.getString(7) != null){
+					commessaTrovata.setData_inizio(formattaDataWeb.format(formattaDataServer.parse(rs.getString(7))));
+				}else{
+					commessaTrovata.setData_inizio("");
+				}
+				if(rs.getString(8) != null){
+					commessaTrovata.setData_fine(formattaDataWeb.format(formattaDataServer.parse(rs.getString(8))));
+				}else{
+					commessaTrovata.setData_fine("");
+				}
+				commessaTrovata.setImporto(rs.getDouble(9));
 				commessaTrovata.setImporto_lettere(rs.getString(10));
 				commessaTrovata.setPagamento(rs.getString(12));
 				commessaTrovata.setNote(rs.getString(13));
@@ -376,6 +372,9 @@ public class CommesseDAO extends BaseDao {
 			}
 		} catch (SQLException e) {
 			log.error(metodo, "", e);
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}finally{
 			close(ps,rs);
 			log.end(metodo);
@@ -473,9 +472,17 @@ public class CommesseDAO extends BaseDao {
 				commessa.setOggetto_offerta(rs.getString(4));
 				commessa.setDescrizione(rs.getString(5));
 				commessa.setSede_lavoro(rs.getString(6));
-				commessa.setData_inizio(rs.getString(7));
-				commessa.setData_fine(rs.getString(8));
-				commessa.setImporto(rs.getInt(9));
+				if(rs.getString(7) != null){
+					commessa.setData_inizio(formattaDataWeb.format(formattaDataServer.parse(rs.getString(7))));
+				}else{
+					commessa.setData_inizio("");
+				}
+				if(rs.getString(8) != null){
+					commessa.setData_fine(formattaDataWeb.format(formattaDataServer.parse(rs.getString(8))));
+				}else{
+					commessa.setData_fine("");
+				}
+				commessa.setImporto(rs.getDouble(9));
 				commessa.setImporto_lettere(rs.getString(10));
 				commessa.setAl(rs.getString(11));
 				commessa.setPagamento(rs.getString(12));
@@ -489,6 +496,9 @@ public class CommesseDAO extends BaseDao {
 			}
 		} catch (SQLException e) {
 			log.error(metodo, "", e);
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}finally{
 			close(ps,rs);
 			log.end(metodo);
@@ -516,7 +526,7 @@ public class CommesseDAO extends BaseDao {
 			ps.setString(5, commessa.getSede_lavoro());
 			ps.setString(6, commessa.getData_inizio());
 			ps.setString(7, commessa.getData_fine());
-			ps.setInt(8, commessa.getImporto());
+			ps.setDouble(8, commessa.getImporto());
 			ps.setString(9, commessa.getImporto_lettere());
 			ps.setString(10, commessa.getAl());
 			ps.setString(11, commessa.getPagamento());
@@ -553,9 +563,9 @@ public class CommesseDAO extends BaseDao {
 		String sql = "";
 		
 		if(tipologia.equals("1") || tipologia.equals("2")){
-			sql = "select asscommessa.*, risorsa.cognome, risorsa.nome, cliente.ragione_sociale from tbl_associaz_risor_comm as asscommessa, tbl_risorse as risorsa,tbl_commesse as commessa,tbl_clienti as cliente where asscommessa.id_risorsa = risorsa.id_risorsa and asscommessa.id_commessa = commessa.id_commessa and commessa.id_cliente = cliente.id_cliente and asscommessa.attiva = true and asscommessa.id_commessa = ?";
+			sql = "select asscommessa.*, risorsa.cognome, risorsa.nome, cliente.ragione_sociale from tbl_associaz_risor_comm as asscommessa, tbl_risorse as risorsa,tbl_commesse as commessa,tbl_clienti as cliente where asscommessa.id_risorsa = risorsa.id_risorsa and asscommessa.id_commessa = commessa.id_commessa and commessa.id_cliente = cliente.id_cliente and asscommessa.id_commessa = ?";
 		}else{
-			sql = "select asscommessa.*, risorsa.cognome, risorsa.nome from tbl_associaz_risor_comm as asscommessa, tbl_risorse as risorsa,tbl_commesse as commessa where asscommessa.id_risorsa = risorsa.id_risorsa and asscommessa.id_commessa = commessa.id_commessa and asscommessa.attiva = true and asscommessa.id_commessa = ?";
+			sql = "select asscommessa.*, risorsa.cognome, risorsa.nome from tbl_associaz_risor_comm as asscommessa, tbl_risorse as risorsa,tbl_commesse as commessa where asscommessa.id_risorsa = risorsa.id_risorsa and asscommessa.id_commessa = commessa.id_commessa and asscommessa.id_commessa = ?";
 		}
 			
 		ArrayList listaRisorse = new ArrayList();
@@ -570,9 +580,9 @@ public class CommesseDAO extends BaseDao {
 				assCommessa.setId_associazione(rs.getInt(1));
 				assCommessa.setId_risorsa(rs.getInt(2));
 				assCommessa.setId_commessa(rs.getInt(3));
-				assCommessa.setDataInizio(rs.getString(4));
-				assCommessa.setDataFine(rs.getString(5));
-				assCommessa.setTotaleImporto(rs.getInt(6));
+				assCommessa.setDataInizio(formattaDataWeb.format(formattaDataServer.parse(rs.getString(4))));
+				assCommessa.setDataFine(formattaDataWeb.format(formattaDataServer.parse(rs.getString(5))));
+				assCommessa.setTotaleImporto(rs.getDouble(6));
 				assCommessa.setAttiva(rs.getBoolean(8));
 				assCommessa.setDescrizioneRisorsa(rs.getString(9) + " " + rs.getString(10));
 				if(tipologia.equals("1") || tipologia.equals("2")){
@@ -582,6 +592,9 @@ public class CommesseDAO extends BaseDao {
 			}
 		} catch (SQLException e) {
 			log.error(metodo, "", e);
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}finally{
 			close(ps,rs);
 			log.end(metodo);
@@ -692,17 +705,16 @@ public class CommesseDAO extends BaseDao {
 	 * con tipologia 4 cioè "Altro".
 	 */
 	
-	public String elimina_Associazione_Risorsa_con_Commessa_Altro(int idRisorsa, int idCommessa){
+	public String elimina_Associazione_Risorsa_con_Commessa_Altro(int id_associazione){
 		final String metodo = "elimina_Associazione_Risorsa_con_Commessa_Altro";
 		log.start(metodo);
-		String sql = "delete from tbl_associaz_risor_comm where id_risorsa = ? and id_commessa = ?";
+		String sql = "delete from tbl_associaz_risor_comm where id_associazione = ?";
 		
 		int esitoQuery = 0;
 		PreparedStatement ps=null;
 		try {
 			ps = connessione.prepareStatement(sql);
-			ps.setInt(1, idRisorsa);
-			ps.setInt(2, idCommessa);
+			ps.setInt(1, id_associazione);
 			esitoQuery = ps.executeUpdate();
 		} catch (SQLException e) {
 			log.error(metodo, "", e);
@@ -719,11 +731,9 @@ public class CommesseDAO extends BaseDao {
 		}
 	}
 
-	public String chiudiCommessa_Con_Data(int idCommessa){
+	public String chiudiCommessa_Con_Data(String dataChiusura,int idCommessa){
 		final String metodo = "chiudiCommessa_Con_Data";
 		log.start(metodo);
-		Date data = new Date();
-		String dataOdierna = formattaDataServer.format(data);
 		
 		int esitoChiusuraCommessa = 0;
 		
@@ -731,7 +741,7 @@ public class CommesseDAO extends BaseDao {
 		PreparedStatement ps=null;
 		try {
 			ps = connessione.prepareStatement(sql);
-			ps.setString(1, dataOdierna);
+			ps.setString(1, dataChiusura);
 			ps.setInt(2, idCommessa);
 			esitoChiusuraCommessa = ps.executeUpdate();
 		} catch (SQLException e) {
@@ -805,9 +815,10 @@ public class CommesseDAO extends BaseDao {
 	}
 	
 	/*
-	 * con questo metodo effettuo il caricamento della nuova data fine dell'associazione della risorsa alla commessa.
+	 * con questo metodo effettuo il caricamento della nuova data fine 
+	 * dell'associazione della risorsa alla commessa.
 	 */
-	public void chiudi_Associaz_Risors_Comm_Data_Fine_Posticipata(String data, int id_associazione){
+	public void associaz_Risors_Comm_Data_Fine_Posticipata(String data, int id_associazione){
 		final String metodo = "chiudi_Associaz_Risors_Comm_Data_Fine_Posticipata";
 		log.start(metodo);
 		String sql = "update tbl_associaz_risor_comm set data_fine = ? where id_associazione = ?";
@@ -958,7 +969,7 @@ public class CommesseDAO extends BaseDao {
 	public ArrayList caricamento_Tutte_Associazione_Risorsa_Commessa(int idCommessa){
 		final String metodo = "caricamento_Tutte_Associazione_Risorsa_Commessa";
 		log.start(metodo);
-		String sql = "select asscommessa.id_associazione,asscommessa.id_risorsa,asscommessa.id_commessa,asscommessa.data_inizio,asscommessa.data_fine from tbl_associaz_risor_comm asscommessa, tbl_commesse as commessa where asscommessa.id_commessa = commessa.id_commessa and asscommessa.id_commessa = ? and commessa.id_tipologia_commessa <> 4";
+		String sql = "select asscommessa.id_associazione,asscommessa.id_risorsa,asscommessa.id_commessa,asscommessa.data_inizio,asscommessa.data_fine from tbl_associaz_risor_comm asscommessa, tbl_commesse as commessa where asscommessa.id_commessa = commessa.id_commessa and asscommessa.id_commessa = ? and asscommessa.attiva = true and commessa.id_tipologia_commessa <> 4";
 		
 		ArrayList lista_Associazioni_Risorsa_Commessa = new ArrayList();
 		PreparedStatement ps=null;
@@ -991,31 +1002,33 @@ public class CommesseDAO extends BaseDao {
 	 * tramite questo metodo mi carico la singola associazione che cè tra la risorsa
 	 * e la commessa.
 	 */
-	public Associaz_Risor_Comm caricamento_Singole_Associazione_Risorsa_Commessa(int idCommessa,int idRisorsa){
+	public Associaz_Risor_Comm caricamento_Singole_Associazione_Risorsa_Commessa(int id_associazione){
 		final String metodo = "caricamento_Singole_Associazione_Risorsa_Commessa";
 		log.start(metodo);
-		String sql = "select * from tbl_associaz_risor_comm where id_commessa = ? and id_risorsa = ?";
+		String sql = "select * from tbl_associaz_risor_comm where id_associazione = ?";
 		
 		Associaz_Risor_Comm asscommessa = null;
 		PreparedStatement ps=null;
 		ResultSet rs=null;
 		try {
 			ps = connessione.prepareStatement(sql);
-			ps.setInt(1, idCommessa);
-			ps.setInt(2, idRisorsa);
+			ps.setInt(1, id_associazione);
 			rs = ps.executeQuery();
 			if(rs.next()){
 				asscommessa = new Associaz_Risor_Comm();
 				asscommessa.setId_associazione(rs.getInt(1));
 				asscommessa.setId_risorsa(rs.getInt(2));
 				asscommessa.setId_commessa(rs.getInt(3));
-				asscommessa.setDataInizio(rs.getString(4));
-				asscommessa.setDataFine(rs.getString(5));
-				asscommessa.setTotaleImporto(rs.getInt(6));
+				asscommessa.setDataInizio(formattaDataWeb.format(formattaDataServer.parse(rs.getString(4))));
+				asscommessa.setDataFine(formattaDataWeb.format(formattaDataServer.parse(rs.getString(5))));
+				asscommessa.setTotaleImporto(rs.getDouble(6));
 				asscommessa.setAl(rs.getString(7));
 			}
 		} catch (SQLException e) {
 			log.error(metodo, "", e);
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}finally{
 			close(ps,rs);
 			log.end(metodo);
@@ -1315,5 +1328,32 @@ public class CommesseDAO extends BaseDao {
 			log.end(metodo);
 		}
 		return listaCommesse;
+	}
+	
+	public int estrazione_tipologia_commessa(int id_commessa){
+		final String metodo = "estrazione_tipologia_commessa";
+		log.start(metodo);
+		String sql = "select tipologia.id_tipologia_commessa " +
+				"from tbl_tipologie_commesse as tipologia, tbl_commesse as commessa " +
+				"where commessa.id_tipologia_commessa = tipologia.id_tipologia_commessa and commessa.id_commessa = ?";
+		
+		int tipologia = 0;
+		
+		PreparedStatement ps=null;
+		ResultSet rs=null;
+		try {
+			ps = connessione.prepareStatement(sql);
+			ps.setInt(1, id_commessa);
+			rs = ps.executeQuery();
+			while(rs.next()){
+				tipologia = rs.getInt("id_tipologia_commessa");
+			}
+		} catch (SQLException e) {
+			log.error(metodo, "", e);
+		}finally{
+			close(ps,rs);
+			log.end(metodo);
+		}
+		return tipologia;
 	}
 }
