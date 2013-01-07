@@ -21,7 +21,7 @@ import javax.servlet.http.HttpSession;
  */
 public class GestioneAzienda extends BaseServlet{
 	private static final long serialVersionUID = -7318371187106812683L;
-	private MyLogger log;
+	private MyLogger log = new MyLogger(GestioneAzienda.class);
 
 	/**
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)

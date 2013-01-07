@@ -99,7 +99,7 @@ public class GestioneCommessa extends BaseServlet {
 					commessa.setDescrizione(request.getParameter("commessaEsternaSingola_descrizione"));
 					commessa.setSede_lavoro(request.getParameter("commessaEsternaSingola_sedeLavoro"));
 
-					commessa.setImporto(Integer.parseInt(request.getParameter("commessaEsternaSingola_importo")));
+					commessa.setImporto(Double.parseDouble(request.getParameter("commessaEsternaSingola_importo")));
 					commessa.setImporto_lettere(request.getParameter("commessaEsternaSingola_importoLettere"));
 					commessa.setPagamento(request.getParameter("commessaEsternaSingola_pagamento"));
 					if (request.getParameter("commessaEsternaSingola_ore") != null
@@ -130,28 +130,28 @@ public class GestioneCommessa extends BaseServlet {
 							log.error(metodo, "ParseException", e);
 						}
 
-/*
- * effettuo l'inserimento della commessa nella tabella
- * Tbl_Commessa e recupero il risultato valorizzandolo
- * nella variabile messaggioCommessa.
- */
+						/*
+						 * effettuo l'inserimento della commessa nella tabella
+						 * Tbl_Commessa e recupero il risultato valorizzandolo
+						 * nella variabile messaggioCommessa.
+						 */
 						String messaggioCommessa = commesseDAO.inserimentoCommessa(commessa, tipologia);
 
 						if (messaggioCommessa.equals("ok")) {
 
-/*
- * Mi creo l'oggetto assCommessa che mi serve per
- * caricare i valori nella tabella
- * Tbl_Associaz_risor_comm
- */
+							/*
+							 * Mi creo l'oggetto assCommessa che mi serve per
+							 * caricare i valori nella tabella
+							 * Tbl_Associaz_risor_comm
+							 */
 							Associaz_Risor_Comm asscommessa = new Associaz_Risor_Comm();
 							asscommessa.setId_risorsa(Integer.parseInt(request.getParameter("commessaEsternaSingola_idRisorsa")));
 							asscommessa.setId_commessa(commesseDAO.selectIdCommessa());
 
-/*
- * in questa parte di codice formatto la data nel
- * formato del DB cioè "yyyy-MM-dd"
- */
+							/*
+							 * in questa parte di codice formatto la data nel
+							 * formato del DB cioè "yyyy-MM-dd"
+							 */
 							try {
 								asscommessa.setDataInizio(formattaDataServer.format(formattaDataWeb.parse(request.getParameter("commessaEsternaSingola_dataInizio"))));
 							} catch (ParseException e) {
@@ -162,22 +162,22 @@ public class GestioneCommessa extends BaseServlet {
 							} catch (ParseException e) {
 								log.error(metodo, "ParseException", e);
 							}
-							asscommessa.setTotaleImporto(Integer.parseInt(request.getParameter("commessaEsternaSingola_importo")));
+							asscommessa.setTotaleImporto(Double.parseDouble(request.getParameter("commessaEsternaSingola_importo")));
 							asscommessa.setAttiva(true);
-/*
- * effettuo l'inserimento dei valori recuperati
- * nella tabella Tbl_Associaz_risor_comm e recupero
- * il risultato dell'inserimento
- */
+							/*
+							 * effettuo l'inserimento dei valori recuperati
+							 * nella tabella Tbl_Associaz_risor_comm e recupero
+							 * il risultato dell'inserimento
+							 */
 
 							String verificaInserimentoAssCommessa = commesseDAO
 									.inserimentoAssCommessa(asscommessa);
 							if (verificaInserimentoAssCommessa.equals("ok")) {
-/*
- * mi dichiaro questo oggetto perchè mi serve
- * per convertire le date da stringhe in oggetti
- * java.util.Date
- */
+							/*
+							 * mi dichiaro questo oggetto perchè mi serve
+							 * per convertire le date da stringhe in oggetti
+							 * java.util.Date
+							 */
 								SimpleDateFormat format = new SimpleDateFormat("dd-MM-yyyy");
 
 								Calendar calendar = Calendar.getInstance();
@@ -233,18 +233,23 @@ public class GestioneCommessa extends BaseServlet {
 								.forward(request, response);
 					} else {
 
-/*
- * questa è la sezione di modifica per la commessa
- * avente come tipologia "1" cioè
- * "Commessa Esterna Singola"
- */
+						/*
+						 * questa è la sezione di modifica per la commessa
+						 * avente come tipologia "1" cioè
+						 * "Commessa Esterna Singola"
+						 */
 
-						commessa.setData_inizio(request.getParameter("commessaEsternaSingola_dataInizio"));
+						try {
+							commessa.setData_inizio(formattaDataServer.format(formattaDataWeb.parse(request.getParameter("commessaEsternaSingola_dataInizio"))));
+						} catch (ParseException e1) {
+							// TODO Auto-generated catch block
+							e1.printStackTrace();
+						}
 
-/*
- * casto solo la data fine perchè la data inizio è già
- * nel formato corretto
- */
+						/*
+						 * casto solo la data fine perchè la data inizio è già
+						 * nel formato corretto
+						 */
 
 						try {
 							commessa.setData_fine(formattaDataServer.format(formattaDataWeb.parse(request.getParameter("commessaEsternaSingola_dataFine"))));
@@ -254,10 +259,10 @@ public class GestioneCommessa extends BaseServlet {
 
 						commessa.setId_commessa(Integer.parseInt(request.getParameter("parametro")));
 
-/*
- * tramite il metodo ModificaCommessa effettuo la
- * modifica della commessa nella tabella Tbl_Commessa
- */
+						/*
+						 * tramite il metodo ModificaCommessa effettuo la
+						 * modifica della commessa nella tabella Tbl_Commessa
+						 */
 
 						String messaggio = commesseDAO.modificaCommessa(commessa);
 
@@ -271,10 +276,10 @@ public class GestioneCommessa extends BaseServlet {
 								.forward(request, response);
 					}
 				} else if (tipologia.equals("2")) {
-/*
- * - tipologia 1: corrisponde alla commessa esterna multipla
- * dove abbiamo un cliente associato a tante risorse.
- */
+					/*
+					 * - tipologia 2: corrisponde alla commessa esterna multipla
+					 * dove abbiamo un cliente associato a tante risorse.
+					 */
 
 					CommessaDTO commessa = new CommessaDTO();
 
@@ -284,7 +289,7 @@ public class GestioneCommessa extends BaseServlet {
 					commessa.setOggetto_offerta(request.getParameter("oggettoOfferta"));
 					commessa.setDescrizione(request.getParameter("descrizione"));
 					commessa.setSede_lavoro(request.getParameter("sedeLavoro"));
-					commessa.setImporto(Integer.parseInt(request.getParameter("importo")));
+					commessa.setImporto(Double.parseDouble(request.getParameter("importo")));
 					commessa.setImporto_lettere(request.getParameter("importoLettere"));
 					commessa.setPagamento(request.getParameter("pagamento"));
 					if (request.getParameter("ore") != null
@@ -323,7 +328,19 @@ public class GestioneCommessa extends BaseServlet {
 							rd.forward(request, response);
 						}
 					} else {
-						commessa.setData_inizio(request.getParameter("dataInizio"));
+						
+						/*
+						 * questa è la sezione di modifica per la commessa
+						 * avente come tipologia "2" cioè
+						 * "Commessa Esterna Multipla"
+						 */
+						
+						try {
+							commessa.setData_inizio(formattaDataServer.format(formattaDataWeb.parse(request.getParameter("dataInizio"))));
+						} catch (ParseException e1) {
+							// TODO Auto-generated catch block
+							e1.printStackTrace();
+						}
 
 						try {
 							commessa.setData_fine(formattaDataServer.format(formattaDataWeb.parse(request.getParameter("dataFine"))));
@@ -358,7 +375,7 @@ public class GestioneCommessa extends BaseServlet {
 					commessa.setOggetto_offerta(request.getParameter("commessaInterna_oggettoOfferta"));
 					commessa.setDescrizione(request.getParameter("commessaInterna_descrizione"));
 					commessa.setSede_lavoro(request.getParameter("commessaInterna_sedeLavoro"));
-					commessa.setImporto(Integer.parseInt(request.getParameter("commessaInterna_importo")));
+					commessa.setImporto(Double.parseDouble(request.getParameter("commessaInterna_importo")));
 					commessa.setImporto_lettere(request.getParameter("commessaInterna_importoLettere"));
 					commessa.setPagamento(request.getParameter("commessaInterna_pagamento"));
 					if (request.getParameter("commessaInterna_ore") != null && !request.getParameter("commessaInterna_ore").equals("")) {
@@ -395,7 +412,18 @@ public class GestioneCommessa extends BaseServlet {
 							rd.forward(request, response);
 						}
 					} else {
-						commessa.setData_inizio(request.getParameter("commessaInterna_dataInizio"));
+						/*
+						 * questa è la sezione di modifica per la commessa
+						 * avente come tipologia "3" cioè
+						 * "Commessa Interna Multipla"
+						 */
+						
+						try {
+							commessa.setData_inizio(formattaDataServer.format(formattaDataWeb.parse(request.getParameter("commessaInterna_dataInizio"))));
+						} catch (ParseException e1) {
+							// TODO Auto-generated catch block
+							e1.printStackTrace();
+						}
 
 						try {
 							commessa.setData_fine(formattaDataServer.format(formattaDataWeb.parse(request.getParameter("commessaInterna_dataFine"))));
@@ -460,64 +488,76 @@ public class GestioneCommessa extends BaseServlet {
 
 				CommessaDTO commessa = new CommessaDTO();
 
-				if (request.getParameter("codiceCommessa").equals("")
-						|| request.getParameter("codiceCommessa") == null) {
-					commessa.setCodiceCommessa("");
-				} else {
-					commessa.setCodiceCommessa(request.getParameter("codiceCommessa"));
+				if (request.getParameter("codiceCommessa") != null) {
+					if(request.getParameter("codiceCommessa").equals("")){
+						commessa.setCodiceCommessa("");
+					}else {
+						commessa.setCodiceCommessa(request.getParameter("codiceCommessa"));
+					}
+				} 
+
+				if (request.getParameter("codice") != null) {
+					if(request.getParameter("codice").equals("")){
+						commessa.setId_cliente("");
+					}else {
+						commessa.setId_cliente(request.getParameter("codice"));
+					}
+				} 
+
+				if (request.getParameter("stato") != null) {
+					if(request.getParameter("stato").equals("")){
+						commessa.setStato("");
+					}else {
+						commessa.setStato(request.getParameter("stato"));
+					}
 				}
 
-				if (request.getParameter("codice").equals("")
-						|| request.getParameter("codice") == null) {
-					commessa.setId_cliente("");
-				} else {
-					commessa.setId_cliente(request.getParameter("codice"));
-				}
+				if (request.getParameter("tipologiaCommessa") != null) {
+					if(request.getParameter("tipologiaCommessa").equals("")){
+						commessa.setTipologia("");
+					}else {
+						commessa.setTipologia(request.getParameter("tipologiaCommessa"));
+					}
+				} 
 
-				if (request.getParameter("stato").equals("")
-						|| request.getParameter("stato") == null) {
-					commessa.setStato("");
-				} else {
-					commessa.setStato(request.getParameter("stato"));
+				int anno = 0;
+				if(request.getParameter("anno") != null){
+					anno = Integer.parseInt(request.getParameter("anno"));
 				}
-
-				if (request.getParameter("tipologiaCommessa").equals("")
-						|| request.getParameter("tipologiaCommessa") == null) {
-					commessa.setTipologia("");
-				} else {
-					commessa.setTipologia(request.getParameter("tipologiaCommessa"));
-				}
-
-				ArrayList listaCommesse = commesseDAO.caricamentoCommesse(commessa);
+				
+				ArrayList listaCommesse = commesseDAO.caricamentoCommesse(commessa,anno);
 
 				String codiceCommessa = "";
 				String codice = "";
 				String stato = "";
 				String tipologia = "";
-
-				if (!request.getParameter("codiceCommessa").equals("")
-						&& request.getParameter("codiceCommessa") != null) {
-					codiceCommessa = request.getParameter("codiceCommessa");
+				
+				if(request.getParameter("codiceCommessa") != null){
+					if (!request.getParameter("codiceCommessa").equals("")) {
+						codiceCommessa = request.getParameter("codiceCommessa");
+					}
 				}
-				if (!request.getParameter("codice").equals("")
-						&& request.getParameter("codice") != null) {
-					codice = request.getParameter("codice");
+				if(request.getParameter("codice") != null){
+					if (!request.getParameter("codice").equals("")) {
+						codice = request.getParameter("codice");
+					}
 				}
-				if (!request.getParameter("stato").equals("")
-						&& request.getParameter("stato") != null) {
-					stato = request.getParameter("stato");
+				if(request.getParameter("stato") != null){
+					if (!request.getParameter("stato").equals("")) {
+						stato = request.getParameter("stato");
+					}
 				}
-				if (!request.getParameter("tipologiaCommessa").equals("")
-						&& request.getParameter("tipologiaCommessa") != null) {
-					tipologia = request.getParameter("tipologiaCommessa");
+				if(request.getParameter("tipologiaCommessa") != null){
+					if (!request.getParameter("tipologiaCommessa").equals("")) {
+						tipologia = request.getParameter("tipologiaCommessa");
+					}
 				}
 
 				String url = request.getRequestURL().append("?azione=" + azione + "&codiceCommessa="+ codiceCommessa + "&codice=" + codice+ "&stato=" + stato + "&tipologiaCommessa="+ tipologia).toString();
 				sessione.setAttribute("url", url);
 
 				request.setAttribute("listaCommesse", listaCommesse);
-				rd = getServletContext().getRequestDispatcher("/index.jsp?azione=visualizzaCommesse&dispositiva=commessa");
-				rd.forward(request, response);
+				getServletContext().getRequestDispatcher("/index.jsp?azione=visualizzaCommesse&dispositiva=commessa").forward(request, response);
 
 			} else if (azione.equals("aggiornaCommessa")
 					|| azione.equals("dettaglioCommessa")) {
@@ -539,11 +579,10 @@ public class GestioneCommessa extends BaseServlet {
 				request.setAttribute("commessa", commessa);
 
 				if (azione.equals("aggiornaCommessa")) {
-					rd = getServletContext().getRequestDispatcher("/index.jsp?azione=aggiornaCommessa&dispositiva=commessa");
+					getServletContext().getRequestDispatcher("/index.jsp?azione=aggiornaCommessa&dispositiva=commessa").forward(request, response);
 				} else {
-					rd = getServletContext().getRequestDispatcher("/index.jsp?azione=dettaglioCommessa&dispositiva=commessa");
+					getServletContext().getRequestDispatcher("/index.jsp?azione=dettaglioCommessa&dispositiva=commessa").forward(request, response);
 				}
-				rd.forward(request, response);
 
 			} else if (azione.equals("risorseAssociate")) {
 
@@ -559,12 +598,8 @@ public class GestioneCommessa extends BaseServlet {
 				request.setAttribute("commessa", commessa);
 				request.setAttribute("listaRisorseAssociate",listaRisorseAssociate);
 
-				/*
-				 * stato corrisponde allo stato della commessa invece parametro
-				 * corrisponde all'id della commessa
-				 */
-				rd = getServletContext().getRequestDispatcher("/index.jsp?azione=risorseAssociate&dispositiva=commessa");
-				rd.forward(request, response);
+				
+				getServletContext().getRequestDispatcher("/index.jsp?azione=risorseAssociate&dispositiva=commessa").forward(request, response);
 
 			} else if (azione.equals("controlloCodiceCommessa")) {
 				/*
@@ -639,8 +674,8 @@ public class GestioneCommessa extends BaseServlet {
 					messaggio = commesseDAO.inserimentoAssCommessa(asscommessa);
 				} else {
 					Associaz_Risor_Comm asscommessa = new Associaz_Risor_Comm();
-					asscommessa.setId_risorsa(Integer.parseInt(request.getParameter("risorsa")));
-					asscommessa.setId_commessa(Integer.parseInt(request.getParameter("commessa")));
+					asscommessa.setId_risorsa(Integer.parseInt(request.getParameter("parametro2"))); //Id_Risorsa
+					asscommessa.setId_commessa(Integer.parseInt(request.getParameter("parametro"))); //Id_Commessa
 					try {
 						asscommessa.setDataInizio(formattaDataServer.format(formattaDataWeb.parse(request.getParameter("dataInizio"))));
 					} catch (ParseException e) {
@@ -651,7 +686,7 @@ public class GestioneCommessa extends BaseServlet {
 					} catch (ParseException e) {
 						log.error(metodo, "ParseException", e);
 					}
-					asscommessa.setTotaleImporto(Integer.parseInt(request.getParameter("importo")));
+					asscommessa.setTotaleImporto(Double.parseDouble(request.getParameter("importo")));
 					asscommessa.setAl(request.getParameter("al"));
 					asscommessa.setAttiva(true);
 
@@ -691,7 +726,7 @@ public class GestioneCommessa extends BaseServlet {
 					 * Ricavati questi due ArrayList rimuovo dalla listaRisorse
 					 * le risorse già associate alla commessa
 					 */
-					ArrayList listaRisorsaAssociate = commesseDAO.risorseAssociate(Integer.parseInt(request.getParameter("commessa")));
+					ArrayList listaRisorsaAssociate = commesseDAO.risorseAssociate(Integer.parseInt(request.getParameter("parametro")));
 					ArrayList listaRisorse = risorsa.elencoRisorse();
 
 					for (int x = 0; x < listaRisorsaAssociate.size(); x++) {
@@ -707,11 +742,11 @@ public class GestioneCommessa extends BaseServlet {
 					 * gestione in modo da poter caricare la barra di navizione
 					 * presente dopo il dettaglio della commessa
 					 */
-					CommessaDTO commessa = commesseDAO.aggiornoCommessa(Integer.parseInt(request.getParameter("commessa")));
+					CommessaDTO commessa = commesseDAO.aggiornoCommessa(Integer.parseInt(request.getParameter("parametro")));
 
 					request.setAttribute("commessa", commessa);
 					request.setAttribute("listaRisorseDaAssociare",listaRisorse);
-					rd = getServletContext().getRequestDispatcher("/index.jsp?azione=risorseDaAssociate&codice="+ request.getParameter("cliente")+ "&parametro="+ Integer.parseInt(request.getParameter("commessa"))+ "&dispositiva=commessa");
+					rd = getServletContext().getRequestDispatcher("/index.jsp?azione=risorseDaAssociate&codice="+ request.getParameter("cliente")+ "&parametro="+ Integer.parseInt(request.getParameter("parametro"))+ "&dispositiva=commessa");
 					rd.forward(request, response);
 				} else {
 					request.setAttribute("messaggio","L'associazione della risorsa con la commessa non è avvenuta con successo. Contattare l'amministratore");
@@ -724,25 +759,25 @@ public class GestioneCommessa extends BaseServlet {
 				/*
 				 * recupero i parametri che mi vengono passati
 				 */
-				int idCommessa = Integer.parseInt(request.getParameter("commessa"));
-				int idRisorsa = Integer.parseInt(request.getParameter("risorsa"));
+				int id_associazione = Integer.parseInt(request.getParameter("parametro"));
 				String tipologia = request.getParameter("tipologia");
 
 				/*
 				 * effettuo il controllo sulla tipologia della commessa
 				 * controllando che se fosse una commessa con tipologia 4 cioè
-				 * ("Altro") effettuo l'associazione diretta alla commessa,
+				 * ("Altro") effettuo la dissociazione diretta alla commessa,
 				 * metre per le altre tipologie visualizzo il dettaglio
 				 * dell'associazione
 				 */
-
+				
+				/*
+				 * in questo procedimento effettuo il caricamento della
+				 * singola associazione tra commessa e risorsa
+				 */
+				Associaz_Risor_Comm associazione_Risorsa_Commessa = commesseDAO.caricamento_Singole_Associazione_Risorsa_Commessa(id_associazione);
+				
 				if (!tipologia.equals("4")) {
-					/*
-					 * in questo procedimento effettuo il caricamento della
-					 * singola associazione tra commessa e risorsa
-					 */
-					Associaz_Risor_Comm associazione_Risorsa_Commessa = commesseDAO.caricamento_Singole_Associazione_Risorsa_Commessa(idCommessa, idRisorsa);
-
+					
 					request.setAttribute("associazione_commessa",associazione_Risorsa_Commessa);
 				} else {
 					/*
@@ -750,9 +785,9 @@ public class GestioneCommessa extends BaseServlet {
 					 * commessa e risorsa.
 					 */
 
-					commesseDAO.elimina_Associazione_Risorsa_con_Commessa_Altro(idRisorsa, idCommessa);
+					commesseDAO.elimina_Associazione_Risorsa_con_Commessa_Altro(id_associazione);
 
-					ArrayList listaRisorseAssociate = commesseDAO.caricamentoRisorseCommessa(idCommessa,request.getParameter("tipologia"));
+					ArrayList listaRisorseAssociate = commesseDAO.caricamentoRisorseCommessa(associazione_Risorsa_Commessa.getId_commessa(),request.getParameter("tipologia"));
 
 					/*
 					 * effettuo il caricamento delle commessa in carico presa in
@@ -780,14 +815,13 @@ public class GestioneCommessa extends BaseServlet {
 				/*
 				 * recupero i valori dal form caricaAssociazione
 				 */
-				int idCommessa = Integer.parseInt(request.getParameter("commessa"));
-				int idRisorsa = Integer.parseInt(request.getParameter("risorsa"));
+				int id_associazione = Integer.parseInt(request.getParameter("parametro"));
 				String dataFine = request.getParameter("dataFine");
 
 				/*
 				 * mi carico la singola associazione
 				 */
-				Associaz_Risor_Comm associazione_Risorsa_Commessa = commesseDAO.caricamento_Singole_Associazione_Risorsa_Commessa(idCommessa, idRisorsa);
+				Associaz_Risor_Comm associazione_Risorsa_Commessa = commesseDAO.caricamento_Singole_Associazione_Risorsa_Commessa(id_associazione);
 
 				Date dataFineForm = null;
 				Date dataFineCommessa = null;
@@ -795,7 +829,7 @@ public class GestioneCommessa extends BaseServlet {
 					dataFineForm = formattaDataWeb.parse(dataFine);
 
 					// casto la data in formato Web
-					dataFineCommessa = formattaDataWeb.parse(formattaDataWeb.format(formattaDataServer.parse(associazione_Risorsa_Commessa.getDataFine())));
+					dataFineCommessa = formattaDataWeb.parse(associazione_Risorsa_Commessa.getDataFine());
 				} catch (ParseException e) {
 					log.error(metodo, "ParseException", e);
 				}
@@ -812,6 +846,7 @@ public class GestioneCommessa extends BaseServlet {
 					 */
 					Calendar giorniFine = Calendar.getInstance();
 					giorniFine.setTime(dataFineForm);
+					giorniFine.add(Calendar.DATE, 1);
 
 					Calendar giornoCommessa = Calendar.getInstance();
 					giornoCommessa.setTime(dataFineCommessa);
@@ -828,7 +863,11 @@ public class GestioneCommessa extends BaseServlet {
 
 					// cato la data fine nel formato del DB
 					String date = formattaDataServer.format(giorniFine.getTime());
-
+					
+					//effettuo la chiusura della commessa solo in caso di tipologia == 1
+					if(commesseDAO.estrazione_tipologia_commessa(associazione_Risorsa_Commessa.getId_commessa()) == 1)
+						commesseDAO.chiudiCommessa_Con_Data(formattaDataServer.format(dataFineForm),associazione_Risorsa_Commessa.getId_commessa());
+					
 					// effettuo la chiusura dell'associazione
 					commesseDAO.chiudi_Associaz_Risors_Comm_Data_Fine_Antecedente(formattaDataServer.format(dataFineForm),associazione_Risorsa_Commessa.getId_associazione());
 
@@ -865,15 +904,15 @@ public class GestioneCommessa extends BaseServlet {
 					 * effettuo il prolungamento della data fine relativa
 					 * all'associazione.
 					 */
-					commesseDAO.chiudi_Associaz_Risors_Comm_Data_Fine_Posticipata(formattaDataServer.format(giorniFine.getTime()),associazione_Risorsa_Commessa.getId_associazione());
-
+					commesseDAO.associaz_Risors_Comm_Data_Fine_Posticipata(formattaDataServer.format(giorniFine.getTime()),associazione_Risorsa_Commessa.getId_associazione());
+					
 					/*
-					 * carico tutti i giorni di differenza che esisto tra la
-					 * vecchia data associazione con quella nuova.
+					 * faccio partire la data di un giorno in avanti rispetto a quella 
+					 * che è gia caricata sulla tabella associazione
 					 */
 					giornoCommessa.add(Calendar.DATE, 1);
-
-					commesseDAO.caricamentoCalendario(giornieffettivi,giornoCommessa,associazione_Risorsa_Commessa.getId_associazione());
+					
+					commesseDAO.caricamentoCalendario(giornieffettivi-1,giornoCommessa,associazione_Risorsa_Commessa.getId_associazione());
 
 				}
 
@@ -895,7 +934,8 @@ public class GestioneCommessa extends BaseServlet {
 				 * con questo metodo effettuo la chiusura della commessa
 				 * presente in Tbl_Commesse
 				 */
-				String messaggio = commesseDAO.chiudiCommessa_Con_Data(ricercaCommessa.getId_commessa());
+				Date dataChiusuraCommessa = new Date();
+				String messaggio = commesseDAO.chiudiCommessa_Con_Data(formattaDataServer.format(dataChiusuraCommessa),ricercaCommessa.getId_commessa());
 				if (messaggio.equals("ok")) {
 					/*
 					 * in questa parte recupero tutte le associazioni che ci
@@ -913,12 +953,7 @@ public class GestioneCommessa extends BaseServlet {
 							 * relazionate a quella associazione
 							 */
 
-							// effettuo la chiusura dell'associazione
-							try {
-								commesseDAO.chiudi_Associaz_Risors_Comm_Data_Fine_Antecedente(formattaDataServer.format(formattaDataServer.parse(asscommessa.getDataFine())),asscommessa.getId_associazione());
-							} catch (ParseException e) {
-								log.error(metodo, "ParseException", e);
-							}
+							commesseDAO.chiudi_Associaz_Risors_Comm_Data_Fine_Antecedente(formattaDataServer.format(new Date()),asscommessa.getId_associazione());
 
 							Date data = new Date();
 							Date dataOdierna = null;
@@ -929,13 +964,10 @@ public class GestioneCommessa extends BaseServlet {
 							}
 							try {
 								if (dataOdierna.before(formattaDataWeb.parse(formattaDataWeb.format(formattaDataServer.parse(asscommessa.getDataFine()))))) {
-
-									/*
-									 * mi creo due oggetti Calendari per
-									 * caricare le due date Fine
-									 */
-									Calendar giorniFine = Calendar.getInstance();
-									giorniFine.setTime(dataOdierna);
+									
+									Calendar dateOdierna = Calendar.getInstance();
+									dateOdierna.setTime(dataOdierna);
+									dateOdierna.add(Calendar.DATE, 1);
 
 									Calendar giornoCommessa = Calendar.getInstance();
 									try {
@@ -944,7 +976,7 @@ public class GestioneCommessa extends BaseServlet {
 										log.error(metodo, "ParseException", e);
 									}
 
-									double giorni = giorniFine.getTimeInMillis()- giornoCommessa.getTimeInMillis();
+									double giorni = dateOdierna.getTimeInMillis()- giornoCommessa.getTimeInMillis();
 
 									long giornieffettivi = Math.round(Math.round(giorni / 1000/ 60 / 60 / 24));
 
@@ -956,16 +988,16 @@ public class GestioneCommessa extends BaseServlet {
 									giornieffettivi = Math.abs(giornieffettivi);
 
 									// cato la data fine nel formato del DB
-									String date = formattaDataServer.format(giorniFine.getTime());
+									String date = formattaDataServer.format(dateOdierna.getTime());
 
 									for (int x = 0; x <= giornieffettivi; x++) {
 										String esito = commesseDAO.aggiornaCalendarioChiusuraSingolo(date,asscommessa.getId_associazione());
 										if (esito.equals("corretto")) {
-											giorniFine.add(Calendar.DATE, 1);
-											date = formattaDataServer.format(giorniFine.getTime());
+											dateOdierna.add(Calendar.DATE, 1);
+											date = formattaDataServer.format(dateOdierna.getTime());
 											log.debug(metodo, "chiusura commessa + associazione e giorni avvenuta con successo");
 										} else {
-											giorniFine.add(Calendar.DATE, 1);
+											dateOdierna.add(Calendar.DATE, 1);
 											log.debug(metodo, "chiusura commessa + associazione e giorni non è avvenuta con successo");
 										}
 									}

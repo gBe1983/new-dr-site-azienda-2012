@@ -173,34 +173,7 @@ public class GestioneCliente extends BaseServlet {
 				}
 			}
 		} else {
-			response.setContentType("text/html");
-			PrintWriter out = response.getWriter();
-			try {
-				out = response.getWriter();
-				out.print("<html>"
-						+ "<head>"
-						+ "</head>"
-						+ "<body>"
-						+ "<script type=\"text/javascript\">"
-						+ "alert(\"La sessione è scaduta. Rieffettuare la login\");"
-						+ "url = window.location.href;"
-						+ "var variabiliUrl = url.split(\"/\");"
-						+ "for(a=0; a < variabiliUrl.length; a++){"
-						+ "		if(a == 2){"
-						+ "			var localVariabili = variabiliUrl[a].split(\":\");"
-						+ "			for(x=0; x < localVariabili.length; x++){"
-						+ "				if(localVariabili[x] == \"localhost\"){"
-						+ "					window.location = \"http://localhost/dr\";"
-						+ "				}if(localVariabili[x] == \"cvonline\"){"
-						+ "					window.location.href = \"http://cvonline.tv\";"
-						+ "				}if(localVariabili[x] == \"drconsulting\"){"
-						+ "					window.location.href= \"http://drconsulting.tv\";"
-						+ "				}" + "			}" + "		}else{" + "			continue;"
-						+ "		}" + "}" + "</script>" + "</body>" + "</html>");
-				out.flush();
-			} catch (IOException e) {
-				log.error(metodo, "", e);
-			}
+			sessioneScaduta(response);
 		}
 		log.end(metodo);
 	}

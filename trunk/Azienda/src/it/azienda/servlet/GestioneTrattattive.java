@@ -89,107 +89,20 @@ public class GestioneTrattattive extends BaseServlet {
 				 * - Codice == "" e idRisorsa == "" e esito == "" 
 				 * - idTrattativa <> ""
 				 */
-				if (request.getParameter("idRisorsa") != null && request.getParameter("codice") != null && request.getParameter("esito") != null) {
+				if (request.getParameter("idRisorsa") != null && 
+						request.getParameter("codice") != null && 
+						request.getParameter("esito") != null && 
+						request.getParameter("anno") != null) {
 	
-					if (!request.getParameter("codice").equals("")
-							&& !request.getParameter("idRisorsa").equals("")
-							&& !request.getParameter("esito").equals("")) {
-	
-						/* Codice <> "" e idRisorsa <> "" e esito <> "" */
-	
-						listaTrattattive = tDAO.ricercaTrattative(request.getParameter("codice"), Integer.parseInt(request.getParameter("idRisorsa")), 0, request.getParameter("esito"));
-	
-					} else if (!request.getParameter("codice").equals("") && !request.getParameter("idRisorsa").equals("") && request.getParameter("esito").equals("")) {
-	
-						/* Codice <> "" e idRisorsa <> "" e esito == "" */
-	
-						listaTrattattive = tDAO.ricercaTrattative(request.getParameter("codice"),Integer.parseInt(request.getParameter("idRisorsa")), 0,null);
-	
-	
-					} else if (!request.getParameter("codice").equals("")
-							&& request.getParameter("idRisorsa").equals("")
-							&& !request.getParameter("esito").equals("")) {
-	
-						/* Codice <> "" e idRisorsa == "" e esito <> "" */
-	
-						listaTrattattive = tDAO.ricercaTrattative(request.getParameter("codice"), 0, 0, request.getParameter("esito"));
-	
-	
-					} else if (request.getParameter("codice").equals("")
-							&& !request.getParameter("idRisorsa").equals("")
-							&& !request.getParameter("esito").equals("")) {
-	
-						/* Codice == "" e idRisorsa <> "" e esito <> "" */
-	
-						listaTrattattive = tDAO.ricercaTrattative(null, Integer.parseInt(request.getParameter("idRisorsa")), 0, request.getParameter("esito"));
-	
-	
-					} else if (!request.getParameter("codice").equals("")
-							&& request.getParameter("idRisorsa").equals("")
-							&& request.getParameter("esito").equals("")) {
-	
-						/* Codice <> "" e idRisorsa == "" e esito == "" */
-	
-						listaTrattattive = tDAO.ricercaTrattative(request.getParameter("codice"),0, 0, null);
-	
-	
-					} else if (request.getParameter("codice").equals("")
-							&& !request.getParameter("idRisorsa").equals("")
-							&& request.getParameter("esito").equals("")) {
-	
-						/* Codice == "" e idRisorsa <> "" e esito == "" */
-	
-						listaTrattattive = tDAO.ricercaTrattative(null, Integer.parseInt(request.getParameter("idRisorsa")), 0,null);
-	
-	
-					} else if (request.getParameter("codice").equals("")
-							&& request.getParameter("idRisorsa").equals("")
-							&& !request.getParameter("esito").equals("")) {
-	
-						/* Codice == "" e idRisorsa == "" e esito <> "" */
-	
-						listaTrattattive = tDAO.ricercaTrattative(null, 0, 0, request.getParameter("esito"));
-	
-	
-					} else if (request.getParameter("codice").equals("")
-							&& request.getParameter("idRisorsa").equals("")
-							&& request.getParameter("esito").equals("")) {
-	
-						/* Codice == "" e idRisorsa == "" e esito == "" */
-	
-						listaTrattattive = tDAO.ricercaTrattative(null, 0, 0, null);
-	
-					}
-	
-				} else if (request.getParameter("codice") != null
-						&& request.getParameter("idRisorsa") == null
-						&& !request.getParameter("codice").equals("")) {
+					listaTrattattive = tDAO.ricercaTrattative(request.getParameter("codice"), Integer.parseInt(request.getParameter("idRisorsa")), 0,request.getParameter("esito"),Integer.parseInt(request.getParameter("anno")));
 					
-					/* Codice <> "" e idRisorsa == "" e esito <> "" */
-					
-					listaTrattattive = tDAO.ricercaTrattative(request.getParameter("codice"), 0, 0, null);
-	
-	
-				} else if (request.getParameter("codice") == null
-						&& request.getParameter("idRisorsa") != null) {
-					
-					/* Codice == "" e idRisorsa <> "" */
-					
-					listaTrattattive = tDAO.ricercaTrattative(null, Integer.parseInt(request.getParameter("idRisorsa")), 0, null);
-	
-	
-				} else if (request.getParameter("idRisorsa") == null
-						&& request.getParameter("codice") == null
-						&& request.getParameter("dettaglioTrattativa") == null) {
-	
-					/* Codice == "" e idRisorsa == "" e esito == "" */
-					
-					listaTrattattive = tDAO.ricercaTrattative(null, 0, 0, null);
-	
-	
 				} else if (request.getParameter("dettaglioTrattativa") != null) {
 	
-					listaTrattattive = tDAO.ricercaTrattative(null, 0, Integer.parseInt(request.getParameter("dettaglioTrattativa")),null);
+					listaTrattattive = tDAO.ricercaTrattative("", 0, Integer.parseInt(request.getParameter("dettaglioTrattativa")),"",0);
+					
+				} else {
+					
+					listaTrattattive = tDAO.ricercaTrattative("", 0, 0,"",0);
 					
 				}
 	
@@ -256,8 +169,8 @@ public class GestioneTrattattive extends BaseServlet {
 				request.setAttribute("newCodCommessaEsterna",commesseDAO.creazioneCodiceCommessaEsterna());
 				/*
 				 * in questa sezione entro quando l'utente clicca su
-				 * "Aggiungi Trattative" e/o clicca su "Aggingi Commessa" per
-				 * caricare i Cliente e le Risorse legati all'Azienda.
+				 * "Aggiungi Trattative" o clicca su "Aggingi Commessa" o clicca "Ricerca Commessa" 
+				 * per caricare i Cliente e le Risorse legati all'Azienda.
 				 */
 				if (azione.equals("aggiungiTrattative")) {
 					request.setAttribute("listaClienti",cDAO.caricamentoClienti());
@@ -279,19 +192,19 @@ public class GestioneTrattattive extends BaseServlet {
 				 */
 	
 				if (azione.equals("aggiungiTrattative")) {
-					rd = getServletContext()
+					getServletContext()
 							.getRequestDispatcher(
-									"/index.jsp?azione=aggiungiTrattative&tipo=tutte&dispositiva=trattative");
+									"/index.jsp?azione=aggiungiTrattative&tipo=tutte&dispositiva=trattative").forward(request, response);;
 				} else if (azione.equals("ricercaCommessa")) {
-					rd = getServletContext()
+					getServletContext()
 							.getRequestDispatcher(
-									"/index.jsp?azione=ricercaCommessa&dispositiva=commessa");
+									"/index.jsp?azione=ricercaCommessa&dispositiva=commessa").forward(request, response);;
 				} else {
-					rd = getServletContext()
+					getServletContext()
 							.getRequestDispatcher(
-									"/index.jsp?azione=aggiungiCommessa&dispositiva=commessa");
+									"/index.jsp?azione=aggiungiCommessa&dispositiva=commessa").forward(request, response);
 				}
-				rd.forward(request, response);
+				
 	
 			} else if (azione.equals("inserisciTrattative") || azione.equals("modificaTrattativa")) {
 	
@@ -367,7 +280,7 @@ public class GestioneTrattattive extends BaseServlet {
 								log.error(metodo, "dataFine", e);
 							}
 	
-							commessa.setImporto(Integer.parseInt(request.getParameter("importo")));
+							commessa.setImporto(Double.parseDouble(request.getParameter("importo")));
 							commessa.setImporto_lettere(request.getParameter("importoLettere"));
 							commessa.setPagamento(request.getParameter("pagamento"));
 							if(request.getParameter("ore") != null && !request.getParameter("ore").equals("")){
@@ -411,7 +324,7 @@ public class GestioneTrattattive extends BaseServlet {
 									} catch (ParseException e) {
 										log.error(metodo, "dataFine", e);
 									}
-									asscommessa.setTotaleImporto(Integer.parseInt(request.getParameter("importo")));
+									asscommessa.setTotaleImporto(Double.parseDouble(request.getParameter("importo")));
 									
 									SimpleDateFormat format = new SimpleDateFormat("dd-MM-yyyy");
 									
@@ -439,9 +352,6 @@ public class GestioneTrattattive extends BaseServlet {
 									if(request.getParameter("stato").equals("aperta")){
 										asscommessa.setAttiva(true);
 										verificaInserimentoAssCommessa = commesseDAO.inserimentoAssCommessa(asscommessa);
-									}else{
-										asscommessa.setAttiva(false);
-										verificaInserimentoAssCommessa = commesseDAO.inserimentoAssCommessa(asscommessa);
 									}
 									
 									if (verificaInserimentoAssCommessa.equals("ok")) {
@@ -457,13 +367,13 @@ public class GestioneTrattattive extends BaseServlet {
 										rd = getServletContext().getRequestDispatcher("/index.jsp?azione=messaggio");
 										rd.forward(request, response);
 									}
-								}else{
+								} else{
 									request.setAttribute("messaggio","La modifica della trattattiva e l'associazione con una nuova commessa è avvenuta con successo");
 									rd = getServletContext().getRequestDispatcher("/index.jsp?azione=messaggio");
 									rd.forward(request, response);
 								}
 							} else {
-								request.setAttribute("messaggio", messaggio);
+								request.setAttribute("messaggio", messaggioCommessa);
 								rd = getServletContext().getRequestDispatcher("/index.jsp?azione=messaggio");
 								rd.forward(request, response);
 							}
@@ -479,7 +389,9 @@ public class GestioneTrattattive extends BaseServlet {
 						rd.forward(request, response);
 					}
 				} else {
-	
+					
+					//modifica trattattiva
+					
 					trattative.setIdTrattative(Integer.parseInt(request.getParameter("trattativa")));
 					String messaggio = tDAO.modificaTrattativa(trattative);
 					if (messaggio.equals("ok")) {
@@ -527,10 +439,14 @@ public class GestioneTrattattive extends BaseServlet {
 								log.error(metodo, "dataFine", e);
 							}
 	
-							commessa.setImporto(Integer.parseInt(request.getParameter("importo")));
+							commessa.setImporto(Double.parseDouble(request.getParameter("importo")));
 							commessa.setImporto_lettere(request.getParameter("importoLettere"));
 							commessa.setPagamento(request.getParameter("pagamento"));
-							commessa.setTotaleOre(Integer.parseInt(request.getParameter("ore")));
+							if(request.getParameter("ore") != ""){
+								commessa.setTotaleOre(Integer.parseInt(request.getParameter("ore")));
+							}else{
+								commessa.setTotaleOre(0);
+							}
 							commessa.setAl(request.getParameter("al"));
 							commessa.setNote(request.getParameter("note"));
 							commessa.setStato(request.getParameter("stato"));
@@ -588,12 +504,8 @@ public class GestioneTrattattive extends BaseServlet {
 									if(request.getParameter("stato").equals("aperta")){
 										asscommessa.setAttiva(true);
 										verificaInserimentoAssCommessa = commesseDAO.inserimentoAssCommessa(asscommessa);
-									}else{
-										asscommessa.setAttiva(false);
-										verificaInserimentoAssCommessa = commesseDAO.inserimentoAssCommessa(asscommessa);
 									}
 									
-									verificaInserimentoAssCommessa = commesseDAO.inserimentoAssCommessa(asscommessa);
 									if (verificaInserimentoAssCommessa.equals("ok")) {
 										/*
 										 * carico il calendario nella tabella Tbl_Planning
