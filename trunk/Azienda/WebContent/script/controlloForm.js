@@ -192,6 +192,9 @@ function controlloInserisciModificaRisorsa(){
 
 function controlloInserisciCommessa(tipologia){
 	
+	var espressione = /^(0[1-9]|[12][0-9]|3[01])[- \/.](0[1-9]|1[012])[- \/.](19|20)\d\d$/;
+	var controlloLettere = /^([a-zA-Z '])+$/;
+	
 	if(tipologia == "1"){
 		
 		/*
@@ -244,7 +247,6 @@ function controlloInserisciCommessa(tipologia){
 					alert("La lunghezza della data è errata. La lunghezza predefinita è di 10 caratteri");
 					return false;
 				}else{
-					var espressione = /^(0[1-9]|[12][0-9]|3[01])[- \/.](0[1-9]|1[012])[- \/.](19|20)\d\d$/;
 					if (!espressione.test(dataOfferta_CommessaSingola))
 					{
 						alert("Formato della \"Data Offerta\" è errato. Il formato corretto è gg-mm-yyyy");
@@ -280,7 +282,6 @@ function controlloInserisciCommessa(tipologia){
 					alert("La lunghezza della data è errata. La lunghezza predefinita è di 10 caratteri");
 					return false;
 				}else{
-					var espressione = /^(0[1-9]|[12][0-9]|3[01])[- \/.](0[1-9]|1[012])[- \/.](19|20)\d\d$/;
 					if (!espressione.test(dataInizio_CommessaSingola))
 					{
 						alert("Formato della \"Data Inizio\" è errato. Il formato corretto è gg-mm-yyyy");
@@ -300,7 +301,6 @@ function controlloInserisciCommessa(tipologia){
 					alert("La lunghezza della data è errata. La lunghezza predefinita è di 10 caratteri");
 					return false;
 				}else{
-					var espressione = /^(0[1-9]|[12][0-9]|3[01])[- \/.](0[1-9]|1[012])[- \/.](19|20)\d\d$/;
 					if (!espressione.test(dataFine_CommessaSingola))
 					{
 						alert("Formato della \"Data Fine\" è errato. Il formato corretto è gg-mm-yyyy");
@@ -327,9 +327,30 @@ function controlloInserisciCommessa(tipologia){
 				alert("Valorizzare correttamente il campo \"Importo\"");
 				return false;
 			}else{
-				if(isNaN(importo_CommessaSingola)){
-					alert("Valorizzare il campo \"Importo\" solo con valori numerici");
+				for(var x = 0; x < importo_CommessaSingola.length; x++){
+					var singleChar = importo_CommessaSingola.substring(x,(x+1));
+					if(controlloLettere.test(singleChar)){
+						alert("Attenzione! I caratteri dell'importo non validi.");
+						return false;
+					}
+				}
+				
+				var num = importo_CommessaSingola.split(".");
+				if(num.length > 2){
+					alert("Attenzione! Il formato dell'importo non è valido. Formato corretto 0.0");
 					return false;
+				}else{
+					if(importo_CommessaSingola.indexOf(",") != -1){
+						alert("Attenzione! Il formato dell'importo non è valido. Formato corretto 0.0");
+						return false;
+					}else{
+						if(importo_CommessaSingola.indexOf(".") != -1){
+							if((importo_CommessaSingola.length-1) - importo_CommessaSingola.indexOf(".") > 2){
+								alert("Attenzione! Il formato dell'importo non è valido. Formato corretto 0.00");
+								return false;
+							}
+						}
+					}
 				}
 			}
 		}
@@ -383,7 +404,6 @@ function controlloInserisciCommessa(tipologia){
 					alert("La lunghezza della data è errata. La lunghezza predefinita è di 10 caratteri");
 					return false;
 				}else{
-					var espressione = /^(0[1-9]|[12][0-9]|3[01])[- \/.](0[1-9]|1[012])[- \/.](19|20)\d\d$/;
 					if (!espressione.test(dataOfferta))
 					{
 						alert("Formato della \"Data Offerta\" è errato. Il formato corretto è gg-mm-yyyy");
@@ -419,7 +439,6 @@ function controlloInserisciCommessa(tipologia){
 					alert("La lunghezza della data è errata. La lunghezza predefinita è di 10 caratteri");
 					return false;
 				}else{
-					var espressione = /^(0[1-9]|[12][0-9]|3[01])[- \/.](0[1-9]|1[012])[- \/.](19|20)\d\d$/;
 					if (!espressione.test(dataInizio))
 					{
 						alert("Formato della \"Data Inizio\" è errato. Il formato corretto è gg-mm-yyyy");
@@ -439,7 +458,6 @@ function controlloInserisciCommessa(tipologia){
 					alert("La lunghezza della data è errata. La lunghezza predefinita è di 10 caratteri");
 					return false;
 				}else{
-					var espressione = /^(0[1-9]|[12][0-9]|3[01])[- \/.](0[1-9]|1[012])[- \/.](19|20)\d\d$/;
 					if (!espressione.test(dataFine))
 					{
 						alert("Formato della \"Data Fine\" è errato. Il formato corretto è gg-mm-yyyy");
@@ -467,9 +485,35 @@ function controlloInserisciCommessa(tipologia){
 				alert("Valorizzare correttamente il campo \"Importo\"");
 				return false;
 			}else{
-				if(isNaN(importo)){
-					alert("Valorizzare il campo \"Importo\" solo con valori numerici");
+				if(!controlloLettere.test(importo)){
+					alert("Attenzione! I caratteri dell'importo non validi.");
 					return false;
+				}else{
+					for(var y = 0; y < importo.length; y++){
+						var char = importo.substring(y,(y+1));
+						if(controlloLettere.test(char)){
+							alert("Attenzione! I caratteri dell'importo non validi.");
+							return false;
+						}
+					}
+					
+					var num1 = importo.split(".");
+					if(num1.length > 2){
+						alert("Attenzione! Il formato dell'importo non è valido. Formato corretto 0.0");
+						return false;
+					}else{
+						if(importo.indexOf(",") != -1){
+							alert("Attenzione! Il formato dell'importo non è valido. Formato corretto 0.0");
+							return false;
+						}else{
+							if(importo.indexOf(".") != -1){
+								if((importo.length-1) - importo.indexOf(".") > 2){
+									alert("Attenzione! Il formato dell'importo non è valido. Formato corretto 0.00");
+									return false;
+								}
+							}
+						}
+					}
 				}
 			}
 		}
@@ -513,7 +557,6 @@ function controlloInserisciCommessa(tipologia){
 						alert("La lunghezza della data è errata. La lunghezza predefinita è di 10 caratteri");
 						return false;
 					}else{
-						var espressione = /^(0[1-9]|[12][0-9]|3[01])[- \/.](0[1-9]|1[012])[- \/.](19|20)\d\d$/;
 						if (!espressione.test(dataOfferta_CommessaInterna))
 						{
 							alert("Formato della \"Data Offerta\" è errato. Il formato corretto è gg-mm-yyyy");
@@ -549,7 +592,7 @@ function controlloInserisciCommessa(tipologia){
 						alert("La lunghezza della data è errata. La lunghezza predefinita è di 10 caratteri");
 						return false;
 					}else{
-						var espressione = /^(0[1-9]|[12][0-9]|3[01])[- \/.](0[1-9]|1[012])[- \/.](19|20)\d\d$/;
+						
 						if (!espressione.test(dataInizio_CommessaInterna))
 						{
 							alert("Formato della \"Data Inizio\" è errato. Il formato corretto è gg-mm-yyyy");
@@ -569,7 +612,6 @@ function controlloInserisciCommessa(tipologia){
 						alert("La lunghezza della data è errata. La lunghezza predefinita è di 10 caratteri");
 						return false;
 					}else{
-						var espressione = /^(0[1-9]|[12][0-9]|3[01])[- \/.](0[1-9]|1[012])[- \/.](19|20)\d\d$/;
 						if (!espressione.test(dataFine_CommessaInterna))
 						{
 							alert("Formato della \"Data Fine\" è errato. Il formato corretto è gg-mm-yyyy");
@@ -596,9 +638,30 @@ function controlloInserisciCommessa(tipologia){
 					alert("Valorizzare correttamente il campo \"Importo\"");
 					return false;
 				}else{
-					if(isNaN(importo_CommessaInterna)){
-						alert("Valorizzare il campo \"Importo\" solo con valori numerici");
+					for(var z = 0; z < importo_CommessaInterna.length; z++){
+						var singoloChar = importo_CommessaInterna.substring(z,(z+1));
+						if(controlloLettere.test(singoloChar)){
+							alert("Attenzione! I caratteri dell'importo non validi.");
+							return false;
+						}
+					}
+					
+					var num2 = importo_CommessaInterna.split(".");
+					if(num2.length > 2){
+						alert("Attenzione! Il formato dell'importo non è valido. Formato corretto 0.0");
 						return false;
+					}else{
+						if(importo_CommessaInterna.indexOf(",") != -1){
+							alert("Attenzione! Il formato dell'importo non è valido. Formato corretto 0.0");
+							return false;
+						}else{
+							if(importo_CommessaInterna.indexOf(".") != -1){
+								if((importo_CommessaInterna.length-1) - importo_CommessaInterna.indexOf(".") > 2){
+									alert("Attenzione! Il formato dell'importo non è valido. Formato corretto 0.00");
+									return false;
+								}
+							}
+						}
 					}
 				}
 			}
@@ -644,7 +707,8 @@ function controlloInserisciCommessa(tipologia){
 
 function controlloModificaCommessa(tipologia){
 	
-	
+	var espressione = /^(0[1-9]|[12][0-9]|3[01])[- \/.](0[1-9]|1[012])[- \/.](19|20)\d\d$/;
+	var controlloLettere = /^[A-Za-z ']+$/;
 	
 	if(tipologia == "1"){
 		
@@ -678,7 +742,6 @@ function controlloModificaCommessa(tipologia){
 					alert("La lunghezza della data è errata. La lunghezza predefinita è di 10 caratteri");
 					return false;
 				}else{
-					var espressione = /^(0[1-9]|[12][0-9]|3[01])[- \/.](0[1-9]|1[012])[- \/.](19|20)\d\d$/;
 					if (!espressione.test(dataOfferta_CommessaSingola))
 					{
 						alert("Formato della \"Data Offerta\" è errato. Il formato corretto è gg-mm-yyyy");
@@ -715,7 +778,6 @@ function controlloModificaCommessa(tipologia){
 					alert("La lunghezza della data è errata. La lunghezza predefinita è di 10 caratteri");
 					return false;
 				}else{
-					var espressione = /^(0[1-9]|[12][0-9]|3[01])[- \/.](0[1-9]|1[012])[- \/.](19|20)\d\d$/;
 					if (!espressione.test(dataFine_CommessaSingola))
 					{
 						alert("Formato della \"Data Fine\" è errato. Il formato corretto è gg-mm-yyyy");
@@ -743,9 +805,30 @@ function controlloModificaCommessa(tipologia){
 				alert("Valorizzare correttamente il campo \"Importo\"");
 				return false;
 			}else{
-				if(isNaN(importo_CommessaSingola)){
-					alert("Valorizzare il campo \"Importo\" solo con valori numerici");
+				for(var z = 0; z < importo_CommessaSingola.length; z++){
+					var singoloChar = importo_CommessaSingola.substring(z,(z+1));
+					if(controlloLettere.test(singoloChar)){
+						alert("Attenzione! I caratteri dell'importo non validi.");
+						return false;
+					}
+				}
+
+				var num = importo_CommessaSingola.split(".");
+				if(num.length > 2){
+					alert("Attenzione! Il formato dell'importo non è valido. Formato corretto 0.0");
 					return false;
+				}else{
+					if(importo_CommessaSingola.indexOf(",") != -1){
+						alert("Attenzione! Il formato dell'importo non è valido. Formato corretto 0.0");
+						return false;
+					}else{
+						if(importo_CommessaSingola.indexOf(".") != -1){
+							if((importo_CommessaSingola.length-1) - importo_CommessaSingola.indexOf(".") > 2){
+								alert("Attenzione! Il formato dell'importo non è valido. Formato corretto 0.00");
+								return false;
+							}
+						}
+					}
 				}
 			}
 		}
@@ -790,7 +873,6 @@ function controlloModificaCommessa(tipologia){
 					alert("La lunghezza della data è errata. La lunghezza predefinita è di 10 caratteri");
 					return false;
 				}else{
-					var espressione = /^(0[1-9]|[12][0-9]|3[01])[- \/.](0[1-9]|1[012])[- \/.](19|20)\d\d$/;
 					if (!espressione.test(dataOfferta))
 					{
 						alert("Formato della \"Data Offerta\" è errato. Il formato corretto è gg-mm-yyyy");
@@ -827,7 +909,6 @@ function controlloModificaCommessa(tipologia){
 					alert("La lunghezza della data è errata. La lunghezza predefinita è di 10 caratteri");
 					return false;
 				}else{
-					var espressione = /^(0[1-9]|[12][0-9]|3[01])[- \/.](0[1-9]|1[012])[- \/.](19|20)\d\d$/;
 					if (!espressione.test(dataFine))
 					{
 						alert("Formato della \"Data Fine\" è errato. Il formato corretto è gg-mm-yyyy");
@@ -838,18 +919,16 @@ function controlloModificaCommessa(tipologia){
 		}
 		
 		dataInizio = document.inserisciCommessaMultipla.dataInizio.value;
-		var split_DataInizio = dataInizio.split("-");
-		var split_DataFine = dataFine.split("-");
+		var split_DateInizio = dataInizio.split("-");
+		var split_DateFine = dataFine.split("-");
 
-		var dateInizio = new Date(split_DataInizio[0],split_DataInizio[1],split_DataInizio[2]).getTime();
-		var dateFine = new Date(split_DataFine[2],split_DataFine[1],split_DataFine[0]).getTime();
+		var dateStart = new Date(split_DateInizio[0],split_DateInizio[1],split_DateInizio[2]).getTime();
+		var dateEnd = new Date(split_DateFine[2],split_DateFine[1],split_DateFine[0]).getTime();
 		
-		if(dateInizio > dateFine){
+		if(dateStart > dateEnd){
 			alert("Data Inizio maggiore della Data Fine");
 			return false;
 		}
-		
-		
 		
 		if(document.inserisciCommessaMultipla.importo != undefined){
 			importo = document.inserisciCommessaMultipla.importo.value;
@@ -857,9 +936,30 @@ function controlloModificaCommessa(tipologia){
 				alert("Valorizzare correttamente il campo \"Importo\"");
 				return false;
 			}else{
-				if(isNaN(importo)){
-					alert("Valorizzare il campo \"Importo\" solo con valori numerici");
+				for(var x = 0; x < importo.length; x++){
+					var char = importo.substring(x,(x+1));
+					if(controlloLettere.test(char)){
+						alert("Attenzione! I caratteri dell'importo non validi.");
+						return false;
+					}
+				}
+
+				var num1 = importo.split(".");
+				if(num1.length > 2){
+					alert("Attenzione! Il formato dell'importo non è valido. Formato corretto 0.0");
 					return false;
+				}else{
+					if(importo.indexOf(",") != -1){
+						alert("Attenzione! Il formato dell'importo non è valido. Formato corretto 0.0");
+						return false;
+					}else{
+						if(importo.indexOf(".") != -1){
+							if((importo.length-1) - importo.indexOf(".") > 2){
+								alert("Attenzione! Il formato dell'importo non è valido. Formato corretto 0.00");
+								return false;
+							}
+						}
+					}
 				}
 			}
 		}
@@ -902,7 +1002,6 @@ function controlloModificaCommessa(tipologia){
 						alert("La lunghezza della data è errata. La lunghezza predefinita è di 10 caratteri");
 						return false;
 					}else{
-						var espressione = /^(0[1-9]|[12][0-9]|3[01])[- \/.](0[1-9]|1[012])[- \/.](19|20)\d\d$/;
 						if (!espressione.test(dataOfferta_CommessaInterna))
 						{
 							alert("Formato della \"Data Offerta\" è errato. Il formato corretto è gg-mm-yyyy");
@@ -938,7 +1037,6 @@ function controlloModificaCommessa(tipologia){
 						alert("La lunghezza della data è errata. La lunghezza predefinita è di 10 caratteri");
 						return false;
 					}else{
-						var espressione = /^(0[1-9]|[12][0-9]|3[01])[- \/.](0[1-9]|1[012])[- \/.](19|20)\d\d$/;
 						if (!espressione.test(dataFine_CommessaInterna))
 						{
 							alert("Formato della \"Data Fine\" è errato. Il formato corretto è gg-mm-yyyy");
@@ -966,9 +1064,30 @@ function controlloModificaCommessa(tipologia){
 					alert("Valorizzare correttamente il campo \"Importo\"");
 					return false;
 				}else{
-					if(isNaN(importo_CommessaInterna)){
-						alert("Valorizzare il campo \"Importo\" solo con valori numerici");
+					for(var y = 0; y < importo_CommessaInterna.length; y++){
+						var singleChar = importo_CommessaInterna.substring(y,(y+1));
+						if(controlloLettere.test(singleChar)){
+							alert("Attenzione! I caratteri dell'importo non validi.");
+							return false;
+						}
+					}
+
+					var num2 = importo_CommessaInterna.split(".");
+					if(num2.length > 2){
+						alert("Attenzione! Il formato dell'importo non è valido. Formato corretto 0.0");
 						return false;
+					}else{
+						if(importo_CommessaInterna.indexOf(",") != -1){
+							alert("Attenzione! Il formato dell'importo non è valido. Formato corretto 0.0");
+							return false;
+						}else{
+							if(importo_CommessaInterna.indexOf(".") != -1){
+								if((importo_CommessaInterna.length-1) - importo_CommessaInterna.indexOf(".") > 2){
+									alert("Attenzione! Il formato dell'importo non è valido. Formato corretto 0.00");
+									return false;
+								}
+							}
+						}
 					}
 				}
 			}
@@ -1113,6 +1232,9 @@ function azzeramentoCampoEsito(){
  
  function controlloInserimentoTrattativa(){
 		
+	 	var espressione = /^(0[1-9]|[12][0-9]|3[01])[- \/.](0[1-9]|1[012])[- \/.](19|20)\d\d$/;
+	 	var controlloLettere = /^[A-Za-z ']+$/;
+	 	
 		/* 
 		 * variabili della trattativa
 		 */
@@ -1134,8 +1256,9 @@ function azzeramentoCampoEsito(){
 		var ore = "";
 		
 		/*
-		 * qua inizia la trattattiva singolas
+		 * qua inizia la trattattiva singola
 		 */
+		
 		if(tipologiaTrattativa == "trattattivaSingola"){
 			if(document.inserisciTrattative.trattattivaSingola_codice != undefined){
 				cliente = document.inserisciTrattative.trattattivaSingola_codice.value;
@@ -1163,7 +1286,6 @@ function azzeramentoCampoEsito(){
 						alert("La lunghezza della data è errata. La lunghezza predefinita è di 10 caratteri");
 						return false;
 					}else{
-						var espressione = /^(0[1-9]|[12][0-9]|3[01])[- \/.](0[1-9]|1[012])[- \/.](19|20)\d\d$/;
 						if (!espressione.test(data))
 						{
 							alert("Formato della \"Data\" è errato. Il formato corretto è gg-mm-yyyy");
@@ -1185,6 +1307,7 @@ function azzeramentoCampoEsito(){
 		/*
 		 * qua inizia la trattativa multipla
 		 */
+		
 		if(tipologiaTrattativa == "trattattivaMultipla"){
 			if(document.inserisciTrattative.codice != undefined){
 				cliente = document.inserisciTrattative.codice.value;
@@ -1204,7 +1327,6 @@ function azzeramentoCampoEsito(){
 						alert("La lunghezza della data è errata. La lunghezza predefinita è di 10 caratteri");
 						return false;
 					}else{
-						var espressione = /^(0[1-9]|[12][0-9]|3[01])[- \/.](0[1-9]|1[012])[- \/.](19|20)\d\d$/;
 						if (!espressione.test(data))
 						{
 							alert("Formato della \"Data\" è errato. Il formato corretto è gg-mm-yyyy");
@@ -1236,7 +1358,6 @@ function azzeramentoCampoEsito(){
 						alert("La lunghezza della data è errata. La lunghezza predefinita è di 10 caratteri");
 						return false;
 					}else{
-						var espressione = /^(0[1-9]|[12][0-9]|3[01])[- \/.](0[1-9]|1[012])[- \/.](19|20)\d\d$/;
 						if (!espressione.test(dataOfferta))
 						{
 							alert("Formato della \"Data Offerta\" è errato. Il formato corretto è gg-mm-yyyy");
@@ -1272,7 +1393,6 @@ function azzeramentoCampoEsito(){
 						alert("La lunghezza della data è errata. La lunghezza predefinita è di 10 caratteri");
 						return false;
 					}else{
-						var espressione = /^(0[1-9]|[12][0-9]|3[01])[- \/.](0[1-9]|1[012])[- \/.](19|20)\d\d$/;
 						if (!espressione.test(dataInizio))
 						{
 							alert("Formato della \"Data Inizio\" è errato. Il formato corretto è gg-mm-yyyy");
@@ -1292,7 +1412,6 @@ function azzeramentoCampoEsito(){
 						alert("La lunghezza della data è errata. La lunghezza predefinita è di 10 caratteri");
 						return false;
 					}else{
-						var espressione = /^(0[1-9]|[12][0-9]|3[01])[- \/.](0[1-9]|1[012])[- \/.](19|20)\d\d$/;
 						if (!espressione.test(dataFine))
 						{
 							alert("Formato della \"Data Fine\" è errato. Il formato corretto è gg-mm-yyyy");
@@ -1308,9 +1427,30 @@ function azzeramentoCampoEsito(){
 					alert("Valorizzare il campo \"Importo\"");
 					return false;
 				}else{
-					if(isNaN(importo)){
-						alert("Formato del campo \"Importo\" errato. Inserire solo valori numerici.");
+					for(var y = 0; y < importo.length; y++){
+						var singleChar = importo.substring(y,(y+1));
+						if(controlloLettere.test(singleChar)){
+							alert("Attenzione! I caratteri dell'importo non validi.");
+							return false;
+						}
+					}
+
+					var num = importo.split(".");
+					if(num.length > 2){
+						alert("Attenzione! Il formato dell'importo non è valido. Formato corretto 0.0");
 						return false;
+					}else{
+						if(importo.indexOf(",") != -1){
+							alert("Attenzione! Il formato dell'importo non è valido. Formato corretto 0.0");
+							return false;
+						}else{
+							if(importo.indexOf(".") != -1){
+								if((importo.length-1) - importo.indexOf(".") > 2){
+									alert("Attenzione! Il formato dell'importo non è valido. Formato corretto 0.00");
+									return false;
+								}
+							}
+						}
 					}
 				}
 			}
@@ -1336,6 +1476,9 @@ function azzeramentoCampoEsito(){
  */
 
 function controlloModificaTrattativa(tipologia){
+		
+		var espressione = /^(0[1-9]|[12][0-9]|3[01])[- \/.](0[1-9]|1[012])[- \/.](19|20)\d\d$/;
+		var controlloLettere = /^[A-Za-z ']+$/;
 		
 		/* 
 		 * variabili della trattativa
@@ -1434,7 +1577,6 @@ function controlloModificaTrattativa(tipologia){
 						alert("La lunghezza della data è errata. La lunghezza predefinita è di 10 caratteri");
 						return false;
 					}else{
-						var espressione = /^(0[1-9]|[12][0-9]|3[01])[- \/.](0[1-9]|1[012])[- \/.](19|20)\d\d$/;
 						if (!espressione.test(dataOfferta))
 						{
 							alert("Formato della \"Data Offerta\" è errato. Il formato corretto è gg-mm-yyyy");
@@ -1470,7 +1612,6 @@ function controlloModificaTrattativa(tipologia){
 						alert("La lunghezza della data è errata. La lunghezza predefinita è di 10 caratteri");
 						return false;
 					}else{
-						var espressione = /^(0[1-9]|[12][0-9]|3[01])[- \/.](0[1-9]|1[012])[- \/.](19|20)\d\d$/;
 						if (!espressione.test(dataInizio))
 						{
 							alert("Formato della \"Data Inizio\" è errato. Il formato corretto è gg-mm-yyyy");
@@ -1490,7 +1631,6 @@ function controlloModificaTrattativa(tipologia){
 						alert("La lunghezza della data è errata. La lunghezza predefinita è di 10 caratteri");
 						return false;
 					}else{
-						var espressione = /^(0[1-9]|[12][0-9]|3[01])[- \/.](0[1-9]|1[012])[- \/.](19|20)\d\d$/;
 						if (!espressione.test(dataFine))
 						{
 							alert("Formato della \"Data Fine\" è errato. Il formato corretto è gg-mm-yyyy");
@@ -1506,9 +1646,30 @@ function controlloModificaTrattativa(tipologia){
 					alert("Valorizzare il campo \"Importo\"");
 					return false;
 				}else{
-					if(isNaN(importo)){
-						alert("Formato del campo \"Importo\" errato. Inserire solo valori numerici.");
+					for(var y = 0; y < importo.length; y++){
+						var singleChar = importo.substring(y,(y+1));
+						if(controlloLettere.test(singleChar)){
+							alert("Attenzione! I caratteri dell'importo non validi.");
+							return false;
+						}
+					}
+
+					var num = importo.split(".");
+					if(num.length > 2){
+						alert("Attenzione! Il formato dell'importo non è valido. Formato corretto 0.0");
 						return false;
+					}else{
+						if(importo.indexOf(",") != -1){
+							alert("Attenzione! Il formato dell'importo non è valido. Formato corretto 0.0");
+							return false;
+						}else{
+							if(importo.indexOf(".") != -1){
+								if((importo.length-1) - importo.indexOf(".") > 2){
+									alert("Attenzione! Il formato dell'importo non è valido. Formato corretto 0.00");
+									return false;
+								}
+							}
+						}
 					}
 				}
 			}
@@ -1771,6 +1932,9 @@ function controlloSessioneAttiva(){
 
 function controlloDateAssociazioni(){
 	
+	var espressione = /^(0[1-9]|[12][0-9]|3[01])[- \/.](0[1-9]|1[012])[- \/.](19|20)\d\d$/;
+	var controlloLettere = /^[A-Za-z ']+$/;
+	
 	var dataInizio = document.caricaAssociazione.dataInizio.value;
 	var dataFine = document.caricaAssociazione.dataFine.value;
 	var importo = document.caricaAssociazione.importo.value;
@@ -1789,7 +1953,6 @@ function controlloDateAssociazioni(){
 			alert("La lunghezza della data è errata. La lunghezza predefinita è di 10 caratteri");
 			return false;
 		}else{
-			var espressione = /^(0[1-9]|[12][0-9]|3[01])[- \/.](0[1-9]|1[012])[- \/.](19|20)\d\d$/;
 			if (!espressione.test(dataInizio))
 			{
 				alert("Formato della \"Data Inizio\" è errato. Il formato corretto è gg-mm-yyyy");
@@ -1806,7 +1969,6 @@ function controlloDateAssociazioni(){
 			alert("La lunghezza della data è errata. La lunghezza predefinita è di 10 caratteri");
 			return false;
 		}else{
-			var espressione = /^(0[1-9]|[12][0-9]|3[01])[- \/.](0[1-9]|1[012])[- \/.](19|20)\d\d$/;
 			if (!espressione.test(dataFine))
 			{
 				alert("Formato della \"Data Fine\" è errato. Il formato corretto è gg-mm-yyyy");
@@ -1818,6 +1980,32 @@ function controlloDateAssociazioni(){
 	if(importo == null || importo == ""){
 		alert("Valorizzare il campo \"Importo\"");
 		return false;
+	}else{
+		for(var y = 0; y < importo.length; y++){
+			var singleChar = importo.substring(y,(y+1));
+			if(controlloLettere.test(singleChar)){
+				alert("Attenzione! I caratteri dell'importo non validi.");
+				return false;
+			}
+		}
+
+		var num = importo.split(".");
+		if(num.length > 2){
+			alert("Attenzione! Il formato dell'importo non è valido. Formato corretto 0.0");
+			return false;
+		}else{
+			if(importo.indexOf(",") != -1){
+				alert("Attenzione! Il formato dell'importo non è valido. Formato corretto 0.0");
+				return false;
+			}else{
+				if(importo.indexOf(".") != -1){
+					if((importo.length-1) - importo.indexOf(".") > 2){
+						alert("Attenzione! Il formato dell'importo non è valido. Formato corretto 0.00");
+						return false;
+					}
+				}
+			}
+		}
 	}
 	
 	if(dateInizio > dateFine){
@@ -1867,6 +2055,7 @@ function controlloDataCommessa(){
 	
 	return true;
 }
+
 
 
 /*

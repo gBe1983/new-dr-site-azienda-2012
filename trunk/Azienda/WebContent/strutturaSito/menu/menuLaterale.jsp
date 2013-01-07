@@ -1,6 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=ISO-8859-1"
     pageEncoding="ISO-8859-1"%>
 <%@page import="it.azienda.dto.UtenteDTO"%>
+<%@page import="it.azienda.dto.RisorsaDTO"%>
 
 <%
 	HttpSession sessione = request.getSession();
@@ -8,7 +9,8 @@
 			if(request.getParameter("azione").equals("creazioneCv")){
 				int risorsa = Integer.parseInt(request.getParameter("risorsa"));
 %>
-		<div class="newsbox">
+		
+<div class="newsbox">
 		    <div class="subtitle">Gestione Curriculum</div><br/>
 		    	<li><a href="index.jsp?azione=creazioneCv&tipoCreazione=esperienze&risorsa=<%=risorsa%>&dettaglio=<%=request.getParameter("dettaglio") %>">Aggiungi Esperienze</a></li>
 		    	
@@ -26,12 +28,12 @@
 		<div class="blank"></div>
 <%
 	}else if(request.getParameter("azione").equals("modificaCurriculumRisorsa") || request.getParameter("azione").equals("modificaSingoliCampiCurriculum") || request.getParameter("azione").equals("dettaglioSingoliCampiCurriculum")){
-		int risorsa = Integer.parseInt(request.getParameter("risorsa"));
+		RisorsaDTO risorsa = (RisorsaDTO) request.getAttribute("risorsa");
 %>
 		<div class="newsbox">
 		    <div class="subtitle">Gestione Curriculum</div><br/>
-		    	<li><a href="./GestioneCurriculum?azione=caricamentoCv&tipoCreazione=esperienze&risorsa=<%=risorsa %>">Visualizza Esperienze</a></li>
-		    	<li><a href="./GestioneCurriculum?azione=caricamentoCv&tipoCreazione=dettaglioCv&risorsa=<%=risorsa %>">Visualizza Dettaglio Cv</a></li>
+		    	<li><a href="./GestioneCurriculum?azione=caricamentoCv&tipoCreazione=esperienze&risorsa=<%=risorsa.getIdRisorsa()%>">Visualizza Esperienze</a></li>
+		    	<li><a href="./GestioneCurriculum?azione=caricamentoCv&tipoCreazione=dettaglioCv&risorsa=<%=risorsa.getIdRisorsa() %>">Visualizza Dettaglio Cv</a></li>
 		   	<div class="blank"></div>
 		</div>
 		<div class="blank"></div>	

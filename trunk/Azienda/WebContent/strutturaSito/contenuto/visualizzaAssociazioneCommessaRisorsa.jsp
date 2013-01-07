@@ -16,8 +16,8 @@ if(controlloUtenteLoggato.getAttribute("utenteLoggato") != null){
 <div id="flussoCommessa">
 	<table>
 		<tr>
-			<td><img src="images/home.gif"><a href="index.jsp?azione=homePage">Home</a></td>
-			<td><img src="images/cerca.jpg"><a href="./GestioneTrattattive?azione=ricercaCommessa">Cerca</a></td>
+			<td><a href="index.jsp?azione=homePage">Home</a></td>
+			<td><a href="./GestioneTrattattive?azione=ricercaCommessa">Cerca</a></td>
 			<td><a href="<%=controlloUtenteLoggato.getAttribute("url").toString() %>">Indietro</a></td>
 		</tr>
 	</table>
@@ -80,14 +80,14 @@ if(controlloUtenteLoggato.getAttribute("utenteLoggato") != null){
 			Associaz_Risor_Comm asscommessa = new Associaz_Risor_Comm();
 %>
 
-			<table class="flusso" id="visualizzaRisorseCommesse">
-				<th>Descrizione Cliente</th>
-				<th>Descrizione Risorsa</th>
-				<th>Data Inizio </th>
-				<th>Data Fine </th>
-				<th>Importo </th>
+			<table class="flusso" id="channel">
 				<tr>
-					<td colspan="6"><hr size="1"></td>
+					<th>Descrizione Cliente</th>
+					<th>Descrizione Risorsa</th>
+					<th>Data Inizio </th>
+					<th>Data Fine </th>
+					<th>Importo </th>
+					<th>Scelta </th>
 				</tr>
 <%
 			for(int x = 0; x < listaAssociazioniCommessaRisorsa.size(); x++){
@@ -124,7 +124,7 @@ if(controlloUtenteLoggato.getAttribute("utenteLoggato") != null){
 						%>
 					</td>
 					<td><%
-							if(asscommessa.getTotaleImporto() != 0){
+							if(asscommessa.getTotaleImporto() != 0.0){
 								out.print(asscommessa.getTotaleImporto());
 							}else{
 								out.print("");
@@ -135,7 +135,7 @@ if(controlloUtenteLoggato.getAttribute("utenteLoggato") != null){
 						<%
 							if(asscommessa.isAttiva()){
 						%>
-							<a href="./GestioneCommessa?azione=dissociazioneRisorsaCommessa&commessa=<%=asscommessa.getId_commessa() %>&risorsa=<%=asscommessa.getId_risorsa() %>&tipologia=<%=commessa.getTipologia() %>" ><img src="images/dissociazioneRisorsaCommessa.png" alt="dissociazione risorsa" id="dissociazioneRisorsa"></a>
+								<a href="./GestioneCommessa?azione=dissociazioneRisorsaCommessa&parametro=<%=asscommessa.getId_associazione() %>&tipologia=<%=commessa.getTipologia() %>" ><img src="images/dissociazioneRisorsaCommessa.png" alt="dissociazione risorsa" id="dissociazioneRisorsa"></a>
 						<%
 							}
 						%>

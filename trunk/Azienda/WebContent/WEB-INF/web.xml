@@ -184,6 +184,7 @@
 		<param-name>siteUrl</param-name>
 		<param-value>http://drconsulting.tv</param-value>
 		<!-- <param-value>http://cvonline.tv</param-value> -->
+		<!-- <param-value>http://drconsulting.tv</param-value> -->
 	</context-param>
 
 <!--

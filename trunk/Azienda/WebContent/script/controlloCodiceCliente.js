@@ -16,7 +16,7 @@ function getXmlHttpObject(){
   return xmlHttp;
 }
 
-function controlloCodiceCliente(parametro){ 
+function controlloCodiceCliente(parametro){
 	var url="./GestioneCliente?azione=controlloCodiceCliente&codiceCliente=" + parametro;
 	xmlHttp.open("GET", url , true);
 	xmlHttp.send(null);

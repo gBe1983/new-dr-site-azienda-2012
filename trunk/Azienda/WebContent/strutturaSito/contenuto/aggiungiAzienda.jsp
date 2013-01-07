@@ -243,11 +243,10 @@ if(controlloUtenteLoggato.getAttribute("utenteLoggato") != null){
 </div>
 
 
-<div id="flusso">
+<div id="flussoAzienda">
 	<table>
 		<tr>
-			<td><img src="images/home.gif"><a href="#">Home</a></td>
-			<td><img src="images/cerca.jpg"><a href="#">Cerca</a></td>
+			<td><a href="index.jsp?azione=homePage">Home</a></td>
 		</tr>
 	</table>
 </div>
@@ -439,11 +438,10 @@ if(controlloUtenteLoggato.getAttribute("utenteLoggato") != null){
 </div>
 
 
-<div id="flusso">
+<div id="flussoAzienda">
 	<table>
 		<tr>
-			<td><img src="images/home.gif"><a href="#">Home</a></td>
-			<td><img src="images/cerca.jpg"><a href="#">Cerca</a></td>
+			<td><a href="index.jsp?azione=homePage">Home</a></td>
 		</tr>
 	</table>
 </div>

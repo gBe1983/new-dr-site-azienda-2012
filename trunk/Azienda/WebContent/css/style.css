@@ -14,7 +14,7 @@ img{margin: 0 auto;display:block;width:95%}
 div#header{width: 1100px;margin: 0px auto; color: #000;height:55px}
 
 /*stili specifici per il layout*/
-div#extra{float:left;width: 200px;margin:0 0 0 10px;}
+div#extra{float:left;width: 200px; margin:0 0 0 10px;}
 
 .newsbox{margin:15px 0px; width:200px;padding:0 5px;background:#eee;-moz-border-radius: 20px;-webkit-border-radius: 20px;border-radius: 20px ; font: bold 14px;}
 .newsbox ul{list-style-type:none; }
@@ -84,20 +84,23 @@ img.help:hover{cursor:pointer}
 
 /* menu veloce presente in ogni pagina di ricerca */
 
-#flusso {/*border: 1px solid black;*/ width: 150px; height: 30px; float: right; margin: 20px;}
-#flusso img{width: 20px; height: 20px; float: left; border: 0px;}
-#flusso a{padding: 5px; float: right;}
-#flusso tr td{width: 70px;}
+/* #flusso img{width: 20px; height: 20px; float: left; border: 0px;} */
+/* #flusso tr td{width: 70px;} */
+#flusso {/*border: 1px solid black;*/ width: 80px; height: 30px; float: right; margin: 20px;}
+#flusso a{float: right; margin: 0px; padding: 0 5px 0px 0px; border-right: 1px solid black;}
 
-#flussoCommessa {/*border: 1px solid black;*/ width: 220px; height: 30px; float: right; margin: 20px;}
-#flussoCommessa img{width: 20px; height: 20px; float: left; border: 0px;}
-#flussoCommessa a{padding: 5px; float: right;}
-#flussoCommessa tr td{width: 70px;}*/
+#flussoAzienda {/*border: 1px solid black;*/ width: 25px; height: 30px; float: right; margin: 20px;}
+#flussoAzienda a{float: right; margin: 0px; padding: 0 5px 0px 0px;}
+
+#flussoCommessa {/*border: 1px solid black;*/ width: 150px; height: 30px; float: right; margin-top: 20px;}
+#flussoCommessa table tr td{text-align: right; }
+#flussoCommessa a{ float: right; margin: 0px; padding: 0 5px 0px 0px; border-right: 1px solid black;}
 
 /*crea lo spazio */
 
 .spazio{margin-top: 70px;}
 .spazioUltra{margin-top: 40px;}
+.spazioUltraPlus{margin-top: 40px; margin-bottom: 60px; margin-left: 18px;}
 #spazioMessaggio{font: red;}
 
 /*formattazione per le immagini dettaglio, modifica elimina */
@@ -109,7 +112,7 @@ img.help:hover{cursor:pointer}
 #dissociazioneRisorsa{width: 18px; height: 18px; border: 0px;}
 
 
-/*gestione form per l'inserimento delle commesse */
+/*gestione form per l'inserimento e ricerca delle commesse */
 
 #commessaEsternaMultipla{display:none;}
 #commessaEsternaSingola{display:none;}
@@ -127,18 +130,20 @@ img.help:hover{cursor:pointer}
 
 /* gestione del dettaglio commessa */
 
+.ricercaCommessaTdDestra{ padding-left: 0px; }
 .dettaglioCommessa tr td {width: 200px; }
 .dettaglioCommessa textarea{border: 0px; background: #FFF; color: black;}
 
 /* sezione trattative */
-#ricercaTrattattive {margin-top: 80px; }
-.modificaTrattative {margin-top: 80px; }
+
+#ricercaTrattattive {margin-top: 70px; }
+.modificaTrattative {margin-top: 50px; }
 
 /*gestione tabelle */
 
 #visualizzaRisorsa{ }
 
-.visualizzaChannel { /*border: 1px solid #black;*/ margin-top: 80px; width: 700px;}
+.visualizzaChannel { /*border: 1px solid #black;*/ margin-top: 90px !important; margin-top: 100px; width: 700px;}
 
 .visualizzaChannel h3 { margin: 0; width: 40%; font-size: 1em;font-weight: bold; text-transform: uppercase;text-align: right;padding: 1em 0.5em 1em 0;border-right: 1px solid;}
 
@@ -156,3 +161,10 @@ img.help:hover{cursor:pointer}
 
 
 /* fine gestione tabelle */
+
+/*inizio gestione curriculum */
+
+.sceltaCurriculum{ text-align: right; padding-right: 15px;}
+#toolbar{ text-align: right; padding-right: 5px;  /*border:1px solid black;*/}
+#toolbar a {padding: 0 5px 0 5px; border-right: 1px solid black;}
+

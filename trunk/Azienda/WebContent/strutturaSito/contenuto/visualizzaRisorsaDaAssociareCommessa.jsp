@@ -22,8 +22,8 @@ if(controlloUtenteLoggato.getAttribute("utenteLoggato") != null){
 	<div id="flussoCommessa">
 		<table>
 			<tr>
-				<td><img src="images/home.gif"><a href="index.jsp?azione=homePage">Home</a></td>
-				<td><img src="images/cerca.jpg"><a href="./GestioneTrattattive?azione=ricercaCommessa">Cerca</a></td>
+				<td><a href="index.jsp?azione=homePage">Home</a></td>
+				<td><a href="./GestioneTrattattive?azione=ricercaCommessa">Cerca</a></td>
 				<td><a href="<%=controlloUtenteLoggato.getAttribute("url").toString() %>">Indietro</a></td>
 			</tr>
 		</table>
@@ -79,15 +79,16 @@ if(controlloUtenteLoggato.getAttribute("utenteLoggato") != null){
 %>
 		
 		
-		<table id="visualizzaCommesse">
-			<th>Cognome</th>
-			<th>Nome</th>
-			<th>Costo</th>
-			<th>Figura Professionale</th>
-			<th>Seniority</th>
+		<table id="channel">
 			<tr>
-				<td colspan="6"><hr size="1"></td>
+				<th>Cognome</th>
+				<th>Nome</th>
+				<th>Costo</th>
+				<th>Figura Professionale</th>
+				<th>Seniority</th>
+				<th>Scelta</th>
 			</tr>
+			
 <%
 		
 			for(int x = 0; x < listaRisorseDaAssociare.size(); x++){

@@ -28,9 +28,10 @@
 
 <form action="./GestioneCommessa" method="post" class="modificaTrattative">
 	<input type="hidden" name="azione" value="visualizzaCommessa">
+	
 	<fieldset>
 		<legend>Ricerca Commessa</legend>
-		<table>
+		<table>	
 			<tr>
 				<td><label>Codice Commessa</label></td>
 				<td><input type="text" name="codiceCommessa"></td>
@@ -74,7 +75,7 @@
 				<td>Tipologia</td>
 				<td>
 					<select name="tipologiaCommessa" id="sceltaTipologia" onchange="tipologia(this.value)">
-						<option value="0" selected="selected">-- Scegliere il tipo di commessa --</option>
+						<option value="" selected="selected">-- Scegliere il tipo di commessa --</option>
 						<%
 							ArrayList tipologie = (ArrayList) request.getAttribute("tipologiaCommessa");
 							for(int x = 0; x < tipologie.size(); x++){
@@ -87,14 +88,26 @@
 					</select>
 				</td>
 			</tr>
+			<tr>
+				<td>Anno</td>
+				<td>
+					<select name="anno">
+						<%
+							for(int x = 12; x < (Calendar.getInstance().get(Calendar.YEAR) - 1999); x++){
+						%>
+								<option value="<%=x %>"><%=(x+2000) %></option>	
+						<%	
+							}
+						%>
+					</select>
+				</td>
+			</tr>
+			<tr>
+				<td><input type="submit" value="ricerca Commessa"/></td>
+				<td><input type="reset" value="cancella Dati"/></td>
+			</tr>
 		</table>
 	</fieldset>
-	<table>
-		<tr>
-			<td><input type="submit" value="ricerca Commessa"/></td>
-			<td><input type="reset" value="cancella Dati"/></td>
-		</tr>
-	</table>
 </form>
 
 <%

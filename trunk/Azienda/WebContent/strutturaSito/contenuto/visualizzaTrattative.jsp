@@ -5,6 +5,8 @@
 <%@page import="it.azienda.dto.RisorsaDTO"%>
 <%@page import="it.azienda.dto.TrattativeDTO"%>
 <%@page import="java.lang.reflect.Array"%>
+<%@page import="java.util.Calendar"%>
+<%@page import="java.util.GregorianCalendar"%>
 
 <%
 HttpSession controlloUtenteLoggato = request.getSession();
@@ -18,8 +20,8 @@ if(controlloUtenteLoggato.getAttribute("utenteLoggato") != null){
 <div id="flusso">
 	<table>
 		<tr>
-			<td><img src="images/home.gif"><a href="index.jsp?azione=homePage">Home</a></td>
-			<td><img src="images/cerca.jpg"><a href="./GestioneTrattattive?azione=ricercaTrattativaCliente&tipo=tutte&dispositiva=trattative"">Cerca</a></td>
+			<td><a href="index.jsp?azione=homePage">Home</a></td>
+			<td><a href="./GestioneTrattattive?azione=ricercaTrattativaCliente&tipo=tutte&dispositiva=trattative"">Cerca</a></td>
 		</tr>
 	</table>
 </div>
@@ -91,6 +93,18 @@ if(controlloUtenteLoggato.getAttribute("utenteLoggato") != null){
 					</select>
 				</td>
 				<td>
+					<select name="anno">
+						<option value="0">-- Seleziona Anno --</option>
+						<%
+							for(int x = 12; x < (Calendar.getInstance().get(Calendar.YEAR) - 1999); x++){
+						%>
+								<option value="<%=x %>"><%=(x+2000) %></option>	
+						<%	
+							}
+						%>
+					</select>
+				</td>
+				<td>
 					<input type="submit" value="ricerca">
 				</td>
 			</tr>
@@ -104,7 +118,7 @@ if(controlloUtenteLoggato.getAttribute("utenteLoggato") != null){
 			ArrayList listaTrattative = (ArrayList) request.getAttribute("listaTrattattive");
 
 	%>
-	<div class="visualizzaChannel">
+	<div class="spazioUltra">
 			<table id="channel">
 				<th>Cliente</th>
 				<th>Risorsa</th>
@@ -166,28 +180,36 @@ if(controlloUtenteLoggato.getAttribute("utenteLoggato") != null){
 									}
 								}
 							
-							if(trattative.getEsito().equals("aperta")){
-								if(request.getParameter("dispositiva") != null){
-									if(request.getParameter("dispositiva").equals("cliente")){
-							%>
-										<td>
-											<a href="./GestioneTrattattive?azione=aggiornaTrattativa&trattativa=<%=trattative.getIdTrattative() %>&tipo=azienda&dispositiva=cliente&codice=<%=trattative.getId_cliente() %>"><img src="images/modifica.png" alt="modifica trattativa" id="modifica"/></a>
-										</td>
-							<%
-									}else{
-							%>
-										<td>
-											<a href="./GestioneTrattattive?azione=aggiornaTrattativa&trattativa=<%=trattative.getIdTrattative() %>&dispositiva=trattative"><img src="images/modifica.png" alt="modifica trattativa" id="modifica"/></a>
-										</td>
-							<%		
+							if(trattative.getEsito() != null){
+								if(trattative.getEsito().equals("aperta")){
+									if(request.getParameter("dispositiva") != null){
+										if(request.getParameter("dispositiva").equals("cliente")){
+								%>
+											<td>
+												<a href="./GestioneTrattattive?azione=aggiornaTrattativa&trattativa=<%=trattative.getIdTrattative() %>&tipo=azienda&dispositiva=cliente&codice=<%=trattative.getId_cliente() %>"><img src="images/modifica.png" alt="modifica trattativa" id="modifica"/></a>
+											</td>
+								<%
+										}else{
+								%>
+											<td>
+												<a href="./GestioneTrattattive?azione=aggiornaTrattativa&trattativa=<%=trattative.getIdTrattative() %>&dispositiva=trattative"><img src="images/modifica.png" alt="modifica trattativa" id="modifica"/></a>
+											</td>
+								<%		
+										}
 									}
+								}else{
+								%>	
+									<td>
+										<br>
+									</td>
+								<%
 								}
 							}else{
-							%>	
-								<td>
-									<br>
-								</td>
-							<%
+								%>	
+									<td>
+										<br>
+									</td>
+								<%
 							}
 							%>
 						</tr>		
@@ -222,6 +244,14 @@ if(controlloUtenteLoggato.getAttribute("utenteLoggato") != null){
 			<%
 						}
 					}
+				}else if(!trattative.getEsito().equals("aperta") && !trattative.getEsito().equals("persa")){
+			%>	
+					<div id="bluemenu" class="bluetabs">
+						<ul>
+							<li><a href="./GestioneCommessa?azione=visualizzaCommessa&codiceCommessa=<%=trattative.getEsito() %>&dispositiva=commessa">Modifica Trattativa</a></li>
+						</ul>
+					</div>
+			<%
 				}
 			%>
 			<fieldset>
@@ -258,12 +288,12 @@ if(controlloUtenteLoggato.getAttribute("utenteLoggato") != null){
 	<%		
 			}else{
 	%>
-				<span>Nessun tipo di Trattative per questo cliente e risorsa</span>	
+				<p align="center">Nessun tipo di Trattative per questo cliente e risorsa</p>	
 	<%
 			}
 		}else{
 	%>
-			<span>Nessun tipo di Trattative per questo cliente e risorsa</span>
+			<p align="center">Nessun tipo di Trattative per questo cliente e risorsa</p>
 	<%
 		}
 }else{

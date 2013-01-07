@@ -111,8 +111,8 @@ if(controlloUtenteLoggato.getAttribute("utenteLoggato") != null){
 <div id="flusso">
 	<table>
 		<tr>
-			<td><img src="images/home.gif"><a href="index.jsp?azione=homePage">Home</a></td>
-			<td><img src="images/cerca.jpg"><a href="./GestioneReport?azione=visualizzaReport">Cerca</a></td>
+			<td><a href="index.jsp?azione=homePage">Home</a></td>
+			<td><a href="./GestioneReport?azione=visualizzaReport">Cerca</a></td>
 		</tr>
 	</table>
 </div>	
@@ -153,8 +153,8 @@ if(controlloUtenteLoggato.getAttribute("utenteLoggato") != null){
 		<div id="flusso">
 			<table>
 				<tr>
-					<td><img src="images/home.gif"><a href="index.jsp?azione=homePage">Home</a></td>
-					<td><img src="images/cerca.jpg"><a href="./GestioneReport?azione=visualizzaReport">Cerca</a></td>
+					<td><a href="index.jsp?azione=homePage">Home</a></td>
+					<td><a href="./GestioneReport?azione=visualizzaReport">Cerca</a></td>
 				</tr>
 			</table>
 		</div>	

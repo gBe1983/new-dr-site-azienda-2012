@@ -4,7 +4,7 @@
 <%@page import="it.azienda.dto.RisorsaDTO"%>
 
 <select name="idRisorsa" id="idRisorsa">
-	<option value="" selected="selected">-- Seleziona la Risorsa --</option>
+	<option value="0" selected="selected">-- Seleziona la Risorsa --</option>
 <%
 	if(request.getAttribute("listaRisorse") != null){
 		ArrayList listaRisorsa = (ArrayList) request.getAttribute("listaRisorse");

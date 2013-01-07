@@ -103,11 +103,12 @@ if(controlloUtenteLoggato.getAttribute("utenteLoggato") != null){
 <div class="subtitle">
 	<h2>Visualizza Cliente</h2>
 </div>
+
 <div id="flusso">
 	<table>
 		<tr>
-			<td><img src="images/home.gif"><a href="index.jsp?azione=homePage">Home</a></td>
-			<td><img src="images/cerca.jpg"><a href="./GestioneCliente?azione=caricamentoNominativiCliente">Cerca</a></td>
+			<td><a href="index.jsp?azione=homePage">Home</a></td>
+			<td><a href="./GestioneCliente?azione=caricamentoNominativiCliente">Cerca</a></td>
 		</tr>
 	</table>
 </div>
@@ -213,8 +214,8 @@ if(controlloUtenteLoggato.getAttribute("utenteLoggato") != null){
 <div id="flusso">
 	<table>
 		<tr>
-			<td><img src="images/home.gif"><a href="index.jsp?azione=homePage">Home</a></td>
-			<td><img src="images/cerca.jpg"><a href="./GestioneCliente?azione=caricamentoNominativiCliente">Cerca</a></td>
+			<td><a href="index.jsp?azione=homePage">Home</a></td>
+			<td><a href="./GestioneCliente?azione=caricamentoNominativiCliente">Cerca</a></td>
 		</tr>
 	</table>
 </div>
