@@ -23,8 +23,8 @@ import javax.servlet.http.HttpSession;
  */
 public class GestioneRisorse extends BaseServlet {
 	private static final long serialVersionUID = 4268516633020206244L;
-	private MyLogger log;
-
+	private MyLogger log = new MyLogger(GestioneRisorse.class);
+	
 	/**
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */

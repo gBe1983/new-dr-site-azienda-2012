@@ -1,7 +1,7 @@
 package it.azienda.servlet;
 
 import it.azienda.dao.CurriculumDAO;
-import it.azienda.dao.RisorsaDAO;
+import it.azienda.dto.CurriculumDTO;
 import it.azienda.dto.Dettaglio_Cv_DTO;
 import it.azienda.dto.EsperienzeDTO;
 import it.azienda.dto.RisorsaDTO;
@@ -11,11 +11,11 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.io.StringReader;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 
-import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServlet;
@@ -23,9 +23,15 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import com.itextpdf.text.Chunk;
 import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
+import com.itextpdf.text.Element;
+import com.itextpdf.text.Font;
+import com.itextpdf.text.Image;
 import com.itextpdf.text.PageSize;
+import com.itextpdf.text.Paragraph;
+import com.itextpdf.text.Phrase;
 import com.itextpdf.text.html.simpleparser.HTMLWorker;
 import com.itextpdf.text.html.simpleparser.StyleSheet;
 import com.itextpdf.text.pdf.PdfPCell;
@@ -60,612 +66,521 @@ public class GestioneCurriculum extends BaseServlet {
 		
 		//recupero la sessione
 		HttpSession sessione = request.getSession();
-		
-		RequestDispatcher rd = null;
 
-	if(sessione.getAttribute("utenteLoggato") != null){	
-		//recupero il valore azione 
-		String azione = request.getParameter("azione");
+		CurriculumDAO cDAO = new CurriculumDAO(conn.getConnection());
 		
-		CurriculumDAO curriculum = new CurriculumDAO(conn.getConnection());
+		if(sessione.getAttribute("utenteLoggato") != null){
+			
+			//recupero il parametro azione
+			String azione = request.getParameter("azione");
+			
+			if(azione.equals("caricamentoAllCurriculum")){
+				
+				/**
+				 * mi carico tutti i curriculum che sono stati creati verificando
+				 * che ci siano sia esperinze che dettagli
+				 */
+				ArrayList<CurriculumDTO> curriculumVitae = cDAO.caricamentoAllCurriculum();
+				
+				request.setAttribute("listaCurriculum", curriculumVitae);
+				
+				getServletContext().getRequestDispatcher("/index.jsp?azione=visualizzaCurriculum").forward(request, response);
+				
+			}else if(azione.equals("caricamentoCv")){
+				
+				/**
+				 * in questa sezione carico il curriculum selezionato 
+				 * della singola risorsa
+				 */
+				int id_risorsa = Integer.parseInt(request.getParameter("parametro0"));
+				
+				if(request.getParameter("creazioneCv") != null){
+					if(request.getParameter("creazioneCv").equals("1")){
+						cDAO.creazioneFlagCreazioneCurriculum(id_risorsa);
+					}
+				}
+				
+				CurriculumDTO curriculumVitae = cDAO.caricamentoCurriculum(id_risorsa);
+				curriculumVitae.setId_risorsa(id_risorsa);
+				
+				request.setAttribute("curriculumVitae", curriculumVitae);
+				
+				getServletContext().getRequestDispatcher("/index.jsp?azione=dettaglioCurriculum").forward(request, response);
+				
+			}else if(azione.equals("modificaIntestazione") || azione.equals("modificaEsperienza") || azione.equals("modificaDettaglio")){
+				
+				/**
+				 * in questa sezione gestisco le modifiche delle varie sezioni
+				 */
 		
-		if(azione.equals("creazioneCurriculum") || azione.equals("aggiornaCurriculum")){
-			
-			int idRisorsa = Integer.parseInt(request.getParameter("risorsa"));
-			
-			curriculum.creazioneFlagCreazioneCurriculum(idRisorsa);
-			
-			boolean flag_dettaglio_cv = false;
-			if(request.getParameter("dettaglio") != null){
-				flag_dettaglio_cv = Boolean.parseBoolean(request.getParameter("dettaglio"));
-			}
-			
-			//recupero il valore dal parametro "TipoCreazione" e verifico che valore assume
-			String tipoCreazione = request.getParameter("tipoCreazione");
-			
-			if(tipoCreazione.equals("esperienze")){
+				if(azione.equals("modificaIntestazione")){
+					
+					int id_risorsa = Integer.parseInt(request.getParameter("parametro"));
+					//mi carico l'intestazione della singola risorsa
+					RisorsaDTO risorsa = cDAO.caricamentoIntestazioneRisorsa(id_risorsa);
+					
+					request.setAttribute("intestazioneRisorsa", risorsa);
+					
+					getServletContext().getRequestDispatcher("/index.jsp?azione=gestioneSingoleSezioniCurriculum&sezione=intestazione").forward(request, response);
+					
+				}else if(azione.equals("modificaEsperienza")){
+					
+					int id_esperienza = Integer.parseInt(request.getParameter("parametro0"));
+					
+					EsperienzeDTO exp = cDAO.caricamentoEsperienza(id_esperienza);
+					
+					request.setAttribute("esperienza", exp);
+					
+					getServletContext().getRequestDispatcher("/index.jsp?azione=gestioneSingoleSezioniCurriculum&sezione=esperienza").forward(request, response);
+
+				}else if(azione.equals("modificaDettaglio")){
+					
+					int id_risorsa = Integer.parseInt(request.getParameter("parametro"));
+					
+					Dettaglio_Cv_DTO dettaglio = cDAO.caricamentoDettaglio(id_risorsa);
+					
+					request.setAttribute("dettaglio", dettaglio);
+					
+					getServletContext().getRequestDispatcher("/index.jsp?azione=gestioneSingoleSezioniCurriculum&sezione=dettaglio").forward(request, response);
+
+				}
 				
-				//carico le esperienze 
-				EsperienzeDTO esperienze = new EsperienzeDTO();
-				esperienze.setPeriodo(request.getParameter("periodo"));
-				esperienze.setAzienda(request.getParameter("azienda"));
-				esperienze.setLuogo(request.getParameter("luogo"));
-				esperienze.setDescrizione(request.getParameter("descrizione"));
-				esperienze.setId_risorsa(idRisorsa);
 				
-				//effettuo l'inserimento dell'Esperienza
-				curriculum.inserimentoEsperienze(esperienze);
+			}else if(azione.equals("salvaIntestazione") || azione.equals("salvaEsperienza") || azione.equals("salvaDettaglio")){
 				
-				//valorizzo la variabile Esperienze a "TRUE" per l'avvenuto inserimento
-				request.setAttribute("esperienze", "true");
+				/**
+				 * in questa sezione salvo tutte le modifiche avvenute alle varie sezioni
+				 */
+				int id_risorsa = Integer.parseInt(request.getParameter("parametro"));
 				
-			}else if(tipoCreazione.equals("dettaglioCv")){
+				int esitoModifica = 0;
 				
-				/*
-				 * recupero i valori dal form creazione Cv le voci Dettaglio_Cv
+				if(azione.equals("salvaIntestazione")){
+					
+					//recupero i valori
+					RisorsaDTO intestazioneRisorsa = new RisorsaDTO();
+					
+					intestazioneRisorsa.setIdRisorsa(id_risorsa);
+					intestazioneRisorsa.setCognome(request.getParameter("cognome"));
+					intestazioneRisorsa.setNome(request.getParameter("nome"));
+					intestazioneRisorsa.setIndirizzo(request.getParameter("indirizzo"));
+					intestazioneRisorsa.setTelefono(request.getParameter("telefono"));
+					intestazioneRisorsa.setCellulare(request.getParameter("cellulare"));
+					intestazioneRisorsa.setFax(request.getParameter("fax"));
+					intestazioneRisorsa.setEmail(request.getParameter("email"));
+					intestazioneRisorsa.setDataNascita(request.getParameter("dataNascita"));
+					
+					esitoModifica = cDAO.updateIntestazione(intestazioneRisorsa);
+			
+				}else if(azione.equals("salvaEsperienza")){
+					
+					EsperienzeDTO esperienza = new EsperienzeDTO();
+					
+					esperienza.setIdEsperienze(Integer.parseInt(request.getParameter("parametroId")));
+					esperienza.setPeriodo(request.getParameter("annoInizio") + request.getParameter("meseInizio") 
+						+ "_" +  request.getParameter("annoFine") + request.getParameter("meseFine"));
+					esperienza.setAzienda(request.getParameter("azienda"));
+					esperienza.setLuogo(request.getParameter("luogo"));
+					esperienza.setDescrizione(request.getParameter("descrizione"));
+					esperienza.setId_risorsa(id_risorsa);
+					
+					esitoModifica = cDAO.aggiornamentoEsperienza(esperienza);
+					
+				}else if(azione.equals("salvaDettaglio")){
+					
+					//recupero i valori della modifica del dettaglio
+					Dettaglio_Cv_DTO dettaglio = new Dettaglio_Cv_DTO();
+					dettaglio.setCapacita_professionali(request.getParameter("capacitaProfessionali"));
+					dettaglio.setCompetenze_tecniche(request.getParameter("competenzeTecniche"));
+					dettaglio.setLingue_Straniere(request.getParameter("lingue"));
+					dettaglio.setIstruzione(request.getParameter("istruzione"));
+					dettaglio.setFormazione(request.getParameter("formazione"));
+					dettaglio.setInteressi(request.getParameter("interessi"));
+					dettaglio.setId_risorsa(id_risorsa);
+					dettaglio.setId_dettaglio(Integer.parseInt(request.getParameter("parametroId")));
+					
+					esitoModifica = cDAO.aggiornamentoDettaglio(dettaglio);
+				}
+				
+				CurriculumDTO curriculumVitae = cDAO.caricamentoCurriculum(id_risorsa);
+				curriculumVitae.setId_risorsa(id_risorsa);
+				
+				request.setAttribute("curriculumVitae", curriculumVitae);
+				
+				if(esitoModifica == 1){
+					getServletContext().getRequestDispatcher("/index.jsp?azione=dettaglioCurriculum&esito=1").forward(request, response);
+				}else{
+					getServletContext().getRequestDispatcher("/index.jsp?azione=dettaglioCurriculum&esito=0").forward(request, response);
+				}
+			
+			}else if(azione.equals("anteprimaIntestazione") || azione.equals("anteprimaEsperienza") || azione.equals("anteprimaDettaglio") || azione.equals("anteprimaGlobale")){
+				
+				/**
+				 * in questa sezione effettuo l'anteprima delle singole sezioni
 				 */
 				
-				Dettaglio_Cv_DTO dettaglio = new Dettaglio_Cv_DTO();
-				dettaglio.setCapacita_professionali(request.getParameter("capacitaProfessionali"));
-				dettaglio.setCompetenze_tecniche(request.getParameter("competenzeTecniche"));
-				dettaglio.setLingue_Straniere(request.getParameter("lingue"));
-				dettaglio.setIstruzione(request.getParameter("istruzione"));
-				dettaglio.setFormazione(request.getParameter("formazione"));
-				dettaglio.setInteressi(request.getParameter("interessi"));
-				dettaglio.setId_risorsa(idRisorsa);
-				
-				curriculum.inserimentoDettaglio(dettaglio);
-				
-				if(azione.equals("creazioneCurriculum")){
-					request.setAttribute("dettaglioCv", "true");
-					flag_dettaglio_cv = true;
-				}else{
-					request.setAttribute("dettaglioModificato", "true");
-				}
-			}
-			
-			/*
-			 * mi serve caricare in sessione il curriculum della risorsa 
-			 * perchè quando effettuo l'aggiornamento del curriculum aggiorno
-			 * il curriculum
-			 */
-			
-			if(azione.equals("aggiornaCurriculum")){
-				ArrayList curriculumVitae = curriculum.caricamentoCurriculum(idRisorsa);
-			
-				//inserisco il curriculum caricato in sessione 
-				sessione.setAttribute("curriculumVitae", curriculumVitae);
-			}
-			
-			/*
-			 * effettuo questi tipi di controllo per verificare con quale url
-			 * utilizza. 
-			 */
-			
-			if(azione.equals("creazioneCurriculum")){
-				rd = getServletContext().getRequestDispatcher("/index.jsp?azione=creazioneCv&tipoCreazione="+ tipoCreazione +"&risorsa="+ idRisorsa +"&dettaglio="+ flag_dettaglio_cv +"&dispositiva=risorsa");
-				rd.forward(request, response);
-			
-			}else if(azione.equals("aggiornaCurriculum")){
-				rd = getServletContext().getRequestDispatcher("/index.jsp?azione=modificaCurriculumRisorsa&tipoCreazione="+tipoCreazione+"&risorsa="+idRisorsa+"&dispositiva=risorsa");
-				rd.forward(request, response);
-				
-			}
-			
-		}else if(azione.equals("caricamentoCv")){
-			//effettuo il caricamento del curriculum della singola risorsa
-			int idRisorsa = Integer.parseInt(request.getParameter("risorsa"));
-			
-			ArrayList curriculumVitae = curriculum.caricamentoCurriculum(idRisorsa);
-			
-			/*
-			 * recupero questa tipo di parametro per differenziare la visualizzazione curriculum
-			 * da il modifica curriculum
-			 */
-			
-			String page = request.getParameter("page");
-			
-			sessione.setAttribute("curriculumVitae", curriculumVitae);
-			if(request.getParameter("tipoCreazione") != null){
-				if(page == null){
-					if(request.getParameter("tipoCreazione").equals("esperienze")){
-						response.sendRedirect("index.jsp?azione=modificaCurriculumRisorsa&tipoCreazione=esperienze&risorsa="+idRisorsa+"&dispositiva=risorsa");
-					}else{
-						response.sendRedirect("index.jsp?azione=modificaCurriculumRisorsa&tipoCreazione=dettaglioCv&risorsa="+idRisorsa+"&dispositiva=risorsa");
-					}
-				}else{
-					response.sendRedirect("./strutturaSito/contenuto/visualizzaCurriculumRisorsa.jsp?azione=''&tipoCreazione=esperienze&risorsa="+idRisorsa+"&dispositiva=risorsa");
-				}
-			}else{
-				response.sendRedirect("index.jsp?azione=modificaCurriculumRisorsa&tipoCreazione=esperienze&risorsa="+idRisorsa+"&dispositiva=risorsa");
-			}
-			
-			
-		}else if(azione.equals("modificaCurriculum")){
-			
-			int idRisorsa = Integer.parseInt(request.getParameter("risorsa"));
-			String tipoModifica = request.getParameter("tipoModifica");
-			
-			if(tipoModifica.equals("esperienze")){
-				
-				
-				//carico le esperienze 
-				EsperienzeDTO esperienze = new EsperienzeDTO();
-				esperienze.setPeriodo(request.getParameter("periodo"));
-				esperienze.setAzienda(request.getParameter("azienda"));
-				esperienze.setLuogo(request.getParameter("luogo"));
-				esperienze.setDescrizione(request.getParameter("descrizione"));
-				esperienze.setId_risorsa(idRisorsa);
-				esperienze.setIdEsperienze(Integer.parseInt(request.getParameter("idEsperienze")));
-				
-				//effettuo la modifica concreta dell'Esperienza
-				String messaggio = curriculum.aggiornamentoEsperienza(esperienze);
-				
-				if(messaggio.equals("ok")){
-					ArrayList curriculumVitae = curriculum.caricamentoCurriculum(idRisorsa);
-					//inserisco il curriculum caricato in sessione
-					sessione.setAttribute("curriculumVitae", curriculumVitae);
-					request.setAttribute("esperienzeModificata", "true");
-					rd = getServletContext().getRequestDispatcher("/index.jsp?azione=modificaCurriculumRisorsa&tipoCreazione=esperienze&risorsa="+idRisorsa+"&dispositiva=risorsa");
-					rd.forward(request, response);
-				}else{
-					request.setAttribute("messaggio", messaggio);
-					rd = getServletContext().getRequestDispatcher("/index.jsp?azione=messaggio");
-					rd.forward(request, response);
-				}
-			}else if(tipoModifica.equals("dettaglioCv")){
-				
-				//recupero i valori della modifica del dettaglio
-				Dettaglio_Cv_DTO dettaglio = new Dettaglio_Cv_DTO();
-				dettaglio.setCapacita_professionali(request.getParameter("capacitaProfessionali"));
-				dettaglio.setCompetenze_tecniche(request.getParameter("competenzeTecniche"));
-				dettaglio.setLingue_Straniere(request.getParameter("lingue"));
-				dettaglio.setIstruzione(request.getParameter("istruzione"));
-				dettaglio.setFormazione(request.getParameter("formazione"));
-				dettaglio.setInteressi(request.getParameter("interessi"));
-				dettaglio.setId_risorsa(idRisorsa);
-				dettaglio.setId_dettaglio(Integer.parseInt(request.getParameter("id_dettaglio")));
-				
-				String messaggio = curriculum.aggiornamentoDettaglio(dettaglio);
-				if(messaggio.equals("ok")){
-					ArrayList curriculumVitae = curriculum.caricamentoCurriculum(idRisorsa);
-					//inserisco il curriculum caricato in sessione
-					sessione.setAttribute("curriculumVitae", curriculumVitae);
-					request.setAttribute("dettaglioModificato", "true");
-					rd = getServletContext().getRequestDispatcher("/index.jsp?azione=modificaCurriculumRisorsa&tipoCreazione=dettaglioCv&risorsa="+idRisorsa+"&dispositiva=risorsa");
-					rd.forward(request, response);
-				}else{
-					request.setAttribute("messaggio", messaggio);
-					rd = getServletContext().getRequestDispatcher("/index.jsp?azione=messaggio");
-					rd.forward(request, response);
-				}
-				
-			}
-		}else if(azione.equals("eliminaCampiCurriculum")){
-			
-			if(request.getParameter("tipologia").equals("esperienze")){
-				
-				int idEsperienze = Integer.parseInt(request.getParameter("idEsperienze"));
-				
-				curriculum.eliminazioneEsperienza(idEsperienze);
-				
-				int idRisorsa = Integer.parseInt(request.getParameter("risorsa"));
-				
-				ArrayList curriculumVitae = curriculum.caricamentoCurriculum(idRisorsa);
-				//inserisco il curriculum caricato in sessione
-				sessione.setAttribute("curriculumVitae", curriculumVitae);
-				
-				request.setAttribute("esperienzeEliminata", "true");
-				
-				rd = getServletContext().getRequestDispatcher("/index.jsp?azione=modificaCurriculumRisorsa&tipoCreazione=esperienze&risorsa="+idRisorsa);
-				rd.forward(request, response);
-				
-				
-			}
-		}else if(azione.equals("esportaPdf")){
-			
-			//recupero l'id della risorsa
-			int idRisorsa = Integer.parseInt(request.getParameter("risorsa")); 
-			
-			ArrayList curriculumVitae =new ArrayList();
-			
-			CurriculumDAO cDAO = new CurriculumDAO(conn.getConnection());
-			RisorsaDAO rDAO = new RisorsaDAO(conn.getConnection());
-			
-			curriculumVitae = cDAO.caricamentoCurriculum(idRisorsa);
-			RisorsaDTO risorsa = rDAO.caricamentoProfiloRisorsa(idRisorsa);
-			
-			
-			File file = new File(getServletContext().getRealPath("/")+"CurriculumVitae"+ risorsa.getCognome() + risorsa.getNome() +".pdf");
-			
-			response.setContentType("application/octet-stream; name=\"" + file.getName() + "\"");
-			response.setCharacterEncoding("UTF-8");
-			response.addHeader("content-disposition", "attachment; filename=\"" + file.getName() + "\"");
-			
-			String str = "";
-			
-			Document doc = new Document(PageSize.A4, 10, 10, 10, 40);
-			
-			boolean titoloEsperienze = false;
-		try {
-			PdfWriter pdfWriter = PdfWriter.getInstance(doc, new FileOutputStream(file));
+				int id_risorsa = 0;
 
-			HTMLWorker htmlWorker = new HTMLWorker(doc);
-			doc.open();
-			for(int x = 0; x < curriculumVitae.size(); x++){
+				if(request.getParameter("parametro") != null){
+					id_risorsa = Integer.parseInt(request.getParameter("parametro"));
+				}else{
+					id_risorsa = Integer.parseInt(request.getParameter("parametro0"));
+				}
+				
+				if(azione.equals("anteprimaIntestazione")){
 					
-					if(curriculumVitae.get(x) instanceof RisorsaDTO){
-						RisorsaDTO stampaRisorsa = (RisorsaDTO) curriculumVitae.get(x);
+					//mi carico l'intestazione per poi effettuare l'anteprima
+					RisorsaDTO risorsa = cDAO.caricamentoIntestazioneRisorsa(id_risorsa);
+					
+					request.setAttribute("anteprimaIntestazione", risorsa);
+					
+					getServletContext().getRequestDispatcher("/index.jsp?azione=gestioneAnteprimeSezioniCurriculum&sezione=intestazione").forward(request, response);
+				
+				}else if(azione.equals("anteprimaEsperienza")){
+					
+					int indice = Integer.parseInt(request.getParameter("indice"));
+					
+					ArrayList<EsperienzeDTO> listaEsperienze = new ArrayList<EsperienzeDTO>();
+					
+					CurriculumDTO curriculum = new CurriculumDTO();
+					
+					for(int x = 0; x < indice; x++){
 						
-						// creazione pagina html
-							str +=  "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\">" +
-									"<html>" +
-									"<head>" +
-									"<link rel=\"stylesheet\" type=\"text/css\" href=\"css/tabella.css\">" +
-									"</head>" +
-									"<body>" +
-									"<table width=\"575\" >" +
-									"<tr>" +
-									"	<td width=\"50%\">" +
-									"		<font size=\"2\"><h1 align=\"right\">Formato europeo<br>per il curriculum<br>vitae</h1><br><img src=\""+getServletContext().getRealPath("/")+"/images/logo.gif\" align=\"right\"></font>" +
-									"	</td>" +
-									"	<td>" +
-									"		<br>"  +
-									"	</td>" +
-									"</tr>" +
-									"<tr>" +
-									"	<td width=\"50%\">" +
-									"		<br>"  +
-									"	</td>" +
-									"	<td>" +
-									"		<br>"  +
-									"	</td>" +
-									"</tr>" +
-									"<tr>" +
-									"	<td width=\"50%\">" +
-									"		<h3 align=\"right\">Informazioni personali</h3>" +
-									"	</td>" +
-									"	<td>" +
-									"		<br>"  +
-									"	</td>" +
-									"</tr>" +
-									"<tr>" +
-									"	<td width=\"50%\">" +
-									"		<br>"  +
-									"	</td>" +
-									"	<td>" +
-									"		<br>"  +
-									"	</td>" +
-									"</tr>" +
-									"<tr>" +
-									"	<td width=\"50%\">" +
-									"		<p align=\"right\">Cognome</p>" +
-									"	</td>" +
-									"	<td>" +
-									"		<span>"+risorsa.getCognome()+ "</span>" +
-									"	</td>" +
-									"</tr>" +
-									"<tr>" +
-									"	<td width=\"50%\">" +
-									"		<p align=\"right\">Nome</p>" +
-									"	</td>" +
-									"	<td>" +
-									"		<span>" + risorsa.getNome() + "</span>" +
-									"	</td>" +
-									"</tr>" +
-									"<tr>" +
-									"	<td width=\"50%\">" +
-									"		<p align=\"right\">Indirizzo</p>" +
-									"	</td>" +
-									"	<td>" +
-									"		<span>" + risorsa.getTelefono() + "</span>" +
-									"	</td>" +
-									"</tr>" +
-									"<tr>" +
-									"	<td width=\"50%\">" +
-									"		<p align=\"right\">Telefono</p>" +
-									"	</td>" +
-									"	<td>" +
-									"		<span>"+ risorsa.getTelefono() + "</span>" +
-									"	</td>" +
-									"</tr>" +
-									"<tr>" +
-									"	<td width=\"50%\">" +
-									"		<p align=\"right\">Fax</p>" +
-									"	</td>" +
-									"	<td>" +
-									"		<span>"+ risorsa.getFax() + "</span>" +
-									"	</td>" +
-									"</tr>" +
-									"<tr>" +
-									"	<td width=\"50%\">" +
-									"		<p align=\"right\">E-mail</p>" +
-									"	</td>" +
-									"	<td>" +
-									"		<span>" + risorsa.getEmail() + "</span>" +
-									"	</td>" +
-									"</tr>" +
-									"<tr>" +
-									"	<td width=\"50%\">" +
-									"		<p align=\"right\">Data di nascita</p>" +
-									"	</td>" +
-									"	<td>" +
-									"		<span>"+risorsa.getDataNascita()+"</span>" +
-									"	</td>" +
-									"</tr>" +
-									"<tr>" +
-									"	<td width=\"50%\">" +
-									"		<br>"  +
-									"	</td>" +
-									"	<td>" +
-									"		<br>"  +
-									"	</td>" +
-									"</tr>";
-						}else if(curriculumVitae.get(x) instanceof EsperienzeDTO){
-							EsperienzeDTO esperienze = (EsperienzeDTO) curriculumVitae.get(x);
-				
-							if(!titoloEsperienze){
-								titoloEsperienze = true;
-								str +=  "<tr>" +
-										"	<td width=\"50%\">" +
-										"		<h3 align=\"right\">Esperienze Lavorative</h3>" +
-										"	<td>" +
-										"	<td>" +
-										"		<br>" +
-										"	<td>" +
-										"</tr>" +
-										"<tr>" +
-										"	<td width=\"50%\">" +
-										"		<br>"  +
-										"	</td>" +
-										"	<td>" +
-										"		<br>"  +
-										"	</td>" +
-										"</tr>";
-							}
-								str += 	"<tr>" +
-										"	<td width=\"50%\">" +
-										"		<p align=\"right\">Periodo:</p>"  +
-										"	</td>" +
-										"	<td>" +
-										"		<span>" + esperienze.getPeriodo() + "</span>" +
-										"	</td>" +
-										"</tr>" +
-										"<tr>" +
-										"	<td width=\"50%\">" +
-										"		<p align=\"right\">Azienda:</p>"  +
-										"	</td>" +
-										"	<td>" +
-										"		<span>" + esperienze.getAzienda() + "</span>" +
-										"	</td>" +
-										"</tr>" +
-										"<tr>" +
-										"	<td width=\"50%\">" +
-										"		<p align=\"right\">Luogo:</p>"  +
-										"	</td>" +
-										"	<td>" +
-										"		<span>" + esperienze.getLuogo() + "</span>" +
-										"	</td>" +
-										"</tr>" +
-										"<tr>" +
-										"	<td width=\"50%\" valign=\"top\">" +
-										"		<p align=\"right\">Descrizione:</p>"  +
-										"	</td>" +
-										"	<td>" +
-										"		<span>" + esperienze.getDescrizione() + "</span>"+
-										"	</td>" +
-										"</tr>"+
-										"<tr>" +
-										"	<td width=\"50%\">" +
-										"		<br>"  +
-										"	</td>" +
-										"	<td>" +
-										"		<br>"  +
-										"	</td>" +
-										"</tr>";
-								}else if(curriculumVitae.get(x) instanceof Dettaglio_Cv_DTO){
-									Dettaglio_Cv_DTO dettaglio = (Dettaglio_Cv_DTO) curriculumVitae.get(x);
-									
-								str +=  "<tr>" +
-										"	<td width=\"50%\">" +
-										"		<h3 align=\"right\">Dettaglio Curriculum</h3>" +
-										"	<td>" +
-										"	<td>" +
-										"		<br>" +
-										"	<td>" +
-										"</tr>" +
-										"<tr>" +
-										"	<td width=\"50%\">" +
-										"		<br>"  +
-										"	</td>" +
-										"	<td>" +
-										"		<br>"  +
-										"	</td>" +
-										"</tr>" +
-										"<tr>" +
-										"	<td width=\"50%\" valign=\"top\">" +
-										"		<p align=\"right\">Capacita Professionali:</p>"  +
-										"	</td>" +
-										"	<td>" +
-										"		<span>" + dettaglio.getCapacita_professionali() + "</span>" +
-										"	</td>" +
-										"</tr>" +
-										"<tr>" +
-										"	<td width=\"50%\">" +
-										"		<br>"  +
-										"	</td>" +
-										"	<td>" +
-										"		<br>"  +
-										"	</td>" +
-										"</tr>"+
-										"<tr>" +
-										"	<td width=\"50%\" valign=\"top\">" +
-										"		<p align=\"right\">Competenze Tecniche:</p>"  +
-										"	</td>" +
-										"	<td>" +
-										"		<span>" + dettaglio.getCompetenze_tecniche() + "</span>" +
-										"	</td>" +
-										"</tr>" +
-										"<tr>" +
-										"	<td width=\"50%\">" +
-										"		<br>"  +
-										"	</td>" +
-										"	<td>" +
-										"		<br>"  +
-										"	</td>" +
-										"</tr>"+
-										"<tr>" +
-										"	<td width=\"50%\" valign=\"top\">" +
-										"		<p align=\"right\">Lingue:</p>"  +
-										"	</td>" +
-										"	<td>" +
-										"		<span>" + dettaglio.getLingue_Straniere() + "</span>" +
-										"	</td>" +
-										"</tr>" +
-										"<tr>" +
-										"	<td width=\"50%\">" +
-										"		<br>"  +
-										"	</td>" +
-										"	<td>" +
-										"		<br>"  +
-										"	</td>" +
-										"</tr>"+
-										"<tr>" +
-										"	<td width=\"50%\" valign=\"top\">" +
-										"		<p align=\"right\">Istruzione:</p>"  +
-										"	</td>" +
-										"	<td>" +
-										"		<span>" + dettaglio.getIstruzione() + "</span>"+
-										"	</td>" +
-										"</tr>" +
-										"<tr>" +
-										"	<td width=\"50%\" valign=\"top\">" +
-										"		<br>"  +
-										"	</td>" +
-										"	<td>" +
-										"		<br>"  +
-										"	</td>" +
-										"</tr>"+
-										"<tr>" +
-										"	<td width=\"50%\" valign=\"top\">" +
-										"		<p align=\"right\">Formazione:</p>"  +
-										"	</td>" +
-										"	<td>" +
-										"		<span>" + dettaglio.getFormazione() + "</span>"+
-										"	</td>" +
-										"</tr>" +
-										"<tr>" +
-										"	<td width=\"50%\">" +
-										"		<br>"  +
-										"	</td>" +
-										"	<td>" +
-										"		<br>"  +
-										"	</td>" +
-										"</tr>"+
-										"<tr>" +
-										"	<td width=\"50%\" valign=\"top\">" +
-										"		<p align=\"right\">Interessi:</p>"  +
-										"	</td>" +
-										"	<td>" +
-										"		<span>" + dettaglio.getInteressi() + "</span>"+
-										"	</td>" +
-										"</tr>";
-								}
-							}
-				str += "</table>";
-				System.out.println(str);
-				StyleSheet styleSheet = new StyleSheet();
-//				styleSheet.loadTagStyle("table", "border", "1");
-				ArrayList lista = (ArrayList) htmlWorker.parseToList(new StringReader(str), styleSheet);
-				
-				//mi creo la tabella che servira a contenere le varie celle
-				PdfPTable disegnaTabella = new PdfPTable(2);
-				disegnaTabella.setWidthPercentage(100);
-				float[] columnWidths = {60, 120};
-				disegnaTabella.setWidths(columnWidths);
-				
-				//mi faccio restituire il risultato della conversione da Html a PDF
-				PdfPTable tabella = (PdfPTable) lista.get(0);
-				
-				//mi faccio restituire le righe presenti nella Tabella
-				ArrayList listaRows =  (ArrayList)tabella.getRows();
-				
-				//ciclo le righe
-				for(int y = 0; y < listaRows.size(); y++){
-					//recupero la singola riga
-					PdfPRow row = (PdfPRow)listaRows.get(y);
+						int id_esperienza = Integer.parseInt(request.getParameter("parametro"+x));
+						
+						EsperienzeDTO esperienza = cDAO.caricamentoEsperienza(id_esperienza);
+						//effettuo questa operazione per formattare la data in MM/YYYY
+						esperienza.setPeriodo(cDAO.formattazionePeriodo(esperienza.getPeriodo().split("_")));
+						
+						listaEsperienze.add(esperienza);
+					}
 					
-					//recupero le varie celle prensenti nella riga
-					PdfPCell[] celle  = (PdfPCell[]) row.getCells();
+					curriculum.setListaEsperienze(listaEsperienze);
+					curriculum.setId_risorsa(id_risorsa);
 					
+					request.setAttribute("listaEsperienze", curriculum);
 					
-					PdfPCell cellaSinistra = new PdfPCell(celle[0]);
-					cellaSinistra.setPaddingRight(5);
-					disegnaTabella.addCell(cellaSinistra);
+					getServletContext().getRequestDispatcher("/index.jsp?azione=gestioneAnteprimeSezioniCurriculum&sezione=esperienze").forward(request, response);
+				
+				}else if(azione.equals("anteprimaDettaglio")){
+										
+					Dettaglio_Cv_DTO dettaglio = cDAO.caricamentoDettaglio(id_risorsa);
 					
-					PdfPCell cellaDestra = new PdfPCell(celle[1]);
-					cellaDestra.setPaddingLeft(5);
-					cellaDestra.setBorderWidthLeft(1);
-					disegnaTabella.addCell(cellaDestra);
+					request.setAttribute("dettaglio", dettaglio);
+					
+					getServletContext().getRequestDispatcher("/index.jsp?azione=gestioneAnteprimeSezioniCurriculum&sezione=dettaglio").forward(request, response);
+					
+				}else if(azione.equals("anteprimaGlobale")){
+										
+					CurriculumDTO curriculumVitae = cDAO.caricamentoCurriculum(id_risorsa);
+					curriculumVitae.setId_risorsa(id_risorsa);
+					
+					request.setAttribute("curriculumVitae", curriculumVitae);
+					
+					if(request.getParameter("area") != null){
+						if(request.getParameter("area").equals("all")){
+							getServletContext().getRequestDispatcher("/index.jsp?azione=anteprimaCurriculum&area=all").forward(request, response);
+						}else{
+							getServletContext().getRequestDispatcher("/index.jsp?azione=anteprimaCurriculum&area=notAll").forward(request, response);
+						}
+					}
+					
 					
 				}
-				doc.add(disegnaTabella);
-				doc.close();
 				
-				FileInputStream fileInputStream = new FileInputStream(file);
-				ServletOutputStream out = response.getOutputStream();
-				int i;
-				while ((i=fileInputStream.read()) != -1)
-					out.write(i);
-				fileInputStream.close();
-				out.close();
-				boolean fileCancellato= new File(getServletContext().getRealPath("/")+"CurriculumVitae"+ risorsa.getCognome() + risorsa.getNome() +".pdf").delete();
-				System.out.println("esito della cancellazione del file: " + fileCancellato);
-			} catch (FileNotFoundException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (DocumentException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		 }
-	  }else{
-		  	response.setContentType("text/html");
-	        PrintWriter out = response.getWriter();
+			}else if (azione.equals("aggiungiEsperienza") || azione.equals("aggiungiDettaglio")) {
+				
+				int id_risorsa = Integer.parseInt(request.getParameter("parametroId"));
+				
+				int esitoAggiungi = 0;
+				
+				if(azione.equals("aggiungiEsperienza")){
+					EsperienzeDTO esperienza = new EsperienzeDTO();
+					esperienza.setPeriodo(request.getParameter("annoInizio") + request.getParameter("meseInizio") 
+							+ "_" +  request.getParameter("annoFine") + request.getParameter("meseFine"));
+					esperienza.setAzienda(request.getParameter("azienda"));
+					esperienza.setLuogo(request.getParameter("luogo"));
+					esperienza.setDescrizione(request.getParameter("descrizione"));
+					esperienza.setId_risorsa(id_risorsa);
+					
+					esitoAggiungi = cDAO.inserimentoEsperienze(esperienza);
+				}else{
+					
+					Dettaglio_Cv_DTO dettaglio = new Dettaglio_Cv_DTO();
+					dettaglio.setCapacita_professionali(request.getParameter("capacitaProfessionali"));
+					dettaglio.setCompetenze_tecniche(request.getParameter("competenzeTecniche"));
+					dettaglio.setLingue_Straniere(request.getParameter("lingue"));
+					dettaglio.setIstruzione(request.getParameter("istruzione"));
+					dettaglio.setFormazione(request.getParameter("formazione"));
+					dettaglio.setInteressi(request.getParameter("interessi"));
+					dettaglio.setId_risorsa(id_risorsa);
+					
+					esitoAggiungi = cDAO.inserimentoDettaglio(dettaglio);
+					
+				}
+				
+				CurriculumDTO curriculumVitae = cDAO.caricamentoCurriculum(id_risorsa);
+				curriculumVitae.setId_risorsa(id_risorsa);
+				
+				request.setAttribute("curriculumVitae", curriculumVitae);
+				
+				if(esitoAggiungi == 1){
+					getServletContext().getRequestDispatcher("/index.jsp?azione=dettaglioCurriculum&esito=1").forward(request, response);
+				}else{
+					getServletContext().getRequestDispatcher("/index.jsp?azione=dettaglioCurriculum&esito=0").forward(request, response);
+				}
+				
+				
+				//esperienza.setPeriodo(periodo)
+				
+			}else if (azione.equals("eliminaEsperienza") || azione.equals("eliminaDettaglio") || azione.equals("eliminazioneGlobale")){
+				/**
+				 *  in questa sezione effettuo l'eliminazione delle singole 
+				 *  parti del curriculum
+				 */
+				int id_risorsa = 0;
+				
+				if(request.getParameter("parametro") != null){
+					id_risorsa = Integer.parseInt(request.getParameter("parametro"));
+				}
+				
+				int esitoEliminazione = 0;
+				
+				if(azione.equals("eliminaEsperienza")){
+					
+					int indice = Integer.parseInt(request.getParameter("indice"));
+					
+					for(int x = 0; x < indice; x++){
+						
+						int id_esperienza = Integer.parseInt(request.getParameter("parametro"+x));
+						
+						esitoEliminazione = cDAO.eliminazioneEsperienza(id_esperienza);
+						
+					}
+				}else if(azione.equals("eliminaDettaglio")){
+						
+					int id_dettaglio = Integer.parseInt(request.getParameter("parametroId"));
+						
+					esitoEliminazione = cDAO.eliminazioneDettaglio(id_dettaglio);
+					
+				}else if(azione.equals("eliminazioneGlobale")){
+					
+ 					int indice = Integer.parseInt(request.getParameter("indice"));
+					
+					for(int x = 0; x < indice; x++){
+						
+						int idRisorsa = Integer.parseInt(request.getParameter("parametro"+x));
+						
+						cDAO.eliminaEsperienzaGlobale(idRisorsa);
+						cDAO.eliminazioneDettaglioGlobale(idRisorsa);
+						cDAO.disabilitazioneFlagCreazioneCurriculum(idRisorsa);
+					}
+					
+					ArrayList<CurriculumDTO> curriculumVitae = cDAO.caricamentoAllCurriculum();
+					
+					request.setAttribute("listaCurriculum", curriculumVitae);
+					
+					getServletContext().getRequestDispatcher("/index.jsp?azione=visualizzaCurriculum").forward(request, response);
+
+					
+				}
+				
+				CurriculumDTO curriculumVitae = cDAO.caricamentoCurriculum(id_risorsa);
+				curriculumVitae.setId_risorsa(id_risorsa);
+				
+				request.setAttribute("curriculumVitae", curriculumVitae);
+				
+				if(!azione.equals("eliminazioneGlobale")){
+					if(esitoEliminazione == 1){
+						getServletContext().getRequestDispatcher("/index.jsp?azione=dettaglioCurriculum&esito=1").forward(request, response);
+					}else{
+						getServletContext().getRequestDispatcher("/index.jsp?azione=dettaglioCurriculum&esito=2").forward(request, response);
+					}
+				}
+				
+				
+			}else if(azione.equals("esportaPdf")){
+				
+				//recupero l'id della risorsa
+				int id_risorsa = Integer.parseInt(request.getParameter("parametro")); 
+				
+				CurriculumDTO curriculum =  cDAO.caricamentoCurriculum(id_risorsa);
+				
+				File file = new File(getServletContext().getRealPath("/")+"CurriculumVitae_"+ curriculum.getRisorsa().getCognome() + "_" + curriculum.getRisorsa().getNome() +".pdf");
+				
+				response.setContentType("application/octet-stream; name=\"" + file.getName() + "\"");
+				response.setCharacterEncoding("UTF-8");
+				response.addHeader("content-disposition", "attachment; filename=\"" + file.getName() + "\"");
+				
+				
+				Document doc = new Document(PageSize.A4, 10, 10, 10, 40);
+				
+				
 			try {
-				out = response.getWriter();
-				out.print("<html>" +
-						"<head>" +
-						"</head>" +
-						"<body>" +
-						"<script type=\"text/javascript\">" +
-						"alert(\"La sessione è scaduta. Rieffettuare la login\");" +
-						"url = window.location.href;" +
-						"var variabiliUrl = url.split(\"/\");" +
-						"for(a=0; a < variabiliUrl.length; a++){" +
-						"		if(a == 2){" +
-						"			var localVariabili = variabiliUrl[a].split(\":\");" +
-						"			for(x=0; x < localVariabili.length; x++){" +
-						"				if(localVariabili[x] == \"localhost\"){" +
-						"					window.location = \"http://localhost/dr\";" +
-						"				}if(localVariabili[x] == \"cvonline\"){" +
-						"					window.location.href = \"http://cvonline.tv\";" +
-						"				}if(localVariabili[x] == \"drconsulting\"){" +
-						"					window.location.href= \"http://drconsulting.tv\";" +
-						"				}" +
-						"			}" +
-						"		}else{" +
-						"			continue;" +
-						"		}" +
-						"}" +
-						"</script>" +
-						"</body>" +
-						"</html>");
-				out.flush();
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+				PdfWriter pdfWriter = PdfWriter.getInstance(doc, new FileOutputStream(file));
+
+				HTMLWorker htmlWorker = new HTMLWorker(doc);
+				doc.open();
+				
+					String curriculumVItaeHtml = cDAO.esportaCurriculumVitae(getServletContext().getRealPath("/"), curriculum);
+				
+					System.out.println(curriculumVItaeHtml);
+					StyleSheet styleSheet = new StyleSheet();
+//					styleSheet.loadTagStyle("table", "border", "1");
+					ArrayList lista = (ArrayList) htmlWorker.parseToList(new StringReader(curriculumVItaeHtml), styleSheet);
+					
+					//mi creo la tabella che servira a contenere le varie celle
+					PdfPTable disegnaTabella = new PdfPTable(2);
+					
+					disegnaTabella.setWidthPercentage(100);
+					
+					//carico le dimensione delle due celle
+					float[] columnWidths = {40, 140};
+					disegnaTabella.setWidths(columnWidths);
+					
+					//mi faccio restituire il risultato della conversione da Html a PDF
+					PdfPTable tabella = (PdfPTable) lista.get(0);
+					
+					//mi faccio restituire le righe presenti nella Tabella
+					ArrayList listaRows =  (ArrayList)tabella.getRows();
+					
+					//Gestione del font per la parte sinistra del curriculum
+					Font fontIntestazione = new Font(Font.FontFamily.TIMES_ROMAN, 13, Font.BOLD);
+					Font fontTitoli = new Font(Font.FontFamily.TIMES_ROMAN, 11, Font.BOLD);
+					Font fontDescrizione = new Font(Font.FontFamily.TIMES_ROMAN, 10);
+					
+					//ciclo le righe
+					for(int y = 0; y < listaRows.size(); y++){
+						//recupero la singola riga
+						PdfPRow row = (PdfPRow)listaRows.get(y);
+						
+						//recupero le varie celle prensenti nella riga
+						PdfPCell[] celle  = (PdfPCell[]) row.getCells();
+						
+						
+						if(celle[0].getCompositeElements().get(0).getChunks().get(0).getContent().equals("Formato europeo")){
+							
+							
+							PdfPCell cellaSinistra = new PdfPCell(new Paragraph(celle[0].getCompositeElements().get(0).getChunks().get(0).getContent() + 
+									  celle[0].getCompositeElements().get(0).getChunks().get(1).getContent() +
+									  celle[0].getCompositeElements().get(0).getChunks().get(2).getContent() +
+									  celle[0].getCompositeElements().get(0).getChunks().get(3).getContent() +
+									  celle[0].getCompositeElements().get(0).getChunks().get(4).getContent() , fontIntestazione));
+							cellaSinistra.setPaddingRight(5);
+							cellaSinistra.setBorderWidth(0);
+							cellaSinistra.setHorizontalAlignment(Element.ALIGN_RIGHT);
+							disegnaTabella.addCell(cellaSinistra);
+							
+						}else if(celle[0].getCompositeElements().get(0).getChunks().get(0).getContent().indexOf("img") == 0){
+							
+							Image immagine = Image.getInstance(getServletContext().getRealPath("/") + "images/logo.gif");
+							immagine.setWidthPercentage(25);
+							PdfPCell cellaSinistra = new PdfPCell(immagine);
+							cellaSinistra.setPaddingRight(5);
+							cellaSinistra.setBorderWidth(0);
+							cellaSinistra.setHorizontalAlignment(Element.ALIGN_RIGHT);
+							disegnaTabella.addCell(cellaSinistra);
+							
+							
+						}else if(celle[0].getCompositeElements().get(0).getChunks().get(0).getContent().equals("Informazioni personali")){
+							
+							
+							PdfPCell cellaSinistra = new PdfPCell(new Paragraph(celle[0].getCompositeElements().get(0).getChunks().get(0).getContent(), fontTitoli));
+							cellaSinistra.setPaddingRight(5);
+							cellaSinistra.setBorderWidth(0);
+							cellaSinistra.setHorizontalAlignment(Element.ALIGN_RIGHT);
+							disegnaTabella.addCell(cellaSinistra);
+							
+						}else if(celle[0].getCompositeElements().get(0).getChunks().get(0).getContent().equals("Esperienze Lavorative")){
+							
+							
+							PdfPCell cellaSinistra = new PdfPCell(new Paragraph(celle[0].getCompositeElements().get(0).getChunks().get(0).getContent(), fontTitoli));
+							cellaSinistra.setPaddingRight(5);
+							cellaSinistra.setBorderWidth(0);
+							cellaSinistra.setHorizontalAlignment(Element.ALIGN_RIGHT);
+							disegnaTabella.addCell(cellaSinistra);
+							
+						}else if(celle[0].getCompositeElements().get(0).getChunks().get(0).getContent().equals("Dettaglio Curriculum")){
+							
+							
+							PdfPCell cellaSinistra = new PdfPCell(new Paragraph(celle[0].getCompositeElements().get(0).getChunks().get(0).getContent(), fontTitoli));
+							cellaSinistra.setPaddingRight(5);
+							cellaSinistra.setBorderWidth(0);
+							cellaSinistra.setHorizontalAlignment(Element.ALIGN_RIGHT);
+							disegnaTabella.addCell(cellaSinistra);
+							
+						}else{
+							PdfPCell cellaSinistra = new PdfPCell(new Phrase(celle[0].getCompositeElements().get(0).getChunks().get(0).getContent(), fontDescrizione));
+							cellaSinistra.setPaddingRight(5);
+							cellaSinistra.setBorderWidth(0);
+							cellaSinistra.setHorizontalAlignment(Element.ALIGN_RIGHT);
+							disegnaTabella.addCell(cellaSinistra);
+						}
+						
+						if(celle[1].getCompositeElements() == null){
+							PdfPCell cellaDestra = new PdfPCell(celle[1]);
+							cellaDestra.setPaddingLeft(5);
+							cellaDestra.setBorderWidth(0);
+							cellaDestra.setBorderWidthLeft(1);
+							cellaDestra.setHorizontalAlignment(Element.ALIGN_LEFT);
+							disegnaTabella.addCell(cellaDestra);
+						}else{
+							if(celle[1].getCompositeElements().get(0).getChunks().size() > 0){
+								String testo = "";
+								for(Chunk chuck:celle[1].getCompositeElements().get(0).getChunks()){
+									testo += chuck.getContent();
+								}
+								PdfPCell cellaDestra = new PdfPCell(new Phrase(testo, fontDescrizione));
+								cellaDestra.setPaddingLeft(5);
+								cellaDestra.setBorderWidth(0);
+								cellaDestra.setBorderWidthLeft(1);
+								cellaDestra.setHorizontalAlignment(Element.ALIGN_LEFT);
+								disegnaTabella.addCell(cellaDestra);
+							}else{
+								PdfPCell cellaDestra = new PdfPCell(new Phrase(celle[1].getCompositeElements().get(0).getChunks().get(0).getContent(), fontDescrizione));
+								cellaDestra.setPaddingLeft(5);
+								cellaDestra.setBorderWidth(0);
+								cellaDestra.setBorderWidthLeft(1);
+								cellaDestra.setHorizontalAlignment(Element.ALIGN_LEFT);
+								disegnaTabella.addCell(cellaDestra);
+							}
+						}
+					}
+					doc.add(disegnaTabella);
+					SimpleDateFormat formatoPdf = new SimpleDateFormat("dd/MM/yyyy");
+					doc.add(new Paragraph());
+					doc.add(new Paragraph("Torino, " + formatoPdf.format(Calendar.getInstance().getTime())));
+					doc.add(new Paragraph("Firma "));
+					doc.close();
+					
+					FileInputStream fileInputStream = new FileInputStream(file);
+					ServletOutputStream out = response.getOutputStream();
+					int i;
+					while ((i=fileInputStream.read()) != -1)
+						out.write(i);
+					fileInputStream.close();
+					out.close();
+					boolean fileCancellato= new File(getServletContext().getRealPath("/")+"CurriculumVitae"+ curriculum.getRisorsa().getCognome() + curriculum.getRisorsa().getNome() +".pdf").delete();
+					System.out.println("esito della cancellazione del file: " + fileCancellato);
+					
+				} catch (FileNotFoundException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (DocumentException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			 }else if(azione.equals("selezionaRisorsa")){
+				 
+				 ArrayList<RisorsaDTO> listaRisorsa = cDAO.caricamentoRisorseSenzaCurriculum();
+				 
+				 request.setAttribute("listaRisorsa", listaRisorsa);
+				 
+				 getServletContext().getRequestDispatcher("/index.jsp?azione=selezionaRisorsa").forward(request, response);
+				 
+			 }
+		}else{
+			sessioneScaduta(response);
 		}
 	}
 }
