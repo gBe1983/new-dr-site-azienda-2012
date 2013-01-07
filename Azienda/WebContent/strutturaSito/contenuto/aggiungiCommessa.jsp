@@ -1,4 +1,4 @@
- <%@ page language="java" contentType="text/html; charset=ISO-8859-1"
+<%@ page language="java" contentType="text/html; charset=ISO-8859-1"
 	pageEncoding="ISO-8859-1"%>
 <%@page import="java.util.ArrayList"%>
 <%@page import="it.azienda.dto.ClienteDTO"%>
@@ -17,11 +17,6 @@
 </script>
 
 <%
-//mi serve per castare le varie date_inizio e date_fine delle varie commesse
-SimpleDateFormat formattaDataWeb = new SimpleDateFormat("dd-MM-yyyy");
-
-//mi serve per formattare le varie date_inizio e date_fine nel formato del DB
-SimpleDateFormat formattaDataServer = new SimpleDateFormat("yyyy-MM-dd");
 
 HttpSession controlloUtenteLoggato = request.getSession();
 if(controlloUtenteLoggato.getAttribute("utenteLoggato") != null){
@@ -191,7 +186,6 @@ if(controlloUtenteLoggato.getAttribute("utenteLoggato") != null){
 		<td>Stato</td>
 		<td><select name="commessaEsternaSingola_stato">
 			<option value="aperta">Aperta</option>
-			<option value="chiusa">Chiusa</option>
 		</select></td>
 	</tr>
 </table>
@@ -299,7 +293,6 @@ if(controlloUtenteLoggato.getAttribute("utenteLoggato") != null){
 		<td>Stato</td>
 		<td><select name="stato">
 			<option value="aperta">Aperta</option>
-			<option value="chiusa">Chiusa</option>
 		</select></td>
 	</tr>
 </table>
@@ -397,7 +390,6 @@ if(controlloUtenteLoggato.getAttribute("utenteLoggato") != null){
 		<td>Stato</td>
 		<td><select name="commessaInterna_stato">
 			<option value="aperta">Aperta</option>
-			<option value="chiusa">Chiusa</option>
 		</select></td>
 	</tr>
 </table>
@@ -491,12 +483,9 @@ if(controlloUtenteLoggato.getAttribute("utenteLoggato") != null){
 			<a href="./index.jsp?azione=homePage">Home</a></p>
 <%
 		}
-		
-		/*
-		*	qua inizia la sezione Dettaglio Commessa
-		*/
-		
-		
+	/*
+	*	qua inizia la sezione Dettaglio Commessa
+	*/
 	}if(request.getParameter("azione").equals("dettaglioCommessa")){
 %>
 		<div class="subtitle ">
@@ -507,8 +496,8 @@ if(controlloUtenteLoggato.getAttribute("utenteLoggato") != null){
 		<div id="flussoCommessa">
 			<table>
 				<tr>
-					<td><img src="images/home.gif"><a href="index.jsp?azione=homePage">Home</a></td>
-					<td><img src="images/cerca.jpg"><a href="./GestioneTrattattive?azione=ricercaCommessa">Cerca</a></td>
+					<td><a href="index.jsp?azione=homePage">Home</a></td>
+					<td><a href="./GestioneTrattattive?azione=ricercaCommessa">Cerca</a></td>
 					<td><a href="<%=controlloUtenteLoggato.getAttribute("url").toString() %>">Indietro</a></td>
 				</tr>
 			</table>
@@ -662,7 +651,7 @@ if(controlloUtenteLoggato.getAttribute("utenteLoggato") != null){
 				<td>Importo</td>
 				<td>
 					<%
-						if(commessa.getImporto() != 0){
+						if(commessa.getImporto() != 0.0){
 							out.print("<label>" + commessa.getImporto() + "</label>");
 						}
 					%>
@@ -779,8 +768,8 @@ if(controlloUtenteLoggato.getAttribute("utenteLoggato") != null){
 	<div id="flussoCommessa">
 		<table>
 			<tr>
-				<td><img src="images/home.gif"><a href="index.jsp?azione=homePage">Home</a></td>
-				<td><img src="images/cerca.jpg"><a href="./GestioneTrattattive?azione=ricercaCommessa">Cerca</a></td>
+				<td><a href="index.jsp?azione=homePage">Home</a></td>
+				<td><a href="./GestioneTrattattive?azione=ricercaCommessa">Cerca</a></td>
 				<td><a href="<%=controlloUtenteLoggato.getAttribute("url").toString() %>">Indietro</a></td>
 			</tr>
 		</table>
@@ -888,7 +877,7 @@ if(controlloUtenteLoggato.getAttribute("utenteLoggato") != null){
 			<td><input type="text" name="commessaEsternaSingola_dataInizio" value="<%=commessa.getData_inizio() %>" readonly="readonly"/></td>
 	
 			<td>* Data Fine</td>
-			<td><input type="text" name="commessaEsternaSingola_dataFine" class="data" value="<%=formattaDataWeb.format(formattaDataServer.parse(commessa.getData_fine())) %>"/></td>
+			<td><input type="text" name="commessaEsternaSingola_dataFine" class="data" value="<%=commessa.getData_fine() %>"/></td>
 		</tr>
 		<tr>
 			<td>* Importo</td>
@@ -1060,7 +1049,7 @@ if(controlloUtenteLoggato.getAttribute("utenteLoggato") != null){
 			<td><input type="text" name="dataInizio" value="<%=commessa.getData_inizio() %>" readonly="readonly"/></td>
 	
 			<td>* Data Fine</td>
-			<td><input type="text" name="dataFine" class="data" value="<%=formattaDataWeb.format(formattaDataServer.parse(commessa.getData_fine())) %>"/></td>
+			<td><input type="text" name="dataFine" class="data" value="<%=commessa.getData_fine() %>"/></td>
 		</tr>
 		<tr>
 			<td>* Importo</td>
@@ -1221,7 +1210,7 @@ if(controlloUtenteLoggato.getAttribute("utenteLoggato") != null){
 				<td><input type="text" name="commessaInterna_dataInizio" value="<%=commessa.getData_inizio() %>" readonly="readonly"/></td>
 			
 				<td>* Data Fine</td>
-				<td><input type="text" name="commessaInterna_dataFine" class="data" value="<%=formattaDataWeb.format(formattaDataServer.parse(commessa.getData_fine())) %>"/></td>
+				<td><input type="text" name="commessaInterna_dataFine" class="data" value="<%=commessa.getData_fine() %>"/></td>
 			</tr>
 			<tr>
 				<td>* Importo</td>

@@ -17,8 +17,8 @@ if(sessioneModificaCredenziali.getAttribute("utenteLoggato") != null){
 <div id="flusso">
 	<table>
 		<tr>
-			<td><img src="images/home.gif"><a href="index.jsp?azione=homePage">Home</a></td>
-			<td><img src="images/cerca.jpg"><a href="index.jsp?azione=ricercaRisorse&dispositiva=risorsa">Cerca</a></td>
+			<td><a href="index.jsp?azione=homePage">Home</a></td>
+			<td><a href="index.jsp?azione=ricercaRisorse&dispositiva=risorsa">Cerca</a></td>
 		</tr>
 	</table>
 </div>
@@ -31,12 +31,11 @@ if(sessioneModificaCredenziali.getAttribute("utenteLoggato") != null){
 <% 
 	if(risorsa.isFlaCreazioneCurriculum()){
 %>
-		<li><a href="GestioneCurriculum?azione=caricamentoCv&tipoCreazione=visualizzaCurriculum&risorsa=<%=risorsa.getIdRisorsa() %>&page=visualizzaCurriculum">Anteprima C.V.</a></li>
-		<li><a href="GestioneCurriculum?azione=caricamentoCv&risorsa=<%=risorsa.getIdRisorsa() %>">Modifica C.V.</a></li>				
+		<li><a href="GestioneCurriculum?azione=caricamentoCv&parametro0=<%=risorsa.getIdRisorsa() %>">Curriculum Vitae</a></li>				
 <%
 	}else{
 %>
-		<li><a href="index.jsp?azione=creazioneCv&risorsa=<%=risorsa.getIdRisorsa() %>&dispositiva=risorsa">Crea C.V.</a></li>
+		<li><a href="GestioneCurriculum?azione=caricamentoCv&parametro0=<%=risorsa.getIdRisorsa() %>&creazioneCv=1">Crea Curriculum Vitae</a></li>
 <%
 	}
 %>

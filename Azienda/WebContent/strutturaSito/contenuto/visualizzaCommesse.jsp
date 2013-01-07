@@ -2,12 +2,14 @@
     pageEncoding="ISO-8859-1"%>
 <%@page import="java.util.ArrayList"%>
 <%@page import="it.azienda.dto.CommessaDTO"%>
+<%@page import="java.util.Calendar"%>
 
 
 <%
 	HttpSession controlloUtenteLoggato = request.getSession();
 	if(controlloUtenteLoggato.getAttribute("utenteLoggato") != null){
 %>
+
 <div class="subtitle ">
 	<h2>Visualizza Commesse</h2>
 </div>
@@ -15,11 +17,33 @@
 <div id="flusso">
 	<table>
 		<tr>
-			<td><img src="images/home.gif"><a href="index.jsp?azione=homePage">Home</a></td>
-			<td><img src="images/cerca.jpg"><a href="./GestioneTrattattive?azione=ricercaCommessa">Cerca</a></td>
+			<td><a href="index.jsp?azione=homePage">Home</a></td>
+			<td><a href="./GestioneTrattattive?azione=ricercaCommessa">Cerca</a></td>
 		</tr>
 	</table>
 </div>
+<div id="ricercaTrattattive">
+	<table align="right">
+	  	<tr>
+		    <td>
+				<form action="./GestioneCommessa" method="post">
+					<input type="hidden" name="azione" value="visualizzaCommessa" />
+					<select name="anno">
+						<%
+							for(int x = 12; x < (Calendar.getInstance().get(Calendar.YEAR) - 1999); x++){
+						%>
+								<option value="<%=x %>"><%=(x+2000) %></option>	
+						<%	
+							}
+						%>
+					</select>
+					<input type="submit" value="cerca" />
+				</form>
+			</td>
+	  	</tr>
+	</table>
+</div>
+
 <div class="visualizzaChannel" >
 <%
 	if(request.getAttribute("chiusuraCommessa") != null){
@@ -76,7 +100,7 @@
 						<td>
 							<label>
 									<%
-										if(visualizzaCommessa.getImporto() != 0){
+										if(visualizzaCommessa.getImporto() != 0.0){
 											out.print(visualizzaCommessa.getImporto());
 										}
 									%>
@@ -137,16 +161,18 @@
 		}
 %>
 			</table>
-		</div>
 <%	
 		}else{
 %>
-			<p align="center" class="modificaTrattative">Non ci sono Commessa trovate! Riprovare a effettuare una nuova ricerca.<br><br> 
-			<a href="index.jsp?azione=homePage">Home</a></p>
+			<span align="center">Non ci sono Commessa trovate! Riprovare a effettuare una nuova ricerca.<br><br> 
+			<a href="index.jsp?azione=homePage">Home</a></span>
 			
 <%
 		}
 	}
+%>
+	</div>
+<%
 }else{
 %>
 	<script type="text/javascript">

@@ -14,11 +14,6 @@
 </script>
 
 <%
-//mi serve per castare le varie date_inizio e date_fine delle varie commesse
-SimpleDateFormat formattaDataWeb = new SimpleDateFormat("dd-MM-yyyy");
-
-//mi serve per formattare le varie date_inizio e date_fine nel formato del DB
-SimpleDateFormat formattaDataServer = new SimpleDateFormat("yyyy-MM-dd");
 
 HttpSession controlloUtenteLoggato = request.getSession();
 if(controlloUtenteLoggato.getAttribute("utenteLoggato") != null){
@@ -32,8 +27,8 @@ if(controlloUtenteLoggato.getAttribute("utenteLoggato") != null){
 <div id="flusso">
 	<table>
 		<tr>
-			<td><img src="images/home.gif"><a href="index.jsp?azione=homePage">Home</a></td>
-			<td><img src="images/cerca.jpg"><a href="./GestioneTrattattive?azione=ricercaCommessa">Cerca</a></td>
+			<td><a href="index.jsp?azione=homePage">Home</a></td>
+			<td><a href="./GestioneTrattattive?azione=ricercaCommessa">Cerca</a></td>
 		</tr>
 	</table>
 </div>
@@ -44,8 +39,8 @@ if(controlloUtenteLoggato.getAttribute("utenteLoggato") != null){
 	<legend>Caricamento Dati Commessa</legend>
 	<form action="./GestioneCommessa" method="post" name="caricaAssociazione">
 	<input type="hidden" name="azione" value="caricaAssociazione" />
-	<input type="hidden" name="commessa" value="<%=request.getParameter("parametro") %>" />
-	<input type="hidden" name="risorsa" value="<%=request.getParameter("parametro2") %>" />
+	<input type="hidden" name="parametro" value="<%=request.getParameter("parametro") %>" />
+	<input type="hidden" name="parametro2" value="<%=request.getParameter("parametro2") %>" />
 	<table>
 		<tr>
 			<td><label>* Data Inizio</label></td>
@@ -78,7 +73,6 @@ if(controlloUtenteLoggato.getAttribute("utenteLoggato") != null){
 		<tr>
 			<td colspan="2">
 				<input type="submit" value="inserisci associazione" id="inserisciAssociazione" disabled="disabled" onclick="return controlloDateAssociazioni()"/>
-				<input type="reset" value="svuota campi"/>
 			</td>
 		</tr>
 	</table>
@@ -96,18 +90,17 @@ if(controlloUtenteLoggato.getAttribute("utenteLoggato") != null){
 <div id="flusso">
 	<table>
 		<tr>
-			<td><img src="images/home.gif"><a href="index.jsp?azione=homePage">Home</a></td>
-			<td><img src="images/cerca.jpg"><a href="./GestioneTrattattive?azione=ricercaCommessa">Cerca</a></td>
+			<td><a href="index.jsp?azione=homePage">Home</a></td>
+			<td><a href="./GestioneTrattattive?azione=ricercaCommessa">Cerca</a></td>
 		</tr>
 	</table>
 </div>
 
-<fieldset class="modificaTrattative">
+<fieldset class="spazio">
 	<legend>Caricamento Dati Commessa</legend>
 	<form action="./GestioneCommessa" method="post">
 		<input type="hidden" name="azione" value="modificaDissociazioneRisorsaCommessa" />
-		<input type="hidden" name="commessa" value="<%=associazione.getId_commessa() %>" />
-		<input type="hidden" name="risorsa" value="<%=associazione.getId_risorsa() %>" />
+		<input type="hidden" name="parametro" value="<%=associazione.getId_associazione() %>" />
 		<table>
 			<tr>
 				<td><label>Data Inizio</label></td>
@@ -118,13 +111,12 @@ if(controlloUtenteLoggato.getAttribute("utenteLoggato") != null){
 			<tr>
 				<td><label>Data Fine</label></td>
 				<td>
-					<input type="text" name="dataFine" id="dataFine" value="<%=formattaDataWeb.format(formattaDataServer.parse(associazione.getDataFine())) %>" onblur="controlloDataFine_ModificaAssociazioneCommessa('<%=associazione.getId_commessa() %>',this.value)"/><label> (formato "dd-mm-yyyy")</label>
+					<input type="text" name="dataFine" id="dataFine" value="<%=associazione.getDataFine() %>" onblur="controlloDataFine_ModificaAssociazioneCommessa('<%=associazione.getId_commessa() %>',this.value)"/><label> (formato "dd-mm-yyyy")</label>
 				</td>
 			</tr>
 			<tr>
 				<td colspan="2">
 					<input type="submit" value="modifica associazione" id="modificaAssociazione" disabled="disabled" onclick="return controlloDataCommessa()"/>
-					<input type="reset" value="svuota campi"/>
 				</td>
 			</tr>
 		</table>

@@ -285,7 +285,6 @@ if(controlloUtenteLoggato.getAttribute("utenteLoggato") != null){
 		<td>Stato</td>
 		<td><select name="stato">
 			<option value="aperta">Aperta</option>
-			<option value="chiusa">Chiusa</option>
 		</select></td>
 	</tr>
 </table>
@@ -324,8 +323,8 @@ if(controlloUtenteLoggato.getAttribute("utenteLoggato") != null){
 <div id="flusso">
 	<table>
 		<tr>
-			<td><img src="images/home.gif"><a href="index.jsp?azione=homePage">Home</a></td>
-			<td><img src="images/cerca.jpg"><a href="./GestioneTrattattive?azione=ricercaTrattativaCliente&tipo=tutte&dispositiva=trattative"">Cerca</a></td>
+			<td><a href="index.jsp?azione=homePage">Home</a></td>
+			<td><a href="./GestioneTrattattive?azione=ricercaTrattativaCliente&tipo=tutte&dispositiva=trattative"">Cerca</a></td>
 		</tr>
 	</table>
 </div>
@@ -544,7 +543,6 @@ if(controlloUtenteLoggato.getAttribute("utenteLoggato") != null){
 					<td>Stato</td>
 					<td><select name="stato">
 						<option value="aperta">Aperta</option>
-						<option value="chiusa">Chiusa</option>
 					</select></td>
 				</tr>
 		</table>
