@@ -7,7 +7,7 @@ public class Associaz_Risor_Comm {
 	private int id_commessa;
 	private String dataInizio;
 	private String dataFine;
-	private int totaleImporto;
+	private double totaleImporto;
 	private String al;
 	private boolean attiva;
 	
@@ -45,10 +45,10 @@ public class Associaz_Risor_Comm {
 	public void setAttiva(boolean attiva) {
 		this.attiva = attiva;
 	}
-	public int getTotaleImporto() {
+	public double getTotaleImporto() {
 		return totaleImporto;
 	}
-	public void setTotaleImporto(int totaleImporto) {
+	public void setTotaleImporto(double totaleImporto) {
 		this.totaleImporto = totaleImporto;
 	}
 	public String getDataInizio() {

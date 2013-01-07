@@ -11,7 +11,7 @@ public class CommessaDTO {
 	private String sede_lavoro;
 	private String data_inizio;
 	private String data_fine;
-	private int importo;
+	private double importo;
 	private String importo_lettere;
 	private String al;
 	private String pagamento;
@@ -123,10 +123,10 @@ public class CommessaDTO {
 	public void setData_fine(String data_fine) {
 		this.data_fine = data_fine;
 	}
-	public int getImporto() {
+	public double getImporto() {
 		return importo;
 	}
-	public void setImporto(int importo) {
+	public void setImporto(double importo) {
 		this.importo = importo;
 	}
 	public String getImporto_lettere() {
