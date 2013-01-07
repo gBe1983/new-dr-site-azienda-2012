@@ -275,7 +275,7 @@ public class ClienteDAO extends BaseDao {
 	public boolean controlloCodiceCliente(String codiceCliente){
 		final String metodo="controlloCodiceCliente";
 		log.start(metodo);
-		String sql = "SELECT ragioneSociale FROM tbl_cliente WHERE codiceCliente=?";
+		String sql = "SELECT ragione_sociale FROM tbl_clienti WHERE id_cliente=?";
 		log.debug(metodo, sql.toString());
 		boolean esitoControlloCodiceCliente = false;
 		PreparedStatement ps=null;
@@ -288,7 +288,7 @@ public class ClienteDAO extends BaseDao {
 				esitoControlloCodiceCliente = true;
 			}
 		} catch (SQLException e) {
-			log.error(metodo, "SELECT tbl_cliente for codiceCliente:"+codiceCliente, e);
+			log.error(metodo, "SELECT tbl_cliente for id_cliente:"+codiceCliente, e);
 		}finally{
 			close(ps,rs);
 			log.end(metodo);

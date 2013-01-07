@@ -9,6 +9,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Calendar;
 
 public class TrattativeDAO extends BaseDao {
 	private MyLogger log;
@@ -18,7 +19,7 @@ public class TrattativeDAO extends BaseDao {
 		log=new MyLogger(this.getClass());
 	}
 
-	public ArrayList<TrattativeDTO>ricercaTrattative(String codiceCliente, int idRisorsa, int idTrattative, String esito){
+	public ArrayList<TrattativeDTO>ricercaTrattative(String codiceCliente, int idRisorsa, int idTrattative, String esito, int anno){
 		final String metodo="ricercaTrattative";
 		log.start(metodo);
 		ArrayList<TrattativeDTO> listaTrattativa = new ArrayList<TrattativeDTO>();
@@ -27,7 +28,50 @@ public class TrattativeDAO extends BaseDao {
 				.append("FROM v_trattative_per_cliente_dettaglio ");
 		PreparedStatement ps=null;
 		ResultSet rs=null;
-		if(codiceCliente != null && idRisorsa != 0 && esito == null){// Codice != "" e idRisorsa != "" e esito == ""
+		
+		if(codiceCliente != "" && idRisorsa == 0 && esito == "" && anno == 0){//Codice != "" e idRisorsa == "" e esito == "" e anno == ""
+			sql.append("WHERE id_cliente = ?");
+			try {
+				ps = connessione.prepareStatement(sql.toString());
+				ps.setString(1, codiceCliente);
+			} catch (SQLException e) {
+				log.error(metodo, "prepareStatement 3", e);
+			}
+		}else if(codiceCliente == "" && idRisorsa != 0 && esito == "" && anno == 0) {//Codice == "" e idRisorsa != "" e esito == "" e anno == ""
+			sql.append("WHERE id_risorsa=?");
+			try {
+				ps = connessione.prepareStatement(sql.toString());
+				ps.setInt(1, idRisorsa);
+			} catch (SQLException e) {
+				log.error(metodo, "prepareStatement 2", e);
+			}
+		}else if(codiceCliente == "" && idRisorsa == 0 && esito != "" && anno == 0){//Codice == "" e idRisorsa == "" e esito !="" e anno == "" 
+			sql.append("WHERE esito");
+			if(esito.equals("aperta")||esito.equals("persa")){
+				sql.append("=?");
+				try {
+					ps = connessione.prepareStatement(sql.toString());
+					ps.setString(1,esito);
+				} catch (SQLException e) {
+					log.error(metodo, "prepareStatement 10", e);
+				}
+			}else if(esito.equals("commessaPresa")){
+				sql.append(" NOT IN('aperta','persa')");
+				try {
+					ps = connessione.prepareStatement(sql.toString());
+				} catch (SQLException e) {
+					log.error(metodo, "prepareStatement 11", e);
+				}
+			}
+		}else if(codiceCliente == "" && idRisorsa == 0 && esito == "" && anno != 0) {//Codice == "" e idRisorsa == "" e esito == "" e anno != ""
+			sql.append("WHERE data like ?");
+			try {
+				ps = connessione.prepareStatement(sql.toString());
+				ps.setString(1, "%"+anno);
+			} catch (SQLException e) {
+				log.error(metodo, "prepareStatement 2", e);
+			}
+		}else if(codiceCliente != "" && idRisorsa != 0 && esito == "" && anno == 0){// Codice != "" e idRisorsa != "" e esito == "" e anno == ""
 			sql.append("WHERE id_cliente=? AND id_risorsa=?");
 			try {
 				ps = connessione.prepareStatement(sql.toString());
@@ -36,23 +80,86 @@ public class TrattativeDAO extends BaseDao {
 			} catch (SQLException e) {
 				log.error(metodo, "prepareStatement 1", e);
 			}
-		}else if(codiceCliente == null && idRisorsa != 0 && esito == null) {//Codice == "" e idRisorsa != "" e esito == ""
-			sql.append("WHERE id_risorsa=?");
-			try {
-				ps = connessione.prepareStatement(sql.toString());
-				ps.setInt(1, idRisorsa);
-			} catch (SQLException e) {
-				log.error(metodo, "prepareStatement 2", e);
+		}else if(codiceCliente != "" && idRisorsa == 0 && esito != "" && anno == 0){//Codice !="" e idRisorsa == "" e esito !="" 
+			sql.append("WHERE id_cliente=? AND esito");
+			if(esito.equals("aperta")||esito.equals("persa")){
+				sql.append("=?");
+				try {
+					ps = connessione.prepareStatement(sql.toString());
+					ps.setString(1, codiceCliente);
+					ps.setString(2, esito);
+				} catch (SQLException e) {
+					log.error(metodo, "prepareStatement 8", e);
+				}
+			}else if(esito.equals("commessaPresa")){
+				sql.append(" NOT IN('aperta','persa')");
+				try {
+					ps = connessione.prepareStatement(sql.toString());
+					ps.setString(1, codiceCliente);
+				} catch (SQLException e) {
+					log.error(metodo, "prepareStatement 9", e);
+				}
 			}
-		}else if(codiceCliente != null && idRisorsa == 0 && esito == null){//Codice != "" e idRisorsa == "" e esito == ""
-			sql.append("WHERE id_cliente = ?");
+		}else if(codiceCliente != "" && idRisorsa == 0 && esito == "" && anno != 0){// Codice != "" e idRisorsa == "" e esito == "" e anno != ""
+			sql.append("WHERE id_cliente=? AND data like ?");
 			try {
 				ps = connessione.prepareStatement(sql.toString());
 				ps.setString(1, codiceCliente);
+				ps.setString(2, "%"+anno);
 			} catch (SQLException e) {
-				log.error(metodo, "prepareStatement 3", e);
+				log.error(metodo, "prepareStatement 1", e);
 			}
-		}else if(codiceCliente != null && idRisorsa != 0 && esito != null){//Codice != "" e idRisorsa != "" e esito != ""
+		}else if(codiceCliente == "" && idRisorsa != 0 && esito != "" && anno == 0) {//Codice == "" e idRisorsa !="" e esito !="" e anno == ""
+			sql.append("WHERE id_risorsa=? AND esito");
+			if(esito.equals("aperta")||esito.equals("persa")){
+				sql.append("=?");
+				try {
+					ps = connessione.prepareStatement(sql.toString());
+					ps.setInt(1, idRisorsa);
+					ps.setString(2, esito);
+				} catch (SQLException e) {
+					log.error(metodo, "prepareStatement 6", e);
+				}
+			}else if(esito.equals("commessaPresa")){
+				sql.append(" NOT IN('aperta','persa')");
+				try {
+					ps = connessione.prepareStatement(sql.toString());
+					ps.setInt(1, idRisorsa);
+				} catch (SQLException e) {
+					log.error(metodo, "prepareStatement 7", e);
+				}
+			}
+		}else if(codiceCliente == "" && idRisorsa != 0 && esito == "" && anno != 0) {//Codice == "" e idRisorsa !="" e esito == "" e anno != ""
+			sql.append("WHERE id_risorsa=? AND data like ?");
+			try {
+				ps = connessione.prepareStatement(sql.toString());
+				ps.setInt(1, idRisorsa);
+				ps.setString(2, "%"+anno);
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}else if(codiceCliente == "" && idRisorsa == 0 && esito != "" && anno != 0) {//Codice == "" e idRisorsa == "" e esito != "" e anno != ""
+			sql.append("WHERE data like ? AND esito");
+			if(esito.equals("aperta")||esito.equals("persa")){
+				sql.append("=?");
+				try {
+					ps = connessione.prepareStatement(sql.toString());
+					ps.setString(1, "%"+anno);
+					ps.setString(2, esito);
+				} catch (SQLException e) {
+					log.error(metodo, "prepareStatement 6", e);
+				}
+			}else if(esito.equals("commessaPresa")){
+				sql.append(" NOT IN('aperta','persa')");
+				try {
+					ps = connessione.prepareStatement(sql.toString());
+					ps.setString(1, "%"+anno);
+				} catch (SQLException e) {
+					log.error(metodo, "prepareStatement 7", e);
+				}
+			}
+		}else if(codiceCliente != "" && idRisorsa != 0 && esito != "" && anno == 0){//Codice != "" e idRisorsa != "" e esito != "" e anno == 0
 			sql.append("WHERE id_cliente=? AND id_risorsa=? AND esito");
 			if(esito.equals("aperta")||esito.equals("persa")){
 				sql.append("=?");
@@ -74,62 +181,83 @@ public class TrattativeDAO extends BaseDao {
 					log.error(metodo, "prepareStatement 5", e);
 				}
 			}
-		}else if(codiceCliente == null && idRisorsa != 0 && esito != null) {//Codice == "" e idRisorsa !="" e esito !=""
-			sql.append("WHERE id_risorsa=? AND esito");
+		}else if(codiceCliente != "" && idRisorsa != 0 && esito == "" && anno != 0){//Codice != "" e idRisorsa != "" e esito == "" e anno != 0
+			sql.append("WHERE id_cliente=? AND id_risorsa=? AND data like ?");
+			try {
+				ps = connessione.prepareStatement(sql.toString());
+				ps.setString(1, codiceCliente);
+				ps.setInt(2, idRisorsa);
+				ps.setString(3, "%"+anno);
+			} catch (SQLException e) {
+				log.error(metodo, "prepareStatement 4", e);
+			}
+			
+		}else if(codiceCliente == "" && idRisorsa != 0 && esito != "" && anno != 0){//Codice == "" e idRisorsa != "" e esito != "" e anno != 0
+			sql.append("WHERE id_cliente=? AND id_risorsa=? AND data like ? AND esito");
 			if(esito.equals("aperta")||esito.equals("persa")){
 				sql.append("=?");
 				try {
 					ps = connessione.prepareStatement(sql.toString());
 					ps.setInt(1, idRisorsa);
-					ps.setString(2, esito);
+					ps.setString(2, "%"+anno);
+					ps.setString(3, esito);
 				} catch (SQLException e) {
-					log.error(metodo, "prepareStatement 6", e);
+					log.error(metodo, "prepareStatement 4", e);
 				}
 			}else if(esito.equals("commessaPresa")){
 				sql.append(" NOT IN('aperta','persa')");
 				try {
 					ps = connessione.prepareStatement(sql.toString());
 					ps.setInt(1, idRisorsa);
+					ps.setString(2, "%"+anno);
 				} catch (SQLException e) {
-					log.error(metodo, "prepareStatement 7", e);
+					log.error(metodo, "prepareStatement 5", e);
 				}
 			}
-		}else if(codiceCliente != null && idRisorsa == 0 && esito != null){//Codice !="" e idRisorsa == "" e esito !="" 
-			sql.append("WHERE id_cliente=? AND esito");
+		}else if(codiceCliente != "" && idRisorsa == 0 && esito != "" && anno != 0){//Codice != "" e idRisorsa == "" e esito != "" e anno != 0
+			sql.append("WHERE id_cliente=? AND data like ? AND data like ? AND esito");
 			if(esito.equals("aperta")||esito.equals("persa")){
 				sql.append("=?");
 				try {
 					ps = connessione.prepareStatement(sql.toString());
 					ps.setString(1, codiceCliente);
-					ps.setString(2, esito);
+					ps.setString(2, "%"+anno);
+					ps.setString(3, esito);
 				} catch (SQLException e) {
-					log.error(metodo, "prepareStatement 8", e);
+					log.error(metodo, "prepareStatement 4", e);
+				}
+			}else if(esito.equals("commessaPresa")){
+				sql.append(" NOT IN('aperta','persa')");
+				try {
+					ps = connessione.prepareStatement(sql.toString());
+					ps.setInt(1, idRisorsa);
+					ps.setString(2, "%"+anno);
+				} catch (SQLException e) {
+					log.error(metodo, "prepareStatement 5", e);
+				}
+			}
+		}else if(codiceCliente != "" && idRisorsa != 0 && esito != "" && anno != 0){//Codice != "" e idRisorsa != "" e esito != "" e anno != 0
+			sql.append("WHERE id_cliente=? AND id_risorsa = ? AND data like ? AND data like ? AND esito");
+			if(esito.equals("aperta")||esito.equals("persa")){
+				sql.append("=?");
+				try {
+					ps = connessione.prepareStatement(sql.toString());
+					ps.setString(1, codiceCliente);
+					ps.setInt(2, idRisorsa);
+					ps.setString(3, "%"+anno);
+					ps.setString(4, esito);
+				} catch (SQLException e) {
+					log.error(metodo, "prepareStatement 4", e);
 				}
 			}else if(esito.equals("commessaPresa")){
 				sql.append(" NOT IN('aperta','persa')");
 				try {
 					ps = connessione.prepareStatement(sql.toString());
 					ps.setString(1, codiceCliente);
+					ps.setInt(2, idRisorsa);
+					ps.setString(3, "%"+anno);
 				} catch (SQLException e) {
-					log.error(metodo, "prepareStatement 9", e);
-				}
-			}
-		}else if(codiceCliente == null && idRisorsa == 0 && esito != null){//Codice == "" e idRisorsa == "" e esito !=""
-			sql.append("WHERE esito");
-			if(esito.equals("aperta")||esito.equals("persa")){
-				sql.append("=?");
-				try {
-					ps = connessione.prepareStatement(sql.toString());
-					ps.setString(1,esito);
-				} catch (SQLException e) {
-					log.error(metodo, "prepareStatement 10", e);
-				}
-			}else if(esito.equals("commessaPresa")){
-				sql.append(" NOT IN('aperta','persa')");
-				try {
-					ps = connessione.prepareStatement(sql.toString());
-				} catch (SQLException e) {
-					log.error(metodo, "prepareStatement 11", e);
+					log.error(metodo, "prepareStatement 5", e);
 				}
 			}
 		}else if(idTrattative != 0){//questa tipo di ricerca viene effettuata al momento di quanto l'utente effettua il dettaglio della trattattiva
@@ -142,7 +270,9 @@ public class TrattativeDAO extends BaseDao {
 			}
 		}else{//questa tipo di ricerca viene effettuata al momento di quanto l'utente effettua il dettaglio della trattattiva
 			try {
+				sql.append(" where data like ?");
 				ps = connessione.prepareStatement(sql.toString());
+				ps.setString(1, "%"+Calendar.getInstance().get(Calendar.YEAR));
 			} catch (SQLException e) {
 				log.error(metodo,"prepareStatement 13",e);
 			}
