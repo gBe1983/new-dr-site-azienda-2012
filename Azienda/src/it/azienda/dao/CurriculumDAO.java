@@ -35,10 +35,9 @@ public class CurriculumDAO extends BaseDao {
 				
 		ArrayList<CurriculumDTO> listaCurriculum = new ArrayList<CurriculumDTO>();
 		
-		String sql = "select risorsa.id_risorsa, risorsa.nome, risorsa.cognome, risorsa.flag_creazione_cv, if((select count(*) from tbl_esperienze_professionali_cv as esperienze where esperienze.id_risorsa = risorsa.id_risorsa and esperienze.visibile = true) > 0 , 1, 0) as esperienza, if((select count(*) from tbl_dettaglio_cv as dettaglio where dettaglio.id_risorsa = risorsa.id_risorsa and dettaglio.visible = true) > 0 , 1, 0) as dettaglio " +
-				" from tbl_risorse as risorsa, tbl_esperienze_professionali_cv as esperienza, tbl_dettaglio_cv as dettaglio " +
-				" where risorsa.flag_creazione_cv = true " +
-				" group by risorsa.nome;";
+		String sql = "select risorsa.id_risorsa, risorsa.nome, risorsa.cognome, risorsa.flag_creazione_cv, if((select count(*) from tbl_esperienze_professionali_cv as esperienze where esperienze.id_risorsa = risorsa.id_risorsa and esperienze.visibile = true) > 0 , 1, 0) as esperienza,if((select count(*) from tbl_dettaglio_cv as dettaglio where dettaglio.id_risorsa = risorsa.id_risorsa and dettaglio.visible = true) > 0 , 1, 0) as dettaglio " +
+				" from tbl_risorse as risorsa " +
+				" where risorsa.flag_creazione_cv = true group by risorsa.nome;";
 		
 		PreparedStatement ps=null;
 		ResultSet rs=null;
