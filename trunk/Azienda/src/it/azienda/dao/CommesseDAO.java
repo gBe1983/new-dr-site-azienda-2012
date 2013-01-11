@@ -276,31 +276,25 @@ public class CommesseDAO extends BaseDao {
 			if(anno == 0){
 				Calendar calendar = Calendar.getInstance();
 				int annoCorrente = calendar.get(Calendar.YEAR) - 2000;
-				sql += " where commessa.codice_commessa like 'CCE"+annoCorrente+"%' or commessa.codice_commessa like 'CCIN"+annoCorrente+"%'";
+				sql += " where (commessa.codice_commessa like 'CCE"+annoCorrente+"%' or commessa.codice_commessa like 'CCIN"+annoCorrente+"%')";
 			}else{
-				sql += " where commessa.codice_commessa like 'CCE"+anno+"%' or commessa.codice_commessa like 'CCIN"+anno+"%'";
+				sql += " where (commessa.codice_commessa like 'CCE"+anno+"%' or commessa.codice_commessa like 'CCIN"+anno+"%')";
 			}
 		}
 		
 		if(commessa.getId_cliente() != null && !commessa.getId_cliente().equals("")){
-			if(codiceCommessa){
-				sql += "and id_cliente = ? ";
-				codiceCliente = true;
-			}
+			sql += "and id_cliente = ? ";
+			codiceCliente = true;
 		}
 		
 		if(commessa.getStato() != null && !commessa.getStato().equals("")){
-			if(codiceCommessa || codiceCliente){
 				sql += " and stato = ? ";
 				stato = true;
-			}
 		}
 		
-		if(commessa.getTipologia() != null && !commessa.getTipologia().equals("0")){
-			if(codiceCommessa || codiceCliente || stato){
-				sql += " and id_tipologia_commessa = ? ";
-				tipologia = true;
-			}
+		if(commessa.getTipologia() != null && !commessa.getTipologia().equals("")){
+			sql += " and id_tipologia_commessa = ? ";
+			tipologia = true;
 		}
 		
 		
@@ -580,8 +574,12 @@ public class CommesseDAO extends BaseDao {
 				assCommessa.setId_associazione(rs.getInt(1));
 				assCommessa.setId_risorsa(rs.getInt(2));
 				assCommessa.setId_commessa(rs.getInt(3));
-				assCommessa.setDataInizio(formattaDataWeb.format(formattaDataServer.parse(rs.getString(4))));
-				assCommessa.setDataFine(formattaDataWeb.format(formattaDataServer.parse(rs.getString(5))));
+				if(rs.getString(4) != null){
+					assCommessa.setDataInizio(formattaDataWeb.format(formattaDataServer.parse(rs.getString(4))));
+				}
+				if(rs.getString(5) != null){
+					assCommessa.setDataFine(formattaDataWeb.format(formattaDataServer.parse(rs.getString(5))));
+				}
 				assCommessa.setTotaleImporto(rs.getDouble(6));
 				assCommessa.setAttiva(rs.getBoolean(8));
 				assCommessa.setDescrizioneRisorsa(rs.getString(9) + " " + rs.getString(10));
