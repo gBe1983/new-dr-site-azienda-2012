@@ -865,6 +865,34 @@ public class CommesseDAO extends BaseDao {
 		
 		return nomeCognome;
 	}
+	
+	public ArrayList<String> descrizioneRisorse(int idCommessa){
+		final String metodo = "descrizioneRisorse";
+		log.start(metodo);
+		String sql = "select risorse.cognome,risorse.nome from tbl_associaz_risor_comm as asscommessa, tbl_risorse as risorse where asscommessa.id_risorsa = risorse.id_risorsa and asscommessa.id_commessa = ?";
+
+		ArrayList<String> listaRisorse = new ArrayList<String>();
+		
+		String nomeCognome = "";
+		PreparedStatement ps=null;
+		ResultSet rs=null;
+		try {
+			ps = connessione.prepareStatement(sql);
+			ps.setInt(1, idCommessa);
+			rs = ps.executeQuery();
+			while(rs.next()){
+				nomeCognome = rs.getString(1) + " " + rs.getString(2);
+				listaRisorse.add(nomeCognome);
+			}
+		} catch (SQLException e) {
+			log.error(metodo, "", e);
+		}finally{
+			close(ps,rs);
+			log.end(metodo);
+		}
+		
+		return listaRisorse;
+	}
 
 	/*
 	 * tramite questo metodo effettuo il caricamento del calendario della risorsa

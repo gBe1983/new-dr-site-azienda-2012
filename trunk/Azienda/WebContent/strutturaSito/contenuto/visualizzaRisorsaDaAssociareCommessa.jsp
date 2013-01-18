@@ -35,20 +35,21 @@ if(controlloUtenteLoggato.getAttribute("utenteLoggato") != null){
 				if(commessa.getStato().equals("aperta") && !commessa.getTipologia().equals("1")){
 		%>
 				<ul>
-					<li><a href="./GestioneCommessa?azione=dettaglioCommessa&parametro=<%=commessa.getId_commessa() %>">Dettaglio Commessa</a></li>
-					<li><a href="./GestioneCommessa?azione=chiudiCommessa&parametro=<%=commessa.getId_commessa() %>" onclick="return confirm('Vuoi chiudere questa commessa?')">Chiudi Commessa</a></li>
+					<li><a href="./GestioneCommessa?azione=aggiornaCommessa&parametro=<%=commessa.getId_commessa() %>">Modifica Commessa</a></li>
+					<li><a href="./GestioneCommessa?azione=chiudiCommessa&parametro=<%=commessa.getId_commessa() %>" onclick="confirm('Vuoi chiudere questa commessa?')">Chiudi Commessa</a></li>
 					<li><a href="./GestioneCommessa?azione=risorseAssociate&parametro=<%=commessa.getId_commessa() %>&tipologia=<%=commessa.getTipologia() %>">Risorse Associate</a></li>
 					<li><a href="./GestioneCommessa?azione=risorseDaAssociare&codice=<%=commessa.getId_cliente() %>&parametro=<%=commessa.getId_commessa() %>">Associare Risorsa</a></li>
-					
+					<li><a href="./GestioneCommessa?azione=esportaCommessaPDF&parametro=<%=commessa.getId_commessa() %>">Esporta in PDF</a></li>
 				</ul>
 
 		<%
 			}else if(commessa.getStato().equals("aperta") && commessa.getTipologia().equals("1")){
 		%>
 				<ul>
-					<li><a href="./GestioneCommessa?azione=dettaglioCommessa&parametro=<%=commessa.getId_commessa() %>">Dettaglio Commessa</a></li>
-					<li><a href="./GestioneCommessa?azione=chiudiCommessa&parametro=<%=commessa.getId_commessa() %>" onclick="return confirm('Vuoi chiudere questa commessa?')">Chiudi Commessa</a></li>
+					<li><a href="./GestioneCommessa?azione=aggiornaCommessa&parametro=<%=commessa.getId_commessa() %>">Modifica Commessa</a></li>
+					<li><a href="./GestioneCommessa?azione=chiudiCommessa&parametro=<%=commessa.getId_commessa() %>" onclick="confirm('Vuoi chiudere questa commessa?')">Chiudi Commessa</a></li>
 					<li><a href="./GestioneCommessa?azione=risorseAssociate&parametro=<%=commessa.getId_commessa() %>&tipologia=<%=commessa.getTipologia() %>">Risorse Associate</a></li>
+					<li><a href="./GestioneCommessa?azione=esportaCommessaPDF&parametro=<%=commessa.getId_commessa() %>">Esporta in PDF</a></li>
 				</ul>
 
 		<%
@@ -57,6 +58,7 @@ if(controlloUtenteLoggato.getAttribute("utenteLoggato") != null){
 				<ul>
 					<li><a href="./GestioneCommessa?azione=dettaglioCommessa&parametro=<%=commessa.getId_commessa() %>">Dettaglio Commessa</a></li>
 					<li><a href="./GestioneCommessa?azione=risorseAssociate&stato=<%=commessa.getStato() %>&parametro=<%=commessa.getId_commessa() %>&tipologia=<%=commessa.getTipologia() %>">Risorse Associate</a></li>
+					<li><a href="./GestioneCommessa?azione=esportaCommessaPDF&parametro=<%=commessa.getId_commessa() %>">Esporta in PDF</a></li>
 				</ul>
 		<%
 			}

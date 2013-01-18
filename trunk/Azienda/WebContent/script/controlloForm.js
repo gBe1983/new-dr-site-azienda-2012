@@ -485,7 +485,7 @@ function controlloInserisciCommessa(tipologia){
 				alert("Valorizzare correttamente il campo \"Importo\"");
 				return false;
 			}else{
-				if(!controlloLettere.test(importo)){
+				if(controlloLettere.test(importo)){
 					alert("Attenzione! I caratteri dell'importo non validi.");
 					return false;
 				}else{
