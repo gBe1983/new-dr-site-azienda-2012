@@ -1,5 +1,7 @@
 package it.azienda.dto;
 
+import java.util.ArrayList;
+
 
 public class CommessaDTO {
 
@@ -27,6 +29,15 @@ public class CommessaDTO {
 	private String descrizioneCliente;
 	private String descrizioneRisorsa;
 	
+	private ArrayList<String> listaRisorse = new ArrayList<String>();
+	
+	
+	public ArrayList<String> getListaRisorse() {
+		return listaRisorse;
+	}
+	public void setListaRisorse(ArrayList<String> listaRisorse) {
+		this.listaRisorse = listaRisorse;
+	}
 	public boolean isAttiva() {
 		return attiva;
 	}

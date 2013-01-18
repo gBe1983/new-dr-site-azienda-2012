@@ -1,12 +1,20 @@
 package it.azienda.servlet;
 
+import it.azienda.dao.AziendaDAO;
+import it.azienda.dao.ClienteDAO;
 import it.azienda.dao.CommesseDAO;
 import it.azienda.dao.RisorsaDAO;
 import it.azienda.dto.Associaz_Risor_Comm;
+import it.azienda.dto.AziendaDTO;
+import it.azienda.dto.ClienteDTO;
 import it.azienda.dto.CommessaDTO;
 import it.azienda.dto.RisorsaDTO;
+import it.azienda.dto.UtenteDTO;
 import it.util.log.MyLogger;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.text.ParseException;
@@ -17,10 +25,26 @@ import java.util.Date;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
+import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+
+import com.itextpdf.text.BadElementException;
+import com.itextpdf.text.BaseColor;
+import com.itextpdf.text.Chunk;
+import com.itextpdf.text.Document;
+import com.itextpdf.text.DocumentException;
+import com.itextpdf.text.Element;
+import com.itextpdf.text.Font;
+import com.itextpdf.text.Image;
+import com.itextpdf.text.PageSize;
+import com.itextpdf.text.Paragraph;
+import com.itextpdf.text.Font.FontFamily;
+import com.itextpdf.text.pdf.PdfPCell;
+import com.itextpdf.text.pdf.PdfPTable;
+import com.itextpdf.text.pdf.PdfWriter;
 
 /**
  * Servlet implementation class GestioneCommessa
@@ -1229,6 +1253,345 @@ public class GestioneCommessa extends BaseServlet {
 					log.error(metodo, "IOException", e);
 				}
 
+			}else if(azione.equals("esportaCommessaPDF")){
+				
+				//recupero l'id della risorsa
+				int id_commessa = Integer.parseInt(request.getParameter("parametro")); 
+				
+				//mi carico la commessa
+				CommessaDTO commessa =  commesseDAO.aggiornoCommessa(id_commessa);
+				
+				commessa.setListaRisorse(commesseDAO.descrizioneRisorse(commessa.getId_commessa()));
+				
+				File file = new File(getServletContext().getRealPath("/")+"Commessa_"+ commessa.getCodiceCommessa() +".pdf");
+				
+				response.setContentType("application/octet-stream; name=\"" + file.getName() + "\"");
+				response.setCharacterEncoding("UTF-8");
+				response.addHeader("content-disposition", "attachment; filename=\"" + file.getName() + "\"");
+				
+				
+				Document doc = new Document(PageSize.A4, 10, 10, 10, 40);
+				doc.addTitle("Commessa_"+ commessa.getCodiceCommessa());
+				
+				try {
+					PdfWriter pdfWriter = PdfWriter.getInstance(doc, new FileOutputStream(file));
+					
+					doc.open();
+					
+					Font fontIntestazione = new Font(Font.FontFamily.TIMES_ROMAN, 11, Font.BOLD,new BaseColor(122,78,43));
+					Font fontIntestazioneCliente = new Font(Font.FontFamily.TIMES_ROMAN, 11, Font.BOLD,new BaseColor(0,0,0));
+					Font fontCorpo = new Font(Font.FontFamily.TIMES_ROMAN, 10, 0,new BaseColor(0,0,0));
+					Font fontTitoli = new Font(Font.FontFamily.TIMES_ROMAN, 11, Font.UNDERLINE,new BaseColor(0,0,128));
+					SimpleDateFormat formattazionePDF = new SimpleDateFormat("dd/MM/yyyy");
+					SimpleDateFormat formattazionePDFDurata = new SimpleDateFormat("EEEEEE dd MMMMMM yyyy");
+					Paragraph spazio = new Paragraph("\n");
+					
+					//carico il logo
+					PdfPTable disegnaTabella = new PdfPTable(1);
+					disegnaTabella.setWidthPercentage(100);
+					
+					Image immagine = Image.getInstance(getServletContext().getRealPath("/") + "images/logo_DierreConsulting.gif");
+					immagine.setWidthPercentage(100);
+					PdfPCell cella = new PdfPCell(immagine);
+					cella.setPaddingLeft(30);
+					cella.setBorder(0);
+					disegnaTabella.addCell(cella);
+					doc.add(disegnaTabella);
+					
+					PdfPTable intestazioni = new PdfPTable(2);
+					intestazioni.setWidthPercentage(100);
+					
+					AziendaDAO aDAO = new AziendaDAO(conn.getConnection());
+					AziendaDTO azienda = aDAO.visualizzaProfiloAzienda(((UtenteDTO)sessione.getAttribute("utenteLoggato")).getId_azienda()); 
+					
+					PdfPCell intestazioneSinistra = new PdfPCell();
+					intestazioneSinistra.setPaddingTop(15);
+					intestazioneSinistra.setPaddingLeft(30);
+					intestazioneSinistra.setBorder(0);
+					
+					//ragione sociale azienda
+					Paragraph intestazioneAzienda = new Paragraph(azienda.getRagioneSociale() + "\n" 
+							+ azienda.getIndirizzo() + "\n" 
+							+ azienda.getCap() + " " + azienda.getCitta() + " " + azienda.getProvincia() + "\n" 
+							+ "P.IVA e Cod. Fisc " + azienda.getPIva(),fontIntestazione);
+					intestazioneSinistra.addElement(intestazioneAzienda);
+					intestazioni.addCell(intestazioneSinistra);
+					
+					PdfPCell intestazioneDestra = new PdfPCell();
+					intestazioneDestra.setBorder(0);
+					intestazioneDestra.addElement(spazio);
+					intestazioni.addCell(intestazioneDestra);
+					
+					ClienteDAO cDAO = new ClienteDAO(conn.getConnection());
+					ClienteDTO cliente = cDAO.caricamentoCliente(commessa.getId_cliente(), null);
+					
+					PdfPCell intestazioneClienteSinistra = new PdfPCell();
+					intestazioneClienteSinistra.setBorder(0);
+					intestazioneClienteSinistra.addElement(spazio);
+					intestazioni.addCell(intestazioneClienteSinistra);
+					
+					//ragione sociale cliente
+					PdfPCell intestazioneClienteDestra = new PdfPCell();
+					intestazioneClienteDestra.setBorder(0);
+					intestazioneClienteDestra.setPaddingLeft(85);
+					Paragraph intestazioneCliente = new Paragraph("Spett.le \n" 
+							+  ((cliente.getRagioneSociale() != null)?cliente.getRagioneSociale() + "\n":"") 
+							+  ((cliente.getIndirizzo() != null && !cliente.getIndirizzo().equals(""))?cliente.getIndirizzo() + "\n":"")
+							+  ((cliente.getCap() != null && !cliente.getCap().equals("") || cliente.getCitta() != null && !cliente.getCitta().equals("") || cliente.getProvincia() != null && !cliente.getProvincia().equals(""))?cliente.getCap() + " " + cliente.getCitta() + " " + cliente.getProvincia() + "\n" :"")
+							+  ((cliente.getPIva() != null && !cliente.getPIva().equals(""))?"P.IVA e Cod. Fisc " + cliente.getPIva():""),fontIntestazioneCliente);
+					intestazioneClienteDestra.addElement(intestazioneCliente);
+					intestazioni.addCell(intestazioneClienteDestra);
+					
+					doc.add(intestazioni);
+					
+					PdfPTable corpo = new PdfPTable(1);
+					corpo.setWidthPercentage(100);
+					
+					//data Commessa
+					PdfPCell dataCommessa = new PdfPCell();
+					dataCommessa.setBorder(0);
+					dataCommessa.setPaddingLeft(30);
+					Paragraph dateCommessa = new Paragraph("Torino, il " + formattazionePDF.format(formattaDataWeb.parse(commessa.getData_offerta())),fontCorpo);
+					dataCommessa.addElement(dateCommessa);
+					corpo.addCell(dataCommessa);
+					
+					//numero Offerta
+					PdfPCell offerta = new PdfPCell();
+					offerta.setBorder(0);
+					offerta.setPaddingLeft(30);
+					Paragraph numeroOfferta = new Paragraph("Offerta n. " + commessa.getCodiceCommessa(),fontIntestazioneCliente);
+					offerta.addElement(numeroOfferta);
+					corpo.addCell(offerta);
+					
+					//Oggetto Commessa
+					PdfPCell oggettoCommessa = new PdfPCell();
+					oggettoCommessa.setBorder(0);
+					oggettoCommessa.setPaddingLeft(30);
+					Chunk objectCommessa = new Chunk("Oggetto: " + commessa.getOggetto_offerta(),fontIntestazioneCliente);
+					oggettoCommessa.addElement(objectCommessa);
+					corpo.addCell(oggettoCommessa);
+					
+					PdfPCell scritta = new PdfPCell();
+					scritta.setBorder(0);
+					scritta.setPaddingLeft(30);
+					Paragraph write = new Paragraph("Come da accordi con la presente formalizziamo un offerta per l’attività espressa in oggetto: ",fontCorpo);
+					scritta.addElement(write);
+					corpo.addCell(scritta);
+					
+					//Contenuto Consulenza
+					
+					PdfPCell titoloConsulenza = new PdfPCell();
+					titoloConsulenza.setBorder(0);
+					titoloConsulenza.setPaddingLeft(30);
+					Paragraph titleConsulenza = new Paragraph("- Contenuto della consulenza: ",fontTitoli);
+					titoloConsulenza.addElement(titleConsulenza);
+					corpo.addCell(titoloConsulenza);
+					
+					PdfPCell contenutoTitoloConsulenza = new PdfPCell();
+					contenutoTitoloConsulenza.setBorder(0);
+					contenutoTitoloConsulenza.setPaddingLeft(50);
+					Paragraph contenutoTitleConsulenza = new Paragraph(commessa.getNote(),fontCorpo);
+					contenutoTitoloConsulenza.addElement(contenutoTitleConsulenza);
+					corpo.addCell(contenutoTitoloConsulenza);
+					
+					//Nominativo Risorsa
+					PdfPCell nominativoRisorsa = new PdfPCell();
+					nominativoRisorsa.setBorder(0);
+					nominativoRisorsa.setPaddingLeft(30);
+					Paragraph titoloNominativo = new Paragraph("- Risorsa: ",fontTitoli);
+					nominativoRisorsa.addElement(titoloNominativo);
+					corpo.addCell(nominativoRisorsa);
+					
+					String listaRisorse = "";
+					
+					for(int y = 0; y < commessa.getListaRisorse().size(); y++){
+						if(commessa.getListaRisorse().size() == 1){
+							listaRisorse = commessa.getListaRisorse().get(y);
+						}else if(y == commessa.getListaRisorse().size()-1){
+							listaRisorse += commessa.getListaRisorse().get(y);
+						}else{
+							listaRisorse += commessa.getListaRisorse().get(y) + ",";
+						}
+					}
+					
+					PdfPCell contenutoNominativoRisorsa = new PdfPCell();
+					contenutoNominativoRisorsa.setBorder(0);
+					contenutoNominativoRisorsa.setPaddingLeft(50);
+					Paragraph contenutoNominativo = new Paragraph(listaRisorse,fontCorpo);
+					contenutoNominativoRisorsa.addElement(contenutoNominativo);
+					corpo.addCell(contenutoNominativoRisorsa);
+					
+					//sede lavoro
+					PdfPCell sedeLavoro = new PdfPCell();
+					sedeLavoro.setBorder(0);
+					sedeLavoro.setPaddingLeft(30);
+					Paragraph titoloSedeLavoro = new Paragraph("- Sede Lavoro: ",fontTitoli);
+					sedeLavoro.addElement(titoloSedeLavoro);
+					corpo.addCell(sedeLavoro);
+					
+					PdfPCell contenutoSedeLavoro = new PdfPCell();
+					contenutoSedeLavoro.setBorder(0);
+					contenutoSedeLavoro.setPaddingLeft(50);
+					Paragraph contentSedeLavoro = new Paragraph(commessa.getSede_lavoro(),fontCorpo);
+					contenutoSedeLavoro.addElement(contentSedeLavoro);
+					corpo.addCell(contenutoSedeLavoro);
+					
+					//durata
+					PdfPCell durata = new PdfPCell();
+					durata.setBorder(0);
+					durata.setPaddingLeft(30);
+					Paragraph titoloDurata = new Paragraph("- Durata: ",fontTitoli);
+					durata.addElement(titoloDurata);
+					corpo.addCell(durata);
+					
+					PdfPCell contenutoDurata = new PdfPCell();
+					contenutoDurata.setBorder(0);
+					contenutoDurata.setPaddingLeft(50);
+					Paragraph contentDurata = new Paragraph("a partire da " + formattazionePDFDurata.format(formattaDataWeb.parse(commessa.getData_inizio())) + " fino a " + formattazionePDFDurata.format(formattaDataWeb.parse(commessa.getData_fine())),fontCorpo);
+					contenutoDurata.addElement(contentDurata);
+					corpo.addCell(contenutoDurata);
+					
+					//valutazione
+					PdfPCell valutazione = new PdfPCell();
+					valutazione.setBorder(0);
+					valutazione.setPaddingLeft(30);
+					Paragraph titoloValutazione = new Paragraph("- Valutazione Economica: ",fontTitoli);
+					valutazione.addElement(titoloValutazione);
+					corpo.addCell(valutazione);
+					
+					PdfPCell contenutoValutazione = new PdfPCell();
+					contenutoValutazione.setBorder(0);
+					contenutoValutazione.setPaddingLeft(50);
+					Paragraph contentValutazione = new Paragraph("Tale consulenza è quotata " + commessa.getImporto() + ((!commessa.getImporto_lettere().equals(""))?" (" + commessa.getImporto_lettere() + ")":"") + " IVA " + ((!commessa.getAl().equals(""))?" al " + commessa.getAl() + ".\n":".\n") 
+							+ "Si considera una giornata di lavoro composta da 8 ore. Le ore giornaliere eccedenti saranno fatturate come da accordi già in essere.",fontCorpo);
+					contenutoValutazione.addElement(contentValutazione);
+					corpo.addCell(contenutoValutazione);
+					
+					//fatturazione
+					PdfPCell fatturazione = new PdfPCell();
+					fatturazione.setBorder(0);
+					fatturazione.setPaddingLeft(30);
+					Paragraph titoloFatturazione = new Paragraph("- Fatturazione: ",fontTitoli);
+					fatturazione.addElement(titoloFatturazione);
+					corpo.addCell(fatturazione);
+					
+					PdfPCell contenutoFatturazione = new PdfPCell();
+					contenutoFatturazione.setBorder(0);
+					contenutoFatturazione.setPaddingLeft(50);
+					Paragraph contentFatturazione = new Paragraph("Ogni fine mese con allegato report delle giornate lavorate che dovrà essere da voi confermato",fontCorpo);
+					contenutoFatturazione.addElement(contentFatturazione);
+					corpo.addCell(contenutoFatturazione);
+					
+					//pagamento
+					PdfPCell pagamento = new PdfPCell();
+					pagamento.setBorder(0);
+					pagamento.setPaddingLeft(30);
+					Paragraph titoloPagamento = new Paragraph("- Pagamento: ",fontTitoli);
+					pagamento.addElement(titoloPagamento);
+					corpo.addCell(pagamento);
+					
+					PdfPCell contenutoPagamento = new PdfPCell();
+					contenutoPagamento.setBorder(0);
+					contenutoPagamento.setPaddingLeft(50);
+					Paragraph contentPagamento = new Paragraph(((!commessa.getPagamento().equals(""))?commessa.getPagamento() + " gg Fine Mese Data Fattura":""),fontCorpo);
+					contenutoPagamento.addElement(contentPagamento);
+					corpo.addCell(contenutoPagamento);
+					
+					
+					for(int x = 0; x < 1; x++){
+						PdfPCell vuoto = new PdfPCell();
+						vuoto.setBorder(0);
+						vuoto.setPaddingLeft(30);
+						vuoto.addElement(spazio);
+						corpo.addCell(vuoto);
+					}
+					
+					PdfPCell conclusione = new PdfPCell();
+					conclusione.setBorder(0);
+					conclusione.setPaddingLeft(30);
+					Paragraph contentConclusione = new Paragraph("Attendiamo vostre considerazioni in merito e cogliamo l’occasione per porgere i nostri più cordiali saluti.",fontCorpo);
+					conclusione.addElement(contentConclusione);
+					corpo.addCell(conclusione);
+					
+					doc.add(corpo);
+					
+					PdfPTable firma = new PdfPTable(2);
+					firma.setWidthPercentage(100);
+					
+					PdfPCell vuoto = new PdfPCell();
+					vuoto.setBorder(0);
+					vuoto.setPaddingLeft(30);
+					vuoto.addElement(spazio);
+					firma.addCell(vuoto);
+					
+					firma.addCell(vuoto);
+					
+					firma.addCell(vuoto);
+					
+					PdfPCell intestazionePieDiPagina = new PdfPCell();
+					intestazionePieDiPagina.setBorder(0);
+					intestazionePieDiPagina.setPaddingLeft(85);
+					Paragraph contenuto = new Paragraph("L’amministratore Unico",fontCorpo);
+					intestazionePieDiPagina.addElement(contenuto);
+					firma.addCell(intestazionePieDiPagina);
+					
+					firma.addCell(vuoto);
+					
+					PdfPCell proprietario = new PdfPCell();
+					proprietario.setBorder(0);
+					proprietario.setPaddingLeft(100);
+					Paragraph contenutoProprietario = new Paragraph("Camarca Roberto",fontCorpo);
+					proprietario.addElement(contenutoProprietario);
+					firma.addCell(proprietario);
+					
+					PdfPCell accetazione = new PdfPCell();
+					accetazione.setBorder(0);
+					accetazione.setPaddingLeft(95);
+					Paragraph titoloAccetazione = new Paragraph("Per accettazione",fontCorpo);
+					accetazione.addElement(titoloAccetazione);
+					firma.addCell(accetazione);
+					
+					PdfPCell vuoto2 = new PdfPCell();
+					vuoto2.setBorder(0);
+					vuoto2.setPaddingLeft(30);
+					vuoto2.setRowspan(2);
+					vuoto2.addElement(spazio);
+					firma.addCell(vuoto2);
+					
+					PdfPCell puntini = new PdfPCell();
+					puntini.setBorder(0);
+					puntini.setPaddingLeft(50);
+					Paragraph titoloPuntini = new Paragraph(".........................................................",fontCorpo);
+					puntini.addElement(titoloPuntini);
+					firma.addCell(puntini);
+					
+					doc.add(firma);
+					
+					doc.close();
+					
+					FileInputStream fileInputStream = new FileInputStream(file);
+					ServletOutputStream out = response.getOutputStream();
+					int i;
+					while ((i=fileInputStream.read()) != -1)
+						out.write(i);
+					fileInputStream.close();
+					out.close();
+					
+					new File(getServletContext().getRealPath("/")+"Commessa_"+ commessa.getCodiceCommessa() +".pdf").delete();
+					
+				} catch (BadElementException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (DocumentException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (ParseException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				
+				
+				
 			}// qui terminano gli if();
 		} else {
 			sessioneScaduta(response);
