@@ -9,9 +9,7 @@ HttpSession controlloUtenteLoggato = request.getSession();
 if(controlloUtenteLoggato.getAttribute("utenteLoggato") != null){
 %>
 
-<div class="subtitle">
-	<h2>Risorse Associate</h2>
-</div>
+<div class="subtitle">Risorse Associate</div>
 
 <div id="flussoCommessa">
 	<table>

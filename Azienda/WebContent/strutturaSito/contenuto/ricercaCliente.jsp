@@ -11,9 +11,8 @@ if(sessioneNominativi.getAttribute("utenteLoggato") != null){
 		if(listaNominativi.size() > 0){
 			if(request.getParameter("tipo") != null){
 %>
-				<div class="subtitle ">
-					<h2>Riabilitazione Cliente</h2>
-				</div>
+				<div class="subtitle">Riabilitazione Cliente</div>
+
 				<p>
 					In questa sezione potrete riabilitare tutti i clienti che avete disabilitato.
 				</p>

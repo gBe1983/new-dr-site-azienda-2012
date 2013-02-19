@@ -19,10 +19,7 @@ HttpSession controlloUtenteLoggato = request.getSession();
 if(controlloUtenteLoggato.getAttribute("utenteLoggato") != null){
 	if(request.getParameter("azione").equals("caricaAssociazione")){
 %>
-<div class="subtitle ">
-	<h2>Associazione Risorsa</h2>
-</div>
-
+<div class="subtitle ">Associazione Risorsa</div>
 
 <div id="flusso">
 	<table>
@@ -82,9 +79,8 @@ if(controlloUtenteLoggato.getAttribute("utenteLoggato") != null){
 	}else if(request.getParameter("azione").equals("dettaglioAssociazione")){
 		Associaz_Risor_Comm associazione = (Associaz_Risor_Comm)request.getAttribute("associazione_commessa");
 %>
-<div class="subtitle ">
-	<h2>Modifica Associzione Risorsa</h2>
-</div>
+
+<div class="subtitle ">Modifica Associzione Risorsa</div>
 
 
 <div id="flusso">

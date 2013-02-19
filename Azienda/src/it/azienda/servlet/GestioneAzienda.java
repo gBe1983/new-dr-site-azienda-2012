@@ -125,6 +125,7 @@ public class GestioneAzienda extends BaseServlet{
 			response.sendRedirect("./index.jsp?azione=homePage");
 		}
 		if(sessione.getAttribute("utenteLoggato") != null){
+			
 			if(azione.equals("visualizzaAzienda") || azione.equals("aggiornaAzienda")){//in questa sezione effettuo il caricamento del profilo dell'Azienda
 				AziendaDTO azienda = aDAO.visualizzaProfiloAzienda(((UtenteDTO)sessione.getAttribute("utenteLoggato")).getId_azienda());
 				request.setAttribute("profiloAzienda", azienda);
@@ -139,7 +140,7 @@ public class GestioneAzienda extends BaseServlet{
 				clearSession(sessione);
 				response.sendRedirect("./index.jsp?azione=homePage");
 			}else if(azione.equals("cambioPassword")){//in questa sezione effettuo l'eliminazione logica dell'azienda
-				String messaggioCambioPass = aDAO.cambioPassword(request.getParameter("nuovaPassword"),((UtenteDTO)sessione.getAttribute("utenteLoggato")).getId_azienda());
+				String messaggioCambioPass = aDAO.cambioPassword(request.getParameter("nuovaPassword"),((UtenteDTO)sessione.getAttribute("utenteLoggato")).getId_utente());
 				if(messaggioCambioPass.equals("ok")){
 					request.setAttribute("messaggio", "Cambio della password avvenuta con successo");
 					getServletContext()

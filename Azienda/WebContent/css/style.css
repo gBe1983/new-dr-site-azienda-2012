@@ -8,20 +8,15 @@ h1{padding-left:0.5em;font: bold 1em/80px arial,serif;color: #000;}
 h2{color: #000;font-size: 1.5em}
 h3{color: #000;font-size: 1.2em}
 a{text-decoration: none;}
-a:hover{    color: #fff;    background:#bbb;-moz-border-radius: 10px;-webkit-border-radius: 10px;border-radius: 10px ;}
+
 img{margin: 0 auto;display:block;width:95%}
 /*stili generici, su header e footer*/
-div#header{width: 1100px;margin: 0px auto; color: #000;height:55px}
+div#header{width: 1100px;margin: 0px; color: #000;height:55px}
 
 /*stili specifici per il layout*/
-div#extra{float:left;width: 200px; margin:0 0 0 10px;}
+div#extra{float:left;width: 200px; height: 450px; border-top:1px solid #ccc; border-right:1px solid #ccc; /*border: 1px solid black;*/ margin: 0px; padding: 0px; background:#eee; /*border-right: 1px solid black;*/}
 
-.newsbox{margin:15px 0px; width:200px;padding:0 5px;background:#eee;-moz-border-radius: 20px;-webkit-border-radius: 20px;border-radius: 20px ; font: bold 14px;}
-.newsbox ul{list-style-type:none; }
-.newsbox li{list-style-type:none;}
-.subtitle {font : bold 15px Verdana, Arial, Helvetica, sans-serif;	padding: 5px; text-align : center !important; border-bottom:1px solid #bbb}
-
-div#content{position:relative;float:left; width:1100px;margin:0px; padding:0px;}
+div#content{position:relative;float:left; width:1100px;margin:0px; padding:0px; /*border: 1px solid black;*/}
 div#content_right{float:right;width: 870px;padding:5px;margin:0; /*border: 1px solid black;*/}
 
 div#footer{clear:both; text-align:center; padding: 0.5em; background:#eee; color: #000;border-top:1px solid #666 !important;}
@@ -36,16 +31,22 @@ div#footer li{display:inline; list-style-type:none;padding:0 10px}
 .logo {position:relative; float:left; background-image: url(../images/logo_DierreConsulting.bmp); background-repeat: no-repeat; width: 1024px; height: 120px;}
 .logo img{text-align:center;margin: 0 auto;}
 
-#nav {	position:relative; text-align:right; background:#eee; color: #000;border-top:1px solid #ccc !important;border-bottom:1px solid #ccc !important;height:40px; padding:0px}
+/* menu alto */
+
+#nav {margin: 0px;	position:relative; text-align:right; background:#eee; color: #000;border-top:1px solid #ccc !important;border-bottom:1px solid #ccc !important; height:40px; padding:0px}
+
 .menu ul{    margin: 0;    float: right}
 .menu ul li{    display: inline;}
-.menu ul li a{    float: left; text-decoration: none;    color: bbb;    padding: 10.5px 11px;  height:18px;}
-.menu ul li a:hover{    color: #fff;    background:#bbb;-moz-border-radius: 10px;-webkit-border-radius: 10px;border-radius: 10px ;}
-#on{  color: #fff;    background:#bbb;-moz-border-radius: 10px;-webkit-border-radius: 10px;border-radius: 10px ;}
+.menu ul li a{    float: left; text-decoration: none; color: bbb; padding: 10.5px 11px;  height:18px;}
+.menu ul li a:hover{color: #fff;   background:#bbb;-moz-border-radius: 10px; behavior: url(css/PIE.htc); -webkit-border-radius: 10px; border-radius: 10px ;}
+
+/* end menu alto */
+
+#on{  color: #fff;    background:#bbb;-moz-border-radius: 10px; -webkit-border-radius: 10px; border-radius: 10px ; behavior: url(css/PIE.htc); height:18px !important; height:25px;}
 
 .creaCvVoci{visible:hidden;display: none;}
 
-.accordion {float:left;	list-style:none;	margin:0px;padding:0 0 0 10px;text-align:left!important;	background:#eee;-moz-border-radius: 20px;-webkit-border-radius: 20px;border-radius: 20px ; }
+.accordion {float:left;	list-style:none;	margin:0px;padding:0 0 0 10px;text-align:left!important;	background:#eee;-moz-border-radius: 20px;-webkit-border-radius: 20px;border-radius: 20px ; behavior: url(css/PIE.htc);}
 .accordion li {	cursor:pointer;	padding:0;	color:#000;vertical-align:middle;list-style-type:none;	}
 .accordion ul {	list-style-type:none;	display:none;	margin:0;	padding:5px 0;	}
 .accordion ul>li {	background:none;padding-left:5px;	border:0; color:#000	}
@@ -168,3 +169,8 @@ img.help:hover{cursor:pointer}
 #toolbar{ text-align: right; padding-right: 5px;  /*border:1px solid black;*/}
 #toolbar a {padding: 0 5px 0 5px; border-right: 1px solid black;}
 
+/* gestione contenuti */
+.contenuti {width: 800px; margin: 0px; position: relative; right: -30; height: 80; border: 1px solid #CCC; margin-bottom: 40px;}
+.titoloContenuti {font : bold 12px Verdana, Arial, Helvetica, sans-serif; padding: 5px; text-align : center; background: #CCC; border-bottom:1px solid #bbb}
+.immagini{ float: left;  width: 35px; height:35px; padding: 0px 20px !important; margin: 0px !important; margin: 10px 20px; }
+.immagini_riabilitazione{ float: left;  width: 70px; height:35px; padding: 0px 20px 0px 10px; margin: 0px !important; margin: 10px 20px 0px 10px; }

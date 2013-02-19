@@ -7,9 +7,8 @@ HttpSession controlloUtenteLoggato = request.getSession();
 if(controlloUtenteLoggato.getAttribute("utenteLoggato") != null){
 	if(request.getParameter("azione").equals("aggiungiRisorsa")){
 %>
-<div class="subtitle ">
-	<h2>Aggiungi Risorsa</h2>
-</div>
+<div class="subtitle ">Aggiungi Risorsa</div>
+
 <p>
 	In questa sezione potrete gestire l'inserimento di tutte le risorse.
 </p>
@@ -190,9 +189,7 @@ if(controlloUtenteLoggato.getAttribute("utenteLoggato") != null){
 		RisorsaDTO risorsa = (RisorsaDTO) request.getAttribute("risorsa");
 %>
 
-<div class="subtitle ">
-	<h2>Modifica Risorsa</h2>
-</div>
+<div class="subtitle ">Modifica Risorsa</div>
 
 <div id="flusso">
 	<table>
@@ -427,9 +424,7 @@ if(controlloUtenteLoggato.getAttribute("utenteLoggato") != null){
 		RisorsaDTO risorsa = (RisorsaDTO) request.getAttribute("risorsa");
 %>
 
-<div class="subtitle ">
-	<h2>Dettaglio Risorsa</h2>
-</div>
+<div class="subtitle ">Dettaglio Risorsa</div>
 
 <div id="flusso">
 	<table>

@@ -308,7 +308,6 @@ public class RisorsaDAO extends BaseDao {
 				risorsa.setSeniority(rs.getString(23));
 				risorsa.setVisible(rs.getBoolean(24));
 				risorsa.setFlaCreazioneCurriculum(rs.getBoolean(25));
-				risorsa.setCv_visibile(rs.getBoolean(26));
 			}	
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block

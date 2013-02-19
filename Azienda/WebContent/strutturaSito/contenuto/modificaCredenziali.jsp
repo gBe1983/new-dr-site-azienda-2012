@@ -10,9 +10,8 @@ if(sessioneModificaCredenziali.getAttribute("utenteLoggato") != null){
 	UtenteDTO utente = (UtenteDTO) sessioneModificaCredenziali.getAttribute("credenziali");
 	RisorsaDTO risorsa = (RisorsaDTO) request.getAttribute("risorsa");
  %>    
-<div class="subtitle ">
-	<h2>Modifica Credenzialità</h2>
-</div>
+
+<div class="subtitle">Modifica Credenzialità</div>
 
 <div id="flusso">
 	<table>

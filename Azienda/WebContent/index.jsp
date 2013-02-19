@@ -11,13 +11,15 @@
 	<meta http-equiv="keywords" content="keyword1,keyword2,keyword3">
 	<meta http-equiv="description" content="This is my page">
 	
+	
 	<!-- caricamento dei fogli di stile -->
-	<link rel="stylesheet" type="text/css" href="css/menuRisorsa.css">
+	<link rel="stylesheet" type="text/css" href="css/menuSceltaRapida.css">
 	<link rel="stylesheet" type="text/css" href="css/style.css">
 	<link rel="stylesheet" type="text/css" href="css/demo.css">
 	<link rel="stylesheet" type="text/css" href="css/visualizzaCurriculum.css">
 	<link rel="stylesheet" type="text/css" href="css/jquery-ui-1.7.2.custom.css">
 	<link rel="stylesheet" type="text/css" href="css/azienda/timeReport.css">
+	<link rel="stylesheet" type="text/css" href="css/menuLaterale.css">	
 	
 	<!-- caricamento dei javascript -->
 	<script type="text/javascript" src="script/controlloCodiceCommessa.js" ></script>
@@ -30,8 +32,11 @@
 	<script type="text/javascript" src="script/controlloDataFine_InserimentoAssociazioneCommesse.js" ></script>
 	<script type="text/javascript" src="script/controlloDataFine_ModificaAssociazioneCommesse.js" ></script>
 	<script type="text/javascript" src="script/controlloDataInizio_InserimentoAssociazioneCommesse.js" ></script>
+	<script type="text/javascript" src="script/script.js" ></script>
 </head>
 <body class="home" >
+
+	
 	<div id="container" class="shadow">	   
     	<div id="header"><jsp:include page="strutturaSito/menu/menuAlto.jsp" /></div> 
 	    <div id="content">	      	
@@ -99,6 +104,10 @@
     					}else if(azione.equals("commessa")){
     			%>	
 							<jsp:include page="strutturaSito/contenuto/commessa.jsp" />
+				<%  
+    					}else if(azione.equals("curriculum")){
+    			%>	
+							<jsp:include page="strutturaSito/contenuto/curriculum.jsp" />
 				<%  
     					}else if(azione.equals("aggiungiCommessa") || azione.equals("aggiornaCommessa") || azione.equals("dettaglioCommessa")){
     			%>	
@@ -171,6 +180,10 @@
 						}else if(azione.equals("selezionaRisorsa")){
 				%>
 							<jsp:include page="strutturaSito/contenuto/selezionaRisorsa.jsp" />
+				<%
+						}else if(azione.equals("visualizzaElencoCurriculum")){
+				%>
+							<jsp:include page="strutturaSito/contenuto/visualizzaElencoCurriculum.jsp" />
 				<%
 						}
 					}else{

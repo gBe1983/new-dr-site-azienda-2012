@@ -39,9 +39,8 @@ if(request.getSession().getAttribute("utenteLoggato") != null){
 	ArrayList<Associaz_Risor_Comm> listaAssociazioni = (ArrayList<Associaz_Risor_Comm>) request.getAttribute("listaAssCommessa");
 	ArrayList<PlanningDTO> listaGiornate = (ArrayList<PlanningDTO>) request.getAttribute("listaGiornate");
 %>
-<div class="subtitle">
-	<h2>Visualizzazzione Consuntuvi</h2>
-</div>
+
+<div class="subtitle">Visualizzazzione Consuntuvi</div>
 
 <form action="./GestioneReport" method="post" name="report">
 	<input type="hidden" name="azione" value="visualizzaConsuntivi">

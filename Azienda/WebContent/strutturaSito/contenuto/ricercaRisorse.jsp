@@ -5,9 +5,7 @@
 	HttpSession controlloUtenteLoggato = request.getSession();
 	if(controlloUtenteLoggato.getAttribute("utenteLoggato") != null){
 %>
-<div class="subtitle ">
-	<h2>Ricerca Risorsa</h2>
-</div>
+<div class="subtitle ">Ricerca Risorsa</div>
 
 <form action="./GestioneRisorse" method="post" class="spazio">
 	<input type="hidden" name="azione" value="ricercaRisorse">

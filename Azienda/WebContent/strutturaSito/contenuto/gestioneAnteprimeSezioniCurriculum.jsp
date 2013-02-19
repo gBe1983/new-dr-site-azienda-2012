@@ -13,9 +13,7 @@
 			RisorsaDTO risorsa = (RisorsaDTO) request.getAttribute("anteprimaIntestazione");
 %>
 
-			<div class="subtitle ">
-				<h2>Anteprima Intestazione C.V.</h2>
-			</div>
+			<div class="subtitle ">Anteprima Intestazione C.V.</div>
 			
 			<div id="toolbar" class="spazioUltra">
 				<a href="./GestioneCurriculum?azione=caricamentoCv&parametro0=<%=risorsa.getIdRisorsa() %>" >Indietro</a>
@@ -73,9 +71,7 @@
 		}else if(request.getParameter("sezione").equals("esperienze")){
 			CurriculumDTO curriculum = (CurriculumDTO) request.getAttribute("listaEsperienze");
 			%>
-						<div class="subtitle">
-							<h2>Anteprima Esperienze Lavorative</h2>
-						</div>
+						<div class="subtitle">Anteprima Esperienze Lavorative</div>
 						
 						<div id="toolbar" class="spazioUltra">
 							<a href="./GestioneCurriculum?azione=caricamentoCv&parametro0=<%=curriculum.getId_risorsa() %>" >Indietro</a>
@@ -129,9 +125,7 @@
 		}else if(request.getParameter("sezione").equals("dettaglio")){
 			Dettaglio_Cv_DTO dettaglio = (Dettaglio_Cv_DTO) request.getAttribute("dettaglio");
 			%>
-					<div class="subtitle">
-						<h2>Anteprima Dettaglio Lavorativo</h2>
-					</div>
+					<div class="subtitle">Anteprima Dettaglio Lavorativo</div>
 					
 					<div id="toolbar" class="spazioUltra">
 						<a href="./GestioneCurriculum?azione=caricamentoCv&parametro0=<%=dettaglio.getId_risorsa() %>" >Indietro</a>

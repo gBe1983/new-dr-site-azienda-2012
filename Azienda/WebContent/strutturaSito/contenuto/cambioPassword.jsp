@@ -7,9 +7,7 @@
 	if(sessioneCambioPassword.getAttribute("utenteLoggato") != null){
 %>
 
-<div class="subtitle ">
-	<h2>Cambio Password</h2>
-</div>
+<div class="subtitle ">Cambio Password</div>
 
 <fieldset class="spazio">
 	<legend>Cambio Password</legend>

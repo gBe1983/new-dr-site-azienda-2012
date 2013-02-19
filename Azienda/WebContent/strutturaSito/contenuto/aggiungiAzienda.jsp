@@ -13,9 +13,7 @@ if(controlloUtenteLoggato.getAttribute("utenteLoggato") != null){
 		if(request.getParameter("azione").equals("registrazioneAzienda")){
 %>
 
-<div class="subtitle ">
-	<h2>Registrazione Azienda</h2>
-</div>
+<div class="subtitle ">Registrazione Azienda</div>
 
 
 <div id="flusso">
@@ -238,9 +236,7 @@ if(controlloUtenteLoggato.getAttribute("utenteLoggato") != null){
 			AziendaDTO azienda = (AziendaDTO) request.getAttribute("profiloAzienda");
 %>
 
-<div class="subtitle ">
-	<h2>Visualizza Profilo</h2>
-</div>
+<div class="subtitle">Visualizza Profilo</div>
 
 
 <div id="flussoAzienda">
@@ -433,9 +429,7 @@ if(controlloUtenteLoggato.getAttribute("utenteLoggato") != null){
 			AziendaDTO azienda = (AziendaDTO) request.getAttribute("profiloAzienda");
 %>
 
-<div class="subtitle ">
-	<h2>Modifica Profilo</h2>
-</div>
+<div class="subtitle ">Modifica Profilo</div>
 
 
 <div id="flussoAzienda">
@@ -539,7 +533,7 @@ if(controlloUtenteLoggato.getAttribute("utenteLoggato") != null){
 									<label>* Partita Iva</label>
 								</td>
 								<td>
-									<input type="text" name="pIva" size="10" maxlength="10" value="<%=azienda.getPIva() %>"/>
+									<input type="text" name="pIva" size="11" maxlength="11" value="<%=azienda.getPIva() %>"/>
 								</td>
 							</tr>
 					</table>

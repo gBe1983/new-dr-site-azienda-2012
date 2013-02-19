@@ -12,9 +12,7 @@
 		if(listaRisorse.size() > 0){
 %>
 			
-			<div class="subtitle ">
-				<h2>Abilita Risorsa</h2>
-			</div>
+			<div class="subtitle ">Abilita Risorsa</div>
 			
 			<div class="spazioUltra">
 			<form action="./GestioneRisorse" method="post" >

@@ -3,6 +3,7 @@
 <%@page import="it.azienda.dto.RisorsaDTO"%>
 <%@page import="it.azienda.dto.EsperienzeDTO"%>
 <%@page import="java.util.Calendar"%>
+<%@page import="it.azienda.dto.Dettaglio_Cv_DTO"%>
 
 
 <%
@@ -12,10 +13,8 @@
 			RisorsaDTO intestazioneRisorsa = (RisorsaDTO) request.getAttribute("intestazioneRisorsa");
 %>
 		
+		<div class="subtitle ">Modifica Intestazione</div>
 
-<%@page import="it.azienda.dto.Dettaglio_Cv_DTO"%><div class="subtitle ">
-			<h2>Modifica Intestazione</h2>
-		</div>
 		<fieldset class="spazioUltra">
 			<legend>Modifica Intestazione</legend>
 			<form action="./GestioneCurriculum" method="post">
@@ -71,9 +70,8 @@
 			
 			EsperienzeDTO exp = (EsperienzeDTO) request.getAttribute("esperienza");
 %>			
-			<div class="subtitle ">
-				<h2>Modifica Esperienza</h2>
-			</div>
+			<div class="subtitle">Modifica Esperienza</div>
+
 			<fieldset class="spazioUltra">
 				<legend>Modifica Esperienza</legend>
 				<form action="./GestioneCurriculum" method="post" name="inserisciEsperienza" id="inserisciEsperienza">
@@ -214,9 +212,7 @@
 			
 			Dettaglio_Cv_DTO dettaglio = (Dettaglio_Cv_DTO) request.getAttribute("dettaglio");
 %>
-		<div class="subtitle ">
-			<h2>Modifica Dettaglio</h2>
-		</div>
+		<div class="subtitle ">Modifica Dettaglio</div>
 
 		<div class="spazioUltra">
 			<form action="./GestioneCurriculum" method="post" name="dettaglioCv" >

@@ -6,9 +6,7 @@
 		if(request.getParameter("sezione").equals("esperienza")){
 %>
 
-	<div class="subtitle ">
-		<h2>Inserisci Esperienza Lavorativa</h2>
-	</div>
+	<div class="subtitle ">Inserisci Esperienza Lavorativa</div>
 
 	<p>* i campi segnati in asterisco sono obbligatori
 	<div class="spazioUltra">
@@ -114,9 +112,7 @@
 <%			
 		}else{
 %>			
-			<div class="subtitle ">
-				<h2>Inserisci Dettaglio Lavorativo</h2>
-			</div>
+			<div class="subtitle">Inserisci Dettaglio Lavorativo</div>
 
 			<div class="spazioUltra">
 					<form action="./GestioneCurriculum" method="post" name="dettaglioCv">

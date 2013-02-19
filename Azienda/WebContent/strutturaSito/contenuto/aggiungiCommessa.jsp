@@ -36,9 +36,8 @@ if(controlloUtenteLoggato.getAttribute("utenteLoggato") != null){
 	if(commessa == null){
 		if(listaClienti.size() != 0 && listaRisorse.size() != 0){
 %>
-<div class="subtitle ">
-	<h2>Aggiungi Commessa</h2>
-</div>
+<div class="subtitle">Aggiungi Commessa</div>
+
 <p>In questa sezione si può effettuate l'inserimento delle commesse che principalmente si suddividono in quattro categorie "Commessa Esterna Singola", "Commessa Esterna Multipla", "Commessa Interna" e "Altro". <br>
    Nelle "Commesse Esterne Singole" abbiamo un associazione uno a uno cioè dato un Cliente abbiamo una risorsa associata, nelle "Commesse Esterna Multipla" troviamo un associazione uno a molti nel senso che dato un cliente ci posso essere più risorse legate a quel cliente,
    poi abbiamo "Commessa Interna" dove non troviamo alcuna associazione a un cliente ma possiamo avere piu risorse associate a quella commessa. Infine abbiamo la tipologia "Altro" che serve per la gestione burocratica dell'azienda. Esempio "Ferie" "Permessi" ecc... e possiamo avere più risorse legate ad essa.
@@ -488,9 +487,7 @@ if(controlloUtenteLoggato.getAttribute("utenteLoggato") != null){
 	*/
 	}if(request.getParameter("azione").equals("dettaglioCommessa")){
 %>
-		<div class="subtitle ">
-			<h2>Dettaglio Commessa</h2>
-		</div>
+		<div class="subtitle ">Dettaglio Commessa</div>
 
 
 		<div id="flussoCommessa">
@@ -763,9 +760,7 @@ if(controlloUtenteLoggato.getAttribute("utenteLoggato") != null){
 	}else if(request.getParameter("azione").equals("aggiornaCommessa")){
 %>		
 
-	<div class="subtitle ">
-		<h2>Modifica Commessa</h2>
-	</div>
+	<div class="subtitle ">Modifica Commessa</div>
 
 	<div id="flussoCommessa">
 		<table>

@@ -3,9 +3,7 @@
 <%@page import="java.util.ArrayList"%>
 <%@page import="it.azienda.dto.RisorsaDTO"%>
 
-<div class="subtitle ">
-	<h2>Visualizza Risorse</h2>
-</div>
+<div class="subtitle ">Visualizza Risorse</div>
 
 <div id="flusso">
 	<table>

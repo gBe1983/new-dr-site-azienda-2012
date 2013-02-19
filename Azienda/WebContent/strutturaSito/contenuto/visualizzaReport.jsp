@@ -23,9 +23,8 @@ if(controlloUtenteLoggato.getAttribute("utenteLoggato") != null){
 	ArrayList listaClienti = (ArrayList) request.getAttribute("listaCliente");
 	if(request.getAttribute("report") == null){
 %>
-<div class="subtitle ">
-	<h2>Ricerca Report</h2>
-</div>
+
+<div class="subtitle">Ricerca Report</div>
 
 <fieldset class="modificaTrattative">
 	<legend>Ricerca Report</legend>

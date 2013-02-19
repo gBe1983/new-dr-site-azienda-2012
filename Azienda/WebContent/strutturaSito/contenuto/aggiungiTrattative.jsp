@@ -28,9 +28,8 @@ if(controlloUtenteLoggato.getAttribute("utenteLoggato") != null){
 		if(!request.getParameter("azione").equals("aggiornaTrattativa")){
 			if(listaClienti.size() > 0 && listaRisorse.size() > 0){
 %>
-<div class="subtitle ">
-	<h2>Aggiungi Trattative</h2>
-</div>	
+<div class="subtitle ">Aggiungi Trattative</div>	
+
 <p>In questa sezione si può effettuate l'inserimento delle trattative che principalmente si suddividono in due categorie "Trattative Multiple" o "Trattative Singole". <br>
    Le "Trattative Multiple" corrispondono alle trattattive con appalto, invece le "Trattative Singole" corrispondono alle trattative della singola risorsa.
 </p>
@@ -316,9 +315,7 @@ if(controlloUtenteLoggato.getAttribute("utenteLoggato") != null){
 			TrattativeDTO trattativa = (TrattativeDTO) request.getAttribute("trattativa");
 %>
 
-<div class="subtitle ">
-	<h2>Modifica Trattative</h2>
-</div>
+<div class="subtitle ">Modifica Trattative</div>
 
 <div id="flusso">
 	<table>

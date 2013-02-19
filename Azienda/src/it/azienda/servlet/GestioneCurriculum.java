@@ -76,15 +76,34 @@ public class GestioneCurriculum extends BaseServlet {
 			
 			if(azione.equals("caricamentoAllCurriculum")){
 				
-				/**
-				 * mi carico tutti i curriculum che sono stati creati verificando
-				 * che ci siano sia esperinze che dettagli
-				 */
-				ArrayList<CurriculumDTO> curriculumVitae = cDAO.caricamentoAllCurriculum();
+				if(request.getParameter("dispositiva").equals("gestione")){
+					/**
+					 * mi carico tutti i curriculum che sono stati creati verificando
+					 * che ci siano sia esperinze che dettagli
+					 */
+					ArrayList<CurriculumDTO> curriculumVitae = cDAO.caricamentoAllCurriculum();
+					
+					request.setAttribute("listaCurriculum", curriculumVitae);
+					
+					getServletContext().getRequestDispatcher("/index.jsp?azione=visualizzaCurriculum").forward(request, response);
 				
-				request.setAttribute("listaCurriculum", curriculumVitae);
-				
-				getServletContext().getRequestDispatcher("/index.jsp?azione=visualizzaCurriculum").forward(request, response);
+				}else if(request.getParameter("dispositiva").equals("esportaPDF")){
+					
+					ArrayList<CurriculumDTO> curriculumVitae = cDAO.caricamentoAllCurriculum();
+					
+					request.setAttribute("listaCurriculum", curriculumVitae);
+					
+					getServletContext().getRequestDispatcher("/index.jsp?azione=visualizzaElencoCurriculum&dispositiva=esportaPdf").forward(request, response);
+					
+				}else if(request.getParameter("dispositiva").equals("anteprimaCv")){
+					
+					ArrayList<CurriculumDTO> curriculumVitae = cDAO.caricamentoAllCurriculum();
+					
+					request.setAttribute("listaCurriculum", curriculumVitae);
+					
+					getServletContext().getRequestDispatcher("/index.jsp?azione=visualizzaElencoCurriculum&dispositiva=anteprimaGlobale").forward(request, response);
+					
+				}
 				
 			}else if(azione.equals("caricamentoCv")){
 				
@@ -283,6 +302,8 @@ public class GestioneCurriculum extends BaseServlet {
 						}else{
 							getServletContext().getRequestDispatcher("/index.jsp?azione=anteprimaCurriculum&area=notAll").forward(request, response);
 						}
+					}else{
+						getServletContext().getRequestDispatcher("/index.jsp?azione=anteprimaCurriculum").forward(request, response);
 					}
 					
 					

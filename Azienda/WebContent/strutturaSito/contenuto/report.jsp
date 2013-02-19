@@ -5,13 +5,18 @@
 	if(controlloUtenteLoggato.getAttribute("utenteLoggato") != null){
 %>
 
-<div class="subtitle ">
-	<h2>Area Report</h2>
-</div>
-<p>
-	In questa sezione potrete gestire tutto quello ha a che fare con il Report dei dipendenti.
-</p>
+<div class="subtitle ">Area Report</div>
 
+<div class="spazioUltra">
+	<a href="./GestioneReport?azione=caricamentoReport">
+		<div class="contenuti">
+			<div class="titoloContenuti">Ricerca Report</div>
+			<div class="corpoContenuti">
+				<img src="images/cerca.jpg" class="immagini"><p>In questa sezione puoi ricercare tutti i report di cui l'azienda dispone.</p>
+			</div>
+		</div>
+	</a>
+</div>
 <%
 	}else{
 %>

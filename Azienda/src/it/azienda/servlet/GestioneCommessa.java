@@ -22,6 +22,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.TimeZone;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -36,12 +37,10 @@ import com.itextpdf.text.BaseColor;
 import com.itextpdf.text.Chunk;
 import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
-import com.itextpdf.text.Element;
 import com.itextpdf.text.Font;
 import com.itextpdf.text.Image;
 import com.itextpdf.text.PageSize;
 import com.itextpdf.text.Paragraph;
-import com.itextpdf.text.Font.FontFamily;
 import com.itextpdf.text.pdf.PdfPCell;
 import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
@@ -1283,7 +1282,9 @@ public class GestioneCommessa extends BaseServlet {
 					Font fontCorpo = new Font(Font.FontFamily.TIMES_ROMAN, 10, 0,new BaseColor(0,0,0));
 					Font fontTitoli = new Font(Font.FontFamily.TIMES_ROMAN, 11, Font.UNDERLINE,new BaseColor(0,0,128));
 					SimpleDateFormat formattazionePDF = new SimpleDateFormat("dd/MM/yyyy");
+					formattazionePDF.setTimeZone(TimeZone.getTimeZone("Europe/Rome"));
 					SimpleDateFormat formattazionePDFDurata = new SimpleDateFormat("EEEEEE dd MMMMMM yyyy");
+					formattazionePDFDurata.setTimeZone(TimeZone.getTimeZone("Europe/Rome"));
 					Paragraph spazio = new Paragraph("\n");
 					
 					//carico il logo
@@ -1444,10 +1445,18 @@ public class GestioneCommessa extends BaseServlet {
 					durata.addElement(titoloDurata);
 					corpo.addCell(durata);
 					
+					formattaDataWeb.setTimeZone(TimeZone.getTimeZone("Europe/Rome"));
+					
+					Calendar calendarioPartenza = Calendar.getInstance(TimeZone.getTimeZone("Europe/Rome")); 
+					calendarioPartenza.setTime(formattaDataWeb.parse(commessa.getData_inizio()));
+					
+					Calendar calendarioFine = Calendar.getInstance(TimeZone.getTimeZone("Europe/Rome")); 
+					calendarioFine.setTime(formattaDataWeb.parse(commessa.getData_fine()));
+					
 					PdfPCell contenutoDurata = new PdfPCell();
 					contenutoDurata.setBorder(0);
 					contenutoDurata.setPaddingLeft(50);
-					Paragraph contentDurata = new Paragraph("a partire da " + formattazionePDFDurata.format(formattaDataWeb.parse(commessa.getData_inizio())) + " fino a " + formattazionePDFDurata.format(formattaDataWeb.parse(commessa.getData_fine())),fontCorpo);
+					Paragraph contentDurata = new Paragraph("a partire da " + formattazionePDFDurata.format(calendarioPartenza.getTime()) + " fino a " + formattazionePDFDurata.format(calendarioFine.getTime()),fontCorpo);
 					contenutoDurata.addElement(contentDurata);
 					corpo.addCell(contenutoDurata);
 					
@@ -1535,7 +1544,13 @@ public class GestioneCommessa extends BaseServlet {
 					intestazionePieDiPagina.addElement(contenuto);
 					firma.addCell(intestazionePieDiPagina);
 					
-					firma.addCell(vuoto);
+					PdfPCell accetazione = new PdfPCell();
+					accetazione.setBorder(0);
+					accetazione.setPaddingLeft(95);
+					Paragraph titoloAccetazione = new Paragraph("Per accettazione",fontCorpo);
+					accetazione.addElement(titoloAccetazione);
+					firma.addCell(accetazione);
+					
 					
 					PdfPCell proprietario = new PdfPCell();
 					proprietario.setBorder(0);
@@ -1544,26 +1559,20 @@ public class GestioneCommessa extends BaseServlet {
 					proprietario.addElement(contenutoProprietario);
 					firma.addCell(proprietario);
 					
-					PdfPCell accetazione = new PdfPCell();
-					accetazione.setBorder(0);
-					accetazione.setPaddingLeft(95);
-					Paragraph titoloAccetazione = new Paragraph("Per accettazione",fontCorpo);
-					accetazione.addElement(titoloAccetazione);
-					firma.addCell(accetazione);
-					
-					PdfPCell vuoto2 = new PdfPCell();
-					vuoto2.setBorder(0);
-					vuoto2.setPaddingLeft(30);
-					vuoto2.setRowspan(2);
-					vuoto2.addElement(spazio);
-					firma.addCell(vuoto2);
-					
 					PdfPCell puntini = new PdfPCell();
 					puntini.setBorder(0);
 					puntini.setPaddingLeft(50);
 					Paragraph titoloPuntini = new Paragraph(".........................................................",fontCorpo);
 					puntini.addElement(titoloPuntini);
 					firma.addCell(puntini);
+					
+					Image firmaDigitale = Image.getInstance(getServletContext().getRealPath("/") + "images/FirmaDigitale.gif");
+					firmaDigitale.setWidthPercentage(50);
+					PdfPCell vuoto2 = new PdfPCell();
+					vuoto2.setBorder(0);
+					vuoto2.setPaddingLeft(90);
+					vuoto2.addElement(firmaDigitale);
+					firma.addCell(vuoto2);
 					
 					doc.add(firma);
 					

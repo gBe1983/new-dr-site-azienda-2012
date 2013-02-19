@@ -9,9 +9,7 @@
 		ArrayList listaRisorse = (ArrayList)request.getAttribute("listaRisorsa");
 		if(listaRisorse.size() > 0){
 %>
-			<div class="subtitle ">
-				<h2>Seleziona Risorsa</h2>
-			</div>
+			<div class="subtitle ">Seleziona Risorsa</div>
 			
 			<div>
 				<p>In questa sezione si seleziona la risorsa per la quale si vuole creare il Curriculum Vitae</p>
