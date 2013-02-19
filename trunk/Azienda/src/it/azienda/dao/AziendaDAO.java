@@ -66,7 +66,7 @@ public class AziendaDAO extends BaseDao {
 	public String modificaAzienda(AziendaDTO azienda){
 		final String metodo="modificaAzienda";
 		log.start(metodo);
-		StringBuilder sql = new StringBuilder("UPDATE tbl_aziende");
+		StringBuilder sql = new StringBuilder("UPDATE tbl_aziende ");
 		sql	.append("SET ragione_sociale=?,indirizzo=?,citta=?,provincia=?,cap=?,nazione=?,")
 				.append("telefono=?,fax=?,mail=?,codice_fiscale=?,p_iva=?,indirizzo_legale=?,")
 				.append("citta_legale=?,provincia_legale=?,cap_legale=?,nazione_legale=?,referente=?,")
@@ -202,7 +202,7 @@ public class AziendaDAO extends BaseDao {
 	public void eliminaProfiloAzienda(int idAzienda){
 		final String metodo="eliminaProfiloAzienda";
 		log.start(metodo);
-		String sql = "UPDATE tbl_login SET utenteVisible=false WHERE id_azienda=?";
+		String sql = "UPDATE tbl_utente SET utenteVisible=false WHERE id_azienda=?";
 		log.debug(metodo, sql);
 		PreparedStatement ps=null;
 		try {
@@ -210,7 +210,7 @@ public class AziendaDAO extends BaseDao {
 			ps.setInt(1, idAzienda);
 			ps.executeUpdate();
 		} catch (SQLException e) {
-			log.error(metodo, "UPDATE tbl_login for idAzienda:"+idAzienda, e);
+			log.error(metodo, "UPDATE tbl_utente for idAzienda:"+idAzienda, e);
 		}finally{
 			close(ps);
 			log.end(metodo);
@@ -223,20 +223,20 @@ public class AziendaDAO extends BaseDao {
 	 * @param idAzienda
 	 * @return
 	 */
-	public String cambioPassword(String password,int idAzienda){
+	public String cambioPassword(String password,int id_utente){
 		final String metodo="cambioPassword";
 		log.start(metodo);
-		String sql = "UPDATE tbl_login SET password=? WHERE id_azienda=?";
+		String sql = "UPDATE tbl_utente SET password=? WHERE id_utente = ?";
 		log.debug(metodo, sql);
 		int aggiornamentoPassword = 0;
 		PreparedStatement ps=null;
 		try {
 			ps = connessione.prepareStatement(sql);
 			ps.setString(1, MD5.encript(password));
-			ps.setInt(2, idAzienda);
+			ps.setInt(2, id_utente);
 			aggiornamentoPassword = ps.executeUpdate();
 		} catch (SQLException e) {
-			log.error(metodo, "UPDATE tbl_login for idAzienda:"+idAzienda, e);
+			log.error(metodo, "UPDATE tbl_utente for id_utente :"+id_utente, e);
 			return "Siamo spiacenti, il cambio password non è avvenuto con successo. Contattare l'amministrazione.";
 		}finally{
 			close(ps);

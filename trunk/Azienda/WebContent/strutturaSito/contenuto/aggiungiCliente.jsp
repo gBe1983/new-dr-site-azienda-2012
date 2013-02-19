@@ -12,9 +12,8 @@ if(controlloUtenteLoggato.getAttribute("utenteLoggato") != null){
 	ClienteDAO clienteDAO = new ClienteDAO((Connection) controlloUtenteLoggato.getAttribute("connessione"));
 	if(request.getAttribute("cliente") == null){
 %>
-<div class="subtitle ">
-	<h2>Aggiungi Cliente</h2>
-</div>
+<div class="subtitle ">Aggiungi Cliente</div>
+
 <p>
 	In questa sezione potrete gestire l'inserimento di tutti i clienti con cui avete un rappporto lavorativo.
 </p>	
@@ -100,9 +99,7 @@ if(controlloUtenteLoggato.getAttribute("utenteLoggato") != null){
 	}else if(request.getAttribute("cliente") != null && request.getParameter("azione").equals("visualizzaCliente")){
 		ClienteDTO cliente = (ClienteDTO)request.getAttribute("cliente");
 %>
-<div class="subtitle">
-	<h2>Visualizza Cliente</h2>
-</div>
+<div class="subtitle">Visualizza Cliente</div>
 
 <div id="flusso">
 	<table>
@@ -208,9 +205,8 @@ if(controlloUtenteLoggato.getAttribute("utenteLoggato") != null){
 	}else{
 		ClienteDTO cliente = (ClienteDTO)request.getAttribute("cliente");
 %>
-<div class="subtitle ">
-	<h2>Modifica Cliente</h2>
-</div>
+<div class="subtitle ">Modifica Cliente</div>
+
 <div id="flusso">
 	<table>
 		<tr>

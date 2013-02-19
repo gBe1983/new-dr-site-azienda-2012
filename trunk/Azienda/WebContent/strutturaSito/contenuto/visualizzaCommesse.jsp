@@ -10,9 +10,7 @@
 	if(controlloUtenteLoggato.getAttribute("utenteLoggato") != null){
 %>
 
-<div class="subtitle ">
-	<h2>Visualizza Commesse</h2>
-</div>
+<div class="subtitle ">Visualizza Commesse</div>
 
 <div id="flusso">
 	<table>

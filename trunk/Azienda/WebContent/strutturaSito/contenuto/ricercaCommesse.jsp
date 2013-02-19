@@ -22,9 +22,7 @@
 	if(controlloUtenteLoggato.getAttribute("utenteLoggato") != null){
 %>
 
-<div class="subtitle ">
-	<h2>Ricerca Commesse</h2>
-</div>
+<div class="subtitle ">Ricerca Commesse</div>
 
 <form action="./GestioneCommessa" method="post" class="modificaTrattative">
 	<input type="hidden" name="azione" value="visualizzaCommessa">

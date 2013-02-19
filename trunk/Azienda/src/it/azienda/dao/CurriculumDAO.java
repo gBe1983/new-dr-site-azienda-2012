@@ -13,8 +13,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
-import com.sun.corba.se.spi.orbutil.fsm.Guard.Result;
-
 
 
 public class CurriculumDAO extends BaseDao {
@@ -35,9 +33,11 @@ public class CurriculumDAO extends BaseDao {
 				
 		ArrayList<CurriculumDTO> listaCurriculum = new ArrayList<CurriculumDTO>();
 		
-		String sql = "select risorsa.id_risorsa, risorsa.nome, risorsa.cognome, risorsa.flag_creazione_cv, if((select count(*) from tbl_esperienze_professionali_cv as esperienze where esperienze.id_risorsa = risorsa.id_risorsa and esperienze.visibile = true) > 0 , 1, 0) as esperienza,if((select count(*) from tbl_dettaglio_cv as dettaglio where dettaglio.id_risorsa = risorsa.id_risorsa and dettaglio.visible = true) > 0 , 1, 0) as dettaglio " +
+		String sql = "select risorsa.id_risorsa, risorsa.nome, risorsa.cognome, risorsa.flag_creazione_cv, " +
+				"if((select count(*) from tbl_esperienze_professionali_cv as esperienze where esperienze.id_risorsa = risorsa.id_risorsa and esperienze.visibile = true) > 0 , 1, 0) as esperienza," +
+				"if((select count(*) from tbl_dettaglio_cv as dettaglio where dettaglio.id_risorsa = risorsa.id_risorsa and dettaglio.visible = true) > 0 , 1, 0) as dettaglio " +
 				" from tbl_risorse as risorsa " +
-				" where risorsa.flag_creazione_cv = true group by risorsa.nome;";
+				" where risorsa.flag_creazione_cv = true group by risorsa.nome";
 		
 		PreparedStatement ps=null;
 		ResultSet rs=null;
@@ -95,12 +95,13 @@ public class CurriculumDAO extends BaseDao {
 		
 		RisorsaDTO risorsa = null;
 		
-		String sql = "select id_risorsa, cognome, nome,data_nascita, mail, telefono, cellulare, fax, indirizzo from tbl_risorse where id_risorsa = ?";
+		String sql = "select risorsa.id_risorsa, risorsa.cognome, risorsa.nome, risorsa.data_nascita, risorsa.mail, risorsa.telefono, risorsa.cellulare, risorsa.fax, risorsa.indirizzo, if((select count(*) from tbl_dettaglio_cv as dettaglio where dettaglio.id_risorsa = risorsa.id_risorsa and risorsa.id_risorsa = ? and dettaglio.visible = true) > 0 , 1, 0) as flagDettaglio from tbl_risorse as risorsa where risorsa.id_risorsa = ?";
 		PreparedStatement ps=null;
 		ResultSet rs=null;
 		try {
 			ps = connessione.prepareStatement(sql);
 			ps.setInt(1, idRisorsa);
+			ps.setInt(2, idRisorsa);
 			rs = ps.executeQuery();
 			while(rs.next()){
 				risorsa = new RisorsaDTO();
@@ -113,6 +114,7 @@ public class CurriculumDAO extends BaseDao {
 				risorsa.setCellulare(rs.getString("cellulare"));
 				risorsa.setFax(rs.getString("fax"));
 				risorsa.setIndirizzo(rs.getString("indirizzo"));
+				risorsa.setFlagCreazioneDettaglio(rs.getBoolean("flagDettaglio"));
 			}	
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block

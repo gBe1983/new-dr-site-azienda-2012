@@ -6,11 +6,7 @@
 <%
 	ArrayList<CurriculumDTO> listaCurriculum = (ArrayList<CurriculumDTO>) request.getAttribute("listaCurriculum");
 %>
-<div class="subtitle ">
-	<h2>Visualizza Curriculum Vitae</h2>
-</div>
-
-<span class="spazioUltra">In questa sezione è possibile visualizzare tutti i curriculum vitae creati di tutti i dipendenti con le rispettive sezioni</span>
+<div class="subtitle">Visualizza Curriculum Vitae</div>
 
 <div class="spazioUltra">
 	

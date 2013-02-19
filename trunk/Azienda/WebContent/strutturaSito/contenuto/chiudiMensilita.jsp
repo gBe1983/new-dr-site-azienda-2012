@@ -7,9 +7,8 @@ HttpSession controlloUtenteLoggato = request.getSession();
 if(controlloUtenteLoggato.getAttribute("utenteLoggato") != null){
 %>
 
-<div class="subtitle ">
-	<h2>Chiudi Mensilità</h2>
-</div>
+<div class="subtitle ">Chiudi Mensilità</div>
+
 <p>
 	In questa sezione potrai gestire la chiusura dei mesi dell'anno corrette in modo da non dare più la possibilità di modificare le ore dei mesi già fatturati.
 </p>

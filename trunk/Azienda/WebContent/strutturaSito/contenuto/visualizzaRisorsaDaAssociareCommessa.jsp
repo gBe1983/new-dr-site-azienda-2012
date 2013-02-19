@@ -14,9 +14,8 @@ if(controlloUtenteLoggato.getAttribute("utenteLoggato") != null){
 		commessa = (CommessaDTO) request.getAttribute("commessa");
 	}
 %>
-	<div class="subtitle ">
-		<h2>Risorse Da Associare</h2>
-	</div>
+
+	<div class="subtitle ">Risorse Da Associare</div>
 
 
 	<div id="flussoCommessa">

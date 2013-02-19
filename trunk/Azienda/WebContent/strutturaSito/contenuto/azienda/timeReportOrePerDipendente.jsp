@@ -32,9 +32,9 @@ if(request.getSession().getAttribute("utenteLoggato") != null){
 	String dtA=(String)request.getAttribute("dtA");
 	String tipologiaReport = request.getParameter("tipologiaReport");
 %>
-<div class="subtitle">
-	<h2>Visualizzazzione Consuntuvi</h2>
-</div>
+
+<div class="subtitle">Visualizzazzione Consuntuvi</div>
+
 <form action="./GestioneReport" method="post" name="report">
 	<input type="hidden" name="azione" value="visualizzaConsuntivi">
 	<table class="filter">

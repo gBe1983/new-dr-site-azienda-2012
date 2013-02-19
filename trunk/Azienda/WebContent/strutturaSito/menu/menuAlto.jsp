@@ -24,10 +24,10 @@
 			<ul class="corner">
 				<li><a href="./index.jsp?azione=cliente" class="linkAlti" title="cliente" <% if(request.getParameter("azione") != null && request.getParameter("azione").equals("cliente")){ out.print("id='on'");} %>>Cliente</a></li>
 				<li><a href="./index.jsp?azione=risorsa" class="linkAlti" <% if(request.getParameter("azione") != null && request.getParameter("azione").equals("risorsa")){ out.print("id='on'");} %>>Risorsa</a></li>
-				<li><a href="./GestioneCurriculum?azione=caricamentoAllCurriculum" class="linkAlti" <% if(request.getParameter("azione") != null && request.getParameter("azione").equals("caricamentoAllCurriculum")){ out.print("id='on'");} %>>Curriculum Vitae</a></li>
+				<li><a href="./index.jsp?azione=curriculum" class="linkAlti" <% if(request.getParameter("azione") != null && request.getParameter("azione").equals("caricamentoAllCurriculum")){ out.print("id='on'");} %>>Curriculum Vitae</a></li>
 				<li><a href="./index.jsp?azione=trattative" class="linkAlti" <% if(request.getParameter("azione") != null && request.getParameter("azione").equals("trattative")){ out.print("id='on'");} %>>Trattative</a></li>
 				<li><a href="./index.jsp?azione=commessa" class="linkAlti" <% if(request.getParameter("azione") != null && request.getParameter("azione").equals("commessa")){ out.print("id='on'");} %>>Commessa</a></li>
-				<li><a href="./GestioneReport?azione=caricamentoReport" <% if(request.getParameter("azione") != null && request.getParameter("azione").equals("visualizzaConsuntivi")){ out.print("id='on'");} %>>Report</a></li>
+				<li><a href="./index.jsp?azione=report" <% if(request.getParameter("azione") != null && request.getParameter("azione").equals("visualizzaConsuntivi")){ out.print("id='on'");} %>>Report</a></li>
 				<li><a href="./GestioneAzienda?azione=logout">Logout</a></li>
 			</ul>
 		</div>

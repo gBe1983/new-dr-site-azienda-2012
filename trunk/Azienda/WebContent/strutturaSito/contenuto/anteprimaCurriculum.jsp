@@ -9,14 +9,23 @@
 	CurriculumDTO curriculum = (CurriculumDTO) request.getAttribute("curriculumVitae");
 %>
 
-<div class="subtitle "><h2>Anteprima Curriculum</h2></div>
-<% if(request.getParameter("area").equals("all")){ %>
-	<div id="toolbar" class="spazioUltra"><a href="./GestioneCurriculum?azione=caricamentoCv&parametro0=<%=curriculum.getId_risorsa() %>">Modifica Cv</a><a href="./GestioneCurriculum?azione=esportaPdf&parametro=<%=curriculum.getId_risorsa() %>">Esporta in Pdf</a><a href="./GestioneCurriculum?azione=caricamentoAllCurriculum&parametro0=<%=curriculum.getId_risorsa() %>" >Indietro</a></div>
+<div class="subtitle ">Anteprima Curriculum</div>
+
+<%  
+	if(request.getParameter("area") != null){
+		if(request.getParameter("area").equals("all")){ 
+%>
+			<div id="toolbar" class="spazioUltra"><a href="./GestioneCurriculum?azione=caricamentoCv&dispositiva=gestione&parametro0=<%=curriculum.getId_risorsa() %>">Modifica Cv</a><a href="./GestioneCurriculum?azione=esportaPdf&parametro=<%=curriculum.getId_risorsa() %>">Esporta in Pdf</a><a href="./GestioneCurriculum?azione=caricamentoAllCurriculum&parametro0=<%=curriculum.getId_risorsa() %>" >Indietro</a></div>
 <%
+		}else{
+%>
+			<div id="toolbar" class="spazioUltra"><a href="./GestioneCurriculum?azione=caricamentoCv&parametro0=<%=curriculum.getId_risorsa() %>">Modifica Cv</a><a href="./GestioneCurriculum?azione=esportaPdf&parametro=<%=curriculum.getId_risorsa() %>">Esporta in Pdf</a><a href="./GestioneCurriculum?azione=caricamentoCv&parametro0=<%=curriculum.getId_risorsa() %>" >Indietro</a></div>
+<%
+		}
 	}else{
 %>
-	<div id="toolbar" class="spazioUltra"><a href="./GestioneCurriculum?azione=caricamentoCv&parametro0=<%=curriculum.getId_risorsa() %>">Modifica Cv</a><a href="./GestioneCurriculum?azione=esportaPdf&parametro=<%=curriculum.getId_risorsa() %>">Esporta in Pdf</a><a href="./GestioneCurriculum?azione=caricamentoCv&parametro0=<%=curriculum.getId_risorsa() %>" >Indietro</a></div>
-<%
+			<div id="toolbar" class="spazioUltra"><a href="./GestioneCurriculum?azione=caricamentoCv&parametro0=<%=curriculum.getId_risorsa() %>">Modifica Cv</a><a href="./GestioneCurriculum?azione=esportaPdf&parametro=<%=curriculum.getId_risorsa() %>">Esporta in Pdf</a><a href="./GestioneCurriculum?azione=caricamentoAllCurriculum&dispositiva=anteprimaCv&parametro0=<%=curriculum.getId_risorsa() %>" >Indietro</a></div>
+<%	
 	}
 %>
 <div class="spazioUltra">

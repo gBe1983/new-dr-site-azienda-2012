@@ -7,7 +7,7 @@
 	CurriculumDTO curriculum = (CurriculumDTO ) request.getAttribute("curriculumVitae");
 %>
 <div class="subtitle "><h2>Dettaglio Curriculum Vitae</h2></div>
-<span class="spazioUltra">In questa sezione è possibile visualizzare nel dettaglio il curriculum del singolo dipendente</span>
+
 <div id="toolbar" class="spazioUltra"><a href="./GestioneCurriculum?azione=anteprimaGlobale&parametro=<%=curriculum.getId_risorsa() %>&area=notAll" >Anteprima</a><a href="./GestioneCurriculum?azione=esportaPdf&parametro=<%=curriculum.getId_risorsa() %>">Esporta in Pdf</a><a href="./GestioneCurriculum?azione=caricamentoAllCurriculum">Indietro</a></div>
 
 <div class="spazioUltra">
@@ -203,7 +203,13 @@
 					<input type="hidden" name="parametroId" value="<% if(curriculum.getListaDettaglio() != null){ if(curriculum.getListaDettaglio().getId_dettaglio() != 0){ out.print(curriculum.getListaDettaglio().getId_dettaglio()); } else{ out.print(0); }}%>">
 					<select name="scelta">
 						<option value="">-- Scegli Azione --</option>
-						<option value="aggiungiDettaglio">Aggiungi</option>
+					<%
+						if(!curriculum.getRisorsa().isFlagCreazioneDettaglio()){
+					%>
+							<option value="aggiungiDettaglio">Aggiungi</option>
+					<%
+						}
+					%>
 						<option value="modificaDettaglio">Modifica</option>
 						<option value="anteprimaDettaglio">Anteprima</option>
 						<option value="eliminaDettaglio">Elimina</option>

@@ -13,9 +13,7 @@ HttpSession controlloUtenteLoggato = request.getSession();
 if(controlloUtenteLoggato.getAttribute("utenteLoggato") != null){
 %>
 
-<div class="subtitle ">
-	<h2>Visualizza Trattative</h2>
-</div>
+<div class="subtitle ">Visualizza Trattative</div>
 	
 <div id="flusso">
 	<table>
