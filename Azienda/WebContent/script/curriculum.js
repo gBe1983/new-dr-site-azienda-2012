@@ -3,9 +3,6 @@ function openFinestra(valore,lastMovimento,area){
 	document.pdf.parametro.value = valore;
 	document.pdf.lastMovimento.value = lastMovimento;
 	document.pdf.area.value = area;
-	alert(document.pdf.parametro.value);
-	alert(document.pdf.lastMovimento.value);
-	alert(document.pdf.area.value);
 	
 	$('#finestra').dialog({
 		modal: true,
@@ -20,7 +17,6 @@ function openFinestra(valore,lastMovimento,area){
 function sceltaRisorsaCurriculum(){
 	
 	var valore = document.sceltaRisorsa.parametro.value;
-	alert(valore);
 	return valore;
 }
 
