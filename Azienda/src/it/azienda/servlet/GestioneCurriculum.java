@@ -5,12 +5,14 @@ import it.azienda.dto.CurriculumDTO;
 import it.azienda.dto.Dettaglio_Cv_DTO;
 import it.azienda.dto.EsperienzeDTO;
 import it.azienda.dto.RisorsaDTO;
+import it.mail.Email;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.io.StringReader;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -76,30 +78,28 @@ public class GestioneCurriculum extends BaseServlet {
 			
 			if(azione.equals("caricamentoAllCurriculum")){
 				
+				/**
+				 * mi carico tutti i curriculum che sono stati creati verificando
+				 * che ci siano sia esperinze che dettagli
+				 */
+				ArrayList<CurriculumDTO> curriculumVitae = cDAO.caricamentoAllCurriculum();
+				
+				request.setAttribute("listaCurriculum", curriculumVitae);
+				
+				/*
+				 * effettuo questa distinzione tramite la dispositiva per via dei vari percorsi
+				 * che l'utente può raggiungere questa sezione.
+				 */
+				
 				if(request.getParameter("dispositiva").equals("gestione")){
-					/**
-					 * mi carico tutti i curriculum che sono stati creati verificando
-					 * che ci siano sia esperinze che dettagli
-					 */
-					ArrayList<CurriculumDTO> curriculumVitae = cDAO.caricamentoAllCurriculum();
-					
-					request.setAttribute("listaCurriculum", curriculumVitae);
 					
 					getServletContext().getRequestDispatcher("/index.jsp?azione=visualizzaCurriculum").forward(request, response);
 				
 				}else if(request.getParameter("dispositiva").equals("esportaPDF")){
 					
-					ArrayList<CurriculumDTO> curriculumVitae = cDAO.caricamentoAllCurriculum();
-					
-					request.setAttribute("listaCurriculum", curriculumVitae);
-					
 					getServletContext().getRequestDispatcher("/index.jsp?azione=visualizzaElencoCurriculum&dispositiva=esportaPdf").forward(request, response);
 					
 				}else if(request.getParameter("dispositiva").equals("anteprimaCv")){
-					
-					ArrayList<CurriculumDTO> curriculumVitae = cDAO.caricamentoAllCurriculum();
-					
-					request.setAttribute("listaCurriculum", curriculumVitae);
 					
 					getServletContext().getRequestDispatcher("/index.jsp?azione=visualizzaElencoCurriculum&dispositiva=anteprimaGlobale").forward(request, response);
 					
@@ -298,11 +298,20 @@ public class GestioneCurriculum extends BaseServlet {
 					
 					if(request.getParameter("area") != null){
 						if(request.getParameter("area").equals("all")){
+							/*
+							 * l'utente arriva dalla visualizzazione di tutti i curriculum
+							 */
 							getServletContext().getRequestDispatcher("/index.jsp?azione=anteprimaCurriculum&area=all").forward(request, response);
 						}else{
+							/*
+							 * l'utente arriva dal dettaglio curriculum
+							 */
 							getServletContext().getRequestDispatcher("/index.jsp?azione=anteprimaCurriculum&area=notAll").forward(request, response);
 						}
 					}else{
+						/*
+						* questa anteprima arriva dalla schermata Curriculum Vitae/Curriculum -> Anteprima C.V. -> scelta risorsa -> anteprima
+						*/
 						getServletContext().getRequestDispatcher("/index.jsp?azione=anteprimaCurriculum").forward(request, response);
 					}
 					
@@ -325,6 +334,7 @@ public class GestioneCurriculum extends BaseServlet {
 					esperienza.setId_risorsa(id_risorsa);
 					
 					esitoAggiungi = cDAO.inserimentoEsperienze(esperienza);
+					
 				}else{
 					
 					Dettaglio_Cv_DTO dettaglio = new Dettaglio_Cv_DTO();
@@ -427,170 +437,173 @@ public class GestioneCurriculum extends BaseServlet {
 				
 				CurriculumDTO curriculum =  cDAO.caricamentoCurriculum(id_risorsa);
 				
-				File file = new File(getServletContext().getRealPath("/")+"CurriculumVitae_"+ curriculum.getRisorsa().getCognome() + "_" + curriculum.getRisorsa().getNome() +".pdf");
+				String sceltaTipoCurriculum = request.getParameter("sceltaCurriculum");
 				
-				response.setContentType("application/octet-stream; name=\"" + file.getName() + "\"");
-				response.setCharacterEncoding("UTF-8");
-				response.addHeader("content-disposition", "attachment; filename=\"" + file.getName() + "\"");
-				
-				
-				Document doc = new Document(PageSize.A4, 10, 10, 10, 40);
-				
-				
-			try {
-				PdfWriter pdfWriter = PdfWriter.getInstance(doc, new FileOutputStream(file));
-
-				HTMLWorker htmlWorker = new HTMLWorker(doc);
-				doc.open();
-				
-					String curriculumVItaeHtml = cDAO.esportaCurriculumVitae(getServletContext().getRealPath("/"), curriculum);
-				
-					System.out.println(curriculumVItaeHtml);
-					StyleSheet styleSheet = new StyleSheet();
-//					styleSheet.loadTagStyle("table", "border", "1");
-					ArrayList lista = (ArrayList) htmlWorker.parseToList(new StringReader(curriculumVItaeHtml), styleSheet);
+				if(sceltaTipoCurriculum.equals("aziendale")){
 					
-					//mi creo la tabella che servira a contenere le varie celle
-					PdfPTable disegnaTabella = new PdfPTable(2);
+					File filePdf = null;
 					
-					disegnaTabella.setWidthPercentage(100);
+					String tipoVisualizzazione = request.getParameter("tipoVisualizzazione");
 					
-					//carico le dimensione delle due celle
-					float[] columnWidths = {40, 140};
-					disegnaTabella.setWidths(columnWidths);
-					
-					//mi faccio restituire il risultato della conversione da Html a PDF
-					PdfPTable tabella = (PdfPTable) lista.get(0);
-					
-					//mi faccio restituire le righe presenti nella Tabella
-					ArrayList listaRows =  (ArrayList)tabella.getRows();
-					
-					//Gestione del font per la parte sinistra del curriculum
-					Font fontIntestazione = new Font(Font.FontFamily.TIMES_ROMAN, 13, Font.BOLD);
-					Font fontTitoli = new Font(Font.FontFamily.TIMES_ROMAN, 11, Font.BOLD);
-					Font fontDescrizione = new Font(Font.FontFamily.TIMES_ROMAN, 10);
-					
-					//ciclo le righe
-					for(int y = 0; y < listaRows.size(); y++){
-						//recupero la singola riga
-						PdfPRow row = (PdfPRow)listaRows.get(y);
-						
-						//recupero le varie celle prensenti nella riga
-						PdfPCell[] celle  = (PdfPCell[]) row.getCells();
-						
-						
-						if(celle[0].getCompositeElements().get(0).getChunks().get(0).getContent().equals("Formato europeo")){
-							
-							
-							PdfPCell cellaSinistra = new PdfPCell(new Paragraph(celle[0].getCompositeElements().get(0).getChunks().get(0).getContent() + 
-									  celle[0].getCompositeElements().get(0).getChunks().get(1).getContent() +
-									  celle[0].getCompositeElements().get(0).getChunks().get(2).getContent() +
-									  celle[0].getCompositeElements().get(0).getChunks().get(3).getContent() +
-									  celle[0].getCompositeElements().get(0).getChunks().get(4).getContent() , fontIntestazione));
-							cellaSinistra.setPaddingRight(5);
-							cellaSinistra.setBorderWidth(0);
-							cellaSinistra.setHorizontalAlignment(Element.ALIGN_RIGHT);
-							disegnaTabella.addCell(cellaSinistra);
-							
-						}else if(celle[0].getCompositeElements().get(0).getChunks().get(0).getContent().indexOf("img") == 0){
-							
-							Image immagine = Image.getInstance(getServletContext().getRealPath("/") + "images/logo.gif");
-							immagine.setWidthPercentage(25);
-							PdfPCell cellaSinistra = new PdfPCell(immagine);
-							cellaSinistra.setPaddingRight(5);
-							cellaSinistra.setBorderWidth(0);
-							cellaSinistra.setHorizontalAlignment(Element.ALIGN_RIGHT);
-							disegnaTabella.addCell(cellaSinistra);
-							
-							
-						}else if(celle[0].getCompositeElements().get(0).getChunks().get(0).getContent().equals("Informazioni personali")){
-							
-							
-							PdfPCell cellaSinistra = new PdfPCell(new Paragraph(celle[0].getCompositeElements().get(0).getChunks().get(0).getContent(), fontTitoli));
-							cellaSinistra.setPaddingRight(5);
-							cellaSinistra.setBorderWidth(0);
-							cellaSinistra.setHorizontalAlignment(Element.ALIGN_RIGHT);
-							disegnaTabella.addCell(cellaSinistra);
-							
-						}else if(celle[0].getCompositeElements().get(0).getChunks().get(0).getContent().equals("Esperienze Lavorative")){
-							
-							
-							PdfPCell cellaSinistra = new PdfPCell(new Paragraph(celle[0].getCompositeElements().get(0).getChunks().get(0).getContent(), fontTitoli));
-							cellaSinistra.setPaddingRight(5);
-							cellaSinistra.setBorderWidth(0);
-							cellaSinistra.setHorizontalAlignment(Element.ALIGN_RIGHT);
-							disegnaTabella.addCell(cellaSinistra);
-							
-						}else if(celle[0].getCompositeElements().get(0).getChunks().get(0).getContent().equals("Dettaglio Curriculum")){
-							
-							
-							PdfPCell cellaSinistra = new PdfPCell(new Paragraph(celle[0].getCompositeElements().get(0).getChunks().get(0).getContent(), fontTitoli));
-							cellaSinistra.setPaddingRight(5);
-							cellaSinistra.setBorderWidth(0);
-							cellaSinistra.setHorizontalAlignment(Element.ALIGN_RIGHT);
-							disegnaTabella.addCell(cellaSinistra);
-							
-						}else{
-							PdfPCell cellaSinistra = new PdfPCell(new Phrase(celle[0].getCompositeElements().get(0).getChunks().get(0).getContent(), fontDescrizione));
-							cellaSinistra.setPaddingRight(5);
-							cellaSinistra.setBorderWidth(0);
-							cellaSinistra.setHorizontalAlignment(Element.ALIGN_RIGHT);
-							disegnaTabella.addCell(cellaSinistra);
-						}
-						
-						if(celle[1].getCompositeElements() == null){
-							PdfPCell cellaDestra = new PdfPCell(celle[1]);
-							cellaDestra.setPaddingLeft(5);
-							cellaDestra.setBorderWidth(0);
-							cellaDestra.setBorderWidthLeft(1);
-							cellaDestra.setHorizontalAlignment(Element.ALIGN_LEFT);
-							disegnaTabella.addCell(cellaDestra);
-						}else{
-							if(celle[1].getCompositeElements().get(0).getChunks().size() > 0){
-								String testo = "";
-								for(Chunk chuck:celle[1].getCompositeElements().get(0).getChunks()){
-									testo += chuck.getContent();
-								}
-								PdfPCell cellaDestra = new PdfPCell(new Phrase(testo, fontDescrizione));
-								cellaDestra.setPaddingLeft(5);
-								cellaDestra.setBorderWidth(0);
-								cellaDestra.setBorderWidthLeft(1);
-								cellaDestra.setHorizontalAlignment(Element.ALIGN_LEFT);
-								disegnaTabella.addCell(cellaDestra);
-							}else{
-								PdfPCell cellaDestra = new PdfPCell(new Phrase(celle[1].getCompositeElements().get(0).getChunks().get(0).getContent(), fontDescrizione));
-								cellaDestra.setPaddingLeft(5);
-								cellaDestra.setBorderWidth(0);
-								cellaDestra.setBorderWidthLeft(1);
-								cellaDestra.setHorizontalAlignment(Element.ALIGN_LEFT);
-								disegnaTabella.addCell(cellaDestra);
-							}
-						}
+					if(tipoVisualizzazione.equals("completo")){
+						/* recupero il file pdf */
+						filePdf = cDAO.creazioneCurriculumVitaeFormatoAziendale(getServletContext().getRealPath("/"), curriculum, new File(getServletContext().getRealPath("/")+"CurriculumVitae_"+ curriculum.getRisorsa().getCognome() + "_" + curriculum.getRisorsa().getNome() +".pdf"),true);
+					}else{
+						/* recupero il file pdf */
+						filePdf = cDAO.creazioneCurriculumVitaeFormatoAziendale(getServletContext().getRealPath("/"), curriculum, new File(getServletContext().getRealPath("/")+"CurriculumVitae_"+ curriculum.getRisorsa().getCognome() + "_" + curriculum.getRisorsa().getNome() +".pdf"),false);
 					}
-					doc.add(disegnaTabella);
-					SimpleDateFormat formatoPdf = new SimpleDateFormat("dd/MM/yyyy");
-					doc.add(new Paragraph());
-					doc.add(new Paragraph("Torino, " + formatoPdf.format(Calendar.getInstance().getTime())));
-					doc.add(new Paragraph("Firma "));
-					doc.close();
 					
-					FileInputStream fileInputStream = new FileInputStream(file);
-					ServletOutputStream out = response.getOutputStream();
-					int i;
-					while ((i=fileInputStream.read()) != -1)
-						out.write(i);
-					fileInputStream.close();
-					out.close();
-					boolean fileCancellato= new File(getServletContext().getRealPath("/")+"CurriculumVitae"+ curriculum.getRisorsa().getCognome() + curriculum.getRisorsa().getNome() +".pdf").delete();
-					System.out.println("esito della cancellazione del file: " + fileCancellato);
+					String lastMovimentazione = request.getParameter("lastMovimento");
 					
-				} catch (FileNotFoundException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				} catch (DocumentException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+					String sceltaInvioEmail = request.getParameter("email");
+					
+					if(sceltaInvioEmail.equals("si")){
+						
+						String destinatario = request.getParameter("destinatario");
+						String oggetto = request.getParameter("oggetto");
+						String corpo = request.getParameter("corpo");
+						
+						Email email = new Email(getServletContext());
+						boolean esitoInvioEmail = email.sendMailConAllegato(destinatario, oggetto, corpo, filePdf);
+						
+						if(lastMovimentazione.equals("dettaglioCurriculum")){
+							
+							CurriculumDTO curriculumVitae = cDAO.caricamentoCurriculum(id_risorsa);
+							curriculumVitae.setId_risorsa(id_risorsa);
+							
+							request.setAttribute("curriculumVitae", curriculumVitae);
+							request.setAttribute("esitoInvioEmail", esitoInvioEmail);
+							
+							getServletContext().getRequestDispatcher("/index.jsp?azione=dettaglioCurriculum").forward(request, response);
+						
+						}else if(lastMovimentazione.equals("anteprimaCurriculum")){
+							
+							CurriculumDTO curriculumVitae = cDAO.caricamentoCurriculum(id_risorsa);
+							curriculumVitae.setId_risorsa(id_risorsa);
+							
+							request.setAttribute("curriculumVitae", curriculumVitae);
+							request.setAttribute("esitoInvioEmail", esitoInvioEmail);
+							
+							if(request.getParameter("area") != null){
+								if(request.getParameter("area").equals("all")){
+									/*
+									 * l'utente arriva dalla visualizzazione di tutti i curriculum
+									 */
+									getServletContext().getRequestDispatcher("/index.jsp?azione=anteprimaCurriculum&area=all").forward(request, response);
+								}else{
+									/*
+									 * l'utente arriva dal dettaglio curriculum
+									 */
+									getServletContext().getRequestDispatcher("/index.jsp?azione=anteprimaCurriculum&area=notAll").forward(request, response);
+								}
+							}
+							
+						}else if(lastMovimentazione.equals("visualizzaElencoCurriculum")){
+							
+							ArrayList<CurriculumDTO> curriculumVitae = cDAO.caricamentoAllCurriculum();
+							
+							request.setAttribute("listaCurriculum", curriculumVitae);
+							request.setAttribute("esitoInvioEmail", esitoInvioEmail);
+							
+							getServletContext().getRequestDispatcher("/index.jsp?azione=visualizzaElencoCurriculum&dispositiva=esportaPdf").forward(request, response);
+						}
+						
+						
+					}else{
+						response.setContentType("application/octet-stream; name=\"" + filePdf.getName() + "\"");
+						response.setCharacterEncoding("UTF-8");
+						response.addHeader("content-disposition", "attachment; filename=\"" + filePdf.getName() + "\"");
+						
+						FileInputStream fileInputStream = new FileInputStream(filePdf);
+						ServletOutputStream out = response.getOutputStream();
+						int i;
+						while ((i=fileInputStream.read()) != -1)
+							out.write(i);
+						fileInputStream.close();
+						out.close();
+						boolean fileCancellato= new File(getServletContext().getRealPath("/")+"CurriculumVitae"+ curriculum.getRisorsa().getCognome() + curriculum.getRisorsa().getNome() +".pdf").delete();
+						System.out.println("esito della cancellazione del file: " + fileCancellato);
+						
+					}
+					
+				}else if(sceltaTipoCurriculum.equals("europeo")){
+					
+					File filePdf = cDAO.creazioneCurriculumVitaeFormatoEuropeo(getServletContext().getRealPath("/"), curriculum, new File(getServletContext().getRealPath("/")+"CurriculumVitae_"+ curriculum.getRisorsa().getCognome() + "_" + curriculum.getRisorsa().getNome() +".pdf"));
+					
+					String lastMovimentazione = request.getParameter("lastMovimento");
+					
+					String sceltaInvioEmail = request.getParameter("email");
+					
+					if(sceltaInvioEmail.equals("si")){
+						
+						String destinatario = request.getParameter("destinatario");
+						String oggetto = request.getParameter("oggetto");
+						String corpo = request.getParameter("corpo");
+						
+						Email email = new Email(getServletContext());
+						boolean esitoInvioEmail = email.sendMailConAllegato(destinatario, oggetto, corpo, filePdf);
+						
+						if(lastMovimentazione.equals("dettaglioCurriculum")){
+							
+							CurriculumDTO curriculumVitae = cDAO.caricamentoCurriculum(id_risorsa);
+							curriculumVitae.setId_risorsa(id_risorsa);
+							
+							request.setAttribute("curriculumVitae", curriculumVitae);
+							request.setAttribute("esitoInvioEmail", esitoInvioEmail);
+							
+							getServletContext().getRequestDispatcher("/index.jsp?azione=dettaglioCurriculum").forward(request, response);
+						
+						}else if(lastMovimentazione.equals("anteprimaCurriculum")){
+							
+							CurriculumDTO curriculumVitae = cDAO.caricamentoCurriculum(id_risorsa);
+							curriculumVitae.setId_risorsa(id_risorsa);
+							
+							request.setAttribute("curriculumVitae", curriculumVitae);
+							request.setAttribute("esitoInvioEmail", esitoInvioEmail);
+							
+							if(request.getParameter("area") != null){
+								if(request.getParameter("area").equals("all")){
+									/*
+									 * l'utente arriva dalla visualizzazione di tutti i curriculum
+									 */
+									getServletContext().getRequestDispatcher("/index.jsp?azione=anteprimaCurriculum&area=all").forward(request, response);
+								}else{
+									/*
+									 * l'utente arriva dal dettaglio curriculum
+									 */
+									getServletContext().getRequestDispatcher("/index.jsp?azione=anteprimaCurriculum&area=notAll").forward(request, response);
+								}
+							}
+							
+						}else if(lastMovimentazione.equals("visualizzaElencoCurriculum")){
+							
+							ArrayList<CurriculumDTO> curriculumVitae = cDAO.caricamentoAllCurriculum();
+							
+							request.setAttribute("listaCurriculum", curriculumVitae);
+							request.setAttribute("esitoInvioEmail", esitoInvioEmail);
+							
+							getServletContext().getRequestDispatcher("/index.jsp?azione=visualizzaElencoCurriculum&dispositiva=esportaPdf").forward(request, response);
+						}
+						
+						
+					}else{
+						response.setContentType("application/octet-stream; name=\"" + filePdf.getName() + "\"");
+						response.setCharacterEncoding("UTF-8");
+						response.addHeader("content-disposition", "attachment; filename=\"" + filePdf.getName() + "\"");
+						
+						FileInputStream fileInputStream = new FileInputStream(filePdf);
+						ServletOutputStream out = response.getOutputStream();
+						int i;
+						while ((i=fileInputStream.read()) != -1)
+							out.write(i);
+						fileInputStream.close();
+						out.close();
+						boolean fileCancellato= new File(getServletContext().getRealPath("/")+"CurriculumVitae"+ curriculum.getRisorsa().getCognome() + curriculum.getRisorsa().getNome() +".pdf").delete();
+						System.out.println("esito della cancellazione del file: " + fileCancellato);
+						
+					}
 				}
+				
 			 }else if(azione.equals("selezionaRisorsa")){
 				 
 				 ArrayList<RisorsaDTO> listaRisorsa = cDAO.caricamentoRisorseSenzaCurriculum();

@@ -1,6 +1,6 @@
 /*stili per il layout fisso*/
 html,body{margin: 0;padding:0;}
-body{font: 12px arial,sans-serif;color: #000;text-align:center}
+body{font-size: 12px;font-family: Arial, Helvetica, sans-serif;color: #000;text-align:center}
 div#container{width: 1100px;margin: 20px auto ;text-align: left; background:#fff;border:1px solid #bbb}
 
 h1,h2{margin: 0;padding:0}
@@ -106,7 +106,7 @@ img.help:hover{cursor:pointer}
 
 /*formattazione per le immagini dettaglio, modifica elimina */
 
-#dettaglio{width: 17px; height: 17px; border: 0px;}
+#dettaglio{width: 13px; height: 13px; border: 0px;}
 #modifica{width: 17px; height: 17px; border: 0px;}
 #disabilita{width: 10px; height: 10px; border: 0px;}
 #aggiungiRisorsa{width: 18px; height: 18px; border: 0px;}
@@ -152,13 +152,13 @@ img.help:hover{cursor:pointer}
 
 #channel{ font-family: "Lucida Sans Unicode", "Lucida Grande", Sans-Serif; font-size: 12px; margin: 45px;width: 840px; text-align: center; border-collapse: collapse; margin: auto; }
 
-#channel th{ font-size: 13px; font-weight: normal; padding: 8px; background: #b9c9fe url(../images/gradhead.png) repeat-x; border-top: 2px solid #d3ddff; border-bottom: 1px solid #fff; color: #039; }
+#channel th{ font-size: 13px; font-weight: normal; padding: 8px; background: #c9ba9d /*#b9c9fe url(../images/gradhead.png) repeat-x*/; border-top: 2px solid #d3ddff; border-bottom: 1px solid #fff; color: #FFF /*#039*/; }
 
-#channel td{ padding: 8px;  border-bottom: 1px solid #fff; color: #669; border-top: 1px solid #fff; background: #e8edff url(../images/gradback.png) repeat-x; }
+#channel td{ padding: 8px;  border-bottom: 1px solid #fff; color: #669; border-top: 1px solid #fff; background: #CCC /*#e8edff url(../images/gradback.png) repeat-x*/; }
 
 #channel tfoot tr td{ background: #e8edff; font-size: 12px; color: #99c; }
 
-#channel tbody tr:hover td{ background: #d0dafd url(../images/gradhover.png) repeat-x; color: #339; }
+#channel tbody tr:hover td{ background: #a5a6a8 /*#d0dafd url(../images/gradhover.png) repeat-x*/; color: #339; }
 
 
 /* fine gestione tabelle */
@@ -174,3 +174,18 @@ img.help:hover{cursor:pointer}
 .titoloContenuti {font : bold 12px Verdana, Arial, Helvetica, sans-serif; padding: 5px; text-align : center; background: #CCC; border-bottom:1px solid #bbb}
 .immagini{ float: left;  width: 35px; height:35px; padding: 0px 20px !important; margin: 0px !important; margin: 10px 20px; }
 .immagini_riabilitazione{ float: left;  width: 70px; height:35px; padding: 0px 20px 0px 10px; margin: 0px !important; margin: 10px 20px 0px 10px; }
+
+/* esporta Pdf */
+#finestra, #formato, #modulo{
+	display: none;
+}
+
+#finestra{
+	text-align: left;	
+}
+
+#finestra label,#finestra textarea,#finestra input,#finestra button{
+	font-size: 12px;
+}
+
+/* end esporta pdf */

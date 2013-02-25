@@ -6,9 +6,13 @@
 <%
 	CurriculumDTO curriculum = (CurriculumDTO ) request.getAttribute("curriculumVitae");
 %>
-<div class="subtitle "><h2>Dettaglio Curriculum Vitae</h2></div>
+<div class="subtitle ">Dettaglio Curriculum Vitae</div>
 
-<div id="toolbar" class="spazioUltra"><a href="./GestioneCurriculum?azione=anteprimaGlobale&parametro=<%=curriculum.getId_risorsa() %>&area=notAll" >Anteprima</a><a href="./GestioneCurriculum?azione=esportaPdf&parametro=<%=curriculum.getId_risorsa() %>">Esporta in Pdf</a><a href="./GestioneCurriculum?azione=caricamentoAllCurriculum">Indietro</a></div>
+<div id="toolbar" class="spazioUltra"><a href="./GestioneCurriculum?azione=anteprimaGlobale&parametro=<%=curriculum.getId_risorsa() %>&area=notAll" >Anteprima</a><a href="#" onclick="return openFinestra('<%=curriculum.getId_risorsa() %>','<%=request.getParameter("azione") %>','notAll')">Esporta in Pdf</a><a href="./GestioneCurriculum?azione=caricamentoAllCurriculum&dispositiva=gestione">Indietro</a></div>
+
+<div id="finestra" title="Esporta Pdf">
+	<%@include file="esportaPdf.jsp" %>
+</div>
 
 <div class="spazioUltra">
 	<table width="100%" border="0">
@@ -327,6 +331,18 @@
 %>			
 			<script type="text/javascript">alert("Siamo spiacenti ma l'operazione effettuata non è andata a buon fine. Contattare l'amministrazione.");</script>		
 <%		
+		}
+	}
+
+	if(request.getAttribute("esitoInvioEmail") != null){
+		if(Boolean.parseBoolean(request.getAttribute("esitoInvioEmail").toString())){
+%>	
+			<script type="text/javascript">alert("L'invio dell'email con l'allegato il Curriculum Vitae è avvenuta correttamente"); </script>
+<%		
+		}else{
+%>
+			<script type="text/javascript">alert("Impossibile inviare l'email con l'allegato il Curriculum Vitae. Contattare l'amministratore.");</script>
+<%			
 		}
 	}
 %>

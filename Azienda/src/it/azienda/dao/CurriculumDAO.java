@@ -6,12 +6,35 @@ import it.azienda.dto.EsperienzeDTO;
 import it.azienda.dto.RisorsaDTO;
 import it.util.log.MyLogger;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.StringReader;
+import java.net.MalformedURLException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+
+import com.itextpdf.text.Chunk;
+import com.itextpdf.text.Document;
+import com.itextpdf.text.DocumentException;
+import com.itextpdf.text.Element;
+import com.itextpdf.text.Font;
+import com.itextpdf.text.Image;
+import com.itextpdf.text.PageSize;
+import com.itextpdf.text.Paragraph;
+import com.itextpdf.text.Phrase;
+import com.itextpdf.text.html.simpleparser.HTMLWorker;
+import com.itextpdf.text.html.simpleparser.StyleSheet;
+import com.itextpdf.text.pdf.PdfPCell;
+import com.itextpdf.text.pdf.PdfPRow;
+import com.itextpdf.text.pdf.PdfPTable;
+import com.itextpdf.text.pdf.PdfWriter;
 
 
 
@@ -34,10 +57,10 @@ public class CurriculumDAO extends BaseDao {
 		ArrayList<CurriculumDTO> listaCurriculum = new ArrayList<CurriculumDTO>();
 		
 		String sql = "select risorsa.id_risorsa, risorsa.nome, risorsa.cognome, risorsa.flag_creazione_cv, " +
-				"if((select count(*) from tbl_esperienze_professionali_cv as esperienze where esperienze.id_risorsa = risorsa.id_risorsa and esperienze.visibile = true) > 0 , 1, 0) as esperienza," +
-				"if((select count(*) from tbl_dettaglio_cv as dettaglio where dettaglio.id_risorsa = risorsa.id_risorsa and dettaglio.visible = true) > 0 , 1, 0) as dettaglio " +
+				" if((select count(*) from tbl_esperienze_professionali_cv as esperienze where esperienze.id_risorsa = risorsa.id_risorsa and esperienze.visibile = true) > 0 , 1, 0) as esperienza," +
+				" if((select count(*) from tbl_dettaglio_cv as dettaglio where dettaglio.id_risorsa = risorsa.id_risorsa and dettaglio.visible = true) > 0 , 1, 0) as dettaglio " +
 				" from tbl_risorse as risorsa " +
-				" where risorsa.flag_creazione_cv = true group by risorsa.nome";
+				" where risorsa.flag_creazione_cv = true";
 		
 		PreparedStatement ps=null;
 		ResultSet rs=null;
@@ -95,7 +118,7 @@ public class CurriculumDAO extends BaseDao {
 		
 		RisorsaDTO risorsa = null;
 		
-		String sql = "select risorsa.id_risorsa, risorsa.cognome, risorsa.nome, risorsa.data_nascita, risorsa.mail, risorsa.telefono, risorsa.cellulare, risorsa.fax, risorsa.indirizzo, if((select count(*) from tbl_dettaglio_cv as dettaglio where dettaglio.id_risorsa = risorsa.id_risorsa and risorsa.id_risorsa = ? and dettaglio.visible = true) > 0 , 1, 0) as flagDettaglio from tbl_risorse as risorsa where risorsa.id_risorsa = ?";
+		String sql = "select risorsa.id_risorsa, risorsa.cognome, risorsa.nome, risorsa.data_nascita, risorsa.mail, risorsa.telefono, risorsa.cellulare, risorsa.fax, risorsa.indirizzo, risorsa.luogo_nascita, risorsa.nazione, risorsa.figura_professionale, risorsa.servizio_militare, if((select count(*) from tbl_dettaglio_cv as dettaglio where dettaglio.id_risorsa = risorsa.id_risorsa and risorsa.id_risorsa = ? and dettaglio.visible = true) > 0 , 1, 0) as flagDettaglio from tbl_risorse as risorsa where risorsa.id_risorsa = ?";
 		PreparedStatement ps=null;
 		ResultSet rs=null;
 		try {
@@ -114,6 +137,10 @@ public class CurriculumDAO extends BaseDao {
 				risorsa.setCellulare(rs.getString("cellulare"));
 				risorsa.setFax(rs.getString("fax"));
 				risorsa.setIndirizzo(rs.getString("indirizzo"));
+				risorsa.setLuogoNascita(rs.getString("luogo_nascita"));
+				risorsa.setNazione(rs.getString("nazione"));
+				risorsa.setFiguraProfessionale(rs.getString("figura_professionale"));
+				risorsa.setServizioMilitare(rs.getString("servizio_militare"));
 				risorsa.setFlagCreazioneDettaglio(rs.getBoolean("flagDettaglio"));
 			}	
 		} catch (SQLException e) {
@@ -488,7 +515,7 @@ public class CurriculumDAO extends BaseDao {
 	 * @return
 	 */
 	
-	public String esportaCurriculumVitae(String url, CurriculumDTO curriculum){
+	public String esportaCurriculumVitaeFormatoEuropeo(String url, CurriculumDTO curriculum){
 		
 		String stampaCurriculum = "";
 		
@@ -794,6 +821,182 @@ public class CurriculumDAO extends BaseDao {
 		return stampaCurriculum;
 	}
 	
+	public String esportaCurriculumVitaeFormatoAziendale(String url, CurriculumDTO cv,boolean completo){
+		
+		String stampaCurriculum = "";
+		
+		stampaCurriculum += "<!DOCTYPE html PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\" \"http://www.w3.org/TR/html4/loose.dtd\"> " +
+				"<html> " +
+				"<head> " +
+				"	<meta http-equiv=\"Content-Type\" content=\"text/html; charset=ISO-8859-1\"> " +
+				"	<title>Insert title here</title> " +
+				"	<link rel=\"stylesheet\" type=\"text/css\" href=\"css/tabella.css\"> " +
+				"</head> " +
+				"<body> " +
+				"	<table width=\"575\" align=\"center\" border=\"0\"> " +
+						"<tr> " +
+						"	<td colspan=\"3\">img src=\""+url+"images/logo_DierreConsulting.gif\" /></td>" +
+						"</tr> " +
+						"<tr> " +
+						"	<td colspan=\"3\" class=\"contenitoreIntestazione\"><p align=\"center\" class=\"intestazione\"><b>CURRICULUM VITAE</b></p></td> " +
+						"</tr>";
+				if(completo){
+						
+					stampaCurriculum += "<tr> " +
+									"	<td class=\"spazioSinistro\"><br></td>" +
+									"	<td class=\"spazioCentro\"><p class=\"contenuti\"><b>Cognome Nome: </b><br>Figura Professionale: </p></td> " +
+									"	<td class=\"spazioDestro\"><p class=\"contenuti\"><b>"+cv.getRisorsa().getCognome() + " " +  cv.getRisorsa().getNome()+ "</b><br>"+ cv.getRisorsa().getFiguraProfessionale() + "</p></td> " +
+									"</tr> " +
+									"<tr> " +
+									"	<td colspan=\"3\" class=\"contenitoreIntestazione\"><p class=\"intestazioni\">INFORMAZIONI PERSONALI</p></td> " +
+									"</tr> " +
+									"<tr> " +
+									"	<td class=\"spazioSinistro\"><br></td> " +
+									"	<td class=\"spazioCentro\"><p class=\"contenuti\">Nazionalità: <br>Data Nascita: <br>Luogo Nascita: <br>Residenza: </p></td> " +
+									"	<td class=\"spazioDestro\"><p class=\"contenuti\"> " + cv.getRisorsa().getNazione() + "<br>" + cv.getRisorsa().getDataNascita() + "<br>" + cv.getRisorsa().getLuogoNascita() + "<br>"+ cv.getRisorsa().getIndirizzo() + "</p></td> " +
+									"</tr> ";
+				}else{
+							stampaCurriculum += "<tr> " +
+										    	"	<td class=\"spazioSinistro\"><br></td>" +
+										    	"	<td class=\"spazioCentro\"><p class=\"contenuti\"><br>Figura Professionale: </p></td> " +
+										    	"	<td class=\"spazioDestro\"><p class=\"contenuti\"><br>" + cv.getRisorsa().getFiguraProfessionale() + "</p></td> " +
+										    	"</tr> ";
+				}
+				if(cv.getListaDettaglio() != null){
+				
+						if(cv.getListaDettaglio().getIstruzione() != null){
+							if(cv.getListaDettaglio().getIstruzione().length() > 0){
+								stampaCurriculum += "<tr> " +
+									"	<td colspan=\"3\" class=\"contenitoreIntestazione\"><p class=\"intestazioni\">ISTRUZIONE</p></td> " +
+									"</tr>" +
+									"<tr> " +
+									"	<td><br></td>" +
+									"	<td class=\"context\" colspan=\"2\"><textarea readonly=\"readonly\" class=\"contenuti\" rows=\"7\" cols=\"58\">" + cv.getListaDettaglio().getIstruzione().replace("\n", "<br>") + "</textarea></td> " +
+									"</tr>";
+							}
+						}
+						if(cv.getListaDettaglio().getLingue_Straniere() != null){
+							if(cv.getListaDettaglio().getLingue_Straniere().length() > 0){
+							
+				stampaCurriculum += "<tr> " +
+									"	<td colspan=\"3\" class=\"contenitoreIntestazione\"><p class=\"intestazioni\">LINGUE STRANIERE</p></td> " +
+									"</tr> " +
+									"<tr> " +
+									"	<td><br></td>" +
+									"	<td class=\"context\" colspan=\"2\"><textarea readonly=\"readonly\" class=\"contenuti\" rows=\"7\" cols=\"58\">" + cv.getListaDettaglio().getLingue_Straniere().replace("\n", "<br>") + "</textarea></td> " +
+									"</tr>";
+							}
+						}
+					}
+					if(cv.getListaEsperienze().size() > 0){
+				stampaCurriculum += "<tr> " +
+									"	<td colspan=\"3\" class=\"contenitoreIntestazione\"><p class=\"intestazioni\">ESPERIENZE</p></td> " +
+									"</tr>";
+				
+						for(int x = 0; x < cv.getListaEsperienze().size(); x++){
+							EsperienzeDTO exp = (EsperienzeDTO) cv.getListaEsperienze().get(x);
+							
+				stampaCurriculum += "<tr> " +
+									"	<td colspan=\"3\"><br></td> " +
+									"</tr> " +
+									"<tr>" +
+									"	<td><br></td>" +
+									"	<td class=\"context\" colspan=\"2\"> " +
+									"		<table width=\"480\"> " +
+									"			<tr> " +
+									"				<td><p>" + exp.getPeriodo() + "</p></td> " +
+									"				<td><p>" + exp.getAzienda() + "</p></td> " +
+									"				<td><p align=\"right\">" + exp.getLuogo() + "</p></td> " +
+									"			</tr>" +
+									"		</table>" +
+									"	</td>" +
+									"</tr> " +
+									"<tr> " +
+									"	<td colspan=\"3\"><br></td>" +
+									"</tr> " +
+									"<tr>" +
+									"	<td><br></td> " +
+									"	<td class=\"context\" colspan=\"2\"><textarea readonly=\"readonly\" class=\"contenuti\" rows=\"30\" cols=\"58\">" + exp.getDescrizione().replace("\n", "<br>") + "</textarea></td>" +
+									"</tr>";
+						}
+					}
+					
+					if(cv.getListaDettaglio() != null){
+						
+						if(cv.getListaDettaglio().getFormazione() != null){
+							if(cv.getListaDettaglio().getFormazione().length() > 0){
+								
+			stampaCurriculum += "<tr> " +
+								"	<td colspan=\"3\" class=\"contenitoreIntestazione\"><p class=\"intestazioni\">FORMAZIONE</p></td> " +
+								"</tr> " +
+								"<tr>" +
+								"	<td><br></td> " +
+								"	<td class=\"context\" colspan=\"2\"><textarea readonly=\"readonly\" class=\"contenuti\" rows=\"20\" cols=\"58\">" + cv.getListaDettaglio().getFormazione().replace("\n", "<br>") + "</textarea></td> " +
+								"</tr>";
+							}
+						}
+						
+						if(cv.getListaDettaglio().getCompetenze_tecniche() != null){
+							if(cv.getListaDettaglio().getCompetenze_tecniche().length() > 0){
+							
+			stampaCurriculum +=	"<tr> " +
+								"	<td colspan=\"3\" class=\"contenitoreIntestazione\"><p class=\"intestazioni\">CAPACITA E COMPETENZE TECNICHE</p></td> " +
+								"</tr> " +
+								"<tr>" +
+								"	<td><br></td> " +
+								"	<td class=\"context\" colspan=\"2\"><textarea readonly=\"readonly\" class=\"contenuti\" rows=\"20\" cols=\"58\">" + cv.getListaDettaglio().getCompetenze_tecniche().replace("\n", "<br>") + "</textarea></td> " +
+								"</tr>";
+							}
+						}
+						
+						if(cv.getListaDettaglio().getCapacita_professionali() != null){
+							if(cv.getListaDettaglio().getCapacita_professionali().length() > 0){
+								
+			stampaCurriculum +=	"<tr> " +
+								"	<td colspan=\"3\" class=\"contenitoreIntestazione\"><p class=\"intestazioni\">CAPACITA' PROFESSIONALI</p></td> " +
+								"</tr> " +
+								"<tr>" +
+								"	<td><br></td>" +
+								"	<td class=\"context\" colspan=\"2\"><textarea readonly=\"readonly\" class=\"contenuti\" rows=\"20\" cols=\"58\">" + cv.getListaDettaglio().getCapacita_professionali().replace("\n", "<br>") + "</textarea></td> " +
+								"</tr>";
+			
+							}
+						}
+						
+						if(cv.getListaDettaglio().getInteressi() != null){
+							if(cv.getListaDettaglio().getInteressi().length() > 0){
+								
+			stampaCurriculum +=	"<tr> " +
+								"	<td colspan=\"3\" class=\"contenitoreIntestazione\"><p class=\"intestazioni\">INTERESSI</p></td> " +
+								"</tr> " +
+								"<tr>" +
+								"	<td><br></td>" +
+								"	<td class=\"context\" colspan=\"2\"><textarea readonly=\"readonly\" class=\"contenuti\" rows=\"20\" cols=\"58\">" + cv.getListaDettaglio().getInteressi().replace("\n", "<br>") + "</textarea></td> " +
+								"</tr>";
+			
+							}
+						}
+						
+						if(cv.getRisorsa().getServizioMilitare() != null){
+							if(cv.getRisorsa().getServizioMilitare().length() > 0){
+							
+			stampaCurriculum +=	"<tr> " +
+								"	<td colspan=\"3\" class=\"contenitoreIntestazione\"><p class=\"intestazioni\">SERVIZIO MILITARE</p></td> " +
+								"</tr> " +
+								"<tr>" +
+								"	<td><br></td>" +
+								"	<td class=\"context\" colspan=\"2\"><br><span>" + cv.getRisorsa().getServizioMilitare() + "</span></td> " +
+								"</tr>";
+							}
+						}
+					}
+			stampaCurriculum += "</table> </body> </html>";
+		
+			
+			return stampaCurriculum;
+		
+	}
+	
 	/**
 	 * tramite questo metodo effettuo l'eliminazione del Dettaglio
 	 * @param idEsperienza
@@ -1037,5 +1240,410 @@ public class CurriculumDAO extends BaseDao {
 		
 		return periodo;
 	}
+	
+	public File creazioneCurriculumVitaeFormatoEuropeo(String url,CurriculumDTO curriculum,File file){
+		
+		Document doc = new Document(PageSize.A4, 10, 10, 10, 40);
+		
+		
+		try {
+			PdfWriter pdfWriter = PdfWriter.getInstance(doc, new FileOutputStream(file));
+			
+
+			HTMLWorker htmlWorker = new HTMLWorker(doc);
+			doc.open();
+			
+				String curriculumVItaeHtml = esportaCurriculumVitaeFormatoEuropeo(url, curriculum);
+			
+				System.out.println(curriculumVItaeHtml);
+				StyleSheet styleSheet = new StyleSheet();
+//				styleSheet.loadTagStyle("table", "border", "1");
+				ArrayList lista = (ArrayList) htmlWorker.parseToList(new StringReader(curriculumVItaeHtml), styleSheet);
+				
+				//mi creo la tabella che servira a contenere le varie celle
+				PdfPTable disegnaTabella = new PdfPTable(2);
+				
+				disegnaTabella.setWidthPercentage(100);
+				
+				//carico le dimensione delle due celle
+				float[] columnWidths = {40, 140};
+				disegnaTabella.setWidths(columnWidths);
+				
+				//mi faccio restituire il risultato della conversione da Html a PDF
+				PdfPTable tabella = (PdfPTable) lista.get(0);
+				
+				//mi faccio restituire le righe presenti nella Tabella
+				ArrayList listaRows =  (ArrayList)tabella.getRows();
+				
+				//Gestione del font per la parte sinistra del curriculum
+				Font fontIntestazione = new Font(Font.FontFamily.TIMES_ROMAN, 13, Font.BOLD);
+				Font fontTitoli = new Font(Font.FontFamily.TIMES_ROMAN, 10, Font.BOLD);
+				Font fontDescrizione = new Font(Font.FontFamily.TIMES_ROMAN, 8);
+				
+				//ciclo le righe
+				for(int y = 0; y < listaRows.size(); y++){
+					//recupero la singola riga
+					PdfPRow row = (PdfPRow)listaRows.get(y);
+					
+					//recupero le varie celle prensenti nella riga
+					PdfPCell[] celle  = (PdfPCell[]) row.getCells();
+					
+					
+					if(celle[0].getCompositeElements().get(0).getChunks().get(0).getContent().equals("Formato europeo")){
+						
+						
+						PdfPCell cellaSinistra = new PdfPCell(new Paragraph(celle[0].getCompositeElements().get(0).getChunks().get(0).getContent() + 
+								  celle[0].getCompositeElements().get(0).getChunks().get(1).getContent() +
+								  celle[0].getCompositeElements().get(0).getChunks().get(2).getContent() +
+								  celle[0].getCompositeElements().get(0).getChunks().get(3).getContent() +
+								  celle[0].getCompositeElements().get(0).getChunks().get(4).getContent() , fontIntestazione));
+						cellaSinistra.setPaddingRight(5);
+						cellaSinistra.setBorderWidth(0);
+						cellaSinistra.setHorizontalAlignment(Element.ALIGN_RIGHT);
+						disegnaTabella.addCell(cellaSinistra);
+						
+					}else if(celle[0].getCompositeElements().get(0).getChunks().get(0).getContent().indexOf("img") == 0){
+						
+						Image immagine = Image.getInstance(url + "images/logo.gif");
+						immagine.setWidthPercentage(25);
+						PdfPCell cellaSinistra = new PdfPCell(immagine);
+						cellaSinistra.setPaddingRight(5);
+						cellaSinistra.setBorderWidth(0);
+						cellaSinistra.setHorizontalAlignment(Element.ALIGN_RIGHT);
+						disegnaTabella.addCell(cellaSinistra);
+						
+						
+					}else if(celle[0].getCompositeElements().get(0).getChunks().get(0).getContent().equals("Informazioni personali")){
+						
+						
+						PdfPCell cellaSinistra = new PdfPCell(new Paragraph(celle[0].getCompositeElements().get(0).getChunks().get(0).getContent(), fontTitoli));
+						cellaSinistra.setPaddingRight(5);
+						cellaSinistra.setBorderWidth(0);
+						cellaSinistra.setHorizontalAlignment(Element.ALIGN_RIGHT);
+						disegnaTabella.addCell(cellaSinistra);
+						
+					}else if(celle[0].getCompositeElements().get(0).getChunks().get(0).getContent().equals("Esperienze Lavorative")){
+						
+						
+						PdfPCell cellaSinistra = new PdfPCell(new Paragraph(celle[0].getCompositeElements().get(0).getChunks().get(0).getContent(), fontTitoli));
+						cellaSinistra.setPaddingRight(5);
+						cellaSinistra.setBorderWidth(0);
+						cellaSinistra.setHorizontalAlignment(Element.ALIGN_RIGHT);
+						disegnaTabella.addCell(cellaSinistra);
+						
+					}else if(celle[0].getCompositeElements().get(0).getChunks().get(0).getContent().equals("Dettaglio Curriculum")){
+						
+						
+						PdfPCell cellaSinistra = new PdfPCell(new Paragraph(celle[0].getCompositeElements().get(0).getChunks().get(0).getContent(), fontTitoli));
+						cellaSinistra.setPaddingRight(5);
+						cellaSinistra.setBorderWidth(0);
+						cellaSinistra.setHorizontalAlignment(Element.ALIGN_RIGHT);
+						disegnaTabella.addCell(cellaSinistra);
+						
+					}else{
+						PdfPCell cellaSinistra = new PdfPCell(new Phrase(celle[0].getCompositeElements().get(0).getChunks().get(0).getContent(), fontDescrizione));
+						cellaSinistra.setPaddingRight(5);
+						cellaSinistra.setBorderWidth(0);
+						cellaSinistra.setHorizontalAlignment(Element.ALIGN_RIGHT);
+						disegnaTabella.addCell(cellaSinistra);
+					}
+					
+					if(celle[1].getCompositeElements() == null){
+						PdfPCell cellaDestra = new PdfPCell(celle[1]);
+						cellaDestra.setPaddingLeft(5);
+						cellaDestra.setBorderWidth(0);
+						cellaDestra.setBorderWidthLeft(1);
+						cellaDestra.setHorizontalAlignment(Element.ALIGN_LEFT);
+						disegnaTabella.addCell(cellaDestra);
+					}else{
+						if(celle[1].getCompositeElements().get(0).getChunks().size() > 0){
+							String testo = "";
+							for(Chunk chuck:celle[1].getCompositeElements().get(0).getChunks()){
+								testo += chuck.getContent();
+							}
+							PdfPCell cellaDestra = new PdfPCell(new Phrase(testo, fontDescrizione));
+							cellaDestra.setPaddingLeft(5);
+							cellaDestra.setBorderWidth(0);
+							cellaDestra.setBorderWidthLeft(1);
+							cellaDestra.setHorizontalAlignment(Element.ALIGN_LEFT);
+							disegnaTabella.addCell(cellaDestra);
+						}else{
+							PdfPCell cellaDestra = new PdfPCell(new Phrase(celle[1].getCompositeElements().get(0).getChunks().get(0).getContent(), fontDescrizione));
+							cellaDestra.setPaddingLeft(5);
+							cellaDestra.setBorderWidth(0);
+							cellaDestra.setBorderWidthLeft(1);
+							cellaDestra.setHorizontalAlignment(Element.ALIGN_LEFT);
+							disegnaTabella.addCell(cellaDestra);
+						}
+					}
+				}
+				doc.add(disegnaTabella);
+				SimpleDateFormat formatoPdf = new SimpleDateFormat("dd/MM/yyyy");
+				doc.add(new Paragraph());
+				doc.add(new Paragraph());
+				doc.add(new Paragraph("Autorizzo il trattamento dei miei dati personali ai sensi del D.Lgs. 196/2003",fontDescrizione));
+				doc.add(new Paragraph());
+				doc.add(new Paragraph("Torino, " + formatoPdf.format(Calendar.getInstance().getTime()),fontDescrizione));
+				doc.add(new Paragraph("Firma ",fontDescrizione));
+				doc.close();
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (DocumentException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (MalformedURLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return file;
+	}
+	
+	public File creazioneCurriculumVitaeFormatoAziendale(String url,CurriculumDTO curriculum,File file,boolean completo){
+		
+ 		Document doc = new Document(PageSize.A4, 10, 10, 10, 40);
+				
+		try {
+			PdfWriter pdfWriter = PdfWriter.getInstance(doc, new FileOutputStream(file));
+			
+
+			HTMLWorker htmlWorker = new HTMLWorker(doc);
+			doc.open();
+			
+				String curriculumVItaeHtml = esportaCurriculumVitaeFormatoAziendale(url, curriculum,completo);
+			
+				System.out.println(curriculumVItaeHtml);
+				StyleSheet styleSheet = new StyleSheet();
+//				styleSheet.loadTagStyle("table", "border", "1");
+				ArrayList lista = (ArrayList) htmlWorker.parseToList(new StringReader(curriculumVItaeHtml), styleSheet);
+				
+				//mi creo la tabella che servira a contenere le varie celle
+				PdfPTable disegnaTabella = new PdfPTable(3);
+				
+				disegnaTabella.setWidthPercentage(87);
+				
+				//carico le dimensione delle due celle
+				float[] columnWidths = {40, 30,40};
+				disegnaTabella.setWidths(columnWidths);
+				
+				//mi faccio restituire il risultato della conversione da Html a PDF
+				PdfPTable tabella = (PdfPTable) lista.get(1);
+				
+				//mi faccio restituire le righe presenti nella Tabella
+				ArrayList listaRows =  (ArrayList)tabella.getRows();
+				
+				//Gestione del font per la parte sinistra del curriculum
+				Font fontIntestazione = new Font(Font.FontFamily.TIMES_ROMAN, 13, Font.BOLD);
+				Font fontTitoli = new Font(Font.FontFamily.TIMES_ROMAN, 10, Font.BOLD);
+				Font fontDescrizione = new Font(Font.FontFamily.TIMES_ROMAN, 8);
+				
+				//ciclo le righe
+				for(int y = 0; y < listaRows.size(); y++){
+					//recupero la singola riga
+					PdfPRow row = (PdfPRow)listaRows.get(y);
+					
+					//recupero le varie celle prensenti nella riga
+					PdfPCell[] celle  = (PdfPCell[]) row.getCells();
+					
+					for(int x = 0; x < celle.length; x++){
+						if(celle[x] != null){
+							if(celle[x].getCompositeElements().get(0).getChunks().size() == 1){
+								if(celle[x].getCompositeElements().get(0).getChunks().get(0).getContent().indexOf("img") == 0){
+									Image immagine = Image.getInstance(url + "images/logo_DierreConsulting_Intestazione.gif");
+									immagine.setWidthPercentage(95);
+									PdfPCell cellaSinistra = new PdfPCell(immagine);
+									cellaSinistra.setColspan(3);
+									cellaSinistra.setBorderWidth(0);
+									cellaSinistra.setHorizontalAlignment(Element.ALIGN_CENTER);
+									disegnaTabella.addCell(cellaSinistra);
+									
+								}else if(celle[x].getCompositeElements().get(0).getChunks().get(0).getContent().indexOf("CURRICULUM VITAE") == 0){
+									
+									PdfPCell cellaSinistra = new PdfPCell(new Paragraph(celle[x].getCompositeElements().get(0).getChunks().get(0).getContent(), fontIntestazione));
+									cellaSinistra.setBorderWidth(0);
+									cellaSinistra.setBorderWidthBottom(1);
+									cellaSinistra.setColspan(3);
+									cellaSinistra.setHorizontalAlignment(Element.ALIGN_CENTER);
+									disegnaTabella.addCell(cellaSinistra);
+								
+								}else if(celle[x].getCompositeElements().get(0).getChunks().get(0).getContent().indexOf("INFORMAZIONI PERSONALI") == 0){
+									
+									PdfPCell cellaSinistra = new PdfPCell(new Paragraph(celle[x].getCompositeElements().get(0).getChunks().get(0).getContent(), fontTitoli));
+									cellaSinistra.setBorderWidth(0);
+									cellaSinistra.setBorderWidthBottom(1);
+									cellaSinistra.setColspan(3);
+									cellaSinistra.setHorizontalAlignment(Element.ALIGN_LEFT);
+									disegnaTabella.addCell(cellaSinistra);
+								
+								}else if(celle[x].getCompositeElements().get(0).getChunks().get(0).getContent().indexOf("ISTRUZIONE") == 0){
+									
+									PdfPCell cellaSinistra = new PdfPCell(new Paragraph(celle[x].getCompositeElements().get(0).getChunks().get(0).getContent(), fontTitoli));
+									cellaSinistra.setBorderWidth(0);
+									cellaSinistra.setBorderWidthBottom(1);
+									cellaSinistra.setColspan(3);
+									cellaSinistra.setHorizontalAlignment(Element.ALIGN_LEFT);
+									disegnaTabella.addCell(cellaSinistra);
+								
+								}else if(celle[x].getCompositeElements().get(0).getChunks().get(0).getContent().indexOf("LINGUE STRANIERE") == 0){
+									
+									PdfPCell cellaSinistra = new PdfPCell(new Paragraph(celle[x].getCompositeElements().get(0).getChunks().get(0).getContent(), fontTitoli));
+									cellaSinistra.setBorderWidth(0);
+									cellaSinistra.setBorderWidthBottom(1);
+									cellaSinistra.setColspan(3);
+									cellaSinistra.setHorizontalAlignment(Element.ALIGN_LEFT);
+									disegnaTabella.addCell(cellaSinistra);
+								
+								}else if(celle[x].getCompositeElements().get(0).getChunks().get(0).getContent().indexOf("ESPERIENZE") == 0){
+									
+									PdfPCell cellaSinistra = new PdfPCell(new Paragraph(celle[x].getCompositeElements().get(0).getChunks().get(0).getContent(), fontTitoli));
+									cellaSinistra.setBorderWidth(0);
+									cellaSinistra.setBorderWidthBottom(1);
+									cellaSinistra.setColspan(3);
+									cellaSinistra.setHorizontalAlignment(Element.ALIGN_LEFT);
+									disegnaTabella.addCell(cellaSinistra);
+								
+								}else if(celle[x].getCompositeElements().get(0).getChunks().get(0).getContent().indexOf("CAPACITA E COMPETENZE TECNICHE") == 0){
+									
+									PdfPCell cellaSinistra = new PdfPCell(new Paragraph(celle[x].getCompositeElements().get(0).getChunks().get(0).getContent(), fontTitoli));
+									cellaSinistra.setBorderWidth(0);
+									cellaSinistra.setBorderWidthBottom(1);
+									cellaSinistra.setColspan(3);
+									cellaSinistra.setHorizontalAlignment(Element.ALIGN_LEFT);
+									disegnaTabella.addCell(cellaSinistra);
+								
+								}else if(celle[x].getCompositeElements().get(0).getChunks().get(0).getContent().indexOf("FORMAZIONE") == 0){
+									
+									PdfPCell cellaSinistra = new PdfPCell(new Paragraph(celle[x].getCompositeElements().get(0).getChunks().get(0).getContent(), fontTitoli));
+									cellaSinistra.setBorderWidth(0);
+									cellaSinistra.setBorderWidthBottom(1);
+									cellaSinistra.setColspan(3);
+									cellaSinistra.setHorizontalAlignment(Element.ALIGN_LEFT);
+									disegnaTabella.addCell(cellaSinistra);
+								
+								}else if(celle[x].getCompositeElements().get(0).getChunks().get(0).getContent().indexOf("CAPACITA' PROFESSIONALI") == 0){
+									
+									PdfPCell cellaSinistra = new PdfPCell(new Paragraph(celle[x].getCompositeElements().get(0).getChunks().get(0).getContent(), fontTitoli));
+									cellaSinistra.setBorderWidth(0);
+									cellaSinistra.setBorderWidthBottom(1);
+									cellaSinistra.setColspan(3);
+									cellaSinistra.setHorizontalAlignment(Element.ALIGN_LEFT);
+									disegnaTabella.addCell(cellaSinistra);
+									
+								}else if(celle[x].getCompositeElements().get(0).getChunks().get(0).getContent().indexOf("INTERESSI") == 0){
+									
+									PdfPCell cellaSinistra = new PdfPCell(new Paragraph(celle[x].getCompositeElements().get(0).getChunks().get(0).getContent(), fontTitoli));
+									cellaSinistra.setBorderWidth(0);
+									cellaSinistra.setBorderWidthBottom(1);
+									cellaSinistra.setColspan(3);
+									cellaSinistra.setHorizontalAlignment(Element.ALIGN_LEFT);
+									disegnaTabella.addCell(cellaSinistra);
+									
+								}else if(celle[x].getCompositeElements().get(0).getChunks().get(0).getContent().indexOf("SERVIZIO MILITARE") == 0){
+									
+									PdfPCell cellaSinistra = new PdfPCell(new Paragraph(celle[x].getCompositeElements().get(0).getChunks().get(0).getContent(), fontTitoli));
+									cellaSinistra.setBorderWidth(0);
+									cellaSinistra.setBorderWidthBottom(1);
+									cellaSinistra.setColspan(3);
+									cellaSinistra.setHorizontalAlignment(Element.ALIGN_LEFT);
+									disegnaTabella.addCell(cellaSinistra);
+									
+								}else if(celle[x].getCompositeElements().get(0).getChunks().get(0).getContent().indexOf("\n") == 0){
+									
+									PdfPCell cellaSinistra = new PdfPCell(new Paragraph(celle[x].getCompositeElements().get(0).getChunks().get(0).getContent(), fontIntestazione));
+									cellaSinistra.setBorderWidth(0);
+									cellaSinistra.setColspan(celle[x].getColspan());
+									cellaSinistra.setHorizontalAlignment(Element.ALIGN_CENTER);
+									disegnaTabella.addCell(cellaSinistra);
+									
+								}
+								
+							}else if(celle[x].getCompositeElements().get(0) instanceof PdfPTable){
+								
+								Font fontPeriodo = new Font(Font.FontFamily.TIMES_ROMAN, 8,Font.BOLD);
+								
+								PdfPTable disegnaExp = new PdfPTable(3);
+								
+								disegnaExp.setWidthPercentage(120);
+								
+								//carico le dimensione delle due celle
+								float[] columnWidth = {55, 40, 25};
+								disegnaExp.setWidths(columnWidth);
+								
+								PdfPTable periodoExp = (PdfPTable) celle[x].getCompositeElements().get(0);
+								
+								ArrayList righe = periodoExp.getRows();
+								
+								for(int z = 0; z < righe.size(); z++){
+									PdfPRow rows = (PdfPRow)righe.get(z);
+									
+									//recupero le varie celle prensenti nella riga
+									PdfPCell[] cells  = (PdfPCell[]) rows.getCells();
+									
+									for(int w = 0; w < cells.length; w++){
+										if(cells[w].getCompositeElements().get(0).getChunks().size() == 1){
+											PdfPCell cell = new PdfPCell(new Paragraph(cells[w].getCompositeElements().get(0).getChunks().get(0).getContent(), fontPeriodo));
+											cell.setBorderWidth(0);
+											cell.setHorizontalAlignment(Element.ALIGN_LEFT);
+											disegnaExp.addCell(cell);
+										}
+									}
+								}
+								
+								PdfPCell cella = new PdfPCell(disegnaExp);
+								cella.setBorderWidth(0);
+								cella.setColspan(celle[x].getColspan());
+								cella.setHorizontalAlignment(Element.ALIGN_LEFT);
+								disegnaTabella.addCell(cella);
+								
+							}else if(celle[x].getCompositeElements().get(0).getChunks().size() > 1){
+								String testo = "";
+								for(Chunk chuck:celle[x].getCompositeElements().get(0).getChunks()){
+									testo += chuck.getContent();
+								}
+								if(celle[x].getColspan() == 1){
+									PdfPCell cellaDestra = new PdfPCell(new Phrase(testo, fontDescrizione));
+									cellaDestra.setBorderWidth(0);
+									cellaDestra.setHorizontalAlignment(Element.ALIGN_LEFT);
+									disegnaTabella.addCell(cellaDestra);
+								}else{
+									PdfPCell cellaDestra = new PdfPCell(new Phrase(testo, fontDescrizione));
+									cellaDestra.setBorderWidth(0);
+									cellaDestra.setColspan(2);
+									cellaDestra.setHorizontalAlignment(Element.ALIGN_LEFT);
+									disegnaTabella.addCell(cellaDestra);
+								}
+							}
+						}
+					}
+				}
+				doc.add(disegnaTabella);
+				SimpleDateFormat formatoPdf = new SimpleDateFormat("dd/MM/yyyy");
+				doc.add(new Paragraph());
+				doc.add(new Paragraph());
+				doc.add(new Paragraph("Autorizzo il trattamento dei miei dati personali ai sensi del D.Lgs. 196/2003",fontDescrizione));
+				doc.add(new Paragraph());
+				doc.add(new Paragraph("Torino, " + formatoPdf.format(Calendar.getInstance().getTime()),fontDescrizione));
+				doc.close();
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (DocumentException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (MalformedURLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return file;
+	}
+	
 
 }
