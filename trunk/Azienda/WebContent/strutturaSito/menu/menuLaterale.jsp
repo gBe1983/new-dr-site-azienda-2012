@@ -47,7 +47,7 @@
 					<li class="sub-menu">
 						<ul>
 							<li><a href="./GestioneCurriculum?azione=caricamentoAllCurriculum&dispositiva=gestione" class="linkAlti" >Gestione C.V.</a></li>
-							<li><a href="#" class="linkAlti" >Esporta PDF</a></li>
+							<li><a href="./GestioneCurriculum?azione=caricamentoAllCurriculum&dispositiva=esportaPDF" class="linkAlti" >Esporta PDF</a></li>
 							<li><a href="./GestioneCurriculum?azione=caricamentoAllCurriculum&dispositiva=anteprimaCv" class="linkAlti" >Anteprima C.V.</a></li>
 						</ul>
 					</li>

@@ -1,3 +1,56 @@
+function openFinestra(valore,lastMovimento,area){
+	
+	document.pdf.parametro.value = valore;
+	document.pdf.lastMovimento.value = lastMovimento;
+	document.pdf.area.value = area;
+	alert(document.pdf.parametro.value);
+	alert(document.pdf.lastMovimento.value);
+	alert(document.pdf.area.value);
+	
+	$('#finestra').dialog({
+		modal: true,
+		autoOpen: true,
+		height: 550,
+		width: 450,
+		position: [500,80]
+	});
+	return false;
+}
+
+function sceltaRisorsaCurriculum(){
+	
+	var valore = document.sceltaRisorsa.parametro.value;
+	alert(valore);
+	return valore;
+}
+
+function closeWindows(){
+	$("#finestra").dialog("close");
+}
+
+function closeFinestra(){
+	$("#finestra").dialog("close");
+	return false;
+}
+
+
+function visualizzazione(valore){
+	if(valore == "europeo"){
+		document.getElementById("formato").style.display = "none";
+	}else if(valore == "aziendale"){
+		document.getElementById("formato").style.display = "block";
+	}
+}
+
+function invioEmail(valore){
+	if(valore == "si"){
+		document.getElementById("modulo").style.display = "block";
+	}else if(valore == "no"){
+		document.getElementById("modulo").style.display = "none";
+	}
+}
+
+
 /*
  * tramite questo metodo controllo le scelte che vengono effettuate
  * nella pagina visualizzaCurriculum.jsp

@@ -17,22 +17,27 @@
 	<link rel="stylesheet" type="text/css" href="css/style.css">
 	<link rel="stylesheet" type="text/css" href="css/demo.css">
 	<link rel="stylesheet" type="text/css" href="css/visualizzaCurriculum.css">
-	<link rel="stylesheet" type="text/css" href="css/jquery-ui-1.7.2.custom.css">
 	<link rel="stylesheet" type="text/css" href="css/azienda/timeReport.css">
-	<link rel="stylesheet" type="text/css" href="css/menuLaterale.css">	
+	<link rel="stylesheet" type="text/css" href="css/menuLaterale.css">
+	<link rel = "stylesheet" href = "http://code.jquery.com/ui/1.10.1/themes/base/jquery-ui.css" />
+	<!--  <link rel="stylesheet" type="text/css" href="css/jquery-ui-1.7.2.custom.css">  -->
+	
 	
 	<!-- caricamento dei javascript -->
 	<script type="text/javascript" src="script/controlloCodiceCommessa.js" ></script>
-	<script type="text/javascript" src="script/curriculum.js" ></script>
 	<script type="text/javascript" src="script/controlloCodiceCliente.js" ></script>
 	<script type="text/javascript" src="script/controlloForm.js" ></script>
 	<script type="text/javascript" src="script/jquery-1.3.2.min.js" ></script>
-	<script type="text/javascript" src="script/jquery-ui-1.7.2.custom.min.js" ></script>
 	<script type="text/javascript" src="script/valorizzazioneTrattativaRisorsa.js" ></script>
 	<script type="text/javascript" src="script/controlloDataFine_InserimentoAssociazioneCommesse.js" ></script>
 	<script type="text/javascript" src="script/controlloDataFine_ModificaAssociazioneCommesse.js" ></script>
 	<script type="text/javascript" src="script/controlloDataInizio_InserimentoAssociazioneCommesse.js" ></script>
 	<script type="text/javascript" src="script/script.js" ></script>
+	<script type="text/javascript" src="script/curriculum.js" ></script>
+	<script type="text/javascript" src="script/jquery-1.9.1.js" ></script>
+	<script type="text/javascript" src="script/jquery-ui.js" ></script>
+	
+	
 </head>
 <body class="home" >
 
@@ -184,6 +189,10 @@
 						}else if(azione.equals("visualizzaElencoCurriculum")){
 				%>
 							<jsp:include page="strutturaSito/contenuto/visualizzaElencoCurriculum.jsp" />
+				<%
+						}else if(azione.equals("esportaPdf")){
+				%>
+							<jsp:include page="strutturaSito/contenuto/esportaPdf.jsp" />
 				<%
 						}
 					}else{

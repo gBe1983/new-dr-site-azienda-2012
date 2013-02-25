@@ -2,16 +2,22 @@ package it.mail;
 
 import it.util.log.MyLogger;
 
+import java.io.File;
 import java.util.Properties;
 
+import javax.activation.DataHandler;
+import javax.activation.FileDataSource;
 import javax.mail.Message;
 import javax.mail.MessagingException;
+import javax.mail.Multipart;
 import javax.mail.PasswordAuthentication;
 import javax.mail.Session;
 import javax.mail.Transport;
 import javax.mail.URLName;
 import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
+import javax.mail.internet.MimeMultipart;
 import javax.servlet.ServletContext;
 
 public class Email{
@@ -77,5 +83,60 @@ public class Email{
 		}finally{
 			log.end(metodo);
 		}
+	}
+	
+	public boolean sendMailConAllegato(String dest, String oggetto, String testoEmail, File file){
+		final String metodo = "sendMail";
+		log.start(metodo);
+		try {
+			Properties props = System.getProperties();
+			props.put("mail.smtp.host", host);
+			props.put("mail.debug", debug);
+			props.put("mail.smtp.auth", smtpAuth);
+			props.put("mail.smtp.starttls.enable", startTls);
+			props.put("mail.smtp.socketFactory.port", port);
+			props.put("mail.smtp.socketFactory.class", socketFactoryClass);
+			props.put("mail.smtp.port", port);
+			Session session = Session.getDefaultInstance(props, null);
+			session.setPasswordAuthentication(
+				new URLName(protocol, host, Integer.parseInt(port), folder, user, pass),
+				new PasswordAuthentication(user, pass));
+			MimeMessage msg = new MimeMessage(session);
+			msg.setFrom(new InternetAddress(user));
+			msg.addRecipient(Message.RecipientType.TO, new InternetAddress(dest));
+			msg.addRecipient(Message.RecipientType.BCC, new InternetAddress( user));
+			msg.setSubject(oggetto);
+			//carico il testo
+			MimeBodyPart bodyPartTestoEmail = new MimeBodyPart();
+			bodyPartTestoEmail.setText(testoEmail);
+	        
+			//carico il file
+			MimeBodyPart bodyPartFileAllegato = new MimeBodyPart();
+	        FileDataSource fds = new FileDataSource(file);
+	        
+	        //allego il file al messaggio
+	        bodyPartFileAllegato.setDataHandler(new DataHandler(fds));
+	        bodyPartFileAllegato.setFileName(fds.getName());
+	        
+	        
+	        Multipart mp = new MimeMultipart();
+	        mp.addBodyPart(bodyPartTestoEmail);
+	        mp.addBodyPart(bodyPartFileAllegato);
+	        msg.setContent(mp);
+	        
+			Transport tr = session.getTransport(protocol);
+			tr.connect(host, user, pass);
+			msg.saveChanges();
+			tr.sendMessage(msg, msg.getAllRecipients());
+			tr.close();
+			log.debug(metodo, "mail inviata");
+		} catch (MessagingException e) {
+			log.error(metodo, "invio mail fallito", e);
+			return false;
+		}finally{
+			log.end(metodo);
+		}
+		
+		return true;
 	}
 }

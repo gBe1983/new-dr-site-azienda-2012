@@ -11,20 +11,24 @@
 
 <div class="subtitle ">Anteprima Curriculum</div>
 
+<div id="finestra" title="Esporta Pdf">
+	<%@include file="esportaPdf.jsp" %>
+</div>
+
 <%  
 	if(request.getParameter("area") != null){
 		if(request.getParameter("area").equals("all")){ 
 %>
-			<div id="toolbar" class="spazioUltra"><a href="./GestioneCurriculum?azione=caricamentoCv&dispositiva=gestione&parametro0=<%=curriculum.getId_risorsa() %>">Modifica Cv</a><a href="./GestioneCurriculum?azione=esportaPdf&parametro=<%=curriculum.getId_risorsa() %>">Esporta in Pdf</a><a href="./GestioneCurriculum?azione=caricamentoAllCurriculum&parametro0=<%=curriculum.getId_risorsa() %>" >Indietro</a></div>
+			<div id="toolbar" class="spazioUltra"><a href="./GestioneCurriculum?azione=caricamentoCv&parametro0=<%=curriculum.getId_risorsa() %>">Modifica Cv</a><a href="#" onclick="return openFinestra('<%=curriculum.getId_risorsa() %>','<%=request.getParameter("azione") %>','all')">Esporta in Pdf</a><a href="./GestioneCurriculum?azione=caricamentoAllCurriculum&dispositiva=gestione&area=all" >Indietro</a></div>
 <%
 		}else{
 %>
-			<div id="toolbar" class="spazioUltra"><a href="./GestioneCurriculum?azione=caricamentoCv&parametro0=<%=curriculum.getId_risorsa() %>">Modifica Cv</a><a href="./GestioneCurriculum?azione=esportaPdf&parametro=<%=curriculum.getId_risorsa() %>">Esporta in Pdf</a><a href="./GestioneCurriculum?azione=caricamentoCv&parametro0=<%=curriculum.getId_risorsa() %>" >Indietro</a></div>
+			<div id="toolbar" class="spazioUltra"><a href="./GestioneCurriculum?azione=caricamentoCv&parametro0=<%=curriculum.getId_risorsa() %>">Modifica Cv</a><a href="#" onclick="return openFinestra('<%=curriculum.getId_risorsa() %>','<%=request.getParameter("azione") %>','notAll')">Esporta in Pdf</a><a href="./GestioneCurriculum?azione=caricamentoCv&parametro0=<%=curriculum.getId_risorsa() %>" >Indietro</a></div>
 <%
 		}
 	}else{
 %>
-			<div id="toolbar" class="spazioUltra"><a href="./GestioneCurriculum?azione=caricamentoCv&parametro0=<%=curriculum.getId_risorsa() %>">Modifica Cv</a><a href="./GestioneCurriculum?azione=esportaPdf&parametro=<%=curriculum.getId_risorsa() %>">Esporta in Pdf</a><a href="./GestioneCurriculum?azione=caricamentoAllCurriculum&dispositiva=anteprimaCv&parametro0=<%=curriculum.getId_risorsa() %>" >Indietro</a></div>
+			<div id="toolbar" class="spazioUltra"><a href="./GestioneCurriculum?azione=caricamentoCv&parametro0=<%=curriculum.getId_risorsa() %>">Modifica Cv</a><a href="#" onclick="return openFinestra('<%=curriculum.getId_risorsa() %>','<%=request.getParameter("azione") %>','notAll')">Esporta in Pdf</a><a href="./GestioneCurriculum?azione=caricamentoAllCurriculum&dispositiva=anteprimaCv" >Indietro</a></div>
 <%	
 	}
 %>
@@ -86,6 +90,16 @@
 %>
 		</table>
 	</div>
+<%
+	if(request.getAttribute("esitoInvioEmail") != null){
+		if(Boolean.parseBoolean(request.getAttribute("esitoInvioEmail").toString())){
+%>	
+			<script type="text/javascript">alert("L'invio dell'email con l'allegato il Curriculum Vitae è avvenuta correttamente"); </script>
 <%		
-
-%>    
+		}else{
+%>
+			<script type="text/javascript">alert("Impossibile inviare l'email con l'allegato il Curriculum Vitae. Contattare l'amministratore.");</script>
+<%			
+		}
+	}
+%>   

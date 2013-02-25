@@ -19,7 +19,7 @@
 		</div>
 	</a>
 
-	<a href="#">
+	<a href="./GestioneCurriculum?azione=caricamentoAllCurriculum&dispositiva=esportaPDF">
 		<div class="contenuti">
 			<div class="titoloContenuti">Esporta Pdf</div>
 			<div class="corpoContenuti">
