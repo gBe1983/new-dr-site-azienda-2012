@@ -8,6 +8,11 @@
 %>
 <div class="subtitle">Visualizza Curriculum Vitae</div>
 
+<div id="anteprima" title="Anteprima Curriculum">
+	<%@include file="anteprima.jsp" %>
+</div>
+
+
 <div class="spazioUltra">
 	
 	<form action="./GestioneCurriculum" method="post" class="sceltaCurriculum" name="sceltaCurriculum" id="sceltaCurriculum">
