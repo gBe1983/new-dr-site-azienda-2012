@@ -3,7 +3,14 @@ function openFinestra(valore,lastMovimento,area,azione){
 	if(azione == "anteprima"){
 		document.anteprima.parametro.value = valore;
 		document.anteprima.lastMovimento.value = lastMovimento;
-		document.anteprima.area.value = area;
+		if(area != ''){
+			var input = document.createElement("input");				
+			input.setAttribute("type", "hidden");
+			input.setAttribute("name", "area");
+			input.setAttribute("value", area);
+			document.getElementById("anteprimaForm").appendChild(input);
+		}
+		
 		
 		$('#anteprima').dialog({
 			modal: true,

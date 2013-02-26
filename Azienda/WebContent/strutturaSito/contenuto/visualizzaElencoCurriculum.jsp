@@ -62,7 +62,7 @@ if(controlloUtenteLoggato.getAttribute("utenteLoggato") != null){
 	}
 %>
 		</select><br><br>
-		<input type="submit" value="anteprima" onclick="return openFinestra(sceltaRisorsaCurriculum(),'<%=request.getParameter("azione") %>','all','anteprima')">
+		<input type="submit" value="anteprima" onclick="return openFinestra(sceltaRisorsaCurriculum(),'<%=request.getParameter("azione") %>','','anteprima')">
 	</form>
 <%
 }
