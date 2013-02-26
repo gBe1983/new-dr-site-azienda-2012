@@ -296,23 +296,33 @@ public class GestioneCurriculum extends BaseServlet {
 					
 					request.setAttribute("curriculumVitae", curriculumVitae);
 					
+					String tipoVisualizzazioneAnteprima = "";
+					
+					String tipoAnteprima = request.getParameter("sceltaCurriculumAnteprima");
+					
+					if(tipoAnteprima.equals("aziendale")){
+						if(request.getParameter("tipoVisualizzazioneAnteprima") != null){
+							tipoVisualizzazioneAnteprima = request.getParameter("tipoVisualizzazioneAnteprima");
+						}
+					}
+					
 					if(request.getParameter("area") != null){
 						if(request.getParameter("area").equals("all")){
 							/*
 							 * l'utente arriva dalla visualizzazione di tutti i curriculum
 							 */
-							getServletContext().getRequestDispatcher("/index.jsp?azione=anteprimaCurriculum&area=all").forward(request, response);
+							getServletContext().getRequestDispatcher("/index.jsp?azione=anteprimaCurriculum&tipoAnteprima="+tipoAnteprima+"&dispositiva="+tipoVisualizzazioneAnteprima+"&area=all").forward(request, response);
 						}else{
 							/*
 							 * l'utente arriva dal dettaglio curriculum
 							 */
-							getServletContext().getRequestDispatcher("/index.jsp?azione=anteprimaCurriculum&area=notAll").forward(request, response);
+							getServletContext().getRequestDispatcher("/index.jsp?azione=anteprimaCurriculum&tipoAnteprima="+tipoAnteprima+"&dispositiva="+tipoVisualizzazioneAnteprima+"&area=notAll").forward(request, response);
 						}
 					}else{
 						/*
 						* questa anteprima arriva dalla schermata Curriculum Vitae/Curriculum -> Anteprima C.V. -> scelta risorsa -> anteprima
 						*/
-						getServletContext().getRequestDispatcher("/index.jsp?azione=anteprimaCurriculum").forward(request, response);
+						getServletContext().getRequestDispatcher("/index.jsp?azione=anteprimaCurriculum&tipoAnteprima="+tipoAnteprima+"&dispositiva="+tipoVisualizzazioneAnteprima).forward(request, response);
 					}
 					
 					

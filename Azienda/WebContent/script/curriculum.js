@@ -1,4 +1,57 @@
-function openFinestra(valore,lastMovimento,area){
+function openFinestra(valore,lastMovimento,area,azione){
+
+	if(azione == "anteprima"){
+		document.anteprima.parametro.value = valore;
+		document.anteprima.lastMovimento.value = lastMovimento;
+		document.anteprima.area.value = area;
+		
+		$('#anteprima').dialog({
+			modal: true,
+			autoOpen: true,
+			height: 250,
+			width: 450,
+			position: [450,150]
+		});
+		return false;
+	}else{
+		
+		document.pdf.parametro.value = valore;
+		document.pdf.lastMovimento.value = lastMovimento;
+		document.pdf.area.value = area;
+		
+		$('#finestra').dialog({
+			modal: true,
+			autoOpen: true,
+			height: 550,
+			width: 450,
+			position: [500,80]
+		});
+		return false;
+	}
+}
+
+/*
+ * function openFinestraAnteprima(valore,lastMovimento,area){
+	
+	alert("sono dentro");
+	
+	document.anteprima.parametro.value = valore;
+	document.anteprima.lastMovimento.value = lastMovimento;
+	document.anteprima.area.value = area;
+	
+	alert(document.anteprima.parametro.value);
+	
+	$('#anteprima').dialog({
+		modal: true,
+		autoOpen: true,
+		height: 250,
+		width: 450,
+		position: [450,150]
+	});
+	return false;
+}
+
+function openFinestraEsporta(valore,lastMovimento,area){
 	
 	document.pdf.parametro.value = valore;
 	document.pdf.lastMovimento.value = lastMovimento;
@@ -12,7 +65,7 @@ function openFinestra(valore,lastMovimento,area){
 		position: [500,80]
 	});
 	return false;
-}
+}*/
 
 function sceltaRisorsaCurriculum(){
 	
@@ -24,11 +77,19 @@ function closeWindows(){
 	$("#finestra").dialog("close");
 }
 
+function closeWindowsAnteprima(){
+	$("#anteprima").dialog("close");
+}
+
 function closeFinestra(){
 	$("#finestra").dialog("close");
 	return false;
 }
 
+function closeFinestraAnteprima(){
+	$("#anteprima").dialog("close");
+	return false;
+}
 
 function visualizzazione(valore){
 	if(valore == "europeo"){
@@ -110,15 +171,23 @@ function controlloSceltaVisualizzaCurriculum(){
 					alert("Per questo di operazione è possibile selezionare un solo Curriculum");
 					return false;
 				}else{
+					
 					document.sceltaCurriculum.azione.value="anteprimaGlobale";
 					var nomiCampiAnteprima = nomeCheckBox.split(",");
 					var valoriCampiAnteprima = valoriCheckBox.split(",");
+					
+					openFinestra(valoriCampiAnteprima[0],'visualizzaCurriculum','all','anteprima');
+					return false;
+					
+					/*
+					
 					
 					var inputAnteprima = document.createElement("input");				
 					inputAnteprima.setAttribute("type", "hidden");
 					inputAnteprima.setAttribute("name", nomiCampiAnteprima[0]);
 					inputAnteprima.setAttribute("value", valoriCampiAnteprima[0]);
 					document.getElementById("sceltaCurriculum").appendChild(inputAnteprima);
+					*/
 				}
 			}
 		}else if(scelta == "elimina"){
