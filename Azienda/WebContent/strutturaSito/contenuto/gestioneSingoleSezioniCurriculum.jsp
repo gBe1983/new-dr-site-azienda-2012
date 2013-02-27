@@ -276,7 +276,7 @@
 						<table>
 							<tr>
 								<td>
-									<input type="submit" value="modifica dettaglio" />
+									<input type="submit" value="modifica dettaglio" onclick="return controlloModificaDettaglio()"/>
 								</td>
 								<td>
 									<input type="button" value="Indietro" onClick="javascript:history.back()" name="button">

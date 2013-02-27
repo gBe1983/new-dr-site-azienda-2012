@@ -81,7 +81,12 @@ function sceltaRisorsaCurriculum(){
 }
 
 function closeWindows(){
-	$("#finestra").dialog("close");
+	
+	if(controlloInvioEmailConAllegato()){
+		$("#finestra").dialog("close");
+	}else{
+		return false;
+	}
 }
 
 function closeWindowsAnteprima(){
@@ -97,6 +102,31 @@ function closeFinestraAnteprima(){
 	$("#anteprima").dialog("close");
 	return false;
 }
+
+function controlloInvioEmailConAllegato(){
+	
+	if(document.getElementById("modulo").style.display = "block"){
+		
+		if(document.pdf.destinatario.value == ""){
+			alert("Inserire un valore nel campo \"Destinatario\"");
+			return false;
+		}
+		
+		if(document.pdf.oggetto.value == ""){
+			alert("Inserire un valore nel campo \"Oggetto\"");
+			return false;
+		}
+		
+		if(document.pdf.corpo.value == "" || document.pdf.corpo.value == "Inserisci Testo"){
+			alert("Inserire un valore nel campo \"Corpo\"");
+			return false;
+		}
+	}
+	
+	return true;
+	
+}
+
 
 function visualizzazione(valore){
 	if(valore == "europeo"){

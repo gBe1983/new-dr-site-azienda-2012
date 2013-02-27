@@ -8,6 +8,81 @@
 var tipologiaTrattativa = "";
 var inserimentoCommessaTrattativa = false;
 
+function controlloInserimentoDettaglio(){
+	
+	if(document.dettaglioCv.capacitaProfessionali.value == "Inserisci testo" || document.dettaglioCv.capacitaProfessionali.value == ""){
+		alert("Valorizzare il campo \"Capacità Professionali\" correttamente.");
+		return false;
+	}
+	
+	if(document.dettaglioCv.competenzeTecniche.value == "Inserisci testo" || document.dettaglioCv.competenzeTecniche.value == ""){
+		alert("Valorizzare il campo \"Capacità Tecniche\" correttamente.");
+		return false;
+	}
+	
+	if(document.dettaglioCv.lingue.value == "Inserisci testo" || document.dettaglioCv.lingue.value == ""){
+		alert("Valorizzare il campo \"Lingue\" correttamente.");
+		return false;
+	}
+	
+	if(document.dettaglioCv.istruzione.value == "Inserisci testo" || document.dettaglioCv.istruzione.value == ""){
+		alert("Valorizzare il campo \"Istruzione\" correttamente.");
+		return false;
+	}
+	
+	if(document.dettaglioCv.formazione.value == "Inserisci testo" || document.dettaglioCv.formazione.value == ""){
+		alert("Valorizzare il campo \"Formazione\" correttamente.");
+		return false;
+	}
+	
+	if(document.dettaglioCv.interessi.value == "Inserisci testo" || document.dettaglioCv.interessi.value == ""){
+		alert("Valorizzare il campo \"Interessi\" correttamente.");
+		return false;
+	}
+	
+	return true;
+	
+	
+}
+
+function controlloModificaDettaglio(){
+	
+	if(document.dettaglioCv.capacitaProfessionali.value == "Inserisci testo" || document.dettaglioCv.capacitaProfessionali.value == ""){
+		alert("Valorizzare il campo \"Capacità Professionali\" correttamente.");
+		return false;
+	}
+	
+	if(document.dettaglioCv.competenzeTecniche.value == "Inserisci testo" || document.dettaglioCv.competenzeTecniche.value == ""){
+		alert("Valorizzare il campo \"Capacità Tecniche\" correttamente.");
+		return false;
+	}
+	
+	if(document.dettaglioCv.lingue.value == "Inserisci testo" || document.dettaglioCv.lingue.value == ""){
+		alert("Valorizzare il campo \"Lingue\" correttamente.");
+		return false;
+	}
+	
+	if(document.dettaglioCv.istruzione.value == "Inserisci testo" || document.dettaglioCv.istruzione.value == ""){
+		alert("Valorizzare il campo \"Istruzione\" correttamente.");
+		return false;
+	}
+	
+	if(document.dettaglioCv.formazione.value == "Inserisci testo" || document.dettaglioCv.formazione.value == ""){
+		alert("Valorizzare il campo \"Formazione\" correttamente.");
+		return false;
+	}
+	
+	if(document.dettaglioCv.interessi.value == "Inserisci testo" || document.dettaglioCv.interessi.value == ""){
+		alert("Valorizzare il campo \"Interessi\" correttamente.");
+		return false;
+	}
+	
+	return true;
+	
+	
+}
+
+
 function controlloModificaAzienda(){
 	
 	//gestione dati aziendali

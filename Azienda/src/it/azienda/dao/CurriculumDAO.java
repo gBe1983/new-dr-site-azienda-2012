@@ -460,7 +460,7 @@ public class CurriculumDAO extends BaseDao {
 			ps.setInt(7, dettaglio.getId_risorsa());
 			esitoInserimentoDettaglio = ps.executeUpdate();
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
+			// TODO Auto-generated catch 
 			log.error("inserimento Dettaglio", e.getMessage());
 		}finally{
 			close(ps);
