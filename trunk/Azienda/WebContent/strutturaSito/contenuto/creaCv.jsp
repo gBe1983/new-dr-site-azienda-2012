@@ -175,7 +175,7 @@
 							<table>
 								<tr>
 									<td>
-										<input type="submit" value="inserisci dettaglio" />
+										<input type="submit" value="inserisci dettaglio" onclick="return controlloInserimentoDettaglio()"/>
 									</td>
 									<td>
 										<input type="button" value="indietro" onClick="javascript:history.back()" name="button">

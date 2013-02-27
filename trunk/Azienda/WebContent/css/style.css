@@ -188,6 +188,10 @@ img.help:hover{cursor:pointer}
 	font-size: 12px;
 }
 
+#modulo textarea{
+	resize: none;	
+}
+
 /* end esporta pdf */
 
 /* anteprima curriculum vitae */

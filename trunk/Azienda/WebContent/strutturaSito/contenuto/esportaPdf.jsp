@@ -29,7 +29,7 @@
 			</tr>
 			<tr>
 				<td><label>Corpo<br>(Max 10000 caratteri) </label></td>
-				<td><textarea rows="10" cols="35" maxlength="10" name="corpo">Inserisci Testo</textarea></td>
+				<td><textarea rows="10" cols="35" name="corpo">Inserisci Testo</textarea></td>
 			</tr>
 		</table>
 	</div>

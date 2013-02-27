@@ -99,12 +99,12 @@ public class Email{
 			props.put("mail.smtp.port", port);
 			Session session = Session.getDefaultInstance(props, null);
 			session.setPasswordAuthentication(
-				new URLName(protocol, host, Integer.parseInt(port), folder, user, pass),
-				new PasswordAuthentication(user, pass));
+				new URLName(protocol, host, Integer.parseInt(port), folder, "roberto.camarca@gmail.com", "R0bert01"),
+				new PasswordAuthentication("roberto.camarca@gmail.com", "R0bert01"));
 			MimeMessage msg = new MimeMessage(session);
-			msg.setFrom(new InternetAddress(user));
+			msg.setFrom(new InternetAddress("roberto.camarca@gmail.com"));
 			msg.addRecipient(Message.RecipientType.TO, new InternetAddress(dest));
-			msg.addRecipient(Message.RecipientType.BCC, new InternetAddress( user));
+			msg.addRecipient(Message.RecipientType.BCC, new InternetAddress("roberto.camarca@gmail.com"));
 			msg.setSubject(oggetto);
 			//carico il testo
 			MimeBodyPart bodyPartTestoEmail = new MimeBodyPart();
@@ -125,7 +125,7 @@ public class Email{
 	        msg.setContent(mp);
 	        
 			Transport tr = session.getTransport(protocol);
-			tr.connect(host, user, pass);
+			tr.connect(host, "roberto.camarca@gmail.com", "R0bert01");
 			msg.saveChanges();
 			tr.sendMessage(msg, msg.getAllRecipients());
 			tr.close();
