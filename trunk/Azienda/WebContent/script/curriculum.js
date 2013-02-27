@@ -17,7 +17,15 @@ function openFinestra(valore,lastMovimento,area,azione){
 			autoOpen: true,
 			height: 250,
 			width: 450,
-			position: [450,150]
+			position: [450,150],
+			show: {
+				effect: "blind",
+				duration: 1000
+			},
+			hide: {
+				effect: "explode",
+				duration: 1000
+			}
 		});
 		return false;
 	}else{
@@ -31,7 +39,15 @@ function openFinestra(valore,lastMovimento,area,azione){
 			autoOpen: true,
 			height: 550,
 			width: 450,
-			position: [500,80]
+			position: [500,80],
+			show: {
+				effect: "blind",
+				duration: 1000
+			},
+			hide: {
+				effect: "explode",
+				duration: 1000
+			}
 		});
 		return false;
 	}
@@ -105,7 +121,7 @@ function closeFinestraAnteprima(){
 
 function controlloInvioEmailConAllegato(){
 	
-	if(document.getElementById("modulo").style.display = "block"){
+	if(document.getElementById("modulo").style.display == "block"){
 		
 		if(document.pdf.destinatario.value == ""){
 			alert("Inserire un valore nel campo \"Destinatario\"");
