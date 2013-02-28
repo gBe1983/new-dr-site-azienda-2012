@@ -6,7 +6,7 @@ HttpSession controlloUtenteLoggato = request.getSession();
 if(controlloUtenteLoggato.getAttribute("utenteLoggato") != null){
 %>
 
-<div class="subtitle ">Area Commessa</div>
+<div class="subtitle">Area Commessa</div>
 
 <div class="spazioUltra">
 	<a href="./GestioneTrattattive?azione=aggiungiCommessa">
