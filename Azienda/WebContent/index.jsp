@@ -1,7 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=ISO-8859-1"
     pageEncoding="ISO-8859-1"%>
 
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>	   
 	<title>Azienda</title>
@@ -10,6 +10,7 @@
 	<meta http-equiv="expires" content="0">    
 	<meta http-equiv="keywords" content="keyword1,keyword2,keyword3">
 	<meta http-equiv="description" content="This is my page">
+	<META http-equiv="Content-Style-Type" content="text/css">
 	
 	
 	<!-- caricamento dei fogli di stile -->
@@ -34,8 +35,8 @@
 	<script type="text/javascript" src="script/controlloDataInizio_InserimentoAssociazioneCommesse.js" ></script>
 	<script type="text/javascript" src="script/script.js" ></script>
 	<script type="text/javascript" src="script/curriculum.js" ></script>
-	<script type="text/javascript" src="http://code.jquery.com/jquery-1.9.1.js" ></script>
-	<script type="text/javascript" src="http://code.jquery.com/ui/1.10.1/jquery-ui.js" ></script>
+	<script type="text/javascript" src="script/jquery-1.9.1.js" ></script>
+	<script type="text/javascript" src="script/jquery-ui.js" ></script>
 	
 	
 </head>

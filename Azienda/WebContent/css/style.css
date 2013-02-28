@@ -1,7 +1,7 @@
 /*stili per il layout fisso*/
 html,body{margin: 0;padding:0;}
-body{font-size: 12px;font-family: Arial, Helvetica, sans-serif;color: #000;text-align:center}
-div#container{width: 1100px;margin: 20px auto ;text-align: left; background:#fff;border:1px solid #bbb}
+body{font-size: 12px;font-family: Arial, Helvetica, sans-serif;text-align:center}
+div#container{width: 1100px; margin: 20px auto ;text-align: left; background:#fff;border:1px solid #bbb}
 
 h1,h2{margin: 0;padding:0}
 h1{padding-left:0.5em;font: bold 1em/80px arial,serif;color: #000;}
@@ -11,13 +11,13 @@ a{text-decoration: none;}
 
 img{margin: 0 auto;display:block;width:95%}
 /*stili generici, su header e footer*/
-div#header{width: 1100px;margin: 0px; color: #000;height:55px}
+#header{ width: 1100px; height: 208px; margin: 0px; border: 0px solid black;}
 
 /*stili specifici per il layout*/
 div#extra{float:left;width: 200px; height: 450px; border-top:1px solid #ccc; border-right:1px solid #ccc; /*border: 1px solid black;*/ margin: 0px; padding: 0px; background:#eee; /*border-right: 1px solid black;*/}
 
 div#content{position:relative;float:left; width:1100px;margin:0px; padding:0px; /*border: 1px solid black;*/}
-div#content_right{float:right;width: 870px;padding:5px;margin:0; /*border: 1px solid black;*/}
+div#content_right{float:right;width: 887px;padding:5px;margin:0; /*border: 1px solid black;*/}
 
 div#footer{clear:both; text-align:center; padding: 0.5em; background:#eee; color: #000;border-top:1px solid #666 !important;}
 div#footer li{display:inline; list-style-type:none;padding:0 10px}
@@ -38,7 +38,7 @@ div#footer li{display:inline; list-style-type:none;padding:0 10px}
 
 .menu ul{    margin: 0;    float: right}
 .menu ul li{    display: inline;}
-.menu ul li a{float: left; text-decoration: none; color: bbb; padding: 10.5px 11px;  height:18px; -moz-border-radius: 10px; -webkit-border-radius: 10px; border-radius: 10px ; behavior: url(css/PIE.htc);}
+.menu ul li a{float: left; text-decoration: none; color: #bababa; padding: 10.5px 11px;  height:18px; -moz-border-radius: 10px; -webkit-border-radius: 10px; border-radius: 10px ; behavior: url(css/PIE.htc);}
 .menu ul li a:hover{color: #fff; background:#bbb; }
 
 /* end menu alto */
@@ -170,11 +170,11 @@ img.help:hover{cursor:pointer}
 #toolbar{ text-align: right; padding-right: 5px;  /*border:1px solid black;*/}
 #toolbar a {padding: 0 5px 0 5px; border-right: 1px solid black;}
 
-/* gestione contenuti */
-.contenuti {width: 800px; margin: 0px; position: relative; right: -30; height: 80; border: 1px solid #CCC; margin-bottom: 40px;}
+/* gestione contenuti delle pagine principali */
+.contenuti {width: 800px; margin: 0px 45px; height: 80px; border: 1px solid #CCC; margin-bottom: 40px;}
 .titoloContenuti {font : bold 12px Verdana, Arial, Helvetica, sans-serif; padding: 5px; text-align : center; background: #CCC; border-bottom:1px solid #bbb}
-.immagini{ float: left;  width: 35px; height:35px; padding: 0px 20px !important; margin: 0px !important; margin: 10px 20px; }
-.immagini_riabilitazione{ float: left;  width: 70px; height:35px; padding: 0px 20px 0px 10px; margin: 0px !important; margin: 10px 20px 0px 10px; }
+.immagini{ float: left;  width: 35px; height:35px; margin: 0px 20px !important; margin: 5px 20px;}
+.immagini_riabilitazione{ float: left;  width: 70px; height:35px; margin: 5px 20px 0px 10px; }
 
 /* esporta Pdf */
 #finestra, #formato, #modulo{
