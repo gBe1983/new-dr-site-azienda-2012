@@ -173,8 +173,17 @@ img.help:hover{cursor:pointer}
 /* gestione contenuti delle pagine principali */
 .contenuti {width: 800px; margin: 0px 45px; height: 80px; border: 1px solid #CCC; margin-bottom: 40px;}
 .titoloContenuti {font : bold 12px Verdana, Arial, Helvetica, sans-serif; padding: 5px; text-align : center; background: #CCC; border-bottom:1px solid #bbb}
-.immagini{ float: left;  width: 35px; height:35px; margin: 0px 20px !important; margin: 5px 20px;}
+.immagini{ float: left;  width: 35px; height:35px; margin: 3px 20px;}
 .immagini_riabilitazione{ float: left;  width: 70px; height:35px; margin: 5px 20px 0px 10px; }
+
+
+<!--[if IE]>
+.immagini{ margin: 10px 20px; }
+<![endif]-->
+
+<!--[if !IE]>
+.immagini{ margin: 0px 20px; }
+<![endif]-->
 
 /* esporta Pdf */
 #finestra, #formato, #modulo{

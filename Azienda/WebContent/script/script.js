@@ -24,6 +24,6 @@ $(document).ready(function(){
 		
 		/* Prevenire l'evento predefinito (che sarebbe di seguire il collegamento) */
 		e.preventDefault();
-	})
+	});
 	
 });
