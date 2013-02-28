@@ -226,6 +226,7 @@ if(tr != null){
 			double totaleOreOrdinarie=0;
 			double totaleOreSraordinarie=0;
 			for(Integer risorseKey:tr.getRisorseKey()){
+				int contatoreGiornate = 0;
 				totaleOreOrdinarie=0;
 				totaleOreSraordinarie=0;
 				tr.resetHours();
@@ -253,6 +254,7 @@ if(tr != null){
 							d.addOreOrdinarie(p.getNumeroOre());
 							totaleOreSraordinarie+=p.getStraordinari();
 							d.addOreSraordinarie(p.getStraordinari());
+							contatoreGiornate++;
 	%>
 							<div class="OreOrdinarie"><%=p.getNumeroOre()%></div>
 							<br>
@@ -278,7 +280,8 @@ if(tr != null){
 						<br>
 					</td>
 		<%
-				for(Day d:tr.getDays()){
+				for(int x = 0; x < tr.getDays().size() && contatoreGiornate > x; x++){
+						Day d = tr.getDays().get(x);
 		%>
 						<td class="<%=d.getCssStyle("riepilogo")%>">
 							<div class="OreOrdinarie"><%=d.getOreOrdinarie()%></div>

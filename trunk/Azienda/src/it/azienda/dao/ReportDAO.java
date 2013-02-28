@@ -289,7 +289,8 @@ public class ReportDAO extends BaseDao {
 			.append("AND asscommessa.id_commessa=commessa.id_commessa ")
 			.append("AND asscommessa.id_risorsa=risorse.id_risorsa ")
 			.append("AND planning.data >=? ")
-			.append("AND planning.data <=? ");
+			.append("AND planning.data <=? ")
+			.append("AND planning.attivo = true ");
 
 		if(isValidFilter(idCliente)){
 			sql.append("AND commessa.id_cliente=? ");
@@ -360,7 +361,8 @@ public class ReportDAO extends BaseDao {
 				" AND planning.data >= ? " +
 				" AND planning.data <= ? " +
 				" AND asscommessa.id_risorsa = ? " +
-				" AND commessa.id_commessa = ? group by data";
+				" AND commessa.id_commessa = ? group by data" +
+				" AND planning.attivo = true";
 
 		PreparedStatement ps=null;
 		ResultSet rs=null;
