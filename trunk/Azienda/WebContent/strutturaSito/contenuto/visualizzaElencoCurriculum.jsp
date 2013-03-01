@@ -24,11 +24,11 @@ if(controlloUtenteLoggato.getAttribute("utenteLoggato") != null){
 		<input type="hidden" name="azione" value="<%=request.getParameter("dispositiva") %>">
 		<select name="parametro">
 <%
-	for(int x = 0; x < listaCurriculum.size(); x++){
+		for(int x = 0; x < listaCurriculum.size(); x++){
 %>		
 			<option value="<%=((CurriculumDTO)listaCurriculum.get(x)).getId_risorsa() %>"><%=((CurriculumDTO)listaCurriculum.get(x)).getNominativo() %></option>
 <%	
-	}
+		}
 %>
 		</select><br><br>
 		<input type="submit" value="esporta" onclick="return openFinestra(sceltaRisorsaCurriculum(),'<%=request.getParameter("azione") %>','all','esporta')">

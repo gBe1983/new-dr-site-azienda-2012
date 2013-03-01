@@ -2,6 +2,7 @@
     pageEncoding="ISO-8859-1"%>
 
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+ 
 <html>
 <head>	   
 	<title>Azienda</title>
@@ -10,7 +11,6 @@
 	<meta http-equiv="expires" content="0">    
 	<meta http-equiv="keywords" content="keyword1,keyword2,keyword3">
 	<meta http-equiv="description" content="This is my page">
-	<META http-equiv="Content-Style-Type" content="text/css">
 	
 	
 	<!-- caricamento dei fogli di stile -->
@@ -41,7 +41,6 @@
 	
 </head>
 <body class="home" >
-
 	
 	<div id="container" class="shadow">	   
     	<div id="header"><jsp:include page="strutturaSito/menu/menuAlto.jsp" /></div> 
