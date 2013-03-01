@@ -177,14 +177,6 @@ img.help:hover{cursor:pointer}
 .immagini_riabilitazione{ float: left;  width: 70px; height:35px; margin: 5px 20px 0px 10px; }
 
 
-<!--[if IE]>
-.immagini{ margin: 10px 20px; }
-<![endif]-->
-
-<!--[if !IE]>
-.immagini{ margin: 0px 20px; }
-<![endif]-->
-
 /* esporta Pdf */
 #finestra, #formato, #modulo{
 	display: none;
