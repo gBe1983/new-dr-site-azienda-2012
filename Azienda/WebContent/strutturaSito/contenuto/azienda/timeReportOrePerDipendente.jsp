@@ -226,7 +226,6 @@ if(tr != null){
 			double totaleOreOrdinarie=0;
 			double totaleOreSraordinarie=0;
 			for(Integer risorseKey:tr.getRisorseKey()){
-				int contatoreGiornate = 0;
 				totaleOreOrdinarie=0;
 				totaleOreSraordinarie=0;
 				tr.resetHours();
@@ -242,19 +241,20 @@ if(tr != null){
 						<tr class="Commessa">
 							<td class="Commessa"><b><u><%=commessaKey%></u></b></td>
 						<%
-									for(Day d:tr.getDays()){
+							for(int z = 0; z < tr.getDays().size(); z++){
+								Day d = tr.getDays().get(z);
 						%>
 						<td class="<%=d.getCssStyle("")%>">
 	<%
-					for(PlanningDTO p:tr.getRisorse().get(risorseKey).getCommesse().get(commessaKey)){
-						if(	(p.getData().get(Calendar.DAY_OF_YEAR))==(d.getDay().get(Calendar.DAY_OF_YEAR))&&
+					for(int y = 0; y < tr.getRisorse().get(risorseKey).getCommesse().get(commessaKey).size(); y++){
+						PlanningDTO p = tr.getRisorse().get(risorseKey).getCommesse().get(commessaKey).get(y);
+						if((p.getData().get(Calendar.DAY_OF_YEAR))==(d.getDay().get(Calendar.DAY_OF_YEAR))&&
 								(p.getData().get(Calendar.YEAR))==(d.getDay().get(Calendar.YEAR))){
 							
 							totaleOreOrdinarie+=p.getNumeroOre();
 							d.addOreOrdinarie(p.getNumeroOre());
 							totaleOreSraordinarie+=p.getStraordinari();
 							d.addOreSraordinarie(p.getStraordinari());
-							contatoreGiornate++;
 	%>
 							<div class="OreOrdinarie"><%=p.getNumeroOre()%></div>
 							<br>
@@ -277,18 +277,25 @@ if(tr != null){
 						<div class="OreOrdinarie"><%=totaleOreOrdinarie%></div>
 						<br>
 						<div class="OreStraordinarie"><%=totaleOreSraordinarie%></div>
-						<br>
 					</td>
 		<%
-				for(int x = 0; x < tr.getDays().size() && contatoreGiornate > x; x++){
-						Day d = tr.getDays().get(x);
+				for(int x = 0; x < tr.getDays().size(); x++){
+					Day d = tr.getDays().get(x);
+					if(d.getOreOrdinarie() == 0.0 && d.getOreSraordinarie() == 0.0){
+		%>
+						<td class="<%=d.getCssStyle("riepilogo")%>">
+							<br>
+						</td>
+		<%							
+					}else{
 		%>
 						<td class="<%=d.getCssStyle("riepilogo")%>">
 							<div class="OreOrdinarie"><%=d.getOreOrdinarie()%></div>
-						<br>
+							<br>
 							<div class="OreStraordinarie"><%=d.getOreSraordinarie()%></div>
 						</td>
 		<%
+					}
 				}
 		%>
 				</tr>
