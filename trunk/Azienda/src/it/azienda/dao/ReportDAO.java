@@ -361,8 +361,9 @@ public class ReportDAO extends BaseDao {
 				" AND planning.data >= ? " +
 				" AND planning.data <= ? " +
 				" AND asscommessa.id_risorsa = ? " +
-				" AND commessa.id_commessa = ? group by data" +
-				" AND planning.attivo = true";
+				" AND commessa.id_commessa = ? " +
+				" AND planning.attivo = true" +
+				" group by data";
 
 		PreparedStatement ps=null;
 		ResultSet rs=null;
@@ -513,6 +514,7 @@ public class ReportDAO extends BaseDao {
 							 " WHERE asscommessa.id_commessa=commessa.id_commessa  " +
 							 " AND planning.id_associazione=asscommessa.id_associazione " +
 							 " AND planning.data >= ?  AND planning.data <= ? " +
+							 " AND planning.attivo = true "+
 							 " AND commessa.descrizione = ?";
 			
 			
