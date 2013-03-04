@@ -216,7 +216,7 @@ img.help:hover{cursor:pointer}
 
 .spazioDestro{ width: 175; border: 0px solid black;}
 
-.context textarea, .context table{ margin: 0px; padding: 0px; font-size: 13px; }
+.context textarea, .context table, .context span{ margin: 0px; padding: 0px; font-size: 13px; }
 
 .context table p{margin: 0px; padding: 0px; }
 

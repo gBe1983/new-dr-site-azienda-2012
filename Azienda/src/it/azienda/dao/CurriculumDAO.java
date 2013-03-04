@@ -840,27 +840,58 @@ public class CurriculumDAO extends BaseDao {
 						"<tr> " +
 						"	<td colspan=\"3\" class=\"contenitoreIntestazione\"><p align=\"center\" class=\"intestazione\"><b>CURRICULUM VITAE</b></p></td> " +
 						"</tr>";
-				if(completo){
-						
-					stampaCurriculum += "<tr> " +
-									"	<td class=\"spazioSinistro\"><br></td>" +
-									"	<td class=\"spazioCentro\"><p class=\"contenuti\"><b>Cognome Nome: </b><br>Figura Professionale: </p></td> " +
-									"	<td class=\"spazioDestro\"><p class=\"contenuti\"><b>"+cv.getRisorsa().getCognome() + " " +  cv.getRisorsa().getNome()+ "</b><br>"+ cv.getRisorsa().getFiguraProfessionale() + "</p></td> " +
-									"</tr> " +
-									"<tr> " +
-									"	<td colspan=\"3\" class=\"contenitoreIntestazione\"><p class=\"intestazioni\">INFORMAZIONI PERSONALI</p></td> " +
-									"</tr> " +
-									"<tr> " +
-									"	<td class=\"spazioSinistro\"><br></td> " +
-									"	<td class=\"spazioCentro\"><p class=\"contenuti\">Nazionalità: <br>Data Nascita: <br>Luogo Nascita: <br>Residenza: </p></td> " +
-									"	<td class=\"spazioDestro\"><p class=\"contenuti\"> " + cv.getRisorsa().getNazione() + "<br>" + cv.getRisorsa().getDataNascita() + "<br>" + cv.getRisorsa().getLuogoNascita() + "<br>"+ cv.getRisorsa().getIndirizzo() + "</p></td> " +
-									"</tr> ";
+		if(completo){
+			
+			stampaCurriculum += "<tr> " +
+							"	<td class=\"spazioSinistro\"><br></td>" +
+							"	<td class=\"spazioCentro\"><p class=\"contenuti\"><b>Cognome Nome: </b><br>Figura Professionale: </p></td> " +
+							"	<td class=\"spazioDestro\"><p class=\"contenuti\"><b>"+cv.getRisorsa().getCognome() + " " +  cv.getRisorsa().getNome()+ "</b><br>";
+							if(cv.getRisorsa().getFiguraProfessionale() != null){ 
+								stampaCurriculum += cv.getRisorsa().getFiguraProfessionale(); 
+							}else{ 
+								stampaCurriculum += ""; 
+							}
+			stampaCurriculum +=	"</p></td> " +
+							"</tr> " +
+							"<tr> " +
+							"	<td colspan=\"3\" class=\"contenitoreIntestazione\"><p class=\"intestazioni\">INFORMAZIONI PERSONALI</p></td> " +
+							"</tr> " +
+							"<tr> " +
+							"	<td class=\"spazioSinistro\"><br></td> " +
+							"	<td class=\"spazioCentro\"><p class=\"contenuti\">Nazionalità: <br>Data Nascita: <br>Luogo Nascita: <br>Residenza: </p></td> " +
+							"	<td class=\"spazioDestro\"><p class=\"contenuti\"> ";
+							if(cv.getRisorsa().getNazione() != null){
+								stampaCurriculum += cv.getRisorsa().getNazione() + "<br>";
+							}else{
+								stampaCurriculum += "" + "<br>";
+							}
+							if(cv.getRisorsa().getDataNascita() != null){
+								stampaCurriculum += cv.getRisorsa().getDataNascita() +  "<br>";
+							}else{
+								stampaCurriculum += "" + "<br>";
+							}
+							if(cv.getRisorsa().getLuogoNascita() != null){
+								stampaCurriculum += cv.getRisorsa().getLuogoNascita() +  "<br>";
+							}else{
+								stampaCurriculum += "" + "<br>";
+							}
+							if(cv.getRisorsa().getIndirizzo() != null){
+								stampaCurriculum +=  cv.getRisorsa().getIndirizzo();
+							}else{
+								stampaCurriculum += "";
+							}
+							stampaCurriculum += "</p></td></tr>";
 				}else{
 							stampaCurriculum += "<tr> " +
 										    	"	<td class=\"spazioSinistro\"><br></td>" +
 										    	"	<td class=\"spazioCentro\"><p class=\"contenuti\"><br>Figura Professionale: </p></td> " +
-										    	"	<td class=\"spazioDestro\"><p class=\"contenuti\"><br>" + cv.getRisorsa().getFiguraProfessionale() + "</p></td> " +
-										    	"</tr> ";
+										    	"	<td class=\"spazioDestro\"><p class=\"contenuti\"><br>";
+												if(cv.getRisorsa().getFiguraProfessionale() != null){ 
+													stampaCurriculum += cv.getRisorsa().getFiguraProfessionale(); 
+												}else{ 
+													stampaCurriculum += ""; 
+												}
+							stampaCurriculum += "</p></td></tr>";
 				}
 				if(cv.getListaDettaglio() != null){
 				
@@ -1451,7 +1482,7 @@ public class CurriculumDAO extends BaseDao {
 					
 					for(int x = 0; x < celle.length; x++){
 						if(celle[x] != null){
-							if(celle[x].getCompositeElements().get(0).getChunks().size() == 1){
+							if(celle[x].getCompositeElements().get(0).getChunks().size() == 1 && (celle[x].getColspan() == 1 || celle[x].getColspan() == 3)){
 								if(celle[x].getCompositeElements().get(0).getChunks().get(0).getContent().indexOf("img") == 0){
 									Image immagine = Image.getInstance(url + "images/logo_DierreConsulting_Intestazione.gif");
 									immagine.setWidthPercentage(95);
@@ -1599,7 +1630,7 @@ public class CurriculumDAO extends BaseDao {
 								cella.setHorizontalAlignment(Element.ALIGN_LEFT);
 								disegnaTabella.addCell(cella);
 								
-							}else if(celle[x].getCompositeElements().get(0).getChunks().size() > 1){
+							}else if(celle[x].getCompositeElements().get(0).getChunks().size() > 1 || celle[x].getColspan() == 2){
 								String testo = "";
 								for(Chunk chuck:celle[x].getCompositeElements().get(0).getChunks()){
 									testo += chuck.getContent();
