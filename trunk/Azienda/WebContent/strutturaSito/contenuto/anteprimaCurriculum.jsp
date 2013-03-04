@@ -102,9 +102,43 @@
 		<%	
 			if(request.getParameter("dispositiva").equals("completo")){
 		%>				
-				<tr><td class="spazioSinistro"><br></td><td class="spazioCentro"><p class="contenutiCurriculum"><b>Cognome Nome: </b><br>Figura Professionale: </p></td><td class="spazioDestro"><p class="contenutiCurriculum"><b> <%=curriculum.getRisorsa().getCognome() + " " +  curriculum.getRisorsa().getNome() %></b><br><%=curriculum.getRisorsa().getFiguraProfessionale() %></p></td></tr>
-				<tr><td colspan="3" class="contenitoreIntestazione"><br><span class="intestazioniCurriculum"><b>INFORMAZIONI PERSONALI<b></span></td></tr>
-				<tr><td class="spazioSinistro"><br></td><td class="spazioCentro"><p class="contenutiCurriculum">Nazionalità: <br>Data Nascita: <br>Luogo Nascita: <br>Residenza: </p></td><td class="spazioDestro"><p class="contenutiCurriculum"> <%=curriculum.getRisorsa().getNazione() %> <br> <%=curriculum.getRisorsa().getDataNascita()%><br><%=curriculum.getRisorsa().getLuogoNascita()%><br><%=curriculum.getRisorsa().getIndirizzo()%></p></td></tr>	
+				<tr><td class="spazioSinistro"><br></td><td class="spazioCentro"><p class="contenutiCurriculum"><b>Cognome Nome: </b><br>Figura Professionale: </p></td><td class="spazioDestro"><p class="contenutiCurriculum"><b> <%=curriculum.getRisorsa().getCognome() + " " +  curriculum.getRisorsa().getNome() %></b><br>
+				<% 
+				if(curriculum.getRisorsa().getFiguraProfessionale() != null){ 
+					out.print(curriculum.getRisorsa().getFiguraProfessionale()); 
+				}else{ 
+					out.print("<br>"); 
+				} 
+			%>
+			</p></td></tr>
+			<tr><td colspan="3" class="contenitoreIntestazione"><br><span class="intestazioniCurriculum"><b>INFORMAZIONI PERSONALI<b></span></td></tr>
+			<tr><td class="spazioSinistro"><br></td><td class="spazioCentro"><p class="contenutiCurriculum">Nazionalità: <br>Data Nascita: <br>Luogo Nascita: <br>Residenza: </p></td><td class="spazioDestro"><p class="contenutiCurriculum">
+			<%
+				if(curriculum.getRisorsa().getNazione() != null){
+					out.print(curriculum.getRisorsa().getNazione() + "<br>");	
+				}else{
+					out.print("<br>");
+				}
+			
+				if(curriculum.getRisorsa().getDataNascita() != null){
+					out.print(curriculum.getRisorsa().getDataNascita() + "<br>");		
+				}else{
+					out.print("<br>");
+				}
+			
+				if(curriculum.getRisorsa().getLuogoNascita() != null){
+					out.print(curriculum.getRisorsa().getLuogoNascita() + "<br>");
+				}else{
+					out.print("<br>");
+				}
+			
+				if(curriculum.getRisorsa().getIndirizzo() != null){
+					out.print(curriculum.getRisorsa().getIndirizzo() + "<br>");
+				}else{
+					out.print("<br>");
+				}
+			%>
+			</p></td></tr>	
 		<%
 			}else{
 		%>
