@@ -145,13 +145,11 @@ function controlloInvioEmailConAllegato(){
 
 
 function visualizzazione(valore){
-	
-	alert(valore);
+
 	if(valore == "europeo"){
 		$(".formato").css("display","none");
 		/*document.getElementById("formato").style.display = "none";*/
 	}else if(valore == "aziendale"){
-		alert("sono dentro");
 		$(".formato").css("display","block");
 		/*document.getElementById("formato").style.display = "block";*/
 	}
