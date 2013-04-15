@@ -490,7 +490,7 @@ if(controlloUtenteLoggato.getAttribute("utenteLoggato") != null){
 		<div class="subtitle ">Dettaglio Commessa</div>
 
 
-		<div id="flussoCommessa">
+		<div id="flusso">
 			<table>
 				<tr>
 					<td><a href="index.jsp?azione=homePage">Home</a></td>
