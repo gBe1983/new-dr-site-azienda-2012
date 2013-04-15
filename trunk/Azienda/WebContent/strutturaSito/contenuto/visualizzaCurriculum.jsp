@@ -28,7 +28,7 @@
 		<input type="submit" value="esegui" onclick="return controlloSceltaVisualizzaCurriculum()">
 	</form>
 
-	<form action="" method="" id="curriculum">
+	<form action="" method="" id="curriculum" class="spazioUltra">
 		<table id="channel">
 			<tr>	
 				<th>Risorsa</th>

@@ -9,7 +9,7 @@
 	<label>In che modalità vuoi esportare il curriculum?</label><br>
 	<input type="radio" name="sceltaCurriculum" value="europeo" checked="checked" onClick="visualizzazione(this.value);"><label>Europeo</label><br>
 	<input type="radio" name="sceltaCurriculum" value="aziendale" onClick="visualizzazione(this.value);"><label>Aziendale</label><br><br>
-	<div id="formato">
+	<div class="formato">
 		<label>In che formato?</label><br>
 		<input type="radio" name="tipoVisualizzazione" value="completo"><label>Completo</label><br>
 		<input type="radio" name="tipoVisualizzazione" value="anonimo"><label>Anonimo</label><br><br>
