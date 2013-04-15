@@ -11,12 +11,11 @@ if(controlloUtenteLoggato.getAttribute("utenteLoggato") != null){
 
 <div class="subtitle">Risorse Associate</div>
 
-<div id="flussoCommessa">
+<div id="flusso">
 	<table>
 		<tr>
 			<td><a href="index.jsp?azione=homePage">Home</a></td>
 			<td><a href="./GestioneTrattattive?azione=ricercaCommessa">Cerca</a></td>
-			<td><a href="<%=controlloUtenteLoggato.getAttribute("url").toString() %>">Indietro</a></td>
 		</tr>
 	</table>
 </div>
