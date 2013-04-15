@@ -145,10 +145,15 @@ function controlloInvioEmailConAllegato(){
 
 
 function visualizzazione(valore){
+	
+	alert(valore);
 	if(valore == "europeo"){
-		document.getElementById("formato").style.display = "none";
+		$(".formato").css("display","none");
+		/*document.getElementById("formato").style.display = "none";*/
 	}else if(valore == "aziendale"){
-		document.getElementById("formato").style.display = "block";
+		alert("sono dentro");
+		$(".formato").css("display","block");
+		/*document.getElementById("formato").style.display = "block";*/
 	}
 }
 

@@ -55,6 +55,7 @@
 %>
 		<table id="channel">
 			<th>Cliente</th>
+			<th>Descrizione</th>
 			<th>Codice Commessa</th>
 			<th>Data Inizio</th>
 			<th>Data Fine</th>
@@ -76,6 +77,7 @@
 								%>
 							</label>
 						</td>
+						<td><label><%=visualizzaCommessa.getDescrizione() %></label></td>
 						<td><label><%=visualizzaCommessa.getCodiceCommessa() %></label></td>
 						<td>
 							<label>

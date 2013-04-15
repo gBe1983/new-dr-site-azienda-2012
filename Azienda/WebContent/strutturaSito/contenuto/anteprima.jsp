@@ -8,7 +8,7 @@
 	<label>In che modalità d'anteprima vuoi visualizzare il Curriculum Vitae?</label><br>
 	<input type="radio" name="sceltaCurriculumAnteprima" value="europeo" checked="checked" onClick="visualizzazione(this.value);"><label>Europeo</label><br>
 	<input type="radio" name="sceltaCurriculumAnteprima" value="aziendale" onClick="visualizzazione(this.value);"><label>Aziendale</label><br><br>
-	<div id="formato">
+	<div class="formato">
 		<label>In che formato?</label><br>
 		<input type="radio" name="tipoVisualizzazioneAnteprima" value="completo"><label>Completo</label><br>
 		<input type="radio" name="tipoVisualizzazioneAnteprima" value="anonimo"><label>Anonimo</label><br><br>

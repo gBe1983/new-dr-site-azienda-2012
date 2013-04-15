@@ -182,7 +182,7 @@
 
 	<context-param>
 		<param-name>siteUrl</param-name>
-		<param-value>http://drconsulting.tv</param-value>
+		<param-value>http://cvonline.tv</param-value>
 		<!-- <param-value>http://cvonline.tv</param-value> -->
 		<!-- <param-value>http://drconsulting.tv</param-value> -->
 	</context-param>
@@ -208,6 +208,10 @@ prod 1
 
 
 prod 2
+	<context-param>
+		<param-name>DB.driver</param-name>
+		<param-value>com.mysql.jdbc.Driver</param-value>
+	</context-param>
 	<context-param>
 		<param-name>DB.url</param-name>
 		<param-value>jdbc:mysql://151.1.159.238:3306/cvonline_Curriculum</param-value>
@@ -236,7 +240,7 @@ loc 1
 	</context-param>
 	<context-param>
 		<param-name>DB.password</param-name>
-		<param-value>PwAdmin5%</param-value>
+		<param-value>root</param-value>
 	</context-param>
 
 loc 2

@@ -550,35 +550,6 @@ public class GestioneCommessa extends BaseServlet {
 				
 				ArrayList listaCommesse = commesseDAO.caricamentoCommesse(commessa,anno);
 
-				String codiceCommessa = "";
-				String codice = "";
-				String stato = "";
-				String tipologia = "";
-				
-				if(request.getParameter("codiceCommessa") != null){
-					if (!request.getParameter("codiceCommessa").equals("")) {
-						codiceCommessa = request.getParameter("codiceCommessa");
-					}
-				}
-				if(request.getParameter("codice") != null){
-					if (!request.getParameter("codice").equals("")) {
-						codice = request.getParameter("codice");
-					}
-				}
-				if(request.getParameter("stato") != null){
-					if (!request.getParameter("stato").equals("")) {
-						stato = request.getParameter("stato");
-					}
-				}
-				if(request.getParameter("tipologiaCommessa") != null){
-					if (!request.getParameter("tipologiaCommessa").equals("")) {
-						tipologia = request.getParameter("tipologiaCommessa");
-					}
-				}
-
-				String url = request.getRequestURL().append("?azione=" + azione + "&codiceCommessa="+ codiceCommessa + "&codice=" + codice+ "&stato=" + stato + "&tipologiaCommessa="+ tipologia).toString();
-				sessione.setAttribute("url", url);
-
 				request.setAttribute("listaCommesse", listaCommesse);
 				getServletContext().getRequestDispatcher("/index.jsp?azione=visualizzaCommesse&dispositiva=commessa").forward(request, response);
 
