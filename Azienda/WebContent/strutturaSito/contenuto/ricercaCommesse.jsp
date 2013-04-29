@@ -92,9 +92,16 @@
 					<select name="anno">
 						<%
 							for(int x = 12; x < (Calendar.getInstance().get(Calendar.YEAR) - 1999); x++){
+								if((x+2000) == anno){
+								
 						%>
-								<option value="<%=x %>"><%=(x+2000) %></option>	
+									<option value="<%=x %>" selected="selected"><%=(x+2000) %></option>	
 						<%	
+								}else{
+						%>
+									<option value="<%=x %>"><%=(x+2000) %></option>
+						<%
+								}
 							}
 						%>
 					</select>

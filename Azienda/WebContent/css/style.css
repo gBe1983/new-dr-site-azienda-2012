@@ -151,7 +151,7 @@ img.help:hover{cursor:pointer}
 
 .visualizzaChannel {background:#fff; text-align: center; padding: 20px; }
 
-#channel{ font-family: "Lucida Sans Unicode", "Lucida Grande", Sans-Serif; font-size: 12px; margin: 45px;width: 840px; text-align: center; border-collapse: collapse; margin: auto; }
+#channel{ font-family: "Lucida Sans Unicode", "Lucida Grande", Sans-Serif; font-size: 12px; margin: 45px;width: 840px; text-align: center; border-collapse: collapse; margin: auto; margin-top: 40px;}
 
 #channel th{ font-size: 13px; font-weight: normal; padding: 8px; background: #c9ba9d /*#b9c9fe url(../images/gradhead.png) repeat-x*/; border-top: 2px solid #d3ddff; border-bottom: 1px solid #fff; color: #FFF /*#039*/; }
 
@@ -224,3 +224,8 @@ img.help:hover{cursor:pointer}
 
 /* end anteprima */
 
+#salva td{ background: #FFF; text-align: right; }
+
+#channel #salva :hover{ background: #FFF; }
+
+#channel #salva tr td input:hover {background: #CCC;}

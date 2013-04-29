@@ -31,7 +31,35 @@ public class CommessaDTO {
 	
 	private ArrayList<String> listaRisorse = new ArrayList<String>();
 	
+	private boolean flag_ferie;
+	private boolean flag_permessi;
+	private boolean flag_mutua;
+	private boolean flag_permessiNonRetribuite;
 	
+	public boolean isFlag_ferie() {
+		return flag_ferie;
+	}
+	public void setFlag_ferie(boolean flag_ferie) {
+		this.flag_ferie = flag_ferie;
+	}
+	public boolean isFlag_permessi() {
+		return flag_permessi;
+	}
+	public void setFlag_permessi(boolean flag_permessi) {
+		this.flag_permessi = flag_permessi;
+	}
+	public boolean isFlag_mutua() {
+		return flag_mutua;
+	}
+	public void setFlag_mutua(boolean flag_mutua) {
+		this.flag_mutua = flag_mutua;
+	}
+	public boolean isFlag_permessiNonRetribuite() {
+		return flag_permessiNonRetribuite;
+	}
+	public void setFlag_permessiNonRetribuite(boolean flag_permessiNonRetribuite) {
+		this.flag_permessiNonRetribuite = flag_permessiNonRetribuite;
+	}
 	public ArrayList<String> getListaRisorse() {
 		return listaRisorse;
 	}
