@@ -24,6 +24,7 @@ if(controlloUtenteLoggato.getAttribute("utenteLoggato") != null){
 	String newCodCommessaEsterna = (String) request.getAttribute("newCodCommessaEsterna");
 	String newCodCommessaInterna = (String) request.getAttribute("newCodCommessaInterna");
 	CommessaDTO commessa = null;
+	
 	if(request.getAttribute("commessa") != null){
 		commessa = (CommessaDTO) request.getAttribute("commessa");
 	}
@@ -31,7 +32,7 @@ if(controlloUtenteLoggato.getAttribute("utenteLoggato") != null){
 	ArrayList listaClienti = (ArrayList) request.getAttribute("listaClienti");
 	ArrayList listaRisorse = (ArrayList) request.getAttribute("listaRisorse");
 	ArrayList tipologie = (ArrayList) request.getAttribute("tipologiaCommessa");
-	ArrayList altreCommesse = (ArrayList) request.getAttribute("listaCommesseTipologiaAltro");
+	CommessaDTO altreCommesse = (CommessaDTO) request.getAttribute("listaCommesseTipologiaAltro");
 	
 	if(commessa == null){
 		if(listaClienti.size() != 0 && listaRisorse.size() != 0){
@@ -325,11 +326,10 @@ if(controlloUtenteLoggato.getAttribute("utenteLoggato") != null){
 	</tr>
 	<tr>
 		<td>* Oggetto</td>
-		<td><input type="text"
-			name="commessaInterna_oggettoOfferta" /></td>
+		<td><input type="text"name="commessaInterna_oggettoOfferta" /></td>
 
 		<td>* Descrizione</td>
-		<td><input type="text" name="commessaInterna_descrizione" />
+			<td><input type="text" name="commessaInterna_descrizione" />
 		</td>
 	</tr>
 	<tr>
@@ -405,37 +405,11 @@ if(controlloUtenteLoggato.getAttribute("utenteLoggato") != null){
 
 <div id="altro">
 	<%
-		boolean ferie = false;
-		boolean permessi = false;
-		boolean mutua = false;
-		boolean consulenza = false;
-		boolean sede = false;
-		int controlloCommesse = 5;
-		
-		for(int x = 0; x < altreCommesse.size(); x++){
-			CommessaDTO altraCommessa = (CommessaDTO) altreCommesse.get(x);
-			if(altraCommessa.getDescrizione().equals("ferie")){
-				ferie = true;
-				controlloCommesse--;
-			}else if(altraCommessa.getDescrizione().equals("permessi")){
-				permessi = true;
-				controlloCommesse--;
-			}else if(altraCommessa.getDescrizione().equals("mutua")){
-				mutua = true;
-				controlloCommesse--;
-			}else if(altraCommessa.getDescrizione().equals("consulenza")){
-				consulenza = true;
-				controlloCommesse--;
-			}else if(altraCommessa.getDescrizione().equals("sede")){
-				sede = true;
-				controlloCommesse--;
-			}
-		}
-	if(controlloCommesse == 0){
+	if(altreCommesse != null){
 %>		
-		<p> Sono stati inserite tutte le tipologie. <p>
+		<p align="center"> Commessa che gestisce le Assenze è già presente. Selezionare "Modifica Commessa" per visualizzare le voci selezionate. <p>
 <%
-	}
+	}else{
 %>
 	<p>* i campi segnati in asterisco sono obbligatori</p>
 	
@@ -447,13 +421,19 @@ if(controlloUtenteLoggato.getAttribute("utenteLoggato") != null){
 				<td><input type="text" name="altro_codiceCommessa" id="codiceCommessa" value="<%=newCodCommessaInterna%>" readonly="readonly"/></td>
 			</tr>
 			<tr>
+			<td>* Descrizione</td>
+				<td><input type="text" name="altro_descrizione" value="Assenze"/>
+			</td>
+			</tr>
+			<tr>
 				<td>* Tipologia Commessa:</td>
 				<td>
-					<input type="radio" name="altro_descrizione" value="ferie" <%if(ferie){%>disabled="disabled" <%}%>/>Ferie
-					<input type="radio" name="altro_descrizione" value="permessi" <%if(permessi){%>disabled="disabled" <%}%>/>Permessi
-					<input type="radio" name="altro_descrizione" value="mutua" <%if(mutua){%>disabled="disabled" <%}%>/>Mutua
-					<input type="radio" name="altro_descrizione" value="consulenza" <%if(consulenza){%>disabled="disabled" <%}%>/>Consulenza
-					<input type="radio" name="altro_descrizione" value="sede" <%if(sede){%>disabled="disabled" <%}%>/>Sede
+					<input type="checkbox" name="ferie" value="true" />Ferie
+					<input type="checkbox" name="permessi" value="true" />Permessi
+					<input type="checkbox" name="mutua" value="true" />Mutua<br><br>			
+					<input type="checkbox" name="ferieNonRetribuite" value="true" />Ferie Non Retribuite
+					<input type="checkbox" name="permessiNonRetribuiti" value="true" />Permessi Non Retribuiti
+					<input type="checkbox" name="mutuaNonRetribuiti" value="true" />Mutua Non Retribuiti
 				</td>
 			</tr>
 			<tr>
@@ -465,18 +445,22 @@ if(controlloUtenteLoggato.getAttribute("utenteLoggato") != null){
 	<table>
 		<tr>
 			<td>
-				<input type="submit" value="inserisci commessa" id="inserisciTrattativa" <%if(controlloCommesse == 0){ %> disabled="disabled" <%} %> onclick="return controlloInserisciCommessa('4')"/>
+				<input type="submit" value="inserisci commessa" id="inserisciTrattativa" onclick="return controlloInserisciCommessa('4')"/>
 			</td>
 			<td>
 				<input type="reset" value="svuota campi" />
 			</td>
 		</tr>
 	</table>
-</div>
 
+<%
+}
+%>
+	</div>
 </form>
 <%
-		}else{
+		
+	}else{
 %>
 			<p align="center" class="spazio">Non ci sono cliente e risorse caricate. Effettuare l'inserimento di queste sezioni.<br><br>
 			<a href="./index.jsp?azione=homePage">Home</a></p>
@@ -511,7 +495,7 @@ if(controlloUtenteLoggato.getAttribute("utenteLoggato") != null){
 				if(commessa.getStato().equals("aperta") && !commessa.getTipologia().equals("1")){
 			%>
 					<ul>
-						<li><a href="./GestioneCommessa?azione=aggiornaCommessa&parametro=<%=commessa.getId_commessa() %>">Modifica Commessa</a></li>
+						<li><a href="./GestioneCommessa?azione=aggiornaCommessa&parametro=<%=commessa.getId_commessa() %>&tipologia=<%=commessa.getTipologia() %>">Modifica Commessa</a></li>
 						<li><a href="./GestioneCommessa?azione=chiudiCommessa&parametro=<%=commessa.getId_commessa() %>" onclick="confirm('Vuoi chiudere questa commessa?')">Chiudi Commessa</a></li>
 						<li><a href="./GestioneCommessa?azione=risorseAssociate&parametro=<%=commessa.getId_commessa() %>&tipologia=<%=commessa.getTipologia() %>">Risorse Associate</a></li>
 						<li><a href="./GestioneCommessa?azione=risorseDaAssociare&codice=<%=commessa.getId_cliente() %>&parametro=<%=commessa.getId_commessa() %>">Associare Risorsa</a></li>
@@ -522,7 +506,7 @@ if(controlloUtenteLoggato.getAttribute("utenteLoggato") != null){
 				}else if(commessa.getStato().equals("aperta") && commessa.getTipologia().equals("1")){
 			%>
 					<ul>
-						<li><a href="./GestioneCommessa?azione=aggiornaCommessa&parametro=<%=commessa.getId_commessa() %>">Modifica Commessa</a></li>
+						<li><a href="./GestioneCommessa?azione=aggiornaCommessa&parametro=<%=commessa.getId_commessa() %>&tipologia=<%=commessa.getTipologia() %>">Modifica Commessa</a></li>
 						<li><a href="./GestioneCommessa?azione=chiudiCommessa&parametro=<%=commessa.getId_commessa() %>" onclick="confirm('Vuoi chiudere questa commessa?')">Chiudi Commessa</a></li>
 						<li><a href="./GestioneCommessa?azione=risorseAssociate&parametro=<%=commessa.getId_commessa() %>&tipologia=<%=commessa.getTipologia() %>">Risorse Associate</a></li>
 						<li><a href="./GestioneCommessa?azione=esportaCommessaPDF&parametro=<%=commessa.getId_commessa() %>">Esporta in PDF</a></li>
@@ -532,7 +516,7 @@ if(controlloUtenteLoggato.getAttribute("utenteLoggato") != null){
 				}else{
 			%>
 					<ul>
-						<li><a href="./GestioneCommessa?azione=dettaglioCommessa&parametro=<%=commessa.getId_commessa() %>">Dettaglio Commessa</a></li>
+						<li><a href="./GestioneCommessa?azione=dettaglioCommessa&parametro=<%=commessa.getId_commessa() %>&tipologia=<%=commessa.getTipologia() %>">Dettaglio Commessa</a></li>
 						<li><a href="./GestioneCommessa?azione=risorseAssociate&stato=<%=commessa.getStato() %>&parametro=<%=commessa.getId_commessa() %>&tipologia=<%=commessa.getTipologia() %>">Risorse Associate</a></li>
 						<li><a href="./GestioneCommessa?azione=esportaCommessaPDF&parametro=<%=commessa.getId_commessa() %>">Esporta in PDF</a></li>
 					</ul>
@@ -541,7 +525,7 @@ if(controlloUtenteLoggato.getAttribute("utenteLoggato") != null){
 			}else{
 			%>	
 				<ul>
-					<li><a href="./GestioneCommessa?azione=aggiornaCommessa&parametro=<%=commessa.getId_commessa() %>">Modifica Commessa</a></li>
+					<li><a href="./GestioneCommessa?azione=aggiornaCommessa&parametro=<%=commessa.getId_commessa() %>&tipologia=<%=commessa.getTipologia() %>">Modifica Commessa</a></li>
 					<li><a href="./GestioneCommessa?azione=risorseAssociate&parametro=<%=commessa.getId_commessa() %>&tipologia=<%=commessa.getTipologia() %>">Risorse Associate</a></li>
 					<li><a href="./GestioneCommessa?azione=risorseDaAssociare&tipologia=<%=commessa.getTipologia() %>&parametro=<%=commessa.getId_commessa() %>">Associare Risorsa</a></li>
 				</ul>
@@ -736,6 +720,68 @@ if(controlloUtenteLoggato.getAttribute("utenteLoggato") != null){
 						<td><label><%=commessa.getDescrizione() %></label></td>
 					</tr>
 					<tr>
+						<td>Data Inizio</td>
+						<td>
+							<%
+								if(commessa.getData_inizio() != null){
+									out.print("<label>" + commessa.getData_inizio() + "</label>");
+								}
+							%>
+						</td>
+						<td>Data Fine</td>
+						<td>
+							<%
+								if(commessa.getData_fine() != null){
+									out.print("<label>" + commessa.getData_fine() + "</label>");
+								}
+							%>
+							<br><br>
+						</td>
+					</tr>
+					<tr>
+						<td>Tipologia Commessa:</td>
+						<td colspan="3">
+							<% 
+								if(commessa.isFlag_ferie()){
+							%>
+									<input type="checkbox" name="ferie" value="ferie" checked="checked" disabled="disabled">Ferie
+							<%
+								}else{
+							%>
+									<input type="checkbox" name="ferie" value="ferie" disabled="disabled">Ferie
+							<%		
+								}
+								if(commessa.isFlag_mutua()){
+							%>
+									<input type="checkbox" name="ferie" value="ferie" checked="checked" disabled="disabled">Mutua
+							<%
+								}else{
+							%>
+									<input type="checkbox" name="ferie" value="ferie" disabled="disabled">Mutua
+							<%		
+								}
+								if(commessa.isFlag_permessi()){
+							%>
+									<input type="checkbox" name="ferie" value="ferie" checked="checked" disabled="disabled">Permessi
+							<%
+								}else{
+							%>
+									<input type="checkbox" name="ferie" value="ferie" disabled="disabled">Permessi
+							<%		
+								}
+								if(commessa.isFlag_permessiNonRetribuite()){
+							%>
+									<input type="checkbox" name="ferie" value="ferie" checked="checked" disabled="disabled">Permessi Non Retribuiti<br><br>
+							<%
+								}else{
+							%>
+									<input type="checkbox" name="ferie" value="ferie" disabled="disabled">Permessi Non Retribuiti<br><br>
+							<%		
+								}
+							%>
+						</td>
+					</tr>
+					<tr>
 						<td>Note</td>
 						<td>
 							<label>
@@ -761,12 +807,11 @@ if(controlloUtenteLoggato.getAttribute("utenteLoggato") != null){
 
 	<div class="subtitle ">Modifica Commessa</div>
 
-	<div id="flussoCommessa">
+	<div id="flusso">
 		<table>
 			<tr>
 				<td><a href="index.jsp?azione=homePage">Home</a></td>
 				<td><a href="./GestioneTrattattive?azione=ricercaCommessa">Cerca</a></td>
-				<td><a href="<%=controlloUtenteLoggato.getAttribute("url").toString() %>">Indietro</a></td>
 			</tr>
 		</table>
 	</div>
@@ -777,7 +822,7 @@ if(controlloUtenteLoggato.getAttribute("utenteLoggato") != null){
 			if(commessa.getStato().equals("aperta") && !commessa.getTipologia().equals("1")){
 		%>
 				<ul>
-					<li><a href="./GestioneCommessa?azione=dettaglioCommessa&parametro=<%=commessa.getId_commessa() %>">Dettaglio Commessa</a></li>
+					<li><a href="./GestioneCommessa?azione=dettaglioCommessa&parametro=<%=commessa.getId_commessa() %>&tipologia=<%=commessa.getTipologia() %>">Dettaglio Commessa</a></li>
 					<li><a href="./GestioneCommessa?azione=chiudiCommessa&parametro=<%=commessa.getId_commessa() %>" onclick="return confirm('Vuoi chiudere questa commessa?')">Chiudi Commessa</a></li>
 					<li><a href="./GestioneCommessa?azione=risorseAssociate&parametro=<%=commessa.getId_commessa() %>&tipologia=<%=commessa.getTipologia() %>">Risorse Associate</a></li>
 					<li><a href="./GestioneCommessa?azione=risorseDaAssociare&codice=<%=commessa.getId_cliente() %>&parametro=<%=commessa.getId_commessa() %>">Associare Risorsa</a></li>
@@ -788,8 +833,8 @@ if(controlloUtenteLoggato.getAttribute("utenteLoggato") != null){
 			}else if(commessa.getStato().equals("aperta") && commessa.getTipologia().equals("1")){
 		%>
 				<ul>
-					<li><a href="./GestioneCommessa?azione=dettaglioCommessa&parametro=<%=commessa.getId_commessa() %>">Dettaglio Commessa</a></li>
-					<li><a href="./GestioneCommessa?azione=chiudiCommessa&parametro=<%=commessa.getId_commessa() %>" onclick="return confirm('Vuoi chiudere questa commessa?')">Chiudi Commessa</a></li>
+					<li><a href="./GestioneCommessa?azione=dettaglioCommessa&parametro=<%=commessa.getId_commessa() %>&tipologia=<%=commessa.getTipologia() %>">Dettaglio Commessa</a></li>
+					<li><a href="./GestioneCommessa?azione=chiudiCommessa&parametro=<%=commessa.getId_commessa() %>" onclick="return confirm('Vuoi chiudere questa commessa?');">Chiudi Commessa</a></li>
 					<li><a href="./GestioneCommessa?azione=risorseAssociate&parametro=<%=commessa.getId_commessa() %>&tipologia=<%=commessa.getTipologia() %>">Risorse Associate</a></li>
 					<li><a href="./GestioneCommessa?azione=esportaCommessaPDF&parametro=<%=commessa.getId_commessa() %>">Esporta in PDF</a></li>
 				</ul>
@@ -798,7 +843,7 @@ if(controlloUtenteLoggato.getAttribute("utenteLoggato") != null){
 			}else{
 		%>
 				<ul>
-					<li><a href="./GestioneCommessa?azione=dettaglioCommessa&parametro=<%=commessa.getId_commessa() %>">Dettaglio Commessa</a></li>
+					<li><a href="./GestioneCommessa?azione=dettaglioCommessa&parametro=<%=commessa.getId_commessa() %>&tipologia=<%=commessa.getTipologia() %>">Dettaglio Commessa</a></li>
 					<li><a href="./GestioneCommessa?azione=risorseAssociate&stato=<%=commessa.getStato() %>&parametro=<%=commessa.getId_commessa() %>&tipologia=<%=commessa.getTipologia() %>">Risorse Associate</a></li>
 					<li><a href="./GestioneCommessa?azione=esportaCommessaPDF&parametro=<%=commessa.getId_commessa() %>">Esporta in PDF</a></li>
 				</ul>
@@ -807,7 +852,7 @@ if(controlloUtenteLoggato.getAttribute("utenteLoggato") != null){
 		}else{
 		%>	
 			<ul>
-				<li><a href="./GestioneCommessa?azione=dettaglioCommessa&parametro=<%=commessa.getId_commessa() %>">Dettaglio Commessa</a></li>
+				<li><a href="./GestioneCommessa?azione=dettaglioCommessa&parametro=<%=commessa.getId_commessa() %>&tipologia=<%=commessa.getTipologia() %>">Dettaglio Commessa</a></li>
 				<li><a href="./GestioneCommessa?azione=risorseAssociate&parametro=<%=commessa.getId_commessa() %>&tipologia=<%=commessa.getTipologia() %>">Risorse Associate</a></li>
 				<li><a href="./GestioneCommessa?azione=risorseDaAssociare&tipologia=<%=commessa.getTipologia() %>&parametro=<%=commessa.getId_commessa() %>">Associare Risorsa</a></li>
 			</ul>
@@ -1339,50 +1384,69 @@ if(controlloUtenteLoggato.getAttribute("utenteLoggato") != null){
 					<td><input type="text" name="altro_codiceCommessa" id="codiceCommessa" onblur="controlloCodiceCommessa(this.value)" value="<%=commessa.getCodiceCommessa() %>" readonly="readonly"/></td>
 				</tr>
 				<tr>
-					<td>Tipologia Commessa:</td>
+					<td>Descrizione</td>
+					<td><input type="text" name="altro_descrizione" value="<%=commessa.getDescrizione() %>" /></td>
+				</tr>
+				<tr>
+					<td>Data Inizio</td>
 					<td>
 						<%
-							if(commessa.getDescrizione().equals("ferie")){
+							if(commessa.getData_inizio() != null){
+								out.print("<input type=\"text\" name=\"dataInizio\" readonly=\"readonly\" value=\""+ commessa.getData_inizio() + "\" >");
+							}
 						%>
-								<input type="radio" name="altro_descrizione" value="ferie" checked="checked"/>Ferie
-								<input type="radio" name="altro_descrizione" value="permessi" disabled="disabled"/>Permessi
-								<input type="radio" name="altro_descrizione" value="mutua" disabled="disabled"/>Mutua
-								<input type="radio" name="altro_descrizione" value="consulenza" disabled="disabled"/>Consulenza
-								<input type="radio" name="altro_descrizione" value="sede" disabled="disabled"/>Sede
+					</td>
+					<td>Data Fine</td>
+					<td>
 						<%
-							}else if(commessa.getDescrizione().equals("permessi")){
+							if(commessa.getData_fine() != null){
+								out.print("<input type=\"text\" name=\"dataInizio\" readonly=\"readonly\" value=\""+ commessa.getData_fine() + "\" >");
+							}
 						%>
-								<input type="radio" name="altro_descrizione" value="ferie" disabled="disabled"/>Ferie
-								<input type="radio" name="altro_descrizione" value="permessi" checked="checked"/>Permessi
-								<input type="radio" name="altro_descrizione" value="mutua" disabled="disabled"/>Mutua
-								<input type="radio" name="altro_descrizione" value="consulenza" disabled="disabled"/>Consulenza
-								<input type="radio" name="altro_descrizione" value="sede" disabled="disabled"/>Sede
-								
-						<%	
-							}else if(commessa.getDescrizione().equals("mutua")){
+					</td>
+				</tr>
+				<tr>
+					<td><br></td>
+				</tr>
+				<tr>
+					<td>Tipologia Commessa:</td>
+					<td colspan="3">
+						<% 
+							if(commessa.isFlag_ferie()){
 						%>
-								<input type="radio" name="altro_descrizione" value="ferie" disabled="disabled"/>Ferie
-								<input type="radio" name="altro_descrizione" value="permessi" disabled="disabled"/>Permessi
-								<input type="radio" name="altro_descrizione" value="mutua" checked="checked"/>Mutua
-								<input type="radio" name="altro_descrizione" value="consulenza" disabled="disabled"/>Consulenza
-								<input type="radio" name="altro_descrizione" value="sede" disabled="disabled"/>Sede
-						<%	
-							}else if(commessa.getDescrizione().equals("consulenza")){
+								<input type="checkbox" name="ferie" value="ferie" checked="checked">Ferie
+						<%
+							}else{
 						%>
-								<input type="radio" name="altro_descrizione" value="ferie" disabled="disabled"/>Ferie
-								<input type="radio" name="altro_descrizione" value="permessi" disabled="disabled"/>Permessi
-								<input type="radio" name="altro_descrizione" value="mutua" disabled="disabled"/>Mutua
-								<input type="radio" name="altro_descrizione" value="consulenza" checked="checked"/>Consulenza
-								<input type="radio" name="altro_descrizione" value="sede" disabled="disabled"/>Sede
-						<%	
-							}else if(commessa.getDescrizione().equals("sede")){
+								<input type="checkbox" name="ferie" value="ferie" >Ferie
+						<%		
+							}
+							if(commessa.isFlag_mutua()){
 						%>
-								<input type="radio" name="altro_descrizione" value="ferie" disabled="disabled"/>Ferie
-								<input type="radio" name="altro_descrizione" value="permessi" disabled="disabled"/>Permessi
-								<input type="radio" name="altro_descrizione" value="mutua" disabled="disabled"/>Mutua
-								<input type="radio" name="altro_descrizione" value="consulenza" disabled="disabled"/>Consulenza
-								<input type="radio" name="altro_descrizione" value="sede" checked="checked"/>Sede
-						<%	
+								<input type="checkbox" name="mutua" value="mutua" checked="checked">Mutua
+						<%
+							}else{
+						%>
+								<input type="checkbox" name="mutua" value="mutua" >Mutua
+						<%		
+							}
+							if(commessa.isFlag_permessi()){
+						%>
+								<input type="checkbox" name="permessi" value="permessi" checked="checked" >Permessi
+						<%
+							}else{
+						%>
+								<input type="checkbox" name="permessi" value="permessi" >Permessi
+						<%		
+							}
+							if(commessa.isFlag_permessiNonRetribuite()){
+						%>
+								<input type="checkbox" name="permessiNonRetribuiti" value="permessiNonRetribuiti" checked="checked">Permessi Non Retribuiti<br><br>
+						<%
+							}else{
+						%>
+								<input type="checkbox" name="permessiNonRetribuiti" value="permessiNonRetribuiti">Permessi Non Retribuiti<br><br>
+						<%		
 							}
 						%>
 					</td>

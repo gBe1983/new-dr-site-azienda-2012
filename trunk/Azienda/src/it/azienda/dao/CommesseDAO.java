@@ -81,14 +81,21 @@ public class CommesseDAO extends BaseDao {
 				log.error(metodo, "", e);
 			}
 		}else{
-			sql = "insert into tbl_commesse(descrizione,codice_commessa,note,id_tipologia_commessa,id_trattativa) values (?,?,?,?,?)"; 
+			//recupero l'anno corrente che mi serve per ricavare l'anno corrente
+			Calendar calendario = Calendar.getInstance();
+			
+			
+			
+			sql = "insert into tbl_commesse(descrizione,data_Inizio,data_Fine,codice_commessa,note,id_tipologia_commessa,id_trattativa) values (?,?,?,?,?,?,?)"; 
 			try {
 				ps = connessione.prepareStatement(sql);
 				ps.setString(1, commessa.getDescrizione());
-				ps.setString(2, commessa.getCodiceCommessa());
-				ps.setString(3, commessa.getNote());
-				ps.setString(4, commessa.getTipologia());
-				ps.setInt(5, 0);
+				ps.setString(2, calendario.get(Calendar.YEAR)+"-01-01");
+				ps.setString(3, calendario.get(Calendar.YEAR)+"-12-31");
+				ps.setString(4, commessa.getCodiceCommessa());
+				ps.setString(5, commessa.getNote());
+				ps.setString(6, commessa.getTipologia());
+				ps.setInt(7, 0);
 			} catch (SQLException e) {
 				log.error(metodo, "", e);
 			}
@@ -97,6 +104,20 @@ public class CommesseDAO extends BaseDao {
 
 		try {
 			esitoInserimentoCommessa = ps.executeUpdate();
+			if(esitoInserimentoCommessa == 1 && tipologia.equals("4")){
+				sql = "insert into tbl_altro (id_commessa,flag_ferie,flag_mutua,flag_permessi,flag_permessiNonRetribuiti) values (?,?,?,?,?)"; 
+				try {
+					ps = connessione.prepareStatement(sql);
+					ps.setInt(1, selectIdCommessa());
+					ps.setBoolean(2, commessa.isFlag_ferie());
+					ps.setBoolean(3, commessa.isFlag_mutua());
+					ps.setBoolean(4, commessa.isFlag_permessi());
+					ps.setBoolean(5, commessa.isFlag_permessiNonRetribuite());
+					ps.executeUpdate();
+				} catch (SQLException e) {
+					log.error(metodo, "inserimento flag commessa fallito", e);
+				}
+			}
 		} catch (SQLException e) {
 			log.error(metodo, "", e);
 			return "Siamo spiacenti l'inserimento della commessa non è avvenuta correttamente. Contattare l'amministratore.";
@@ -500,6 +521,100 @@ public class CommesseDAO extends BaseDao {
 		return commessa;
 	}
 	
+	public CommessaDTO ricercaCommessa(int idCommessa,String tipologia){
+		final String metodo = "aggiornoCommessa";
+		log.start(metodo);
+		CommessaDTO commessa = null;
+		String sql = "";
+		
+		PreparedStatement ps=null;
+		ResultSet rs=null;
+		
+		if(!tipologia.equals("4")){
+			sql = "select * from tbl_commesse where id_commessa = ?";
+			try {
+				ps = connessione.prepareStatement(sql);
+				ps.setInt(1, idCommessa);
+				rs = ps.executeQuery();
+				if(rs.next()){
+					commessa = new CommessaDTO();
+					commessa.setId_commessa(rs.getInt(1));
+					
+					if(rs.getString(2) != null){
+						commessa.setId_cliente(rs.getString(2));
+						commessa.setDescrizioneCliente(caricamentoDescrizioneCliente(rs.getString(2)));
+					}else{
+						commessa.setId_cliente(rs.getString(2));
+						commessa.setDescrizioneCliente("");
+					}
+					commessa.setData_offerta(rs.getString(3));
+					commessa.setOggetto_offerta(rs.getString(4));
+					commessa.setDescrizione(rs.getString(5));
+					commessa.setSede_lavoro(rs.getString(6));
+					if(rs.getString(7) != null){
+						commessa.setData_inizio(formattaDataWeb.format(formattaDataServer.parse(rs.getString(7))));
+					}else{
+						commessa.setData_inizio("");
+					}
+					if(rs.getString(8) != null){
+						commessa.setData_fine(formattaDataWeb.format(formattaDataServer.parse(rs.getString(8))));
+					}else{
+						commessa.setData_fine("");
+					}
+					commessa.setImporto(rs.getDouble(9));
+					commessa.setImporto_lettere(rs.getString(10));
+					commessa.setAl(rs.getString(11));
+					commessa.setPagamento(rs.getString(12));
+					commessa.setNote(rs.getString(13));
+					commessa.setAttiva(rs.getBoolean(14));
+					commessa.setCodiceCommessa(rs.getString(15));
+					commessa.setTotaleOre(rs.getInt(16));
+					commessa.setStato(rs.getString(17));
+					commessa.setTipologia(rs.getString(18));
+					commessa.setId_trattative(rs.getInt(19));
+				}
+			} catch (SQLException e) {
+				log.error(metodo, "", e);
+			} catch (ParseException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}finally{
+				close(ps,rs);
+				log.end(metodo);
+			}
+		}else{
+			sql = "select commessa.codice_commessa, commessa.descrizione, commessa.data_inizio,commessa.data_fine, commessa.note, altro.* from tbl_altro as altro, tbl_commesse as commessa where commessa.id_commessa = ? and commessa.id_tipologia_commessa = 4 and commessa.id_commessa = altro.id_commessa";
+			try {
+				ps = connessione.prepareStatement(sql);
+				ps.setInt(1, idCommessa);
+				rs = ps.executeQuery();
+				if(rs.next()){
+					commessa = new CommessaDTO();
+					commessa.setCodiceCommessa(rs.getString(1));
+					commessa.setDescrizione(rs.getString(2));
+					commessa.setData_inizio(formattaDataWeb.format(formattaDataServer.parse(rs.getString(3))));
+					commessa.setData_fine(formattaDataWeb.format(formattaDataServer.parse(rs.getString(4))));
+					commessa.setNote(rs.getString(5));
+					commessa.setTipologia(tipologia);
+					commessa.setId_commessa(rs.getInt(7));
+					commessa.setFlag_ferie(rs.getBoolean(8));
+					commessa.setFlag_mutua(rs.getBoolean(9));
+					commessa.setFlag_permessi(rs.getBoolean(10));
+					commessa.setFlag_permessiNonRetribuite(rs.getBoolean(11));
+				}
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (ParseException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		 
+		
+		return commessa;
+	}
+	
 	/*
 	 * tramite questo metodo effettuo la modifica della commessa.
 	 */
@@ -507,40 +622,65 @@ public class CommesseDAO extends BaseDao {
 	public String modificaCommessa(CommessaDTO commessa){
 		final String metodo = "modificaCommessa";
 		log.start(metodo);
-		String sql = "update tbl_commesse set id_cliente = ?, data_comm = ?, oggetto_comm = ?, descrizione = ?, sede_lavoro = ?, data_inizio = ?, data_fine = ?, importo = ?, importo_lettere = ?, al = ?, pagamento = ?, note = ?, attiva = ?, codice_commessa = ?, totale_ore = ?, stato = ?, id_tipologia_commessa = ? where id_commessa = ?";
 		
 		int esitoModificaCommessa = 0;
 		PreparedStatement ps=null;
-		try {
-			ps = connessione.prepareStatement(sql);
-			ps.setString(1, commessa.getId_cliente());
-			ps.setString(2, commessa.getData_offerta());
-			ps.setString(3, commessa.getOggetto_offerta());
-			ps.setString(4, commessa.getDescrizione());
-			ps.setString(5, commessa.getSede_lavoro());
-			ps.setString(6, commessa.getData_inizio());
-			ps.setString(7, commessa.getData_fine());
-			ps.setDouble(8, commessa.getImporto());
-			ps.setString(9, commessa.getImporto_lettere());
-			ps.setString(10, commessa.getAl());
-			ps.setString(11, commessa.getPagamento());
-			ps.setString(12, commessa.getNote());
-			ps.setBoolean(13, true);
-			ps.setString(14, commessa.getCodiceCommessa());
-			ps.setInt(15, commessa.getTotaleOre());
-			ps.setString(16, commessa.getStato());
-			ps.setString(17, commessa.getTipologia());
-			ps.setInt(18, commessa.getId_commessa());
-			esitoModificaCommessa = ps.executeUpdate();
-		} catch (SQLException e) {
-			log.error(metodo, "", e);
-			return "Siamo spiacenti l'inserimento della commessa non è avvenuta correttamente. Contattare l'amministratore.";
-		}finally{
-			close(ps);
-			log.end(metodo);
+		
+		String sql = "";
+		if(!commessa.getTipologia().equals("4")){
+			sql = "update tbl_commesse set id_cliente = ?, data_comm = ?, oggetto_comm = ?, descrizione = ?, sede_lavoro = ?, data_inizio = ?, data_fine = ?, importo = ?, importo_lettere = ?, al = ?, pagamento = ?, note = ?, attiva = ?, codice_commessa = ?, totale_ore = ?, stato = ?, id_tipologia_commessa = ? where id_commessa = ?";
+		
+			try {
+				ps = connessione.prepareStatement(sql);
+				ps.setString(1, commessa.getId_cliente());
+				ps.setString(2, commessa.getData_offerta());
+				ps.setString(3, commessa.getOggetto_offerta());
+				ps.setString(4, commessa.getDescrizione());
+				ps.setString(5, commessa.getSede_lavoro());
+				ps.setString(6, commessa.getData_inizio());
+				ps.setString(7, commessa.getData_fine());
+				ps.setDouble(8, commessa.getImporto());
+				ps.setString(9, commessa.getImporto_lettere());
+				ps.setString(10, commessa.getAl());
+				ps.setString(11, commessa.getPagamento());
+				ps.setString(12, commessa.getNote());
+				ps.setBoolean(13, true);
+				ps.setString(14, commessa.getCodiceCommessa());
+				ps.setInt(15, commessa.getTotaleOre());
+				ps.setString(16, commessa.getStato());
+				ps.setString(17, commessa.getTipologia());
+				ps.setInt(18, commessa.getId_commessa());
+				esitoModificaCommessa = ps.executeUpdate();
+			} catch (SQLException e) {
+				log.error(metodo, "", e);
+				return "Siamo spiacenti l'inserimento della commessa non è avvenuta correttamente. Contattare l'amministratore.";
+			}finally{
+				close(ps);
+				log.end(metodo);
+			}
+		}else{
+			
+			sql = "update tbl_commesse as commessa, tbl_altro as altro set commessa.descrizione = ?, commessa.note = ?, " +
+					" altro.flag_ferie = ?,altro.flag_mutua = ?, altro.flag_permessi = ?, altro.flag_permessiNonRetribuiti = ? " +
+					" where altro.id_commessa = ? and altro.id_commessa = commessa.id_commessa";
+			try {
+				ps = connessione.prepareStatement(sql);
+				ps.setString(1, commessa.getDescrizione());
+				ps.setString(2, commessa.getNote());
+				ps.setBoolean(3, commessa.isFlag_ferie());
+				ps.setBoolean(4, commessa.isFlag_mutua());
+				ps.setBoolean(5, commessa.isFlag_permessi());
+				ps.setBoolean(6, commessa.isFlag_permessiNonRetribuite());
+				ps.setInt(9, commessa.getId_commessa());
+				esitoModificaCommessa = ps.executeUpdate();
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
 		}
 		
-		if(esitoModificaCommessa == 1){
+		if(esitoModificaCommessa >= 1){
 			return "ok";
 		}else{
 			return "Siamo spiacenti l'inserimento della commessa non è avvenuta correttamente. Contattare l'amministratore.";
@@ -1330,22 +1470,25 @@ public class CommesseDAO extends BaseDao {
 	 * verifico quelle che sono state già create.
 	 */
 	
-	public ArrayList caricamentoCommesseTipologiaAltro(){
+	public CommessaDTO caricamentoCommesseTipologiaAltro(){
 		final String metodo = "caricamentoCommesseTipologiaAltro";
 		log.start(metodo);
-		String sql = "select id_commessa,descrizione from tbl_commesse where id_tipologia_commessa = 4 order by descrizione";
 		
-		ArrayList listaCommesse = new ArrayList();
+		Calendar calendario = Calendar.getInstance();
+		
+		String sql = "select count(*) as numeroCommessa from tbl_commesse as commessa where id_tipologia_commessa = 4 and commessa.data_inizio like ?";
+		
+		CommessaDTO commessa = null;
 		PreparedStatement ps=null;
 		ResultSet rs=null;
 		try {
 			ps = connessione.prepareStatement(sql);
+			ps.setString(1,calendario.get(Calendar.YEAR)+"%");
 			rs = ps.executeQuery();
-			while(rs.next()){
-				CommessaDTO commessa = new CommessaDTO();
-				commessa.setId_commessa(rs.getInt(1));
-				commessa.setDescrizione(rs.getString(2));
-				listaCommesse.add(commessa);
+			if(rs.next()){
+				if(rs.getInt("numeroCommessa") != 0){
+					commessa = new CommessaDTO();
+				}
 			}
 		} catch (SQLException e) {
 			log.error(metodo, "", e);
@@ -1353,7 +1496,7 @@ public class CommesseDAO extends BaseDao {
 			close(ps,rs);
 			log.end(metodo);
 		}
-		return listaCommesse;
+		return commessa;
 	}
 	
 	public int estrazione_tipologia_commessa(int id_commessa){

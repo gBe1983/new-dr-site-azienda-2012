@@ -479,6 +479,19 @@ public class GestioneCommessa extends BaseServlet {
 					commessa.setDescrizione(request.getParameter("altro_descrizione"));
 					commessa.setTipologia(tipologia);
 					commessa.setNote(request.getParameter("altro_note"));
+					
+					if(request.getParameter("ferie") != null){
+						commessa.setFlag_ferie(true);
+					}
+					if(request.getParameter("permessi") != null){
+						commessa.setFlag_permessi(true);
+					}
+					if(request.getParameter("mutua") != null){
+						commessa.setFlag_mutua(true);
+					}
+					if(request.getParameter("permessiNonRetribuiti") != null){
+						commessa.setFlag_permessiNonRetribuite(true);
+					}
 
 					if (azione.equals("inserisciCommessa")) {
 						String messaggioCommessa = commesseDAO.inserimentoCommessa(commessa, tipologia);
@@ -559,7 +572,7 @@ public class GestioneCommessa extends BaseServlet {
 				 * in questa sezione effettuo il carimento della singola
 				 * commessa per poi visualizzare i dati
 				 */
-				CommessaDTO commessa = commesseDAO.aggiornoCommessa(Integer.parseInt(request.getParameter("parametro")));
+				CommessaDTO commessa = commesseDAO.ricercaCommessa(Integer.parseInt(request.getParameter("parametro")),request.getParameter("tipologia"));
 
 				/*
 				 * verifico la tipologia perchè le commesse con tipologia 1
@@ -661,11 +674,34 @@ public class GestioneCommessa extends BaseServlet {
 				String messaggio = "";
 				if (request.getParameter("tipologia") != null
 						&& request.getParameter("tipologia").equals("4")) {
+					String idRisorse = request.getParameter("risorseSelezionate");
+					String [] idRisorsa = idRisorse.split(";");
+					
 					Associaz_Risor_Comm asscommessa = new Associaz_Risor_Comm();
-					asscommessa.setId_risorsa(Integer.parseInt(request.getParameter("parametro2")));
-					asscommessa.setId_commessa(Integer.parseInt(request.getParameter("commessa")));
-					asscommessa.setAttiva(true);
-					messaggio = commesseDAO.inserimentoAssCommessa(asscommessa);
+					
+					for(int x = 0; x < idRisorsa.length; x++){
+						if(!idRisorsa[x].equals("")){
+							asscommessa.setId_risorsa(Integer.parseInt(idRisorsa[x]));
+							asscommessa.setId_commessa(Integer.parseInt(request.getParameter("commessa")));
+							
+							Calendar calendario = Calendar.getInstance();
+							
+							try {
+								asscommessa.setDataInizio(formattaDataServer.format(formattaDataWeb.parse("01-01-"+calendario.get(Calendar.YEAR))));
+							} catch (ParseException e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+							}
+							try {
+								asscommessa.setDataFine(formattaDataServer.format(formattaDataWeb.parse("31-12-"+calendario.get(Calendar.YEAR))));
+							} catch (ParseException e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+							}
+							asscommessa.setAttiva(true);
+							messaggio = commesseDAO.inserimentoAssCommessa(asscommessa);
+						}
+					}
 				} else {
 					Associaz_Risor_Comm asscommessa = new Associaz_Risor_Comm();
 					asscommessa.setId_risorsa(Integer.parseInt(request.getParameter("parametro2"))); //Id_Risorsa
@@ -720,7 +756,15 @@ public class GestioneCommessa extends BaseServlet {
 					 * Ricavati questi due ArrayList rimuovo dalla listaRisorse
 					 * le risorse già associate alla commessa
 					 */
-					ArrayList listaRisorsaAssociate = commesseDAO.risorseAssociate(Integer.parseInt(request.getParameter("parametro")));
+					String valore = "";
+					
+					if(request.getParameter("parametro") != null){
+						valore = request.getParameter("parametro");
+					}else{
+						valore = request.getParameter("commessa");
+					}
+					
+					ArrayList listaRisorsaAssociate = commesseDAO.risorseAssociate(Integer.parseInt(valore));
 					ArrayList listaRisorse = risorsa.elencoRisorse();
 
 					for (int x = 0; x < listaRisorsaAssociate.size(); x++) {
@@ -736,11 +780,11 @@ public class GestioneCommessa extends BaseServlet {
 					 * gestione in modo da poter caricare la barra di navizione
 					 * presente dopo il dettaglio della commessa
 					 */
-					CommessaDTO commessa = commesseDAO.aggiornoCommessa(Integer.parseInt(request.getParameter("parametro")));
+					CommessaDTO commessa = commesseDAO.aggiornoCommessa(Integer.parseInt(valore));
 
 					request.setAttribute("commessa", commessa);
 					request.setAttribute("listaRisorseDaAssociare",listaRisorse);
-					rd = getServletContext().getRequestDispatcher("/index.jsp?azione=risorseDaAssociate&codice="+ request.getParameter("cliente")+ "&parametro="+ Integer.parseInt(request.getParameter("parametro"))+ "&dispositiva=commessa");
+					rd = getServletContext().getRequestDispatcher("/index.jsp?azione=risorseDaAssociate&codice="+ request.getParameter("cliente")+ "&parametro="+ Integer.parseInt(valore)+ "&dispositiva=commessa");
 					rd.forward(request, response);
 				} else {
 					request.setAttribute("messaggio","L'associazione della risorsa con la commessa non è avvenuta con successo. Contattare l'amministratore");
@@ -789,7 +833,7 @@ public class GestioneCommessa extends BaseServlet {
 					 * presente dopo il dettaglio della commessa
 					 */
 
-					CommessaDTO commessa = commesseDAO.aggiornoCommessa(Integer.parseInt(request.getParameter("commessa")));
+					CommessaDTO commessa = commesseDAO.aggiornoCommessa(Integer.parseInt(request.getParameter("parametro2")));
 
 					request.setAttribute("commessa", commessa);
 					request.setAttribute("listaRisorseAssociate",listaRisorseAssociate);

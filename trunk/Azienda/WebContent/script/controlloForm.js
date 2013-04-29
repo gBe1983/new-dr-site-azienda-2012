@@ -756,20 +756,18 @@ function controlloInserisciCommessa(tipologia){
 		 * 
 		 * altro_descrizione
 		 */
-		
-	  tipologia_Commessa = document.commessa.altro_descrizione;
-	  var controlloSelezione = false;
-	  for(var i=0;i<tipologia_Commessa.length;i++){
-	    if(tipologia_Commessa[i].checked){
-	    	controlloSelezione = true;
-	    }
+	  if(document.commessa.altro_descrizione.value == ""){
+		 alert("Valorizzare la descrizione della commessa");
+		 return false;
 	  }
-	  if(!controlloSelezione){
-		  alert("Selezionare una \"Tipologia Commessa\"");
-		  return controlloSelezione;
-	  }else{
-		  return controlloSelezione;
+	  
+	  if(!(document.commessa.ferie.checked) && !(document.commessa.permessi.checked) &&
+		 !(document.commessa.mutua.checked) && !(document.commessa.ferieNonRetribuite.checked) &&
+		 !(document.commessa.permessiNonRetribuiti.checked) && !(document.commessa.mutuaNonRetribuiti.checked)){
+		  	alert("Selezionare una \"Tipologia Commessa\"");
+		  	return false;
 	  }
+	    
 	}
 	
 	return true;
@@ -2157,3 +2155,56 @@ function controlloValorizzazioneRisorsa(tipologia){
 	}
 	return true;
 }*/
+	
+// add multiple select / deselect functionality
+var associazioniSelezionate = "";
+
+function checkedAll(elm,name){
+	
+	// if all checkbox are selected, check the selectall checkbox
+    // and viceversa
+	var options = $(".case");
+	
+	for (var i = 0; i < options.length; i++){	
+		if(options[i].checked && elm.checked == false){
+			options[i].checked = elm.checked;
+			associazioniSelezionate = "";
+		}else{
+			options[i].checked = elm.checked;
+			associazioniSelezionate += options[i].value + ";";
+		}
+	}
+}
+
+
+
+function checkedNotAll(elm){
+
+   if(elm.checked){
+	   associazioniSelezionate += elm.value + ";";
+   }else{
+	   associazioniSelezionate = associazioniSelezionate.replace(elm.value, "");
+   }
+}
+
+function salvaAssociazioni(name){
+	
+	var check = false;
+	for (var i = 0; i < document.associazioni.elements.length; i++){
+    	if (document.associazioni.elements[i].name.indexOf(name) == 0){
+    		if(document.associazioni.elements[i].checked){
+    			check = true;
+    		}
+    	}
+    }
+    if(!check){
+    	alert("Selezionare almeno una risorsa");
+    	return false;
+    }
+	
+    document.associazioni.risorseSelezionate.value = associazioniSelezionate;
+    associazioniSelezionate = "";
+    
+    return true;
+   
+}

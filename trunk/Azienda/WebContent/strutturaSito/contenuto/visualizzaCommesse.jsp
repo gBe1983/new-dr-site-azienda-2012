@@ -131,7 +131,7 @@
 							</label>
 						</td>
 						<td>
-							<a href="./GestioneCommessa?azione=dettaglioCommessa&parametro=<%=visualizzaCommessa.getId_commessa() %>"><img src="images/dettaglio.gif" alt="dettaglio commessa" id="dettaglio"/></a>
+							<a href="./GestioneCommessa?azione=dettaglioCommessa&parametro=<%=visualizzaCommessa.getId_commessa() %>&tipologia=<%=visualizzaCommessa.getTipologia() %>"><img src="images/dettaglio.gif" alt="dettaglio commessa" id="dettaglio"/></a>
 						</td>
 							<%
 								if(!visualizzaCommessa.getTipologia().equals("4")){
