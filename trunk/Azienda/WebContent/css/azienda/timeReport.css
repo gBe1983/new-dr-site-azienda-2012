@@ -1,3 +1,9 @@
+div#container{width: 1150px; margin: 20px auto ;text-align: left; background:#fff;border:1px solid #bbb}
+#header{ width: 1150px; height: 208px; margin: 0px; border: 0px solid black;}
+div#content{position:relative;float:left; width:1150px;margin:0px; padding:0px; /*border: 1px solid black;*/}
+div#content_right{float:right;width: 1150px;padding:5px;margin:0; /*border: 1px solid black;*/}
+
+
 table.filter{
 	font:normal 12px verdana, arial, sans-serif;
 	border-style:solid;
@@ -13,7 +19,7 @@ select.filter{
 div.timeReport{
 	margin-left:2px;
 	overflow:auto;
-	width:1020px;
+	width:1130px;
 }
 
 table.timeReport{
@@ -161,6 +167,11 @@ div.OreOrdinarie{
 	color:black;
 }
 
+#modalita{
+	font:normal 9px verdana, arial, sans-serif;
+	color:black;
+}
+
 .totale{
 	font:normal 12px verdana, arial, sans-serif;
 	color: black;
@@ -171,6 +182,11 @@ div.OreOrdinarie{
 div.OreStraordinarie{
 	font:normal 12px verdana, arial, sans-serif;
 	color:red;
+}
+
+div.OreAssenze{
+	font:normal 12px verdana, arial, sans-serif;
+	color: #535353;
 }
 
 div.OreTotali{

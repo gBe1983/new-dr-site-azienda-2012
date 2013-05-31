@@ -6,11 +6,21 @@ import java.util.Calendar;
 public class Day{
 	private double oreOrdinarie=0;
 	private double oreSraordinarie=0;
+	private double assenze = 0;
+	
 	private Calendar day;
 
 	
 	public Day() {
 		
+	}
+	
+	public double getAssenze() {
+		return assenze;
+	}
+
+	public void setAssenze(double assenze) {
+		this.assenze = assenze;
 	}
 
 	/**
@@ -58,6 +68,7 @@ public class Day{
 	public void resetHours(){
 		oreOrdinarie=0;
 		oreSraordinarie=0;
+		assenze=0;
 	}
 
 	public String getCssStyle(String tipologia) {

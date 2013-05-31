@@ -281,7 +281,7 @@ public class ReportDAO extends BaseDao {
 		
 		TimeReport tr = new TimeReport(dtDa, dtA, idCliente, idRisorsa, idCommessa);
 		StringBuilder sql = new StringBuilder("SELECT ");
-		sql	.append("planning.data,planning.num_ore,planning.straordinari,")
+		sql	.append("planning.data,planning.num_ore,planning.straordinari,planning.ferie,planning.permessi,planning.mutua,planning.permessiNonRetribuiti, ")
 			.append("commessa.descrizione,")
 			.append("risorse.id_risorsa,risorse.cognome,risorse.nome ")
 			.append("FROM tbl_planning planning,tbl_associaz_risor_comm asscommessa,tbl_commesse commessa,tbl_risorse risorse ")
@@ -327,10 +327,14 @@ public class ReportDAO extends BaseDao {
 			while(rs.next()){
 				tr.addPlanningDTO(
 					new PlanningDTO(
-						rs.getDate("data"),
-						rs.getDouble("num_ore"),
-						rs.getDouble("straordinari"),
-						rs.getString("descrizione")),
+							rs.getDate("data"),
+							rs.getDouble("num_ore"),
+							rs.getDouble("straordinari"),
+							rs.getDouble("ferie"),
+							rs.getDouble("permessi"),
+							rs.getDouble("mutua"),
+							rs.getDouble("permessiNonRetribuiti"),
+							rs.getString("descrizione")),
 					new RisorsaDTO(
 						rs.getInt("id_risorsa"),
 						rs.getString("cognome"),
@@ -352,7 +356,7 @@ public class ReportDAO extends BaseDao {
 		final String metodo="getTimeReport";
 		log.start(metodo);
 		
-		String sql = "SELECT planning.data,planning.num_ore,planning.straordinari " +
+		String sql = "SELECT planning.data,planning.num_ore,planning.straordinari,planning.ferie,planning.permessi,planning.mutua,planning.permessiNonRetribuiti " +
 				" FROM tbl_planning planning,tbl_associaz_risor_comm asscommessa,tbl_commesse commessa,tbl_risorse risorse, tbl_clienti cliente " +
 				" WHERE planning.id_associazione=asscommessa.id_associazione " +
 				" AND asscommessa.id_commessa=commessa.id_commessa " +
@@ -383,6 +387,10 @@ public class ReportDAO extends BaseDao {
 								rs.getDate("data"),
 								rs.getDouble("num_ore"),
 								rs.getDouble("straordinari"),
+								rs.getDouble("ferie"),
+								rs.getDouble("permessi"),
+								rs.getDouble("mutua"),
+								rs.getDouble("permessiNonRetribuiti"),
 								null
 				);
 				
@@ -416,7 +424,7 @@ public class ReportDAO extends BaseDao {
 		final String metodo="caricamentoAssociazioni";
 		log.start(metodo);
 		
-		String sql = "SELECT cliente.ragione_sociale, commessa.descrizione, commessa.id_commessa,risorse.id_risorsa, risorse.nome, risorse.cognome " +
+		String sql = "SELECT asscommessa.id_associazione,cliente.ragione_sociale, commessa.descrizione, commessa.id_commessa,risorse.id_risorsa, risorse.nome, risorse.cognome " +
 				" FROM tbl_planning planning, tbl_associaz_risor_comm asscommessa,tbl_commesse commessa,tbl_risorse risorse, tbl_clienti cliente " +
 				" WHERE asscommessa.id_commessa=commessa.id_commessa " +
 				" AND planning.id_associazione=asscommessa.id_associazione " +
@@ -440,7 +448,7 @@ public class ReportDAO extends BaseDao {
 					sql += " and asscommessa.id_commessa = ?";
 				}
 				
-				sql += " group by descrizione ORDER BY ragione_sociale";
+				sql += " group by asscommessa.id_associazione ORDER BY ragione_sociale";
 		
 		ArrayList<Associaz_Risor_Comm> listaAssociazioni = new ArrayList<Associaz_Risor_Comm>();
 		
@@ -466,6 +474,7 @@ public class ReportDAO extends BaseDao {
 			rs = ps.executeQuery();
 			while(rs.next()){
 				Associaz_Risor_Comm asscommessa = new Associaz_Risor_Comm();
+				asscommessa.setId_associazione(rs.getInt("id_associazione"));
 				asscommessa.setDescrizioneCliente(rs.getString("ragione_sociale"));
 				asscommessa.setDescrizioneCommessa(rs.getString("descrizione"));
 				asscommessa.setId_commessa(rs.getInt("id_commessa"));
@@ -497,7 +506,7 @@ public class ReportDAO extends BaseDao {
 	 *  
 	 */
 	
-	public ArrayList<PlanningDTO> caricamentoOrePerCliente(Calendar dtDa, Calendar dtA, int mesi, String descrizione){
+	public ArrayList<PlanningDTO> caricamentoOrePerCliente(Calendar dtDa, Calendar dtA, int mesi, int id_associazione){
 		
 		final String metodo="caricamentoOrePerCliente";
 		log.start(metodo);
@@ -509,13 +518,14 @@ public class ReportDAO extends BaseDao {
 
 		//verifico i mesi di differenza che ci sono tra la data inizio e la data fine
 		if(mesi == 0){
-				String sql = "SELECT commessa.descrizione, sum(planning.num_ore), sum(planning.straordinari)  " +
+				String sql = "SELECT commessa.descrizione, sum(planning.num_ore), sum(planning.straordinari)," +
+							 " sum(ferie), sum(permessi), sum(mutua)  " +
 							 " FROM tbl_planning planning, tbl_associaz_risor_comm asscommessa,tbl_commesse commessa " +
 							 " WHERE asscommessa.id_commessa=commessa.id_commessa  " +
 							 " AND planning.id_associazione=asscommessa.id_associazione " +
 							 " AND planning.data >= ?  AND planning.data <= ? " +
 							 " AND planning.attivo = true "+
-							 " AND commessa.descrizione = ?";
+							 " AND asscommessa.id_associazione = ?";
 			
 			
 				PreparedStatement ps=null;
@@ -526,7 +536,7 @@ public class ReportDAO extends BaseDao {
 					ps = connessione.prepareStatement(sql);
 					ps.setString(i++, formattaDataServer.format(dtDa.getTime()));
 					ps.setString(i++, formattaDataServer.format(dtA.getTime()));
-					ps.setString(i++, descrizione);
+					ps.setInt(i++, id_associazione);
 					
 					rs = ps.executeQuery();
 					while(rs.next()){
@@ -534,6 +544,9 @@ public class ReportDAO extends BaseDao {
 						planning.setDescrizione_commessa(rs.getString(1));
 						planning.setNumeroOre(rs.getDouble(2));
 						planning.setStraordinari(rs.getDouble(3));
+						planning.setFerie(rs.getDouble(4));
+						planning.setPermessi(rs.getDouble(5));
+						planning.setMutua(rs.getDouble(6));
 						listaGiornate.add(planning);
 					}
 				} catch (SQLException e) {
@@ -561,12 +574,13 @@ public class ReportDAO extends BaseDao {
 					dataFine.add(Calendar.DAY_OF_MONTH, differenzaGiorni);
 					
 						
-					String sql = "SELECT commessa.descrizione, sum(planning.num_ore), sum(planning.straordinari)  " +
+					String sql = "SELECT commessa.descrizione, sum(planning.num_ore), sum(planning.straordinari) " +
+							" sum(ferie), sum(permessi), sum(mutua)" +
 							" FROM tbl_planning planning, tbl_associaz_risor_comm asscommessa,tbl_commesse commessa " +
 							" WHERE asscommessa.id_commessa=commessa.id_commessa  " +
 							" AND planning.id_associazione=asscommessa.id_associazione " +
 							" AND planning.data >= ?  AND planning.data <= ? " +
-							" AND commessa.descrizione = ?";
+							" AND asscommessa.id_associazione = ?";
 			
 					PreparedStatement ps=null;
 					ResultSet rs=null;
@@ -585,7 +599,7 @@ public class ReportDAO extends BaseDao {
 						}else{
 							ps.setString(i++, formattaDataServer.format(dataFine.getTime()));
 						}
-						ps.setString(i++, descrizione);
+						ps.setInt(i++, id_associazione);
 						
 						rs = ps.executeQuery();
 						while(rs.next()){
@@ -593,6 +607,9 @@ public class ReportDAO extends BaseDao {
 							planning.setDescrizione_commessa(rs.getString(1));
 							planning.setNumeroOre(rs.getDouble(2));
 							planning.setStraordinari(rs.getDouble(3));
+							planning.setFerie(rs.getDouble(4));
+							planning.setPermessi(rs.getDouble(5));
+							planning.setMutua(rs.getDouble(6));
 							listaGiornate.add(planning);
 						}
 					} catch (SQLException e) {

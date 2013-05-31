@@ -186,7 +186,10 @@
 		<!-- <param-value>http://cvonline.tv</param-value> -->
 		<!-- <param-value>http://drconsulting.tv</param-value> -->
 	</context-param>
-
+	
+	<session-config>
+	  <session-timeout>120</session-timeout>
+	</session-config>
 <!--
 prod 1
 	<context-param>
