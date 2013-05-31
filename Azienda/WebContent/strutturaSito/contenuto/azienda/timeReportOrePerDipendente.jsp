@@ -225,9 +225,11 @@ if(tr != null){
 		
 			double totaleOreOrdinarie=0;
 			double totaleOreSraordinarie=0;
+			double totaleOreAssenze = 0;
 			for(Integer risorseKey:tr.getRisorseKey()){
 				totaleOreOrdinarie=0;
 				totaleOreSraordinarie=0;
+				totaleOreAssenze=0;
 				tr.resetHours();
 		%>
 				<tr>
@@ -240,11 +242,12 @@ if(tr != null){
 		%>
 						<tr class="Commessa">
 							<td class="Commessa"><b><u><%=commessaKey%></u></b></td>
-						<%
-							for(int z = 0; z < tr.getDays().size(); z++){
-								Day d = tr.getDays().get(z);
-						%>
+		<%
+			for(int z = 0; z < tr.getDays().size(); z++){
+				Day d = tr.getDays().get(z);
+		%>
 						<td class="<%=d.getCssStyle("")%>">
+							<table>
 	<%
 					for(int y = 0; y < tr.getRisorse().get(risorseKey).getCommesse().get(commessaKey).size(); y++){
 						PlanningDTO p = tr.getRisorse().get(risorseKey).getCommesse().get(commessaKey).get(y);
@@ -255,15 +258,68 @@ if(tr != null){
 							d.addOreOrdinarie(p.getNumeroOre());
 							totaleOreSraordinarie+=p.getStraordinari();
 							d.addOreSraordinarie(p.getStraordinari());
-	%>
-							<div class="OreOrdinarie"><%=p.getNumeroOre()%></div>
-							<br>
-							<div class="OreStraordinarie"><%=p.getStraordinari()%></div>
-					<%
+							
+							if(p.getFerie() > 0.0){
+								totaleOreAssenze += p.getFerie();
+								d.setAssenze(p.getFerie());
+							}else if(p.getPermessi() > 0.0){
+								totaleOreAssenze += p.getPermessi();
+								d.setAssenze(p.getPermessi());
+							}else if(p.getMutua() > 0.0){
+								totaleOreAssenze += p.getMutua();
+								d.setAssenze(p.getMutua());
+							}else if(p.getPermessiNonRetribuiti() > 0.0){
+								d.setAssenze(p.getPermessiNonRetribuiti());
+							}
+							
+							%>
+							<tr>
+								<td><div class="OreOrdinarie"><%=p.getNumeroOre()%></div></td>
+							</tr>
+							<tr>
+								<td><div class="OreStraordinarie"><%=p.getStraordinari()%></div></td>
+							</tr>
+							<%			
+									if(p.getFerie() > 0.0){
+							%>
+										<tr>
+											<td><div class="OreAssenze"><span title="Ferie"><%=p.getFerie() %></span></div></td>
+										</tr>
+														
+							<%
+									}else if(p.getPermessi() > 0.0){
+							%>	
+										<tr>
+											<td><div class="OreAssenze"><span title="Permessi"><%=p.getPermessi() %></span></div></td>		
+										</tr>			
+							<%
+									}else if(p.getMutua() > 0.0){
+							%>
+										<tr>
+											<td><div class="OreAssenze"><span title="Mutua"><%=p.getMutua() %></span></div></td>
+										</tr>			
+							<%
+									}else if(p.getPermessiNonRetribuiti() > 0.0){
+							%>
+										<tr>	
+											<td><div class="OreAssenze" ><span title="Permessi Non Retribuiti"><%=p.getPermessiNonRetribuiti() %></span></div></td>
+										</tr>			
+							<%
+									}else{
+							%>
+										<tr>
+											<td><div class="OreAssenze"><%=0.0%></div></td>
+										</tr>
+						<%
+									}
+						%>
+								
+					<%	
 							break;
 						}
 					}
 					%>
+							</table>
 						</td>
 		<%
 					}
@@ -274,14 +330,22 @@ if(tr != null){
 		%>
 				<tr class="Totali">
 					<td class="Totali">
-						<div class="OreOrdinarie"><%=totaleOreOrdinarie%></div>
-						<br>
-						<div class="OreStraordinarie"><%=totaleOreSraordinarie%></div>
+						<table>
+							<tr>
+								<td><div class="OreOrdinarie"><%=totaleOreOrdinarie%></div></td>
+							</tr>
+							<tr>
+								<td><div class="OreStraordinarie"><%=totaleOreSraordinarie%></div></td>
+							</tr>
+							<tr>
+								<td><div class="OreAssenze" ><%=totaleOreAssenze %></div></td>
+							</tr>
+						</table>
 					</td>
 		<%
 				for(int x = 0; x < tr.getDays().size(); x++){
 					Day d = tr.getDays().get(x);
-					if(d.getOreOrdinarie() == 0.0 && d.getOreSraordinarie() == 0.0){
+					if(d.getOreOrdinarie() == 0.0 && d.getOreSraordinarie() == 0.0 && d.getAssenze() == 0.0){
 		%>
 						<td class="<%=d.getCssStyle("riepilogo")%>">
 							<br>
@@ -290,9 +354,17 @@ if(tr != null){
 					}else{
 		%>
 						<td class="<%=d.getCssStyle("riepilogo")%>">
-							<div class="OreOrdinarie"><%=d.getOreOrdinarie()%></div>
-							<br>
-							<div class="OreStraordinarie"><%=d.getOreSraordinarie()%></div>
+							<table>
+								<tr>
+									<td><div class="OreOrdinarie"><%=d.getOreOrdinarie()%></div></td>
+								</tr>
+								<tr>
+									<td><div class="OreStraordinarie"><%=d.getOreSraordinarie()%></div></td>
+								</tr>
+								<tr>
+									<td><div class="OreAssenze" ><%=d.getAssenze() %></div></td>
+								</tr>
+							</table>
 						</td>
 		<%
 					}
@@ -301,7 +373,7 @@ if(tr != null){
 				</tr>
 				<tr>
 					<td colspan="<%=tr.getDays().size() %>">
-						<div class="OreTotali">Totale ore: <%=totaleOreOrdinarie + totaleOreSraordinarie %></div>
+						<div class="OreTotali">Totale ore: <%=totaleOreOrdinarie + totaleOreSraordinarie + totaleOreAssenze %></div>
 					</td>
 				</tr>
 				<tr>

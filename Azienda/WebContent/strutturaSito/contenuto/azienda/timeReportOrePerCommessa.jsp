@@ -179,10 +179,12 @@ if(tr != null && listaGiornate.size() > 0){
 	<%
 						double totaleOrdinarie = 0;
 						double totaleStraordinario = 0;
+						double totaleAssenze = 0;
 						for(int k = 0; k < listaGiornate.size(); k++){
 							PlanningDTO planning = (PlanningDTO) listaGiornate.get(k);
 							if(planning.getDescrizioneRisorsa().equals(asscomm.getDescrizioneRisorsa()) &&
-								planning.getRagione_sociale().equals(client.getRagioneSociale())){
+								planning.getRagione_sociale().equals(client.getRagioneSociale()) &&
+								planning.getDescrizione_commessa().equals(asscomm.getDescrizioneCommessa())){
 								
 								ArrayList<PlanningDTO> listaGiorni = planning.getListaGiornate();
 								
@@ -193,24 +195,78 @@ if(tr != null && listaGiornate.size() > 0){
 									Day day = new Day(plan.getData());
 									totaleOrdinarie += plan.getNumeroOre();
 									totaleStraordinario += plan.getStraordinari();
+									if(plan.getFerie() > 0.0){
+										totaleAssenze += plan.getFerie();
+									}else if(plan.getPermessi() > 0.0){
+										totaleAssenze += plan.getPermessi();
+									}else if(plan.getMutua() > 0.0){
+										totaleAssenze += plan.getMutua();
+									}
 									for(Day data:tr.getDays()){
 										
 										if(data.getDay().getTime().equals(plan.getData().getTime())){
 											spazioVuoto = true;
 	%>
 											<td class="<%=day.getCssStyle("")%>">
-												<div class="OreOrdinarie"><%=plan.getNumeroOre()%></div>
-												<br>
-												<div class="OreStraordinarie"><%=plan.getStraordinari()%></div>
+												<table>
+													<tr>
+														<td><div class="OreOrdinarie"><%=plan.getNumeroOre()%></div></td>
+													</tr>
+													<tr>
+														<td><div class="OreStraordinarie"><%=plan.getStraordinari()%></div></td>
+													</tr>
+									<%			
+												if(plan.getFerie() > 0.0){
+									%>
+													<tr>
+														<td><div class="OreAssenze"><span title="Ferie"><%=plan.getFerie() %></span></div></td>
+													</tr>
+																	
+									<%
+												}else if(plan.getPermessi() > 0.0){
+									%>	
+													<tr>
+														<td><div class="OreAssenze"><span title="Permessi"><%=plan.getPermessi() %></span></div></td>		
+													</tr>			
+									<%
+												}else if(plan.getMutua() > 0.0){
+									%>
+													<tr>
+														<td><div class="OreAssenze"><span title="Mutua"><%=plan.getMutua() %></span></div></td>
+													</tr>			
+									<%
+												}else if(plan.getPermessiNonRetribuiti() > 0.0){
+									%>
+													<tr>	
+														<td><div class="OreAssenze" ><span title="Permessi Non Retribuiti"><%=plan.getPermessiNonRetribuiti() %></span></div></td>
+													</tr>			
+									<%
+												}else{
+									%>
+													<tr>
+														<td><div class="OreAssenze"><%=0.0%></div></td>
+													</tr>
+									<%
+												}
+									 %>
+												</table>
 											</td>
 	<%						
 											break;
 										}else if(!spazioVuoto){
 	%>
 											<td class="<%=day.getCssStyle("riepilogo")%>">
-												<div class="OreOrdinarie"><br></div>
-												<br>
-												<div class="OreStraordinarie"><br></div>
+												<table>
+													<tr>
+														<td><div class="OreOrdinarie"></div></td>
+													</tr>
+													<tr>
+														<td><div class="OreStraordinarie"></div></td>
+													</tr>
+													<tr>
+														<td><div class="OreAssenze"></div></td>
+													</tr>
+												</table>
 											</td>
 	<%
 										}
@@ -221,7 +277,7 @@ if(tr != null && listaGiornate.size() > 0){
 	%>				
 						<tr>
 							<td colspan="<%=tr.getDays().size() %>" class="risorsa">
-								Totale Ore: <%=totaleOrdinarie + totaleStraordinario %>
+								Totale Ore: <%=totaleOrdinarie + totaleStraordinario + totaleAssenze%>
 							</td>
 						</tr>
 					</tr>

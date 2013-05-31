@@ -481,7 +481,7 @@ public class GestioneReport extends BaseServlet {
 										dtDa,
 										dtA,
 										mese,
-										asscomm.getDescrizioneCommessa()
+										asscomm.getId_associazione()
 								));
 								listaGiornate.add(planning);
 							}
@@ -525,6 +525,7 @@ public class GestioneReport extends BaseServlet {
 							Associaz_Risor_Comm asscomm = (Associaz_Risor_Comm)listaAssociazioni.get(y);
 							if(asscomm.getDescrizioneCliente().equals(cliente.getRagioneSociale())){
 								PlanningDTO planning = new PlanningDTO();
+								planning.setDescrizione_commessa(asscomm.getDescrizioneCommessa());
 								planning.setDescrizioneRisorsa(asscomm.getDescrizioneRisorsa());
 								planning.setRagione_sociale(asscomm.getDescrizioneCliente());
 								planning.setListaGiornate(new ReportDAO(conn.getConnection()).getTimeReportCommessaPerCliente(dtDa, dtA, asscomm.getId_risorsa(),asscomm.getId_commessa()));
