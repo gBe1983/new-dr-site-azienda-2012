@@ -192,6 +192,12 @@ div.OreAssenze{
 div.OreTotali{
 	font:normal 12px verdana, arial, sans-serif;
 	color:black;
+	padding-left: 17px;
+}
+
+div.totale{
+	font:normal 12px verdana, arial, sans-serif;
+	color:black;
 }
 
 .Risorsa{
@@ -219,4 +225,8 @@ div.OreTotali{
 	font:12px verdana, arial, sans-serif;
 	color: red;
 	text-align: center;
+}
+
+#totali{
+	text-align: right;
 }

@@ -328,17 +328,20 @@ if(tr != null){
 		<%
 				}
 		%>
-				<tr class="Totali">
-					<td class="Totali">
+				<tr>
+					<td>
 						<table>
 							<tr>
-								<td><div class="OreOrdinarie"><%=totaleOreOrdinarie%></div></td>
+								<td><div class="OreOrdinarie">Ordinarie: </div></td>
+								<td><div class="OreOrdinarie" id="totali"><%=totaleOreOrdinarie%></div></td>
 							</tr>
 							<tr>
-								<td><div class="OreStraordinarie"><%=totaleOreSraordinarie%></div></td>
+								<td><div class="OreStraordinarie">Straordinario: </div></td>
+								<td><div class="OreStraordinarie" id="totali"><%=totaleOreSraordinarie%></div></td>
 							</tr>
 							<tr>
-								<td><div class="OreAssenze" ><%=totaleOreAssenze %></div></td>
+								<td><div class="OreAssenze" >Assenze: </div></td>
+								<td><div class="OreAssenze" id="totali"><%=totaleOreAssenze %></div></td>
 							</tr>
 						</table>
 					</td>
@@ -372,8 +375,17 @@ if(tr != null){
 		%>
 				</tr>
 				<tr>
-					<td colspan="<%=tr.getDays().size() %>">
-						<div class="OreTotali">Totale ore: <%=totaleOreOrdinarie + totaleOreSraordinarie + totaleOreAssenze %></div>
+					<td colspan="<%=tr.getDays().size() %>" class="Totali">
+						<table>
+							<tr>
+								<td>
+									<div class="totale">Totale ore: </div>
+								</td>
+								<td>
+									<div class="OreTotali"><%=totaleOreOrdinarie + totaleOreSraordinarie + totaleOreAssenze %></div>
+								</td>
+							</tr>
+						</table>
 					</td>
 				</tr>
 				<tr>
