@@ -18,7 +18,6 @@
 	<link rel="stylesheet" type="text/css" href="css/style.css">
 	<link rel="stylesheet" type="text/css" href="css/demo.css">
 	<link rel="stylesheet" type="text/css" href="css/visualizzaCurriculum.css">
-	<link rel="stylesheet" type="text/css" href="css/azienda/timeReport.css">
 	<link rel="stylesheet" type="text/css" href="css/menuLaterale.css">
 	<link rel="stylesheet" href="http://code.jquery.com/ui/1.10.1/themes/base/jquery-ui.css" />
 	<!--  <link rel="stylesheet" type="text/css" href="css/jquery-ui-1.7.2.custom.css">  -->

@@ -217,6 +217,31 @@ public class AziendaDAO extends BaseDao {
 		}
 	}
 
+	public int loginEditor(String username, String password){
+		
+		final String metodo="loginEditor";
+		log.start(metodo);
+		String sql = "select id_azienda from tbl_utenti where username = ? and password = ?";
+		log.debug(metodo, sql);
+		PreparedStatement ps=null;
+		
+		int id_azienda = 0;
+		
+		try {
+			ps = connessione.prepareStatement(sql);
+			ps.setString(1, username);
+			ps.setString(2, MD5.encript(password));
+			ResultSet rs = ps.executeQuery();
+			while(rs.next()){
+				id_azienda = rs.getInt(1);
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return id_azienda;
+	}
 	/**
 	 * tramite questo metodo effettuo il cambiamento della password
 	 * @param password

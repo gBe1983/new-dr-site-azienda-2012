@@ -147,6 +147,23 @@ public class GestioneAzienda extends BaseServlet{
 						.getRequestDispatcher("/index.jsp?azione=messaggio")
 							.forward(request, response);
 				}
+			}else if(azione.equals("loginEditor")){
+				
+				String username = request.getParameter("username");
+				String password = request.getParameter("password");
+				
+				if(!username.equals("editor")){
+					response.sendRedirect("./editorLogin&error=loginErrato");
+				}
+				
+				int id_azienda = aDAO.loginEditor(username, password);
+				
+				if(id_azienda == 0){
+					response.sendRedirect("./editorLogin.jsp&error=loginErrato");
+				}else{
+					//response.sendRedirect("http://localhost:8080/DrConsultingEditor/GestioneLogin?azione=login&utente="+id_azienda);
+					response.sendRedirect("http://drconsulting.tv/DrConsultingEditor/GestioneAzienda?azione=login&utente="+id_azienda);
+				}
 			}
 		}else{
 			sessioneScaduta(response);
