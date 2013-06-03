@@ -130,7 +130,7 @@ if(tr != null && listaGiornate.size() > 0){
 	
 	%>
 	<div class="timeReport">
-	<table class="timeReport">
+	<table class="timeReport" border="1">
 		
 	<%
 	for(int y = 0; y < listaClienti.size(); y++){
@@ -146,13 +146,13 @@ if(tr != null && listaGiornate.size() > 0){
 					<td colspan="<%=tr.getDays().size()+1 %>">
 						<br>
 					</td>
-				<tr>
+				</tr>
 				<tr>
 					<%
 						if(!cliente){
 							cliente = true;
 					%>
-						<td class="cliente" ><%=client.getRagioneSociale() %></td>
+							<td class="cliente" ><%=client.getRagioneSociale() %></td>
 					<%
 						}else{
 					%>
@@ -161,26 +161,34 @@ if(tr != null && listaGiornate.size() > 0){
 							</td>		
 					<%	
 						}
+					%>
+				</tr>
+				<tr>
+					<td>
+						<br>
+					</td>
+					<%
 						boolean creazioneCalendario = false;
 						if(!creazioneCalendario){
 							SimpleDateFormat sdfnd = new SimpleDateFormat("d");
 							SimpleDateFormat sdfld = new SimpleDateFormat("E",Locale.ITALIAN);
 							for(Day d:tr.getDays()){
 					%>
-								<td class="<%=d.getCssStyle("")%>">
-									<%=sdfnd.format(d.getDay().getTime())%>
-									<br>
-									<%=sdfld.format(d.getDay().getTime())%>
-								</td>
+									
+									<td class="<%=d.getCssStyle("")%>">
+										<%=sdfnd.format(d.getDay().getTime())%>
+										<br>
+										<%=sdfld.format(d.getDay().getTime())%>
+									</td>
+				
 					<%
 							}
 							creazioneCalendario = true;
 						}
-					%>		
-						
-					</tr>
+					%>
+					</tr>		
 					<tr>	
-					  <td class="Risorsa"><%=asscomm.getDescrizioneRisorsa() %></td>
+					  <td class="Risorsa" valign="top"><%=asscomm.getDescrizioneRisorsa() %></td>
 	<%
 						double totaleOrdinarie = 0;
 						double totaleStraordinario = 0;
@@ -279,7 +287,7 @@ if(tr != null && listaGiornate.size() > 0){
 								}
 							}
 						}
-	%>				
+	%>					</tr>
 						<tr>
 							<td>
 								<table>
@@ -299,11 +307,9 @@ if(tr != null && listaGiornate.size() > 0){
 										<td><div class="OreOrdinarie">Totale Ore: : </div></td>
 										<td><div class="OreOrdinarie"><%=totaleOrdinarie + totaleStraordinario + totaleAssenze%></div></td>
 									</tr>
-									
 								</table>
 							</td>
 						</tr>
-					</tr>
 	<%
 				}
 			}
