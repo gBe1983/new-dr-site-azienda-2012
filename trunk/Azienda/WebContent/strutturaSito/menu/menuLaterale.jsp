@@ -95,6 +95,7 @@
 							<li><a href="./GestioneAzienda?azione=visualizzaAzienda">Visualizza Profilo</a></li>
 							<li><a href="./index.jsp?azione=cambioPassword">Modifica Password</a></li>
 							<li><a href="./GestioneAzienda?azione=eliminaProfilo" onClick="return confirm('Sei sicuro di voler Cancellare il tuo profilo aziendale?');">Cancella Profilo</a></li>
+							<li><a href="./GestioneAzienda?azione=logout">Logout</a></li>
 						</ul>
 					</li>
 				</ul>	
