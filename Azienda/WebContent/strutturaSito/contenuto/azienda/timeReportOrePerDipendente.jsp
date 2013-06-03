@@ -214,37 +214,31 @@ if(tr != null){
 				totaleOreSraordinarie=0;
 				totaleOreAssenze=0;
 				tr.resetHours();
-		%>
-				<tr>
-					<td class="Risorsa" colspan="<%=tr.getDays().size()%>">
-						<br>
-						<%=tr.getRisorse().get(risorseKey).getRisorsaDTO().getNome()%>&nbsp;<%=tr.getRisorse().get(risorseKey).getRisorsaDTO().getCognome()%>
-					</td>
-				</tr>
-		<%
+
 				boolean creazioneCalendario = false;
 				for(String commessaKey:tr.getRisorse().get(risorseKey).getCommesse().keySet()){
 					
 					if(!creazioneCalendario){
 		%>
-						
-						<tr>
-							<td>
-							</td>
-						<%
-							SimpleDateFormat sdfnd = new SimpleDateFormat("d");
-							SimpleDateFormat sdfld = new SimpleDateFormat("E",Locale.ITALIAN);
-							for(Day d:tr.getDays()){
-						%>
-								<td class="<%=d.getCssStyle("")%>">
-									<%=sdfnd.format(d.getDay().getTime())%>
+							<tr>
+								<td class="Risorsa" >
 									<br>
-									<%=sdfld.format(d.getDay().getTime())%>
+									<%=tr.getRisorse().get(risorseKey).getRisorsaDTO().getNome()%>&nbsp;<%=tr.getRisorse().get(risorseKey).getRisorsaDTO().getCognome()%>
 								</td>
-						<%
-							}
-						%>
-						</tr>
+							<%
+								SimpleDateFormat sdfnd = new SimpleDateFormat("d");
+								SimpleDateFormat sdfld = new SimpleDateFormat("E",Locale.ITALIAN);
+								for(Day d:tr.getDays()){
+							%>
+									<td class="<%=d.getCssStyle("")%>">
+										<%=sdfnd.format(d.getDay().getTime())%>
+										<br>
+										<%=sdfld.format(d.getDay().getTime())%>
+									</td>
+							<%
+								}
+							%>
+							</tr>
 					<%
 							creazioneCalendario = true;
 						}

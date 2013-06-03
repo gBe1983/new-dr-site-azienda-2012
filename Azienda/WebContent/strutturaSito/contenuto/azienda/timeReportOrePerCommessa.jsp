@@ -302,24 +302,21 @@ if(tr != null && listaGiornate.size() > 0){
 									
 								</table>
 							</td>
-							<td colspan="<%=tr.getDays().size() %>">
-								<br> 
-							</td>
 						</tr>
 					</tr>
-		<%
-					if(!stampaRiga){
-						stampaRiga = true;
-		%>
-						<tr>
-							<td colspan="<%=tr.getDays().size()+1 %>">
-								<br>
-								<hr size="1"> 
-							</td>
-						<tr>
-		<%		
-					}
+	<%
 				}
+			}
+			if(!stampaRiga){
+				stampaRiga = true;
+	%>
+				<tr>
+					<td colspan="<%=tr.getDays().size()+1 %>">
+						<br>
+						<hr size="1"> 
+					</td>
+				<tr>
+	<%		
 			}
 		}
 	%>
