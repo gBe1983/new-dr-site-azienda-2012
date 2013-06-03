@@ -25,9 +25,8 @@ div.timeReport{
 }
 
 table.timeReport{
-	border-style:solid;
-	width:100%;
-	border-color:#A1A1A1;
+	width: 1180px;
+	border: 4px solid #A1A1A1;
 }
 
 th.weekHeader{

@@ -130,17 +130,18 @@ if(tr != null && listaGiornate.size() > 0){
 	
 	%>
 	<div class="timeReport">
-	<table class="timeReport" border="1">
+		<table class="timeReport" border="0">
 		
 	<%
 	for(int y = 0; y < listaClienti.size(); y++){
 			ClienteDTO client = (ClienteDTO) listaClienti.get(y);
 			
 			boolean cliente = false;
-			boolean stampaRiga = false;
+			boolean trovatoAssociazione = false;
 			for(int x = 0; x < listaAssociazioni.size(); x++){
 				Associaz_Risor_Comm asscomm = (Associaz_Risor_Comm)listaAssociazioni.get(x);
 				if(asscomm.getDescrizioneCliente().equals(client.getRagioneSociale())){
+					trovatoAssociazione = true;
 	%>		
 				<tr>
 					<td colspan="<%=tr.getDays().size()+1 %>">
@@ -313,7 +314,8 @@ if(tr != null && listaGiornate.size() > 0){
 	<%
 				}
 			}
-			if(!stampaRiga){
+			boolean stampaRiga = false;
+			if(!stampaRiga && trovatoAssociazione){
 				stampaRiga = true;
 	%>
 				<tr>
