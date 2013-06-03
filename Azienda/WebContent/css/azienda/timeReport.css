@@ -3,6 +3,8 @@ div#container{width: 1150px; margin: 20px auto ;text-align: left; background:#ff
 div#content{position:relative;float:left; width:1150px;margin:0px; padding:0px; /*border: 1px solid black;*/}
 div#content_right{float:right;width: 1150px;padding:5px;margin:0; /*border: 1px solid black;*/}
 
+.subtitle {width: 1150px; font: bold 15px Verdana, Arial, Helvetica, sans-serif; padding-top: 5px; padding-bottom: 5px; text-align : center; border-bottom:1px solid #bbb; margin-bottom: 20px;}
+
 
 table.filter{
 	font:normal 12px verdana, arial, sans-serif;

@@ -162,7 +162,7 @@ public class GestioneAzienda extends BaseServlet{
 					response.sendRedirect("./editorLogin.jsp&error=loginErrato");
 				}else{
 					//response.sendRedirect("http://localhost:8080/DrConsultingEditor/GestioneLogin?azione=login&utente="+id_azienda);
-					response.sendRedirect("http://drconsulting.tv/DrConsultingEditor/GestioneAzienda?azione=login&utente="+id_azienda);
+					response.sendRedirect("http://drconsulting.tv/DrConsultingEditor/GestioneLogin?azione=login&utente="+id_azienda);
 				}
 			}
 		}else{

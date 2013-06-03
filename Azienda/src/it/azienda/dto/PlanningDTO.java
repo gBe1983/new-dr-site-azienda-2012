@@ -23,6 +23,7 @@ public class PlanningDTO {
 	
 	private String descrizioneRisorsa;
 	ArrayList<PlanningDTO> listaGiornate = new ArrayList<PlanningDTO>();
+	private int id_associazione;
 
 	public PlanningDTO() {}
 
@@ -43,6 +44,14 @@ public class PlanningDTO {
 		this.permessi = permessi;
 		this.permessiNonRetribuiti = permessiNonRetribuiti;
 		this.descrizione_commessa=descrizione_commessa;
+	}
+	
+	public int getId_associazione() {
+		return id_associazione;
+	}
+
+	public void setId_associazione(int id_associazione) {
+		this.id_associazione = id_associazione;
 	}
 
 	public double getFerie() {

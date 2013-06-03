@@ -181,8 +181,7 @@ if(request.getSession().getAttribute("utenteLoggato") != null){
 						double totaliOre = 0;
 						for(int k = 0; k < listaGiornate.size(); k++){
 							PlanningDTO planning = (PlanningDTO) listaGiornate.get(k);
-							if(planning.getDescrizione_commessa().equals(asscomm.getDescrizioneCommessa()) &&
-								planning.getRagione_sociale().equals(client.getRagioneSociale())){
+							if(asscomm.getId_associazione() == planning.getId_associazione()){
 								
 								ArrayList<PlanningDTO> listaGiorni = planning.getListaGiornate();
 								

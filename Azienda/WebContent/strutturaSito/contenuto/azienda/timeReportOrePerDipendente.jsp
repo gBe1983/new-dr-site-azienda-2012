@@ -234,6 +234,8 @@ if(tr != null){
 		%>
 				<tr>
 					<td class="Risorsa" colspan="<%=tr.getDays().size()+1%>">
+						<hr size="1">
+						<br>
 						<%=tr.getRisorse().get(risorseKey).getRisorsaDTO().getNome()%>&nbsp;<%=tr.getRisorse().get(risorseKey).getRisorsaDTO().getCognome()%>
 					</td>
 				</tr>

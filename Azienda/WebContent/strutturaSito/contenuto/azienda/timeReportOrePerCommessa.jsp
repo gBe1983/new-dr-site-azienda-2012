@@ -160,8 +160,9 @@ if(tr != null && listaGiornate.size() > 0){
 				if(asscomm.getDescrizioneCliente().equals(client.getRagioneSociale())){
 	%>		
 				<tr>
-					<td colspan="<%=tr.getDays().size() %>">
+					<td colspan="<%=tr.getDays().size()+1 %>">
 						<br>
+						<hr size="1"> 
 					</td>
 				<tr>
 				<tr>
@@ -277,7 +278,24 @@ if(tr != null && listaGiornate.size() > 0){
 	%>				
 						<tr>
 							<td colspan="<%=tr.getDays().size() %>" class="risorsa">
-								Totale Ore: <%=totaleOrdinarie + totaleStraordinario + totaleAssenze%>
+								<table>
+									<tr>
+										<td><div class="OreOrdinarie">Ore Lavorative: </div></td>
+										<td><div class="OreOrdinarie" id="totali"><%=totaleOrdinarie %></div></td>
+									</tr>
+									<tr>
+										<td><div class="OreStraordinarie">Straordinario: </div></td>
+										<td><div class="OreStraordinarie" id="totali"><%=totaleStraordinario %></div></td>
+									</tr>
+									<tr>
+										<td><div class="OreAssenze" >Assenze: </div></td>
+										<td><div class="OreAssenze" id="totali"><%=totaleAssenze %></div></td>
+									</tr>
+									<tr>
+										<td><div class="OreOrdinarie">Totale Ore: : </div></td>
+										<td><div class="OreOrdinarie"><%=totaleOrdinarie + totaleStraordinario + totaleAssenze%></div></td>
+									</tr>
+								</table>
 							</td>
 						</tr>
 					</tr>

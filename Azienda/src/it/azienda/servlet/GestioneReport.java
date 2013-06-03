@@ -474,7 +474,7 @@ public class GestioneReport extends BaseServlet {
 								}
 								
 								PlanningDTO planning = new PlanningDTO();
-								
+								planning.setId_associazione(asscomm.getId_associazione());
 								planning.setRagione_sociale(asscomm.getDescrizioneCliente());
 								planning.setDescrizione_commessa(asscomm.getDescrizioneCommessa());
 								planning.setListaGiornate(new ReportDAO(conn.getConnection()).caricamentoOrePerCliente(
