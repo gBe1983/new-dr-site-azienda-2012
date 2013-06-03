@@ -153,13 +153,13 @@ public class GestioneAzienda extends BaseServlet{
 				String password = request.getParameter("password");
 				
 				if(!username.equals("editor")){
-					response.sendRedirect("./editorLogin&error=loginErrato");
+					response.sendRedirect("./editorLogin?errore=loginErrato");
 				}
 				
 				int id_azienda = aDAO.loginEditor(username, password);
 				
 				if(id_azienda == 0){
-					response.sendRedirect("./editorLogin.jsp&error=loginErrato");
+					response.sendRedirect("./editorLogin.jsp?errore=loginErrato");
 				}else{
 					//response.sendRedirect("http://localhost:8080/DrConsultingEditor/GestioneLogin?azione=login&utente="+id_azienda);
 					response.sendRedirect("http://drconsulting.tv/DrConsultingEditor/GestioneLogin?azione=login&utente="+id_azienda);
