@@ -32,8 +32,8 @@
 </form>
 
 <%
-	if(request.getParameter("error") != null){
-		if(request.getParameter("error").equals("loginErrato")){
+	if(request.getParameter("errore") != null){
+		if(request.getParameter("errore").equals("loginErrato")){
 %>
 			<script type="text/javascript">
 				alert("Username e/o Password errati");
