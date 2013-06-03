@@ -28,7 +28,7 @@
 				<li><a href="./index.jsp?azione=trattative" class="linkAlti" <% if(request.getParameter("azione") != null && request.getParameter("azione").equals("trattative")){ out.print("id='on'");} %>>Trattative</a></li>
 				<li><a href="./index.jsp?azione=commessa" class="linkAlti" <% if(request.getParameter("azione") != null && request.getParameter("azione").equals("commessa")){ out.print("id='on'");} %>>Commessa</a></li>
 				<li><a href="./index.jsp?azione=report" <% if(request.getParameter("azione") != null && request.getParameter("azione").equals("visualizzaConsuntivi")){ out.print("id='on'");} %>>Report</a></li>
-				<li><a href="./editorLogin.jsp">Editor</a></li>
+				<li><a href="./editorLogin.jsp?url=http://www.drconsulting.tv/Azienda/index.jsp?azione=homePage" >Editor</a></li>
 			</ul>
 		</div>
 	</div>

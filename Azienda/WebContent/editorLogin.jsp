@@ -1,5 +1,10 @@
 <%@ page language="java" contentType="text/html; charset=ISO-8859-1"
     pageEncoding="ISO-8859-1"%>
+
+<%
+	
+%>
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
@@ -13,6 +18,7 @@
 
 <form action="./GestioneAzienda" method="post">
 	<input type="hidden" name="azione" value="loginEditor">
+	<input type="hidden" name="azione" value="<%=request.getParameter("url") %>">
 	<table id="login">
 		<tr>
 			<th colspan="2">Dierre Consulting S.r.L. Editor</th>			
@@ -26,7 +32,8 @@
 			<td><input type="password" name="password"></td>			
 		</tr>
 		<tr>
-			<td colspan="2"><input type="submit" value="Login"></td>			
+			<td><input type="submit" value="Login"></td>
+			<td><div id="indietro"><a href="<%=request.getParameter("url") %>">Indietro</a><div>			
 		</tr>
 	</table>
 </form>

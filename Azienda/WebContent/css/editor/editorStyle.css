@@ -5,3 +5,6 @@ body{font-size: 12px;font-family: Arial, Helvetica, sans-serif; background: #eee
 #login{position: relative; left: 550px; top: 200px; border: 1px solid #CCC; background: white;}
 #login th{background: black; color:white; padding: 5px;}
 #login input{border: 1px solid #CCC; padding: 5px; }
+
+#indietro { width: 100px; height: 23px; background: #eee; text-align: center; padding-top: 7px; border: 1px solid #CCC;}
+#indietro a,#indietro a:visited{font-size: 12px; font-family: Arial, Helvetica, sans-serif; text-decoration: none; color: #000;} 
