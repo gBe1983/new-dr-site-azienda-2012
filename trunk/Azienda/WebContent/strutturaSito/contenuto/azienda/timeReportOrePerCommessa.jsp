@@ -137,7 +137,7 @@ if(tr != null && listaGiornate.size() > 0){
 			ClienteDTO client = (ClienteDTO) listaClienti.get(y);
 			
 			boolean cliente = false;
-			
+			boolean stampaRiga = false;
 			for(int x = 0; x < listaAssociazioni.size(); x++){
 				Associaz_Risor_Comm asscomm = (Associaz_Risor_Comm)listaAssociazioni.get(x);
 				if(asscomm.getDescrizioneCliente().equals(client.getRagioneSociale())){
@@ -145,7 +145,6 @@ if(tr != null && listaGiornate.size() > 0){
 				<tr>
 					<td colspan="<%=tr.getDays().size()+1 %>">
 						<br>
-						<hr size="1"> 
 					</td>
 				<tr>
 				<tr>
@@ -155,29 +154,30 @@ if(tr != null && listaGiornate.size() > 0){
 					%>
 						<td class="cliente" ><%=client.getRagioneSociale() %></td>
 					<%
-						}	
-			
-					boolean creazioneCalendario = false;
-					if(!creazioneCalendario){
+						}else{
 					%>
-							<%
-								SimpleDateFormat sdfnd = new SimpleDateFormat("d");
-								SimpleDateFormat sdfld = new SimpleDateFormat("E",Locale.ITALIAN);
-								for(Day d:tr.getDays()){
-							%>
-									<td class="<%=d.getCssStyle("")%>">
-										<%=sdfnd.format(d.getDay().getTime())%>
-										<br>
-										<%=sdfld.format(d.getDay().getTime())%>
-									</td>
-							<%
-								}
-							%>
-							
-						<%
-								creazioneCalendario = true;
+							<td>
+								<br>
+							</td>		
+					<%	
+						}
+						boolean creazioneCalendario = false;
+						if(!creazioneCalendario){
+							SimpleDateFormat sdfnd = new SimpleDateFormat("d");
+							SimpleDateFormat sdfld = new SimpleDateFormat("E",Locale.ITALIAN);
+							for(Day d:tr.getDays()){
+					%>
+								<td class="<%=d.getCssStyle("")%>">
+									<%=sdfnd.format(d.getDay().getTime())%>
+									<br>
+									<%=sdfld.format(d.getDay().getTime())%>
+								</td>
+					<%
 							}
-						%>
+							creazioneCalendario = true;
+						}
+					%>		
+						
 					</tr>
 					<tr>	
 					  <td class="Risorsa"><%=asscomm.getDescrizioneRisorsa() %></td>
@@ -281,7 +281,7 @@ if(tr != null && listaGiornate.size() > 0){
 						}
 	%>				
 						<tr>
-							<td colspan="<%=tr.getDays().size() %>" class="risorsa">
+							<td>
 								<table>
 									<tr>
 										<td><div class="OreOrdinarie">Ore Lavorative: </div></td>
@@ -299,12 +299,26 @@ if(tr != null && listaGiornate.size() > 0){
 										<td><div class="OreOrdinarie">Totale Ore: : </div></td>
 										<td><div class="OreOrdinarie"><%=totaleOrdinarie + totaleStraordinario + totaleAssenze%></div></td>
 									</tr>
+									
 								</table>
+							</td>
+							<td colspan="<%=tr.getDays().size() %>">
+								<br> 
 							</td>
 						</tr>
 					</tr>
-										
-	<%	
+		<%
+					if(!stampaRiga){
+						stampaRiga = true;
+		%>
+						<tr>
+							<td colspan="<%=tr.getDays().size()+1 %>">
+								<br>
+								<hr size="1"> 
+							</td>
+						<tr>
+		<%		
+					}
 				}
 			}
 		}
