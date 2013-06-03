@@ -131,23 +131,6 @@ if(tr != null && listaGiornate.size() > 0){
 	%>
 	<div class="timeReport">
 	<table class="timeReport">
-		<tr>
-			<td>
-			</td>
-		<%
-			SimpleDateFormat sdfnd = new SimpleDateFormat("d");
-			SimpleDateFormat sdfld = new SimpleDateFormat("E",Locale.ITALIAN);
-			for(Day d:tr.getDays()){
-		%>
-				<td class="<%=d.getCssStyle("")%>">
-					<%=sdfnd.format(d.getDay().getTime())%>
-					<br>
-					<%=sdfld.format(d.getDay().getTime())%>
-				</td>
-		<%
-			}
-		%>
-		</tr>
 		
 	<%
 	for(int y = 0; y < listaClienti.size(); y++){
@@ -173,9 +156,30 @@ if(tr != null && listaGiornate.size() > 0){
 						<td class="cliente" ><%=client.getRagioneSociale() %></td>
 					<%
 						}	
+			
+					boolean creazioneCalendario = false;
+					if(!creazioneCalendario){
 					%>
-				</tr>
-				<tr>	
+							<%
+								SimpleDateFormat sdfnd = new SimpleDateFormat("d");
+								SimpleDateFormat sdfld = new SimpleDateFormat("E",Locale.ITALIAN);
+								for(Day d:tr.getDays()){
+							%>
+									<td class="<%=d.getCssStyle("")%>">
+										<%=sdfnd.format(d.getDay().getTime())%>
+										<br>
+										<%=sdfld.format(d.getDay().getTime())%>
+									</td>
+							<%
+								}
+							%>
+							
+						<%
+								creazioneCalendario = true;
+							}
+						%>
+					</tr>
+					<tr>	
 					  <td class="Risorsa"><%=asscomm.getDescrizioneRisorsa() %></td>
 	<%
 						double totaleOrdinarie = 0;
