@@ -1,7 +1,6 @@
 package it.bo.azienda;
 
 
-import it.azienda.dto.Associaz_Risor_Comm;
 import it.azienda.dto.PlanningDTO;
 import it.azienda.dto.RisorsaDTO;
 import it.bo.Day;

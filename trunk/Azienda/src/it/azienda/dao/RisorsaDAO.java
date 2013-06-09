@@ -409,9 +409,9 @@ public class RisorsaDAO extends BaseDao {
 		return messaggio;
 	}
 	
-	public ArrayList elencoRisorse(){
+	public ArrayList<RisorsaDTO> elencoRisorse(){
 		
-		ArrayList listaRisorse = new ArrayList();
+		ArrayList<RisorsaDTO> listaRisorse = new ArrayList<RisorsaDTO>();
 		
 		String sql = "select id_risorsa, nome, cognome, costo, figura_professionale, seniority from tbl_risorse where visible = true order by cognome ASC";
 		PreparedStatement ps=null;

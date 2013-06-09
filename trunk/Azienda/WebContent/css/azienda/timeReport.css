@@ -231,3 +231,7 @@ div.totale{
 #totali{
 	text-align: right;
 }
+
+#scaricaExcel {float: right; }
+#scaricaExcel input{ border: 1px solid #CCC; padding: 5px;}
+#scaricaExcel input:hover{ background: #CCC;}

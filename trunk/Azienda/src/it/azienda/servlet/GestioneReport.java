@@ -8,9 +8,12 @@ import it.azienda.dto.Associaz_Risor_Comm;
 import it.azienda.dto.ClienteDTO;
 import it.azienda.dto.CommessaDTO;
 import it.azienda.dto.PlanningDTO;
+import it.azienda.dto.RisorsaDTO;
 import it.bo.azienda.TimeReport;
 import it.util.log.MyLogger;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -20,6 +23,7 @@ import java.util.Date;
 import java.util.List;
 
 import javax.servlet.ServletException;
+import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -493,7 +497,7 @@ public class GestioneReport extends BaseServlet {
 					request.setAttribute("listaClienti", listaClienti);
 					request.setAttribute("calendario", mesi);
 					
-					getServletContext().getRequestDispatcher("/main.jsp?azione=visualizzaConsuntivi&tipologia=1").forward(request, response);
+					getServletContext().getRequestDispatcher("/main.jsp?azione=visualizzaConsuntivi&tipologia=1&cliente="+request.getParameter("cliente")+"&risorsa="+request.getParameter("risorsa")+"&commessa="+request.getParameter("commessa")).forward(request, response);
 										
 				}else if(tipologiaReport.equals("2")){
 					
@@ -540,7 +544,7 @@ public class GestioneReport extends BaseServlet {
 					request.setAttribute("timeReport", timeReport);
 					request.setAttribute("listaGiornate", listaGiornate);
 					
-					getServletContext().getRequestDispatcher("/main.jsp?azione=visualizzaConsuntivi&tipologia=2").forward(request, response);
+					getServletContext().getRequestDispatcher("/main.jsp?azione=visualizzaConsuntivi&tipologia=2&cliente="+request.getParameter("cliente")+"&risorsa="+request.getParameter("risorsa")+"&commessa="+request.getParameter("commessa")).forward(request, response);
 
 					
 				}else if(tipologiaReport.equals("3")){
@@ -554,7 +558,7 @@ public class GestioneReport extends BaseServlet {
 							request.getParameter("risorsa"),
 							request.getParameter("commessa")));
 					
-					getServletContext().getRequestDispatcher("/main.jsp?azione=visualizzaConsuntivi&tipologia=3").forward(request, response);
+					getServletContext().getRequestDispatcher("/main.jsp?azione=visualizzaConsuntivi&tipologia=3&cliente="+request.getParameter("cliente")+"&risorsa="+request.getParameter("risorsa")+"&commessa="+request.getParameter("commessa")).forward(request, response);
 				}
 				
 			}else if("caricamentoReport".equals(azione)){
@@ -597,6 +601,40 @@ public class GestioneReport extends BaseServlet {
 				request.setAttribute("clienti",new ClienteDAO(conn.getConnection()).caricamentoClienti());
 				
 				getServletContext().getRequestDispatcher("/main.jsp?azione=visualizzaConsuntivi").forward(request, response);
+			
+			}else if(azione.equals("scaricaReportExcel")){
+				
+				ReportDAO rDAO = new ReportDAO(conn.getConnection());
+				
+				String dataDa = request.getParameter("dataInizio");
+				String dataA = request.getParameter("dataFine");
+				String risorsa = request.getParameter("risorsa");
+				String cliente = request.getParameter("cliente");
+				String commessa = request.getParameter("commessa");
+				
+				ArrayList<RisorsaDTO> listaRisorse = new RisorsaDAO(conn.getConnection()).elencoRisorse();
+				ArrayList<PlanningDTO> giornate = rDAO.caricaGiornatePerExcel(dataDa, dataA,risorsa,cliente,commessa); 
+				
+				
+				File file = rDAO.scaricaReportInExcel(dataDa,dataA,listaRisorse,giornate,getServletContext().getRealPath("/")+"xls");
+				
+				response.setContentType("application/octet-stream; name=\"" + file.getName() + "\"");
+				response.setCharacterEncoding("UTF-8");
+				response.addHeader("content-disposition", "attachment; filename=\"" + file.getName() + "\"");
+				
+				FileInputStream fileInputStream = new FileInputStream(file);
+				ServletOutputStream out = response.getOutputStream();
+				int i;
+				while ((i=fileInputStream.read()) != -1)
+					out.write(i);
+				fileInputStream.close();
+				out.close();
+				boolean fileCancellato= new File(getServletContext().getRealPath("/")+"xls/"+file.getName()).delete();
+				if(fileCancellato){
+					log.info("scaricaReportInFormatoExcel", "File cancellato");
+				}else{
+					log.info("scaricaReportInFormatoExcel", "File non Cancellato");
+				}
 			}
 		}else{
 			sessioneScaduta(response);
