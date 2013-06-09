@@ -2208,3 +2208,13 @@ function salvaAssociazioni(name){
     return true;
    
 }
+
+function valorizzazioniCampiNascosti(){
+	
+	document.reportExcel.dataInizio.value = document.report.dtDa.value;
+	document.reportExcel.dataFine.value = document.report.dtA.value;
+	document.reportExcel.risorsa.value = document.report.risorsa.value;
+	document.reportExcel.cliente.value = document.report.cliente.value;
+	document.reportExcel.commessa.value = document.report.commessa.value;
+	
+}

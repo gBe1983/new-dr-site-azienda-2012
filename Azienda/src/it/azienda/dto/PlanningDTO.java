@@ -6,6 +6,7 @@ import java.util.Calendar;
 
 public class PlanningDTO {
 
+	
 	private String cognome;
 	private String nome;
 	private String ragione_sociale;
@@ -13,6 +14,7 @@ public class PlanningDTO {
 	private int numero_ore;
 	private String descrizione_commessa;
 
+	private int id_planning;
 	private Calendar data;
 	private double numeroOre;
 	private double straordinari;
@@ -20,10 +22,16 @@ public class PlanningDTO {
 	private double mutua;
 	private double permessi;
 	private double permessiNonRetribuiti;
+	private double assenze;
+	private String descrizioneAssenza;
 	
+	public void setDescrizioneAssenza(String descrizioneAssenza) {
+		this.descrizioneAssenza = descrizioneAssenza;
+	}
 	private String descrizioneRisorsa;
 	ArrayList<PlanningDTO> listaGiornate = new ArrayList<PlanningDTO>();
 	private int id_associazione;
+	private int id_risorsa;
 
 	public PlanningDTO() {}
 
@@ -46,6 +54,32 @@ public class PlanningDTO {
 		this.descrizione_commessa=descrizione_commessa;
 	}
 	
+	public int getId_planning() {
+		return id_planning;
+	}
+	
+	public double getAssenze() {
+		return assenze;
+	}
+
+	public void setAssenze(double assenze) {
+		this.assenze = assenze;
+	}
+
+	public String getDescrizioneAssenza() {
+		return descrizioneAssenza;
+	}
+	
+	public void setId_planning(int id_planning) {
+		this.id_planning = id_planning;
+	}
+	public int getId_risorsa() {
+		return id_risorsa;
+	}
+
+	public void setId_risorsa(int id_risorsa) {
+		this.id_risorsa = id_risorsa;
+	}
 	public int getId_associazione() {
 		return id_associazione;
 	}

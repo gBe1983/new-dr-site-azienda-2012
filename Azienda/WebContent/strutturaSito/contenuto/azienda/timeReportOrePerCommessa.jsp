@@ -60,11 +60,11 @@ if(request.getSession().getAttribute("utenteLoggato") != null){
 			<td>Clienti:</td>
 			<td>
 				<select name="cliente" class="filter">
-					<option value="all">-- Tutti i Clienti --</option>
+					<option value="">-- Tutti i Clienti --</option>
 <%
 	for(ClienteDTO cliente:clienti){
 %>
-					<option value="<%=cliente.getId_cliente()%>"<%if(cliente.getId_cliente().equals(tr.getIdCliente())){%> selected="selected"<%}%>>
+					<option value="<%=cliente.getId_cliente()%>" <%if(request.getParameter("cliente") != null){ if((request.getParameter("cliente").equals(cliente.getId_cliente()))){ out.print("selected=selected");} }%>>
 						<%=cliente.getRagioneSociale()%>
 					</option>
 <%
@@ -75,13 +75,13 @@ if(request.getSession().getAttribute("utenteLoggato") != null){
 			<td>Commesse:</td>
 			<td>
 				<select name="commessa" class="filter">
-					<option value="all">
+					<option value="">
 						-- Tutte le Commesse --
 					</option>
 <%
 	for(CommessaDTO commessa:commesse){
 %>
-					<option value="<%=commessa.getId_commessa() %>"<%if(tr.getIdCommessa()!=null&&tr.getIdCommessa().equals(commessa.getId_commessa()+"")){%> selected="selected"<%}%>>
+					<option value="<%=commessa.getId_commessa() %>" <%if(request.getParameter("commessa") != null){ if(!request.getParameter("commessa").equals("")){ if(Integer.parseInt(request.getParameter("commessa")) == (commessa.getId_commessa())){ out.print("selected=selected");} } } %>>
 						<%=commessa.getCodiceCommessa() + " - " + commessa.getDescrizione() %>
 					</option>
 <%
@@ -94,13 +94,13 @@ if(request.getSession().getAttribute("utenteLoggato") != null){
 			<td>Risorse:</td>
 			<td colspan="1">
 				<select name="risorsa" class="filter">
-					<option value="all">
+					<option value="">
 						-- Tutte le Risorse --
 					</option>
 <%
 	for(RisorsaDTO risorsa:risorse){
 %>
-					<option value="<%=risorsa.getIdRisorsa()%>"<%if(tr.getIdRisorsa()!=null&&tr.getIdRisorsa().equals(risorsa.getIdRisorsa()+"")){%> selected="selected"<%}%>>
+					<option value="<%=risorsa.getIdRisorsa()%>" <%if(request.getParameter("risorsa") != null){ if(!request.getParameter("risorsa").equals("")){ if(Integer.parseInt(request.getParameter("risorsa")) == (risorsa.getIdRisorsa())){ out.print("selected=selected");} } }%>>
 						<%=risorsa.getCognome()%> <%=risorsa.getNome()%>
 					</option>
 <%
@@ -111,10 +111,41 @@ if(request.getSession().getAttribute("utenteLoggato") != null){
 			<td>Tipologia: </td>
 			<td>
 				<select name="tipologiaReport">
-					<option value="" selected="selected">-- Seleziona la Tipologia -- </option>
-					<option value="1">Ore per Cliente</option>
-					<option value="2">Ore per Commessa</option>
-					<option value="3">Ore per Dipendente</option>
+					
+					<%
+						if(request.getAttribute("tipologiaReport") != null){
+							String tipologiaReport = request.getAttribute("tipologiaReport").toString();
+							if(tipologiaReport.equals("1")){
+					%>
+								<option value="" >-- Seleziona la Tipologia -- </option>
+								<option value="1" selected="selected">Ore per Cliente</option>
+								<option value="2">Ore per Commessa</option>
+								<option value="3">Ore per Dipendente</option>
+					<%	
+							}else if(tipologiaReport.equals("2")){
+					%>
+								<option value="" >-- Seleziona la Tipologia -- </option>
+								<option value="1">Ore per Cliente</option>
+								<option value="2" selected="selected">Ore per Commessa</option>
+								<option value="3">Ore per Dipendente</option>
+					<%	
+							}else if(tipologiaReport.equals("3")){
+					%>
+								<option value="" >-- Seleziona la Tipologia -- </option>
+								<option value="1">Ore per Cliente</option>
+								<option value="2">Ore per Commessa</option>
+								<option value="3" selected="selected">Ore per Dipendente</option>
+					<%	
+							} 
+						}else{
+					%>
+							<option value="" selected="selected">-- Seleziona la Tipologia -- </option>
+							<option value="1">Ore per Cliente</option>
+							<option value="2">Ore per Commessa</option>
+							<option value="3">Ore per Dipendente</option>
+					<%
+						}
+					%>
 				</select>
 			</td>
 			<td>
@@ -130,6 +161,19 @@ if(tr != null && listaGiornate.size() > 0){
 	
 	%>
 	<div class="timeReport">
+
+		<div id="scaricaExcel">
+		<form action="./GestioneReport" method="post" name="reportExcel">
+			<input type="hidden" name="azione" value="scaricaReportExcel" />
+			<input type="hidden" name="dataInizio" value="" />
+			<input type="hidden" name="dataFine" value="" />
+			<input type="hidden" name="risorsa" value="" />
+			<input type="hidden" name="cliente" value="" />
+			<input type="hidden" name="commessa" value="" />
+			<input type="submit" value="Scarica Report in Excel" onclick="valorizzazioniCampiNascosti()"/>
+		</form>
+	</div>
+
 		<table class="timeReport" border="0">
 		
 	<%
