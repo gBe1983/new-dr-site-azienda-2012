@@ -22,6 +22,7 @@
 	<div id="nav">
 		<div class="menu">
 			<ul class="corner">
+				<li><a href="./index.jsp?azione=homePage" class="linkAlti" title="home" <% if(request.getParameter("azione") != null && request.getParameter("azione").equals("homePage")){ out.print("id='on'");} %>>Home</a></li>
 				<li><a href="./index.jsp?azione=cliente" class="linkAlti" title="cliente" <% if(request.getParameter("azione") != null && request.getParameter("azione").equals("cliente")){ out.print("id='on'");} %>>Cliente</a></li>
 				<li><a href="./index.jsp?azione=risorsa" class="linkAlti" <% if(request.getParameter("azione") != null && request.getParameter("azione").equals("risorsa")){ out.print("id='on'");} %>>Risorsa</a></li>
 				<li><a href="./index.jsp?azione=curriculum" class="linkAlti" <% if(request.getParameter("azione") != null && request.getParameter("azione").equals("caricamentoAllCurriculum")){ out.print("id='on'");} %>>Curriculum Vitae</a></li>

@@ -13,6 +13,6 @@
 		<input type="radio" name="tipoVisualizzazioneAnteprima" value="completo"><label>Completo</label><br>
 		<input type="radio" name="tipoVisualizzazioneAnteprima" value="anonimo"><label>Anonimo</label><br><br>
 	</div>
-	<input type="submit" value="anteprima" onclick="return closeWindowsAnteprima()">
-	<button value="chiudi" onclick="return closeFinestraAnteprima()">chiudi</button>
+	<button type="submit" value="anteprima" onclick="return closeWindowsAnteprima()">Anteprima</button>
+	<button value="chiudi" onclick="return closeFinestraAnteprima()">Chiudi</button>
 </form>

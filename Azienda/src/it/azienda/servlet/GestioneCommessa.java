@@ -138,10 +138,10 @@ public class GestioneCommessa extends BaseServlet {
 
 					if (azione.equals("inserisciCommessa")) {
 
-/*
- * recupero le date e le casto nel formato del server
- * cioè "yyyy-MM-dd"
- */
+						/*
+						 * recupero le date e le casto nel formato del server
+						 * cioè "yyyy-MM-dd"
+						 */
 						try {
 							commessa.setData_inizio(formattaDataServer.format(formattaDataWeb.parse(request.getParameter("commessaEsternaSingola_dataInizio"))));
 						} catch (ParseException e) {

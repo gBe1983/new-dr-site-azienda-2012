@@ -54,15 +54,14 @@
 			
 %>
 		<table id="channel">
-			<th>Cliente</th>
-			<th>Descrizione</th>
-			<th>Codice Commessa</th>
-			<th>Data Inizio</th>
-			<th>Data Fine</th>
-			<th>Importo Commessa</th>
-			<th>Stato</th>
-			<th>Tipologia</th>
-			<th colspan="2">Scelta</th>
+			<th><label>Cliente</label></th>
+			<th><label>Descrizione</label></th>
+			<th><label>Codice Commessa</label></th>
+			<th><label>Data Inizio</label></th>
+			<th><label>Data Fine</label></th>
+			<th><label>Stato</label></th>
+			<th><label>Tipologia</label></th>
+			<th colspan="2"><label>Scelta</label></th>
 <%
 		for(int x = 0; x < listaCommesse.size(); x++){
 			CommessaDTO visualizzaCommessa = (CommessaDTO)listaCommesse.get(x);
@@ -93,15 +92,6 @@
 									<%
 										if(visualizzaCommessa.getData_fine() != null){
 											out.print(visualizzaCommessa.getData_fine());
-										}
-									%>
-							</label>
-						</td>
-						<td>
-							<label>
-									<%
-										if(visualizzaCommessa.getImporto() != 0.0){
-											out.print(visualizzaCommessa.getImporto());
 										}
 									%>
 							</label>

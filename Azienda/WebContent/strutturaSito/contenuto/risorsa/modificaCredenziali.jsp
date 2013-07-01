@@ -30,11 +30,11 @@ if(sessioneModificaCredenziali.getAttribute("utenteLoggato") != null){
 <% 
 	if(risorsa.isFlaCreazioneCurriculum()){
 %>
-		<li><a href="GestioneCurriculum?azione=caricamentoCv&parametro0=<%=risorsa.getIdRisorsa() %>">Curriculum Vitae</a></li>				
+		<li><a href="GestioneCurriculum?azione=caricamentoCv&parametro0=<%=risorsa.getIdRisorsa() %>&dispositiva=risorsa">Curriculum Vitae</a></li>				
 <%
 	}else{
 %>
-		<li><a href="GestioneCurriculum?azione=caricamentoCv&parametro0=<%=risorsa.getIdRisorsa() %>&creazioneCv=1">Crea Curriculum Vitae</a></li>
+		<li><a href="GestioneCurriculum?azione=caricamentoCv&parametro0=<%=risorsa.getIdRisorsa() %>&creazioneCv=1&dispositiva=risorsa">Crea Curriculum Vitae</a></li>
 <%
 	}
 %>
@@ -49,7 +49,7 @@ if(sessioneModificaCredenziali.getAttribute("utenteLoggato") != null){
 	<input type="hidden" name="utente" value="<%=utente.getId_utente() %>" />
 	<input type="hidden" name="email" value="<%=utente.getEmail() %>" />
 	<fieldset>
-		<legend>Modifica Credenziali</legend>
+		<legend align="center">Modifica Credenziali</legend>
 		<table>
 			<tr>
 				<td>
@@ -67,13 +67,15 @@ if(sessioneModificaCredenziali.getAttribute("utenteLoggato") != null){
 					<input type="password" name="password" value=""/>
 				</td>
 			</tr>
-			<tr>
-				<td colspan="2">
-					<input type="submit" value="modifica credenziali" />
-				</td>
-			</tr>
 		</table>
 	</fieldset>
+	<table>
+		<tr>
+			<td colspan="2">
+				<button type="submit" value="modifica credenziali" >Modifica Credenziali</button>
+			</td>
+		</tr>
+	</table>
 </form>
 
 <%

@@ -16,8 +16,8 @@ if(controlloUtenteLoggato.getAttribute("utenteLoggato") != null){
 <form action="./GestioneCommessa" method="post" class="spazio">
 	<input type="hidden" name="azione" value="chiudiMensilita" />
 	<fieldset>
-		<legend>Chiusura Mensilità</legend>
-		<table>
+		<legend align="center">Chiusura Mensilità</legend>
+		<table align="center">
 			<tr>
 				<td>
 					<select name="mese">
@@ -49,7 +49,7 @@ if(controlloUtenteLoggato.getAttribute("utenteLoggato") != null){
 					</select>
 				</td>
 				<td>
-					<input type="submit" value="chiudiMensilita" />
+					<button type="submit" value="chiudiMensilita" >Chiudi Mensilita</button>
 				</td>
 			</tr>
 		</table>

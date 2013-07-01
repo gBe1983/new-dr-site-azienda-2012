@@ -2,15 +2,15 @@
 <!DOCTYPE log4j:configuration SYSTEM "log4j.dtd">
 <log4j:configuration xmlns:log4j='http://jakarta.apache.org/log4j/'>
 
-	<appender name="AziendaAppender" class="org.apache.log4j.RollingFileAppender">
-		<param name="File" value="C:/Users/Utente/Desktop/Progetti Java/dierreconsulting/Azienda/WebContent/WEB-INF/logs/azienda.log"/>
-		<param name="Append" value="true"/>
-		<param name="MaxFileSize" value="1MB"/>
-		<param name="MaxBackupIndex" value="10"/>
-		<layout class="org.apache.log4j.PatternLayout">
-			<param name="ConversionPattern" value="[%d{ISO8601}][%-5p][%t][%c]%m%n" />
-		</layout>
-	</appender>
+	<appender name="fileAppender" class="org.apache.log4j.DailyRollingFileAppender">
+      <param name="Append" value="true"/>
+      <param name="DatePattern" value="'.'yyyy-MM-dd"/>
+       <param name="File" value="C:/Users/Utente/Desktop/Progetti Java/dierreconsulting/Azienda/WebContent/WEB-INF/logs/Azienda.log"/>
+  <!-- <param name="File" value="/nfs_home/drcon860/public_html/log/DrConsultingEditor/Dipendente.log"/> -->
+      <layout class="org.apache.log4j.PatternLayout">
+         <param name="ConversionPattern" value="%d{dd-MM-yyyy HH:mm:ss:SSS} | [%c] | %p | %M:%L | %m %n "/>
+      </layout>
+   </appender>
 
 	<appender name="SmtpAppender" class="org.apache.log4j.net.SMTPAppender">
 		<param name="SMTPProtocol" value="smtps"/>
@@ -32,7 +32,7 @@
 
 	<root>
 		<level value="WARN"/>
-		<appender-ref ref="AziendaAppender"/>
+		<appender-ref ref="fileAppender"/>
 		<appender-ref ref="SmtpAppender"/>
 	</root>
 </log4j:configuration>

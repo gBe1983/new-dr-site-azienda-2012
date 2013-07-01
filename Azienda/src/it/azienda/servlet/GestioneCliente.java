@@ -80,11 +80,11 @@ public class GestioneCliente extends BaseServlet {
 				cliente.setEmail(request.getParameter("email"));
 				cliente.setSito(request.getParameter("sito"));
 				cliente.setCodFiscale(request.getParameter("codFiscale"));
-/*
- * verifico che tipo di azione sta compiendo l'utente in modo
- * che a seconda di come è valorizzata la variabile "azione"
- * compio una query piuttosto che un altra.
- */
+				/*
+				 * verifico che tipo di azione sta compiendo l'utente in modo
+				 * che a seconda di come è valorizzata la variabile "azione"
+				 * compio una query piuttosto che un altra.
+				 */
 				if (azione.equals("inserimentoCliente")) {
 					String messaggio = cDAO.inserimentoCliente(cliente);
 					if (messaggio.equals("ok")) {
@@ -114,13 +114,26 @@ public class GestioneCliente extends BaseServlet {
 								.forward(request, response);
 					}
 				}
+				
 			} else if (azione.equals("caricamentoNominativiCliente")) {//in questa sezione effettuo il caricamento di tutti i clienti che sono stati caricati nella tabella "Tbl_Cliente"
 				request.setAttribute("nominativi",cDAO.caricamentoNominativiCliente());
 				getServletContext()
 					.getRequestDispatcher(	"/index.jsp?azione=visualizzaNominativi&dispositiva=cliente")
 						.forward(request, response);
+				
 			} else if (azione.equals("ricercaCliente")) {
+				
+				/*
+				 * la ricerca cliente può avvenire da diversi canali che sono
+				 * Modifica Cliente, Dettaglio Cliente, Ricerca Cliente
+				 */
+				
 				request.setAttribute("cliente", cDAO.caricamentoCliente(request.getParameter("codice"), request.getParameter("nominativo")));
+				
+				/*
+				 * filtro per questo parametro perchè la richiesta avvenendo da più canali 
+				 * non sempre tale parametro viene passato in modalita "Modifica Cliente"
+				 */
 				if (request.getParameter("nominativo") != null) {
 					getServletContext()
 						.getRequestDispatcher("/index.jsp?azione=visualizzaCliente&dispositiva=cliente")
@@ -130,10 +143,11 @@ public class GestioneCliente extends BaseServlet {
 						.getRequestDispatcher("/index.jsp?azione=aggiornaCliente&dispositiva=cliente")
 							.forward(request, response);
 				}
+				
 			} else if (azione.equals("disabilitaCliente")) {//in questa sezione effettuo l'eliminazione logica del singolo Cliente che l'Utente ha deciso di eliminare
 				String messaggio = cDAO.disabilitaCliente(request.getParameter("codice"));
 				if (messaggio.equals("ok")) {
-					request.setAttribute("messaggio","L'eliminazione del Cliente avvenuta con successo");
+					request.setAttribute("messaggio","Il Cliente è stato diabilitato con successo");
 					getServletContext()
 						.getRequestDispatcher("/index.jsp?azione=messaggio")
 							.forward(request, response);
@@ -143,6 +157,7 @@ public class GestioneCliente extends BaseServlet {
 						.getRequestDispatcher("/index.jsp?azione=messaggio")
 							.forward(request, response);
 				}
+				
 			} else if (azione.equals("controlloCodiceCliente")) {
 				boolean controlloCodiceCliente = cDAO.controlloCodiceCliente(request.getParameter("codiceCliente"));
 				PrintWriter out;
@@ -153,11 +168,13 @@ public class GestioneCliente extends BaseServlet {
 				} catch (IOException e) {
 					log.error(metodo, "controlloCodiceCliente", e);
 				}
+				
 			} else if (azione.equals("caricamentoNominativiClienteDisabilitati")) {//in questa sezione effettuo il caricamento di tutti i clienti che sono stati caricati nella tabella "Tbl_Cliente"
 				request.setAttribute("nominativi",cDAO.caricamentoNominativiClienteDisabilitati());
 				getServletContext()
 					.getRequestDispatcher("/index.jsp?azione=visualizzaNominativi&dispositiva=cliente&tipo=disabilitato")
 						.forward(request, response);
+			
 			} else if (azione.equals("abilitazioneCliente")) {
 				String messaggio = cDAO.abilitaCliente(request.getParameter("codice"));
 				if (messaggio.equals("ok")) {

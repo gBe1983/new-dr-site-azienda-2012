@@ -15,9 +15,14 @@
 			<div class="subtitle ">Abilita Risorsa</div>
 			
 			<div class="spazioUltra">
+			
+			
 			<form action="./GestioneRisorse" method="post" >
 				<input type="hidden" name="azione" value="abilitaRisorsa">
-				<table>
+				<fieldset>
+				<legend align="center">Abilita Risorsa</legend>
+				<br>
+				<table align="center">
 					<tr>
 						<td><label>Risorsa:</label></td>
 						<td><select name="risorsa">
@@ -34,10 +39,11 @@
 					<tr>
 						<td colspan="2">
 							<br>
-							<input type="submit" value="abilita risorsa" />
+							<button type="submit" value="abilita risorsa" />Abilita Risorsa</button>
 						</td>
 					</tr>
 				</table>
+				</fieldset>
 			</form>
 			</div>
 <%

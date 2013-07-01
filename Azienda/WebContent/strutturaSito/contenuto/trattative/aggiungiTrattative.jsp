@@ -38,7 +38,7 @@ if(controlloUtenteLoggato.getAttribute("utenteLoggato") != null){
 		<input type="hidden" name="azione" value="inserisciTrattative" />
 		<table>
 			<tr>
-				<td>Tipo Trattativa:</td>
+				<td><label>Tipo Trattativa:</label></td>
 				<td>
 					<select name="sceltaTrattativa" onchange="sceltaTrattattiva(this.value)">
 							<option value="" selected="selected">-- Seleziona la Trattativa --</option>
@@ -64,80 +64,84 @@ if(controlloUtenteLoggato.getAttribute("utenteLoggato") != null){
 	<p>* i campi segnati in asterisco sono obbligatori</p>
 		
 	<fieldset>
-		<legend>Aggiungi Trattative</legend>
-	<table>
-		<tr>
-			<td>
-				<label>* Cliente: </label>
-			</td>
-			<td>
-				<select name="trattattivaSingola_codice">
-					<option value="" selected="selected">-- Seleziona il Cliente </option>
-				<%
-					
-					for(int x = 0; x < listaClienti.size(); x++){
-						ClienteDTO cliente = (ClienteDTO)listaClienti.get(x);
-				%>
-								<option value="<%=cliente.getId_cliente() %>" ><%=cliente.getRagioneSociale() %></option>
-				<%			
-					}
-				%>
-				</select>
-			</td>
-		</tr>
-		<tr>
-		<td><label>* Risorsa: </label></td>
-		<td><select name="trattattivaSingola_risorsa">
-				<option value="" selected="selected">-- Seleziona la risorsa --</option>
-				<%
-							if(request.getAttribute("listaRisorse") != null){
-								for(int x = 0; x < listaRisorse.size(); x++){
-									RisorsaDTO risorsa = ((RisorsaDTO) listaRisorse.get(x));
-				%>
-									<option value="<%=risorsa.getIdRisorsa() %>"><%=risorsa.getCognome() + " " + risorsa.getNome() %></option>
-				<%
+		<legend align="center">Aggiungi Trattative</legend>
+		<table>
+			<tr>
+				<td>
+					<label>* Cliente: </label>
+				</td>
+				<td>
+					<select name="trattattivaSingola_codice">
+						<option value="" selected="selected">-- Seleziona il Cliente </option>
+					<%
+						
+						for(int x = 0; x < listaClienti.size(); x++){
+							ClienteDTO cliente = (ClienteDTO)listaClienti.get(x);
+					%>
+									<option value="<%=cliente.getId_cliente() %>" ><%=cliente.getRagioneSociale() %></option>
+					<%			
+						}
+					%>
+					</select>
+				</td>
+			</tr>
+			<tr>
+			<td><label>* Risorsa: </label></td>
+			<td><select name="trattattivaSingola_risorsa">
+					<option value="" selected="selected">-- Seleziona la risorsa --</option>
+					<%
+								if(request.getAttribute("listaRisorse") != null){
+									for(int x = 0; x < listaRisorse.size(); x++){
+										RisorsaDTO risorsa = ((RisorsaDTO) listaRisorse.get(x));
+					%>
+										<option value="<%=risorsa.getIdRisorsa() %>"><%=risorsa.getCognome() + " " + risorsa.getNome() %></option>
+					<%
+									}
 								}
-							}
-				%>
-			</select></td>
-		</tr>
-		<tr>
-			<td>
-				<label>Contatto: </label>
-			</td>
-			<td>
-				<input type="text" name="trattattivaSingola_contatto" />
-			</td>
-		</tr>
-		<tr>
-			<td>
-				<label>* Data: </label>
-			</td>
-			<td>
-				<input type="text" name="trattattivaSingola_data" class="data"/>
-			</td>
-		</tr>
-		<tr>
-			<td>
-				<label>* Oggetto: </label>
-			</td>
-			<td>
-				<input type="text" name="trattattivaSingola_oggetto" />
-			</td>
-		</tr>
-		<tr>
-			<td>
-				<label>Esito: </label>
-			</td>
-			<td>
-				<select name="trattattivaSingola_esito" onchange="commessa('inserisci')">
-					<option value="aperta" selected="selected">Aperta</option>
-					<option value="persa">Persa</option>
-					<option value="nuova commessa">Nuova Commessa</option>
-				</select>
-			</td>
-		</tr>
-	</table>
+					%>
+				</select></td>
+			</tr>
+			<tr>
+				<td>
+					<label>Contatto: </label>
+				</td>
+				<td>
+					<input type="text" name="trattattivaSingola_contatto" />
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<label>* Data: </label>
+				</td>
+				<td>
+					<input type="text" name="trattattivaSingola_data" class="data"/>
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<label>* Oggetto: </label>
+				</td>
+				<td>
+					<input type="text" name="trattattivaSingola_oggetto" />
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<label>Esito: </label>
+				</td>
+				<td>
+					<select name="trattattivaSingola_esito" onchange="commessa('inserisci')">
+						<option value="aperta" selected="selected">Aperta</option>
+						<option value="persa">Persa</option>
+						<option value="nuova commessa">Nuova Commessa</option>
+					</select>
+				</td>
+			</tr>
+			<tr>
+				<td><label>Note: <br>(max 1000 caratteri)</label></td>
+				<td><textarea name="trattattivaSingola_note" rows="10" cols="30">Inserisci Testo</textarea>
+			</tr>
+		</table>
 	</fieldset>
 </div>
 
@@ -148,7 +152,7 @@ if(controlloUtenteLoggato.getAttribute("utenteLoggato") != null){
 	<p>* i campi segnati in asterisco sono obbligatori</p>
 
 		<fieldset>
-			<legend>Aggiungi Trattative</legend>
+			<legend align="center">Aggiungi Trattative</legend>
 		<table>
 		<tr>
 			<td>
@@ -205,6 +209,10 @@ if(controlloUtenteLoggato.getAttribute("utenteLoggato") != null){
 				</select>
 			</td>
 		</tr>
+		<tr>
+			<td><label>Note: <br>(max 1000 caratteri)</label></td>
+			<td><textarea name="note" rows="10" cols="30">Inserisci Testo</textarea>
+		</tr>
 	</table>
 	</fieldset>	
 </div>
@@ -216,43 +224,43 @@ if(controlloUtenteLoggato.getAttribute("utenteLoggato") != null){
 <fieldset><legend>Aggiungi Commessa</legend>
 <table>
 	<tr>
-		<td>Codice Commessa</td>
+		<td><label>Codice Commessa</label></td>
 		<td><input type="text" name="codiceCommessa" id="codiceCommessa" value="<%=newCodCommessaEsterna%>" readonly="readonly" /></td>
 	</tr>
 	<tr>
-		<td>* Data</td>
+		<td><label>* Data</label></td>
 		<td><input type="text" name="dataOfferta" class="data" /></td>
 	</tr>
 	<tr>
-		<td>* Oggetto</td>
+		<td><label>* Oggetto</label></td>
 		<td><input type="text" name="oggettoOfferta" /></td>
 
-		<td>* Descrizione</td>
+		<td><label>* Descrizione</label></td>
 		<td><input type="text" name="descrizione" />
 		</td>
 	</tr>
 	<tr>
-		<td>Sede Lavoro</td>
+		<td><label>Sede Lavoro</label></td>
 		<td><input type="text" name="sedeLavoro" />
 		</td>
 	</tr>
 	<tr>
-		<td>* Data Inizio</td>
+		<td><label>* Data Inizio</label></td>
 		<td><input type="text" name="dataInizio" class="data" /></td>
 
-		<td>* Data Fine</td>
+		<td><label>* Data Fine</label></td>
 		<td><input type="text" name="dataFine" class="data" /></td>
 	</tr>
 	<tr>
-		<td>* Importo</td>
+		<td><label>* Importo</label></td>
 		<td><input type="text" name="importo" /></td>
 	</tr>
 	<tr>
-		<td>Importo Lettere</td>
+		<td><label>Importo Lettere</label></td>
 		<td><input type="text" name="importoLettere" /></td>
 		
 		
-		<td>Pagamento</td>
+		<td><label>Pagamento</label></td>
 		<td><select name="pagamento">
 			<option value=""></option>
 			<option value="30">30</option>
@@ -263,10 +271,10 @@ if(controlloUtenteLoggato.getAttribute("utenteLoggato") != null){
 		</select></td>
 	</tr>
 	<tr>
-		<td>Ore</td>
+		<td><label>Ore</label></td>
 		<td><input type="text" name="ore" /></td>
 		
-		<td>Al</td>
+		<td><label>Al</label></td>
 		<td>
 			<select name="al">
 				<option value=""></option>
@@ -276,12 +284,12 @@ if(controlloUtenteLoggato.getAttribute("utenteLoggato") != null){
 		</td>
 	</tr>
 	<tr>
-		<td>Note<br>
-		(1000 caratteri)</td>
+		<td><label>Note<br>
+		(1000 caratteri)</label></td>
 		<td><textarea name="note" cols="30" rows="10" onclick="cancellaCampoTextArea('inserisciCommessa','singola')" onfocus="cancellaCampoTextArea('inserisciCommessa','singola')">Inserisci la descrizione</textarea></td>
 	</tr>
 	<tr>
-		<td>Stato</td>
+		<td><label>Stato</label></td>
 		<td><select name="stato">
 			<option value="aperta">Aperta</option>
 		</select></td>
@@ -293,10 +301,10 @@ if(controlloUtenteLoggato.getAttribute("utenteLoggato") != null){
 <table id="bottoni">
 	<tr>
 		<td>
-			<input type="submit" value="inserisci trattativa" id="inserisciTrattativa" onclick="return controlloInserimentoTrattativa()"/>
+			<button type="submit" value="inserisci trattativa" id="inserisciTrattativa" onclick="return controlloInserimentoTrattativa()">Inserisci Trattativa</button>
 		</td>
 		<td>
-			<input type="reset" value="svuota campi" />
+			<button type="reset" value="svuota campi" />Svuota Campi</button>
 		</td>
 	</tr>
 </table>
@@ -339,7 +347,7 @@ if(controlloUtenteLoggato.getAttribute("utenteLoggato") != null){
 	<p>* i campi segnati in asterisco sono obbligatori</p>
 	
 	<fieldset>
-		<legend>Modifica Trattative</legend>
+		<legend align="center">Modifica Trattative</legend>
 			<table>
 				<tr>
 					<td>
@@ -395,6 +403,10 @@ if(controlloUtenteLoggato.getAttribute("utenteLoggato") != null){
 						</select>
 					</td>
 				</tr>
+				<tr>
+					<td><label>Note: <br>(max 1000 caratteri)</label></td>
+					<td><textarea name="trattattivaSingola_note" rows="10" cols="30"><%=trattativa.getNote() %></textarea>
+				</tr>
 			</table>
 	</fieldset>
 </div>
@@ -410,7 +422,7 @@ if(controlloUtenteLoggato.getAttribute("utenteLoggato") != null){
 		<p>* i campi segnati in asterisco sono obbligatori</p>
 		
 		<fieldset>
-			<legend>Modifica Trattative</legend>
+			<legend align="center">Modifica Trattative</legend>
 		<table>
 		<tr>
 			<td>
@@ -458,6 +470,10 @@ if(controlloUtenteLoggato.getAttribute("utenteLoggato") != null){
 				</select>
 			</td>
 		</tr>
+		<tr>
+			<td><label>Note: <br>(max 1000 caratteri)<label></td>
+			<td><textarea name="note" rows="10" cols="30"><%=trattativa.getNote() %></textarea>
+		</tr>
 	</table>
 	</fieldset>	
 </div>
@@ -470,45 +486,45 @@ if(controlloUtenteLoggato.getAttribute("utenteLoggato") != null){
 <div id="creazioneCommessa">
 
 	<fieldset>
-		<legend>Aggiungi Commessa</legend>
+		<legend align="center">Aggiungi Commessa</legend>
 			<table>
 				<tr>
-					<td>* Codice Commessa</td>
+					<td><label>* Codice Commessa</label></td>
 					<td><input type="text" name="codiceCommessa" id="codiceCommessa" onblur="controlloCodiceCommessa(this.value)" value="<%=newCodCommessaEsterna%>" readonly="readonly" /></td>
 				</tr>
 				<tr>
-					<td>* Data</td>
+					<td><label>* Data</label></td>
 					<td><input type="text" name="dataOfferta" class="data" /></td>
 				</tr>
 				<tr>
-					<td>* Oggetto</td>
+					<td><label>* Oggetto</label></td>
 					<td><input type="text" name="oggettoOfferta" /></td>
 			
-					<td>* Descrizione</td>
+					<td><label>* Descrizione</label></td>
 					<td><input type="text" name="descrizione" />
 					</td>
 				</tr>
 				<tr>
-					<td>Sede Lavoro</td>
+					<td><label>Sede Lavoro</label></td>
 					<td><input type="text" name="sedeLavoro" />
 					</td>
 				</tr>
 				<tr>
-					<td>* Data Inizio</td>
+					<td><label>* Data Inizio</label></td>
 					<td><input type="text" name="dataInizio" class="data" /></td>
 			
-					<td>* Data Fine</td>
+					<td><label>* Data Fine</label></td>
 					<td><input type="text" name="dataFine" class="data" /></td>
 				</tr>
 				<tr>
-					<td>* Importo</td>
+					<td><label>* Importo</label></td>
 					<td><input type="text" name="importo" /></td>
 				</tr>
 				<tr>
-					<td>Importo Lettere</td>
+					<td><label>Importo Lettere</label></td>
 					<td><input type="text" name="importoLettere" /></td>
 			
-					<td>Pagamento</td>
+					<td><label>Pagamento</label></td>
 					<td><select name="pagamento">
 						<option value=""></option>
 						<option value="30">30</option>
@@ -519,10 +535,10 @@ if(controlloUtenteLoggato.getAttribute("utenteLoggato") != null){
 					</select></td>
 				</tr>
 				<tr>
-					<td>Ore</td>
+					<td><label>Ore</label></td>
 					<td><input type="text" name="ore" /></td>
 					
-					<td>Al</td>
+					<td><label>Al</label></td>
 					<td>
 						<select name="al">
 							<option value=""></option>
@@ -532,12 +548,12 @@ if(controlloUtenteLoggato.getAttribute("utenteLoggato") != null){
 					</td>
 				</tr>
 				<tr>
-					<td>Note<br>
-					(1000 caratteri)</td>
+					<td><label>Note<br>
+					(1000 caratteri)</label></td>
 					<td><textarea name="note" cols="30" rows="10" onclick="cancellaCampoTextArea('inserisciCommessa','singola')" onfocus="cancellaCampoTextArea('inserisciCommessa','singola')">Inserisci la descrizione</textarea></td>
 				</tr>
 				<tr>
-					<td>Stato</td>
+					<td><label>Stato</label></td>
 					<td><select name="stato">
 						<option value="aperta">Aperta</option>
 					</select></td>
@@ -548,10 +564,7 @@ if(controlloUtenteLoggato.getAttribute("utenteLoggato") != null){
 <table>
 	<tr>
 		<td>
-			<input type="submit" value="modifica trattativa" id="inserisciTrattativa" onclick="return controlloModificaTrattativa('<%=trattativa.getId_tipologiaTrattative() %>')"/>
-		</td>
-		<td>
-			<input type="reset" value="svuota campi" />
+			<button type="submit" value="modifica trattativa" id="inserisciTrattativa" onclick="return controlloModificaTrattativa('<%=trattativa.getId_tipologiaTrattative() %>')" >Modifica Trattativa</button>
 		</td>
 	</tr>
 </table>

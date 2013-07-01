@@ -89,20 +89,28 @@ public class GestioneTrattattive extends BaseServlet {
 				 * - Codice == "" e idRisorsa == "" e esito == "" 
 				 * - idTrattativa <> ""
 				 */
-				if (request.getParameter("idRisorsa") != null && 
-						request.getParameter("codice") != null && 
-						request.getParameter("esito") != null && 
+				
+				/*
+				 * parametri di ricerca:
+				 * - idRisorsa corrisponde all'id della risorsa
+				 * - codice corrisponse al codice del cliente
+				 * - esito corrisponde allo stato della trattativa
+				 * - anno corrisponde all'anno con cui si ricerca le trattative
+				 */
+				if (request.getParameter("idRisorsa") != null ||
+						request.getParameter("codice") != null ||
+						request.getParameter("esito") != null || 
 						request.getParameter("anno") != null) {
 	
-					listaTrattattive = tDAO.ricercaTrattative(request.getParameter("codice"), Integer.parseInt(request.getParameter("idRisorsa")), 0,request.getParameter("esito"),Integer.parseInt(request.getParameter("anno")));
+					listaTrattattive = tDAO.ricercaTrattative(request.getParameter("codice"), request.getParameter("idRisorsa"), 0,request.getParameter("esito"),request.getParameter("anno"));
 					
 				} else if (request.getParameter("dettaglioTrattativa") != null) {
 	
-					listaTrattattive = tDAO.ricercaTrattative("", 0, Integer.parseInt(request.getParameter("dettaglioTrattativa")),"",0);
+					listaTrattattive = tDAO.ricercaTrattative("", "", Integer.parseInt(request.getParameter("dettaglioTrattativa")),"","");
 					
 				} else {
 					
-					listaTrattattive = tDAO.ricercaTrattative("", 0, 0,"",0);
+					listaTrattattive = tDAO.ricercaTrattative("", "", 0,"","");
 					
 				}
 	
@@ -151,8 +159,13 @@ public class GestioneTrattattive extends BaseServlet {
 				 */
 				if (request.getParameter("dispositiva") != null) {
 					if (request.getParameter("dispositiva").equals("trattative")) {
-						rd = getServletContext().getRequestDispatcher("/index.jsp?azione=visualizzaTrattative&tipo=tutte&dispositiva=trattative");
-						rd.forward(request, response);
+						if(request.getParameter("dettaglioTrattativa") != null){
+							rd = getServletContext().getRequestDispatcher("/index.jsp?azione=visualizzaTrattative&tipo=tutte&dispositiva=trattative&dettaglioTrattativa="+request.getParameter("dettaglioTrattativa"));
+							rd.forward(request, response);
+						}else{
+							rd = getServletContext().getRequestDispatcher("/index.jsp?azione=visualizzaTrattative&tipo=tutte&dispositiva=trattative");
+							rd.forward(request, response);
+						}
 					} else {
 						if(request.getParameter("dettaglioTrattativa") != null){
 							rd = getServletContext().getRequestDispatcher("/index.jsp?azione=visualizzaTrattative&dettaglioTrattativa="+request.getParameter("dettaglioTrattativa")+"&tipo=azienda&dispositiva=cliente");
@@ -231,6 +244,7 @@ public class GestioneTrattattive extends BaseServlet {
 					trattative.setOggetto(request.getParameter("trattattivaSingola_oggetto"));
 					trattative.setEsito(request.getParameter("trattattivaSingola_esito"));
 					trattative.setId_tipologiaTrattative(request.getParameter("sceltaTrattativa"));
+					trattative.setNote(request.getParameter("trattattivaSingola_note"));
 				}else{
 					trattative.setId_cliente(request.getParameter("codice"));
 					trattative.setContatto(request.getParameter("contatto"));
@@ -238,6 +252,7 @@ public class GestioneTrattattive extends BaseServlet {
 					trattative.setOggetto(request.getParameter("oggetto"));
 					trattative.setEsito(request.getParameter("esito"));
 					trattative.setId_tipologiaTrattative(request.getParameter("sceltaTrattativa"));
+					trattative.setNote(request.getParameter("note"));
 				}
 	
 				// verifico che valore ha assunto azione

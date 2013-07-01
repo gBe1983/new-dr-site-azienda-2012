@@ -52,143 +52,143 @@
     					String azione = request.getParameter("azione");
     					if(azione.equals("homePage")){
     			%>
-							<jsp:include page="strutturaSito/contenuto/homePage.jsp" />
+							<jsp:include page="strutturaSito/contenuto/home/homePage.jsp" />
 				<%
     					}else if(azione.equals("registrazioneAzienda") || azione.equals("visualizzaAzienda") || azione.equals("aggiornaAzienda")){
     			%>	
-							<jsp:include page="strutturaSito/contenuto/aggiungiAzienda.jsp" />
+							<jsp:include page="strutturaSito/contenuto/areaPrivata/aggiungiAzienda.jsp" />
 				<%  
     					}else if(azione.equals("messaggio")){
     			%>	
-							<jsp:include page="strutturaSito/contenuto/messaggio.jsp" />
+							<jsp:include page="strutturaSito/contenuto/home/messaggio.jsp" />
 				<%  
     					}else if(azione.equals("aggiungiRisorsa") || azione.equals("modificaRisorsa") || azione.equals("dettaglioRisorsa")){
     			%>	
-							<jsp:include page="strutturaSito/contenuto/aggiungiRisorsa.jsp" />
+							<jsp:include page="strutturaSito/contenuto/risorsa/aggiungiRisorsa.jsp" />
 				<%  
     					}else if(azione.equals("aggiungiCliente") || azione.equals("visualizzaCliente") || azione.equals("aggiornaCliente")){
     			%>	
-							<jsp:include page="strutturaSito/contenuto/aggiungiCliente.jsp" />
+							<jsp:include page="strutturaSito/contenuto/cliente/aggiungiCliente.jsp" />
 				<%  
     					}else if(azione.equals("ricercaRisorse")){
     			%>	
-							<jsp:include page="strutturaSito/contenuto/ricercaRisorse.jsp" />
+							<jsp:include page="strutturaSito/contenuto/risorsa/ricercaRisorse.jsp" />
 				<%  
     					}else if(azione.equals("visualizzaRisorse")){
     			%>	
-							<jsp:include page="strutturaSito/contenuto/visualizzaRisorse.jsp" />
+							<jsp:include page="strutturaSito/contenuto/risorsa/visualizzaRisorse.jsp" />
 				<%  
     					}else if(azione.equals("visualizzaNominativi")){
     			%>	
-							<jsp:include page="strutturaSito/contenuto/ricercaCliente.jsp" />
+							<jsp:include page="strutturaSito/contenuto/cliente/ricercaCliente.jsp" />
 				<%  
     					}else if(azione.equals("visualizzaTrattative")){
     			%>	
-							<jsp:include page="strutturaSito/contenuto/visualizzaTrattative.jsp" />
+							<jsp:include page="strutturaSito/contenuto/trattative/visualizzaTrattative.jsp" />
 				<%  
     					}else if(azione.equals("aggiungiTrattative") || azione.equals("aggiornaTrattativa")){
     			%>	
-							<jsp:include page="strutturaSito/contenuto/aggiungiTrattative.jsp" />
+							<jsp:include page="strutturaSito/contenuto/trattative/aggiungiTrattative.jsp" />
 				<%  
     					}else if(azione.equals("cambioPassword")){
     			%>	
-							<jsp:include page="strutturaSito/contenuto/cambioPassword.jsp" />
+							<jsp:include page="strutturaSito/contenuto/areaPrivata/cambioPassword.jsp" />
 				<%  
     					}else if(azione.equals("cliente")){
     			%>	
-							<jsp:include page="strutturaSito/contenuto/cliente.jsp" />
+							<jsp:include page="strutturaSito/contenuto/cliente/cliente.jsp" />
 				<%  
     					}else if(azione.equals("risorsa")){
     			%>	
-							<jsp:include page="strutturaSito/contenuto/risorsa.jsp" />
+							<jsp:include page="strutturaSito/contenuto/risorsa/risorsa.jsp" />
 				<%  
     					}else if(azione.equals("trattative")){
     			%>	
-							<jsp:include page="strutturaSito/contenuto/trattative.jsp" />
+							<jsp:include page="strutturaSito/contenuto/trattative/trattative.jsp" />
 				<%  
     					}else if(azione.equals("commessa")){
     			%>	
-							<jsp:include page="strutturaSito/contenuto/commessa.jsp" />
+							<jsp:include page="strutturaSito/contenuto/commesse/commessa.jsp" />
 				<%  
     					}else if(azione.equals("curriculum")){
     			%>	
-							<jsp:include page="strutturaSito/contenuto/curriculum.jsp" />
+							<jsp:include page="strutturaSito/contenuto/curriculum/curriculum.jsp" />
 				<%  
     					}else if(azione.equals("aggiungiCommessa") || azione.equals("aggiornaCommessa") || azione.equals("dettaglioCommessa")){
     			%>	
-							<jsp:include page="strutturaSito/contenuto/aggiungiCommessa.jsp" />
+							<jsp:include page="strutturaSito/contenuto/commesse/aggiungiCommessa.jsp" />
 				<%  
     					}else if(azione.equals("visualizzaCommesse")){
     			%>	
-							<jsp:include page="strutturaSito/contenuto/visualizzaCommesse.jsp" />
+							<jsp:include page="strutturaSito/contenuto/commesse/visualizzaCommesse.jsp" />
 				<%  
     					}else if(azione.equals("ricercaCommessa")){
     			%>	
-							<jsp:include page="strutturaSito/contenuto/ricercaCommesse.jsp" />
+							<jsp:include page="strutturaSito/contenuto/commesse/ricercaCommesse.jsp" />
 				<%  
     					}else if(azione.equals("report")){
     			%>	
-							<jsp:include page="strutturaSito/contenuto/report.jsp" />
+							<jsp:include page="strutturaSito/contenuto/report/report.jsp" />
 				<%  
     					}else if(azione.equals("risorseAssociate")){
     			%>	
-							<jsp:include page="strutturaSito/contenuto/visualizzaAssociazioneCommessaRisorsa.jsp" />
+							<jsp:include page="strutturaSito/contenuto/commesse/visualizzaAssociazioneCommessaRisorsa.jsp" />
 				<%  
     					}else if(azione.equals("risorseDaAssociate")){
     			%>	
-							<jsp:include page="strutturaSito/contenuto/visualizzaRisorsaDaAssociareCommessa.jsp" />
+							<jsp:include page="strutturaSito/contenuto/commesse/visualizzaRisorsaDaAssociareCommessa.jsp" />
 				<%  
     					}else if(azione.equals("caricaAssociazione") || azione.equals("dettaglioAssociazione") ){
     			%>	
-							<jsp:include page="strutturaSito/contenuto/caricaAssociazione.jsp" />
+							<jsp:include page="strutturaSito/contenuto/commesse/caricaAssociazione.jsp" />
 				<%  
     					}else if(azione.equals("credenziali")){
     			%>	
-							<jsp:include page="strutturaSito/contenuto/modificaCredenziali.jsp" />
+							<jsp:include page="strutturaSito/contenuto/risorsa/modificaCredenziali.jsp" />
 				<%  
     					}else if(azione.equals("chiudiMensilita")){
     			%>	
-							<jsp:include page="strutturaSito/contenuto/chiudiMensilita.jsp" />
+							<jsp:include page="strutturaSito/contenuto/commesse/chiudiMensilita.jsp" />
 				<%  
     					}else if(azione.equals("visualizzaReport")){
     			%>	
-							<jsp:include page="strutturaSito/contenuto/visualizzaReport.jsp" />
+							<jsp:include page="strutturaSito/contenuto/report/visualizzaReport.jsp" />
 				<%
 						}else if(azione.equals("listaRisorseDaAbilitare")){
 				%>
-							<jsp:include page="strutturaSito/contenuto/listaRisorseDaAbilitare.jsp" />
+							<jsp:include page="strutturaSito/contenuto/risorsa/listaRisorseDaAbilitare.jsp" />
 				<%
 						}else if(azione.equals("visualizzaCurriculum")){
 				%>
-							<jsp:include page="strutturaSito/contenuto/visualizzaCurriculum.jsp" />
+							<jsp:include page="strutturaSito/contenuto/curriculum/visualizzaCurriculum.jsp" />
 				<%
 						}else if(azione.equals("dettaglioCurriculum")){
 				%>
-							<jsp:include page="strutturaSito/contenuto/dettaglioCurriculum.jsp" />
+							<jsp:include page="strutturaSito/contenuto/curriculum/dettaglioCurriculum.jsp" />
 				<%
 						}else if(azione.equals("gestioneSingoleSezioniCurriculum")){
 				%>
-							<jsp:include page="strutturaSito/contenuto/gestioneSingoleSezioniCurriculum.jsp" />
+							<jsp:include page="strutturaSito/contenuto/curriculum/gestioneSingoleSezioniCurriculum.jsp" />
 				<%
 						}else if(azione.equals("gestioneAnteprimeSezioniCurriculum")){
 				%>
-							<jsp:include page="strutturaSito/contenuto/gestioneAnteprimeSezioniCurriculum.jsp" />
+							<jsp:include page="strutturaSito/contenuto/curriculum/gestioneAnteprimeSezioniCurriculum.jsp" />
 				<%
 						}else if(azione.equals("creaCv")){
 				%>
-							<jsp:include page="strutturaSito/contenuto/creaCv.jsp" />
+							<jsp:include page="strutturaSito/contenuto/curriculum/creaCv.jsp" />
 				<%
 						}else if(azione.equals("anteprimaCurriculum")){
 				%>
-							<jsp:include page="strutturaSito/contenuto/anteprimaCurriculum.jsp" />
+							<jsp:include page="strutturaSito/contenuto/curriculum/anteprimaCurriculum.jsp" />
 				<%
 						}else if(azione.equals("selezionaRisorsa")){
 				%>
-							<jsp:include page="strutturaSito/contenuto/selezionaRisorsa.jsp" />
+							<jsp:include page="strutturaSito/contenuto/curriculum/selezionaRisorsa.jsp" />
 				<%
 						}else if(azione.equals("visualizzaElencoCurriculum")){
 				%>
-							<jsp:include page="strutturaSito/contenuto/visualizzaElencoCurriculum.jsp" />
+							<jsp:include page="strutturaSito/contenuto/curriculum/visualizzaElencoCurriculum.jsp" />
 				<%
 						}else if(azione.equals("esportaPdf")){
 				%>
@@ -197,7 +197,7 @@
 						}
 					}else{
 				%>
-						<jsp:include page="strutturaSito/contenuto/homePage.jsp" />
+						<jsp:include page="strutturaSito/contenuto/home/homePage.jsp" />
 				<%
     				}
 				%>

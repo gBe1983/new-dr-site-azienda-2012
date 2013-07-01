@@ -90,137 +90,56 @@ public class RisorsaDAO extends BaseDao {
 		
 		ArrayList listaRisorse = new ArrayList();
 		
-		boolean cognome = false;
-		boolean nome = false;
-		boolean costo = false;
-		boolean figuraProfessionale = false;
-		boolean seniority = false;
-		int contatori = 1;
-		
-		String sql = "select * from tbl_risorse ";
+		String sql = "select * from tbl_risorse where visible = true ";
 		
 		if(risorsa.getCognome() != null && !risorsa.getCognome().equals("")){
-			sql += "where cognome like ?";
-			cognome = true;
-			contatori++;
+			sql += "and cognome like ? ";
 		}
 		
 		if(risorsa.getNome() != null && !risorsa.getNome().equals("")){
-			if(!cognome){
-				sql += "where nome like ?";
-				nome = true;
-				contatori++;
-			}else{
-				sql += " and nome like ?";
-				nome = true;
-				contatori++;
-			}
+			sql += " and nome like ? ";
 		}
 		
 		if(risorsa.getCosto() != null && !risorsa.getCosto().equals("")){
-			if(!cognome && !nome){
-				sql += "where costo = ?";
-				costo = true;
-				contatori++;
-			}else{
-				sql += " and costo = ?";
-				costo = true;
-				contatori++;
-			}
+			sql += " and costo = ? ";
 		}
 		
 		if(risorsa.getFiguraProfessionale() != null && !risorsa.getFiguraProfessionale().equals("")){
-			if(!cognome && !nome && !costo){
-				sql += "where figura_professionale like ?";
-				figuraProfessionale = true;
-				contatori++;
-			}else{
-				sql += " and figura_professionale like ?";
-				figuraProfessionale = true;
-				contatori++;
-			}
+			sql += " and figura_professionale like ?";
 		}
 		
 		if(risorsa.getSeniority() != null && !risorsa.getSeniority().equals("")){
-			if(!cognome && !nome && !costo && !figuraProfessionale){
-				sql += "where seniority = ?";
-				seniority = true;
-				contatori++;
-			}else{
-				sql += " and seniority = ?";
-				seniority = true;
-				contatori++;
-			}
+			sql += " and seniority = ?";
 		}
 		
-		if(contatori == 1){
-			sql += " where visible = true order by cognome ASC";
-		}else{
-			sql += " and visible = true order by cognome ASC";
-		}
-		System.out.println(sql);
+		sql += "  order by cognome ASC";
+		
 		PreparedStatement ps=null;
 		ResultSet rs=null;
+		
+		int contatore = 1;
 		try {
 			ps = connessione.prepareStatement(sql);
-			if(cognome){
-				ps.setString(1, "%"+risorsa.getCognome().trim()+"%");
+			
+			if(risorsa.getCognome() != null && !risorsa.getCognome().equals("")){
+				ps.setString(contatore++, "%"+risorsa.getCognome().trim()+"%");
 			}
 			
-			if(cognome && nome){
-				ps.setString(2,	"%"+risorsa.getNome().trim()+"%");
-			}else if(!cognome && nome){
-				ps.setString(1, "%"+risorsa.getNome().trim()+"%");
+			if(risorsa.getNome() != null && !risorsa.getNome().equals("")){
+				ps.setString(contatore++,	"%"+risorsa.getNome().trim()+"%");
 			}
 			
-			if(cognome && nome && costo){
-				ps.setString(3, risorsa.getCosto().trim());
-			}else if(!cognome && nome && costo || cognome && !nome && costo){
-				ps.setString(2, risorsa.getCosto().trim());
-			}else if(!cognome && !nome && costo){
-				ps.setString(1, risorsa.getCosto().trim());
+			if(risorsa.getCosto() != null && !risorsa.getCosto().equals("")){
+				ps.setString(contatore++, risorsa.getCosto().trim());
 			}
 			
-			if(cognome && nome && costo && figuraProfessionale){
-				ps.setString(4, "%"+risorsa.getFiguraProfessionale().trim()+"%");
-			}else if(!cognome && nome && costo && figuraProfessionale 
-					|| cognome && !nome && costo && figuraProfessionale 
-					|| cognome && nome && !costo && figuraProfessionale
-			){
-				ps.setString(3, "%"+risorsa.getFiguraProfessionale().trim()+"%");
-			}else if(!cognome && !nome && costo && figuraProfessionale 
-					|| !cognome && nome && !costo && figuraProfessionale 
-					|| cognome && !nome && !costo && figuraProfessionale){
-				ps.setString(2, "%"+risorsa.getFiguraProfessionale().trim()+"%");
-			}else if(!cognome && !nome && !costo && figuraProfessionale){
-				ps.setString(1, "%"+risorsa.getFiguraProfessionale().trim()+"%");
+			if(risorsa.getFiguraProfessionale() != null && !risorsa.getFiguraProfessionale().equals("")){
+				ps.setString(contatore++, "%"+risorsa.getFiguraProfessionale().trim()+"%");
 			}
 			
-			if(cognome && nome && costo && figuraProfessionale && seniority){
-				ps.setString(5, risorsa.getSeniority());
-			}else if(!cognome && nome && costo && figuraProfessionale && seniority
-					|| cognome && !nome && costo && figuraProfessionale && seniority
-					|| cognome && nome && !costo && figuraProfessionale && seniority
-					|| cognome && nome && costo && !figuraProfessionale && seniority
-			){
-				ps.setString(4, risorsa.getSeniority());
-			}else if(!cognome && !nome && costo && figuraProfessionale && seniority
-					|| !cognome && 	nome && !costo && figuraProfessionale && seniority
-					|| !cognome &&  nome &&  costo && !figuraProfessionale && seniority
-					|| 	cognome && !nome && !costo && figuraProfessionale && seniority
-					|| 	cognome && !nome &&  costo && !figuraProfessionale && seniority
-					|| 	cognome &&  nome && !costo && !figuraProfessionale && seniority){
-				ps.setString(3, risorsa.getSeniority());
-			}else if(cognome && !nome && !costo && !figuraProfessionale && seniority
-					|| !cognome &&   nome && !costo && !figuraProfessionale && seniority
-					|| !cognome && !nome &&   costo && !figuraProfessionale && seniority
-					|| !cognome &&  !nome && !costo && figuraProfessionale && seniority
-			){
-				ps.setString(2, risorsa.getSeniority());
-			}else if(!cognome && !nome && !costo && !figuraProfessionale && seniority){
-				ps.setString(1, risorsa.getSeniority());
+			if(risorsa.getSeniority() != null && !risorsa.getSeniority().equals("")){
+				ps.setString(contatore, risorsa.getSeniority());
 			}
-			
 			
 			rs = ps.executeQuery();
 			while(rs.next()){

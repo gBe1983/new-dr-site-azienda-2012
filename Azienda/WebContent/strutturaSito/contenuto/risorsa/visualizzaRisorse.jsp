@@ -13,8 +13,7 @@
 		</tr>
 	</table>
 </div>
-<div class="spazio">
-	<div class="visualizzaChannel">
+<div class="visualizzaChannel">
 <% 
 HttpSession sessioneRisorse = request.getSession();
 if(sessioneRisorse.getAttribute("utenteLoggato") != null){
@@ -64,6 +63,5 @@ if(sessioneRisorse.getAttribute("utenteLoggato") != null){
 <%
 }
 %>
-		</table>
-	</div>
+	</table>
 </div>

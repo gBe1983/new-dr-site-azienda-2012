@@ -60,7 +60,7 @@ public class CurriculumDAO extends BaseDao {
 				" if((select count(*) from tbl_esperienze_professionali_cv as esperienze where esperienze.id_risorsa = risorsa.id_risorsa and esperienze.visibile = true) > 0 , 1, 0) as esperienza," +
 				" if((select count(*) from tbl_dettaglio_cv as dettaglio where dettaglio.id_risorsa = risorsa.id_risorsa and dettaglio.visible = true) > 0 , 1, 0) as dettaglio " +
 				" from tbl_risorse as risorsa " +
-				" where risorsa.flag_creazione_cv = true";
+				" where risorsa.flag_creazione_cv = true and risorsa.visible = true";
 		
 		PreparedStatement ps=null;
 		ResultSet rs=null;

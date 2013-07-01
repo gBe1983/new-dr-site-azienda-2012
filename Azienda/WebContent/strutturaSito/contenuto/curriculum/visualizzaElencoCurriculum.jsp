@@ -17,7 +17,7 @@ if(controlloUtenteLoggato.getAttribute("utenteLoggato") != null){
 	if(request.getParameter("dispositiva").equals("esportaPdf")){
 %>
 	  <div id="finestra" title="Esporta Pdf">
-		<%@include file="esportaPdf.jsp" %>
+		<jsp:include page="esportaPdf.jsp" />
 	  </div>
 
 	  <form action="./GestioneCurriculum" method="post" name="sceltaRisorsa">
@@ -31,7 +31,7 @@ if(controlloUtenteLoggato.getAttribute("utenteLoggato") != null){
 		}
 %>
 		</select><br><br>
-		<input type="submit" value="esporta" onclick="return openFinestra(sceltaRisorsaCurriculum(),'<%=request.getParameter("azione") %>','all','esporta')">
+		<button type="submit" value="esporta" onclick="return openFinestra(sceltaRisorsaCurriculum(),'<%=request.getParameter("azione") %>','all','esporta')">Esporta</button>
 	</form>
 <%
 	if(request.getAttribute("esitoInvioEmail") != null){
@@ -48,7 +48,7 @@ if(controlloUtenteLoggato.getAttribute("utenteLoggato") != null){
 }else{
 %>	
 	<div id="anteprima" title="Anteprima Curriculum">
-		<%@include file="anteprima.jsp" %>
+		<jsp:include page="anteprima.jsp" />
 	</div>
 
 	<form action="./GestioneCurriculum" method="post" name="sceltaRisorsa">
@@ -62,7 +62,7 @@ if(controlloUtenteLoggato.getAttribute("utenteLoggato") != null){
 	}
 %>
 		</select><br><br>
-		<input type="submit" value="anteprima" onclick="return openFinestra(sceltaRisorsaCurriculum(),'<%=request.getParameter("azione") %>','','anteprima')">
+		<button type="submit" value="anteprima" onclick="return openFinestra(sceltaRisorsaCurriculum(),'<%=request.getParameter("azione") %>','','anteprima')">Anteprima</button>
 	</form>
 <%
 }
