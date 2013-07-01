@@ -33,6 +33,10 @@ public class Email{
 	private String startTls = null;
 	private String socketFactoryClass = null;
 
+	public Email() {
+		// TODO Auto-generated constructor stub
+	}
+	
 	public Email(ServletContext servletContext) {
 		log = new MyLogger(this.getClass());
 		final String metodo = "costruttore";

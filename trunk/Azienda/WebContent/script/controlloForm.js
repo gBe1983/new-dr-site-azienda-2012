@@ -184,25 +184,16 @@ function controlloInserisciModificaCliente(){
 * sia in fase d'inserimento che in fase di modifica. 
 */
 
-function controlloInserisciModificaRisorsa(){
+function controlloModificaRisorsa(){
 	
-	var cognome = document.risorsa.cognome.value;
-	var nome = document.risorsa.nome.value;
-	var dataNascita = document.risorsa.dataNascita.value;
-	var luogoNascita = document.risorsa.luogoNascita.value;
-	var email = document.risorsa.mail.value;
-	var cellulare = document.risorsa.cellulare.value;
+	var cognome = document.risorse.cognome.value;
+	var nome = document.risorse.nome.value;
+	var dataNascita = document.risorse.dataNascita.value;
+	var luogoNascita = document.risorse.luogoNascita.value;
+	var email = document.risorse.mail.value;
+	var codiceFiscale = document.risorse.codiceFiscale.value;
+	var cellulare = document.risorse.cellulare.value;
 	
-	var username = "";
-	if(document.risorsa.username != undefined){
-		username = document.risorsa.username.value;
-	}
-
-	var password = "";
-	if(document.risorsa.password != undefined){
-		password = document.risorsa.password.value;
-	}
-
 	if(cognome == "" || cognome == null){
 		alert("Valorizzare correttamente il campo \"Cognome\"");
 		return false;
@@ -239,22 +230,18 @@ function controlloInserisciModificaRisorsa(){
 		alert("Valorizzare correttamente il campo \"Email\"");
 		return false;
 	}
+	
 	if(cellulare == "" || cellulare == null){
 		alert("Valorizzare correttamente il campo \"Cellulare\"");
 		return false;
 	}else{
-		if(isNaN(cellulare)){
-			alert("Valorizzare il campo \"Cellulare\" solo con valori numerici");
-			return false;
+		var espressioneControlloNumerico = /[0-9]/;
+		for(var x = 0; x < cellulare.length; x++){
+			if(!espressioneControlloNumerico.test(cellulare.substring(x,x+1))){
+				alert("Valorizzare il campo \"Cellulare\" solo con valori numerici");
+				return false;
+			}
 		}
-	}
-	if(username == "" || username == null){
-		alert("Valorizzare correttamente il campo \"Username\"");
-		return false;
-	}
-	if(password == "" || password == null){
-		alert("Valorizzare correttamente il campo \"Password\"");
-		return false;
 	}
 	
 	return true;

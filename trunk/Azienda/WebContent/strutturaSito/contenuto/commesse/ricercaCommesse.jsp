@@ -28,14 +28,14 @@
 	<input type="hidden" name="azione" value="visualizzaCommessa">
 	
 	<fieldset>
-		<legend>Ricerca Commessa</legend>
+		<legend align="center">Ricerca Commessa</legend>
 		<table>	
 			<tr>
 				<td><label>Codice Commessa</label></td>
 				<td><input type="text" name="codiceCommessa"></td>
 			</tr>
 			<tr>
-				<td>Cliente</td>
+				<td><label>Cliente</label></td>
 				<td><select name="codice">
 					<option value="" selected="selected">-- Seleziona il Cliente --</option>
 					<%
@@ -60,7 +60,7 @@
 				</td>
 			</tr>
 			<tr>
-				<td>Stato</td>
+				<td><label>Stato</label></td>
 				<td>
 					<select name="stato">
 						<option value="" selected="selected">-- Seleziona lo stato --</option>
@@ -70,7 +70,7 @@
 				</td>
 			</tr>
 			<tr>
-				<td>Tipologia</td>
+				<td><label>Tipologia</label></td>
 				<td>
 					<select name="tipologiaCommessa" id="sceltaTipologia" onchange="tipologia(this.value)">
 						<option value="" selected="selected">-- Scegliere il tipo di commessa --</option>
@@ -87,7 +87,7 @@
 				</td>
 			</tr>
 			<tr>
-				<td>Anno</td>
+				<td><label>Anno</label></td>
 				<td>
 					<select name="anno">
 						<%
@@ -108,8 +108,8 @@
 				</td>
 			</tr>
 			<tr>
-				<td><input type="submit" value="ricerca Commessa"/></td>
-				<td><input type="reset" value="cancella Dati"/></td>
+				<td><button type="submit" value="ricerca Commessa" >Ricerca Commessa</button></td>
+				<td><button type="reset" value="svuota campi" >Svuota Campi</button></td>
 			</tr>
 		</table>
 	</fieldset>

@@ -9,6 +9,11 @@ h2{color: #000;font-size: 1.5em}
 h3{color: #000;font-size: 1.2em}
 a{text-decoration: none;}
 
+p, label, span, legend{font-size: 13px;font-family: Arial, Helvetica, sans-serif;}
+input{border: 1px solid #CCC; padding: 5px; }
+button{border: 1px solid #CCC; padding: 5px; background: #CCC;}
+button:hover{background: #eee;}
+
 img{margin: 0 auto;display:block;width:95%}
 /*stili generici, su header e footer*/
 #header{ width: 1100px; height: 208px; margin: 0px; border: 0px solid black;}
@@ -19,6 +24,8 @@ div#extra{float:left;width: 200px; height: 450px; border-top:1px solid #ccc; bor
 div#content{position:relative;float:left; width:1100px;margin:0px; padding:0px; /*border: 1px solid black;*/}
 div#content_right{float:right;width: 887px;padding:5px;margin:0; /*border: 1px solid black;*/}
 
+
+
 div#footer{clear:both; text-align:center; padding: 0.5em; background:#eee; color: #000;border-top:1px solid #666 !important;}
 div#footer li{display:inline; list-style-type:none;padding:0 10px}
 .space {clear : both;}
@@ -28,7 +35,7 @@ div#footer li{display:inline; list-style-type:none;padding:0 10px}
 .shadow {-moz-box-shadow: 0 0 10px 1px #CCC; -webkit-box-shadow: 0 0 10px 1px #CCC;box-shadow: 0 0 10px 1px #CCC;}
 
 /*CSS principale per il menu*/
-.logo {position:relative; float:left; background-image: url(../images/logo_DierreConsulting.bmp); background-repeat: no-repeat; width: 1024px; height: 120px;}
+.logo {position:relative; float:left; background-image: url(../images/introLogo_Dr.gif);/*url(../images/logo_DierreConsulting.bmp);*/ background-repeat: no-repeat; width: 1024px; height: 120px;}
 .logo img{text-align:center;margin: 0 auto;}
 
 /* menu alto */
@@ -102,6 +109,7 @@ img.help:hover{cursor:pointer}
 
 .spazio{margin-top: 70px;}
 .spazioUltra{margin-top: 40px;}
+.spazioMin{margin-top: 20px;}
 .spazioUltraPlus{margin-top: 40px; margin-bottom: 60px; margin-left: 18px;}
 #spazioMessaggio{font: red;}
 
@@ -125,8 +133,10 @@ img.help:hover{cursor:pointer}
 
 /* gestione del menu a tendina nella sezione trattatamenti */
 
-#trattattivaMultipla{display: none;}
 #trattattivaSingola{display: none;}
+#trattattivaSingola textarea{resize: none;}
+#trattattivaMultipla{display: none;}
+#trattattivaMultipla textarea{resize: none;}
 #creazioneCommessa{display: none;}
 #bottoni{display: none;}
 
@@ -145,7 +155,7 @@ img.help:hover{cursor:pointer}
 
 #visualizzaRisorsa{ }
 
-.visualizzaChannel { /*border: 1px solid #black;*/ margin-top: 90px !important; margin-top: 100px; width: 700px;}
+.visualizzaChannel { /*border: 1px solid #black;*/ margin-top: 25px !important; margin-top: 35px; width: 700px;}
 
 .visualizzaChannel h3 { margin: 0; width: 40%; font-size: 1em;font-weight: bold; text-transform: uppercase;text-align: right;padding: 1em 0.5em 1em 0;border-right: 1px solid;}
 
@@ -229,3 +239,9 @@ img.help:hover{cursor:pointer}
 #channel #salva :hover{ background: #FFF; }
 
 #channel #salva tr td input:hover {background: #CCC;}
+
+/* area cliente */
+
+#aggiungiCliente p, #aggiungiCliente span{font-size: 14px;font-family: Arial, Helvetica, sans-serif;}
+
+/* end area cliente */

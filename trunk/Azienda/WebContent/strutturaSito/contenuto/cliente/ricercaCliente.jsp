@@ -6,9 +6,17 @@
 <%
 HttpSession sessioneNominativi = request.getSession();
 if(sessioneNominativi.getAttribute("utenteLoggato") != null){
+	
 	if(request.getAttribute("nominativi") != null){
 		List<String>listaNominativi=(List<String>)request.getAttribute("nominativi");
 		if(listaNominativi.size() > 0){
+			
+			/*
+			* tramite questo parametro verifico che la chiamata a questa 
+			* pagina non arrivi da Ricerca Cliente piuttosto che da 
+			* Riabilita Cliente
+			*/
+			
 			if(request.getParameter("tipo") != null){
 %>
 				<div class="subtitle">Riabilitazione Cliente</div>
@@ -19,20 +27,18 @@ if(sessioneNominativi.getAttribute("utenteLoggato") != null){
 <%
 			}else{
 %>
-				<div class="subtitle ">
-					<h2>Ricerca Cliente</h2>
-				</div>
+				<div class="subtitle ">Ricerca Cliente</div>
 				<p>
 					In questa sezione potrete ricercare tutti i clienti con cui avete un rapporto lavorativo.
 				</p>
 <%
 			}
 %>
-	<form action="./GestioneCliente" method="post" name="ricercaCliente" class="spazio">
+	    <form action="./GestioneCliente" method="post" name="ricercaCliente" class="spazio">
 			<input type="hidden" name="azione" value="ricercaCliente">
 			<fieldset>
-			<legend>Elenco Nominativi Clienti</legend>
-			<table>
+			<legend align="center"><label>Elenco Nominativi Clienti</label></legend>
+			<table align="center" class="spazioMin">
 				<tr>
 					<td>
 						<select name="nominativo">
@@ -59,17 +65,13 @@ if(sessioneNominativi.getAttribute("utenteLoggato") != null){
 		}else{
 			if(request.getParameter("tipo") != null){
 %>			
-			<div class="subtitle ">
-				<h2>Disabilita Cliente</h2>
-			</div>
-			<p align="center" class="spazio"> Al momento non sono i clienti disabilitati.</p>
+				<div class="subtitle">Disabilita Cliente</div>
+				<p align="center" class="spazio"> Al momento non sono i clienti disabilitati.</p>
 <%	
 			}else{
 %>
-			<div class="subtitle ">
-				<h2>Ricerca Cliente</h2>
-			</div>
-			<p align="center" class="spazio"> Al momento non sono caricati i clienti. Aggiungere dei clienti.</p>
+				<div class="subtitle ">Ricerca Cliente</div>
+				<p align="center" class="spazio"> Al momento non sono caricati i clienti. Aggiungere dei clienti.</p>
 <%
 			}
 

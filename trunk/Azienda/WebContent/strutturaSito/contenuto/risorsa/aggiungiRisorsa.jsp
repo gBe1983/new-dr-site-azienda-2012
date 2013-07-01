@@ -16,7 +16,7 @@ if(controlloUtenteLoggato.getAttribute("utenteLoggato") != null){
 <form action="./GestioneRisorse" method="post" name="risorsa">
 	<input type="hidden" name="azione" value="aggiungiRisorsa">
 	<fieldset>
-		<legend>Dati Anagrafici</legend>
+		<legend align="center">Dati Anagrafici</legend>
 		<table>
 			<tr>
 				<td><label>* Cognome</label></td>
@@ -37,8 +37,8 @@ if(controlloUtenteLoggato.getAttribute("utenteLoggato") != null){
 			<tr>
 				<td><label>* Sesso</label></td>
 				<td>
-					<input type="radio" name="sesso" value="m"/>Maschio
-					<input type="radio" name="sesso" value="f"/>Femmina
+					<input type="radio" name="sesso" value="m"/><label>Maschio</label>
+					<input type="radio" name="sesso" value="f"/><label>Femmina</label>
 				</td>
 			</tr>
 			<tr>
@@ -64,7 +64,7 @@ if(controlloUtenteLoggato.getAttribute("utenteLoggato") != null){
 		</table>
 	</fieldset>	
 	<fieldset>
-		<legend>Residenza</legend>
+		<legend align="center">Residenza</legend>
 		<table>
 			<tr>
 				<td><label>Indirizzo</label></td>
@@ -103,7 +103,7 @@ if(controlloUtenteLoggato.getAttribute("utenteLoggato") != null){
 		</table>
 	</fieldset>
 	<fieldset>
-		<legend>Altri Dati</legend>
+		<legend align="center">Altri Dati</legend>
 		<table>
 			<tr>
 				<td><label>Patente </label></td>
@@ -131,8 +131,8 @@ if(controlloUtenteLoggato.getAttribute("utenteLoggato") != null){
 			<tr>
 				<td><label>Occupato</label></td>
 				<td>
-					<input type="radio" name="occupato" value="si">Si
-					<input type="radio" name="occupato" value="no">No
+					<input type="radio" name="occupato" value="si"><label>Si</label>
+					<input type="radio" name="occupato" value="no"><label>No</label>
 				</td>
 			</tr>
 			<tr>
@@ -161,7 +161,7 @@ if(controlloUtenteLoggato.getAttribute("utenteLoggato") != null){
 		</table>
 	</fieldset>
 	<fieldset>
-		<legend>Credenziali</legend>
+		<legend align="center">Credenziali</legend>
 		<table>
 			<tr>
 				<td><label>* Username</label></td>
@@ -179,8 +179,8 @@ if(controlloUtenteLoggato.getAttribute("utenteLoggato") != null){
 	</fieldset>
 	<table>
 		<tr>
-			<td><input type="submit" value="aggiungi Risorsa" onclick="return controlloInserisciModificaRisorsa()"></td>
-			<td><input type="reset" value="svuota campi"></td>
+			<td><button type="submit" value="aggiungi Risorsa" onclick="return controlloInserisciModificaRisorsa()">Aggiungi Risorsa</button></td>
+			<td><button type="reset" value="svuota campi">Svuota Campi</button></td>
 		</tr>
 	</table>
 </form>
@@ -209,11 +209,11 @@ if(controlloUtenteLoggato.getAttribute("utenteLoggato") != null){
 <% 
 	if(risorsa.isFlaCreazioneCurriculum()){
 %>
-		<li><a href="GestioneCurriculum?azione=caricamentoCv&parametro0=<%=risorsa.getIdRisorsa() %>">Curriculum Vitae</a></li>				
+		<li><a href="GestioneCurriculum?azione=caricamentoCv&parametro0=<%=risorsa.getIdRisorsa() %>&dispositiva=risorsa">Curriculum Vitae</a></li>				
 <%
 	}else{
 %>
-		<li><a href="GestioneCurriculum?azione=caricamentoCv&parametro0=<%=risorsa.getIdRisorsa() %>&creazioneCv=1">Crea Curriculum Vitae</a></li>
+		<li><a href="GestioneCurriculum?azione=caricamentoCv&parametro0=<%=risorsa.getIdRisorsa() %>&creazioneCv=1&dispositiva=risorsa">Crea Curriculum Vitae</a></li>
 <%
 	}
 %>
@@ -222,11 +222,11 @@ if(controlloUtenteLoggato.getAttribute("utenteLoggato") != null){
 
 <p>* i campi segnati in asterisco sono obbligatori</p>
 
-<form action="./GestioneRisorse" method="post" name="risorsa">
+<form action="./GestioneRisorse" method="post" name="risorse">
 	<input type="hidden" name="azione" value="modificaRisorsa">
 	<input type="hidden" name="idRisorsa" value="<%=risorsa.getIdRisorsa() %>">
 	<fieldset>
-		<legend>Dati Anagrafici</legend>
+		<legend align="center">Dati Anagrafici</legend>
 		<table>
 			<tr>
 				<td><label>* Cognome</label></td>
@@ -250,13 +250,13 @@ if(controlloUtenteLoggato.getAttribute("utenteLoggato") != null){
 					<%
 						if(risorsa.getSesso().equals("m")){
 					%>
-						<input type="radio" name="sesso" value="m" checked="checked"/>Maschio
-						<input type="radio" name="sesso" value="f"/>Femmina
+						<input type="radio" name="sesso" value="m" checked="checked"/><label>Maschio</label>
+						<input type="radio" name="sesso" value="f"/><label>Femmina</label>
 					<%
 						}else{
 					%>
-							<input type="radio" name="sesso" value="m"/>Maschio
-							<input type="radio" name="sesso" value="f" checked="checked">Femmina
+							<input type="radio" name="sesso" value="m"/><label>Maschio</label>
+							<input type="radio" name="sesso" value="f" checked="checked"><label>Femmina</label>
 					<%
 						}
 					%>
@@ -285,7 +285,7 @@ if(controlloUtenteLoggato.getAttribute("utenteLoggato") != null){
 		</table>
 	</fieldset>	
 	<fieldset>
-		<legend>Residenza</legend>
+		<legend align="center">Residenza</legend>
 		<table>
 			<tr>
 				<td><label>Indirizzo</label></td>
@@ -324,7 +324,7 @@ if(controlloUtenteLoggato.getAttribute("utenteLoggato") != null){
 		</table>
 	</fieldset>
 	<fieldset>
-		<legend>Altri Dati</legend>
+		<legend align="center">Altri Dati</legend>
 		<table>
 			<tr>
 				<td><label>Patente </label></td>
@@ -355,13 +355,13 @@ if(controlloUtenteLoggato.getAttribute("utenteLoggato") != null){
 				<%
 					if(risorsa.isOccupato()){ 
 				%>
-						<input type="radio" name="occupato" value="si" checked="checked">Si
-						<input type="radio" name="occupato" value="no">No
+						<input type="radio" name="occupato" value="si" checked="checked"><label>Si</label>
+						<input type="radio" name="occupato" value="no"><label>No</label>
 				<%
 					}else{
 				%>
-						<input type="radio" name="occupato" value="si">Si
-						<input type="radio" name="occupato" value="no" checked="checked">No
+						<input type="radio" name="occupato" value="si"><label>Si</label>
+						<input type="radio" name="occupato" value="no" checked="checked"><label>No</label>
 				<%
 					}
 				%>		
@@ -414,8 +414,7 @@ if(controlloUtenteLoggato.getAttribute("utenteLoggato") != null){
 	</fieldset>
 	<table>
 		<tr>
-			<td><input type="submit" value="Modifica Risorsa" onclick="return controlloInserisciModificaRisorsa()"></td>
-			<td><input type="reset" value="svuota campi"></td>
+			<td><button type="submit" value="Modifica Risorsa" onclick="return controlloModificaRisorsa()">Modifica Risorsa</button></td>
 		</tr>
 	</table>
 </form>
@@ -444,11 +443,11 @@ if(controlloUtenteLoggato.getAttribute("utenteLoggato") != null){
 <% 
 	if(risorsa.isFlaCreazioneCurriculum()){
 %>
-		<li><a href="GestioneCurriculum?azione=caricamentoCv&parametro0=<%=risorsa.getIdRisorsa() %>">Curriculum Vitae</a></li>				
+		<li><a href="GestioneCurriculum?azione=caricamentoCv&parametro0=<%=risorsa.getIdRisorsa() %>&dispositiva=risorsa">Curriculum Vitae</a></li>				
 <%
 	}else{
 %>
-		<li><a href="GestioneCurriculum?azione=caricamentoCv&parametro0=<%=risorsa.getIdRisorsa() %>&creazioneCv=1">Crea Curriculum Vitae</a></li>
+		<li><a href="GestioneCurriculum?azione=caricamentoCv&parametro0=<%=risorsa.getIdRisorsa() %>&creazioneCv=1&dispositiva=risorsa">Crea Curriculum Vitae</a></li>
 <%
 	}
 %>
@@ -456,7 +455,7 @@ if(controlloUtenteLoggato.getAttribute("utenteLoggato") != null){
 </div>
 
 	<fieldset>
-		<legend>Dati Anagrafici</legend>
+		<legend align="center">Dati Anagrafici</legend>
 		<table>
 			<tr>
 				<td><label>Cognome</label></td>
@@ -522,7 +521,7 @@ if(controlloUtenteLoggato.getAttribute("utenteLoggato") != null){
 		</table>
 	</fieldset>	
 	<fieldset>
-		<legend>Residenza</legend>
+		<legend align="center">Residenza</legend>
 		<table>
 			<tr>
 				<td><label>Indirizzo</label></td>
@@ -553,7 +552,7 @@ if(controlloUtenteLoggato.getAttribute("utenteLoggato") != null){
 		</table>
 	</fieldset>
 	<fieldset>
-		<legend>Altri Dati</legend>
+		<legend align="center">Altri Dati</legend>
 		<table>
 			<tr>
 				<td><label>Patente </label></td>

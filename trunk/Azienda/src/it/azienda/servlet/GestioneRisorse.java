@@ -143,6 +143,7 @@ public class GestioneRisorse extends BaseServlet {
 					getServletContext()
 						.getRequestDispatcher("/index.jsp?azione=messaggio")
 							.forward(request, response);
+					
 				}else if(azione.equals("modificaRisorsa")){//in questa sezione effettuo la modifica della risorsa effettuando un controllo sull'esito dell'inserimento della risorsa
 					risorsa.setIdRisorsa(Integer.parseInt(request.getParameter("idRisorsa")));
 					request.setAttribute("messaggio", rDAO.modificaRisorsa(risorsa));
@@ -150,6 +151,7 @@ public class GestioneRisorse extends BaseServlet {
 						.getRequestDispatcher("/index.jsp?azione=messaggio")
 							.forward(request, response);
 				}
+				
 			}else if(azione.equals("ricercaRisorse")){
 				
 				/*
@@ -169,11 +171,12 @@ public class GestioneRisorse extends BaseServlet {
 					sessione.setAttribute("listaRisorse", listaRisorse);
 					response.sendRedirect("./index.jsp?azione=visualizzaRisorse&numeroPagina=0&dispositiva=risorsa");
 				}else{
-					request.setAttribute("messaggio", "La risorsa ricerca non è presente! Inserire i dati correttamente");
+					request.setAttribute("messaggio", "Nessuna risorsa trovata! Effettuare la ricerca nuovamente.");
 					getServletContext()
 						.getRequestDispatcher("/index.jsp?azione=messaggio")
 							.forward(request, response);
 				}
+				
 			}else if(azione.equals("caricamentoProfiloRisorsa")){
 				
 				/*
@@ -213,11 +216,13 @@ public class GestioneRisorse extends BaseServlet {
 					log.error(metodo, "valorizzazioneRisorsa Fallita", e);
 				}
 			}else if(azione.equals("caricamentoCredenziali")){
+				
 				request.setAttribute("risorsa", rDAO.caricamentoProfiloRisorsa(Integer.parseInt(request.getParameter("risorsa"))));
 				sessione.setAttribute("credenziali", rDAO.caricamentoCredenziali(Integer.parseInt(request.getParameter("risorsa"))));
 				getServletContext()
 					.getRequestDispatcher("/index.jsp?azione=credenziali&dispositiva=risorsa")
 						.forward(request, response);
+				
 			}else if(azione.equals("modificaCredenziali")){
 
 				String messaggio = rDAO.modificaCredenziali(request.getParameter("username"),
@@ -247,6 +252,7 @@ public class GestioneRisorse extends BaseServlet {
 					.getRequestDispatcher("/index.jsp?azione=messaggio")
 						.forward(request, response);
 			}else if(azione.equals("listaRisorseDaAbilitare")){
+				
 				request.setAttribute("listaRisorseDaAbilitare", rDAO.listaRisorseDaAbilitare());
 				getServletContext()
 					.getRequestDispatcher("/index.jsp?azione=listaRisorseDaAbilitare&dispositiva=risorsa")

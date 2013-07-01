@@ -9,7 +9,7 @@
 <div class="subtitle">Visualizza Curriculum Vitae</div>
 
 <div id="anteprima" title="Anteprima Curriculum">
-	<%@include file="anteprima.jsp" %>
+	<jsp:include page="anteprima.jsp" />
 </div>
 
 
@@ -25,7 +25,7 @@
 			<option value="anteprima">Anteprima Cv</option>
 			<option value="elimina">Elimina Cv</option>
 		</select>
-		<input type="submit" value="esegui" onclick="return controlloSceltaVisualizzaCurriculum()">
+		<button type="submit" value="esegui" onclick="return controlloSceltaVisualizzaCurriculum()">Esegui</button>
 	</form>
 
 	<form action="" method="" id="curriculum" class="spazioUltra">

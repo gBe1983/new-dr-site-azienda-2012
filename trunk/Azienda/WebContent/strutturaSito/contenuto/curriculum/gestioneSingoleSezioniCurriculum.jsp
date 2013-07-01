@@ -15,53 +15,57 @@
 		
 		<div class="subtitle ">Modifica Intestazione</div>
 
-		<fieldset class="spazioUltra">
-			<legend>Modifica Intestazione</legend>
+		
 			<form action="./GestioneCurriculum" method="post">
 				<input type="hidden" name="azione" value="salvaIntestazione">
 				<input type="hidden" name="parametro" value="<%=intestazioneRisorsa.getIdRisorsa() %>" >
+				<fieldset class="spazioUltra">
+					<legend align="center">Modifica Intestazione</legend>
+					<table>
+						<tr>
+							<td><label>Cognome </label></td>
+							<td><input type="text" name="cognome" value="<%=intestazioneRisorsa.getCognome() %>" maxlength="45"></td>
+						</tr>
+						<tr>
+							<td><label>Nome </label></td>
+							<td><input type="text" name="nome" value="<%=intestazioneRisorsa.getNome() %>" maxlength="45"></td>
+						</tr>
+						<tr>
+							<td><label>Indirizzo</label></td>
+							<td><input type="text" name="indirizzo" maxlength="45" value="<%if(intestazioneRisorsa.getIndirizzo() != null){out.print(intestazioneRisorsa.getIndirizzo());}else{out.print("");} %>"></td>
+						</tr>
+						<tr>
+							<td><label>Telefono</label></td>
+							<td><input type="text" name="telefono" maxlength="45" value="<%if(intestazioneRisorsa.getTelefono() != null){out.print(intestazioneRisorsa.getTelefono());}else{out.print("");}%>"></td>
+						</tr>
+						<tr>
+							<td><label>Cellulare</label></td>
+							<td><input type="text" name="cellulare" maxlength="45" value="<%if(intestazioneRisorsa.getCellulare() != null){out.print(intestazioneRisorsa.getCellulare());}else{out.print("");}%>"></td>
+						</tr>
+						<tr>
+							<td><label>Fax</label></td>
+							<td><input type="text" name="fax" maxlength="45" value="<%if(intestazioneRisorsa.getFax() != null){out.print(intestazioneRisorsa.getFax());}else{out.print("");}%>"></td>
+						</tr>
+						<tr>
+							<td><label>Email</label></td>
+							<td><input type="text" name="email" maxlength="45" value="<%if(intestazioneRisorsa.getEmail() != null){out.print(intestazioneRisorsa.getEmail());}else{out.print("");}%>" size="40"></td>
+						</tr>
+						<tr>
+							<td><label>Data Nascita</label></td>
+							<td><input type="text" name="dataNascita" maxlength="45" value="<%if(intestazioneRisorsa.getDataNascita() != null){out.print(intestazioneRisorsa.getDataNascita());}else{out.print("");}%>"></td>
+						</tr>
+					</table>
+				</fieldset>
 				<table>
 					<tr>
-						<td><label>Cognome </label></td>
-						<td><input type="text" name="cognome" value="<%=intestazioneRisorsa.getCognome() %>" maxlength="45"></td>
-					</tr>
-					<tr>
-						<td><label>Nome </label></td>
-						<td><input type="text" name="nome" value="<%=intestazioneRisorsa.getNome() %>" maxlength="45"></td>
-					</tr>
-					<tr>
-						<td><label>Indirizzo</label></td>
-						<td><input type="text" name="indirizzo" maxlength="45" value="<%if(intestazioneRisorsa.getIndirizzo() != null){out.print(intestazioneRisorsa.getIndirizzo());}else{out.print("");} %>"></td>
-					</tr>
-					<tr>
-						<td><label>Telefono</label></td>
-						<td><input type="text" name="telefono" maxlength="45" value="<%if(intestazioneRisorsa.getTelefono() != null){out.print(intestazioneRisorsa.getTelefono());}else{out.print("");}%>"></td>
-					</tr>
-					<tr>
-						<td><label>Cellulare</label></td>
-						<td><input type="text" name="cellulare" maxlength="45" value="<%if(intestazioneRisorsa.getCellulare() != null){out.print(intestazioneRisorsa.getCellulare());}else{out.print("");}%>"></td>
-					</tr>
-					<tr>
-						<td><label>Fax</label></td>
-						<td><input type="text" name="fax" maxlength="45" value="<%if(intestazioneRisorsa.getFax() != null){out.print(intestazioneRisorsa.getFax());}else{out.print("");}%>"></td>
-					</tr>
-					<tr>
-						<td><label>Email</label></td>
-						<td><input type="text" name="email" maxlength="45" value="<%if(intestazioneRisorsa.getEmail() != null){out.print(intestazioneRisorsa.getEmail());}else{out.print("");}%>" size="40"></td>
-					</tr>
-					<tr>
-						<td><label>Data Nascita</label></td>
-						<td><input type="text" name="dataNascita" maxlength="45" value="<%if(intestazioneRisorsa.getDataNascita() != null){out.print(intestazioneRisorsa.getDataNascita());}else{out.print("");}%>"></td>
-					</tr>
-					<tr>
 						<td colspan="2">
-							<input type="submit" value="salva modifiche">
-							<input type="button" value="Indietro" onClick="javascript:history.back()" name="button">
+							<button type="submit" value="salva modifiche">Salva Modifiche</button>
+							<button type="button" value="Indietro" onClick="javascript:history.back()" name="button">Indietro</button>
 						</td>
 					</tr>
 				</table>
 			</form>
-		</fieldset>		
+				
 <%		
 
 //-------------------------------------- Sezione Esperienza -------------------------------------------------------*/
@@ -72,12 +76,12 @@
 %>			
 			<div class="subtitle">Modifica Esperienza</div>
 
-			<fieldset class="spazioUltra">
-				<legend>Modifica Esperienza</legend>
 				<form action="./GestioneCurriculum" method="post" name="inserisciEsperienza" id="inserisciEsperienza">
 					<input type="hidden" name="azione" value="salvaEsperienza">
 					<input type="hidden" name="parametro" value="<%=exp.getId_risorsa() %>" >
 					<input type="hidden" name="parametroId" value="<%=exp.getIdEsperienze() %>" >
+					<fieldset class="spazioUltra">
+					<legend align="center">Modifica Esperienza</legend>
 					<table>
 						<tr>
 							<td><label>*Periodo </label></td>
@@ -196,15 +200,18 @@
 								<textarea rows="15" cols="50" name="descrizione" maxlength="10000"><%=exp.getDescrizione() %></textarea>
 							</td>
 						</tr>
+					</table>
+					</fieldset>
+					<table>
 						<tr>
 							<td colspan="2">
-								<input type="submit" value="salva modifiche" onclick="return controlloCampiInserimentoExp()">
-								<input type="button" value="Indietro" onClick="javascript:history.back()" name="button">
+								<button type="submit" value="salva modifiche" onclick="return controlloCampiInserimentoExp()">Salva Modifiche</button>
+								<button type="button" value="Indietro" onClick="javascript:history.back()" name="button">Indietro</button>
 							</td>
 						</tr>
 					</table>
 				</form>
-			</fieldset>
+			
 <%			
 //------------------------------------------ Sezione Dettaglio -------------------------------------------------------*/
 
@@ -220,7 +227,7 @@
 					<input type="hidden" name="parametro" value="<%=dettaglio.getId_risorsa() %>"/>
 					<input type="hidden" name="parametroId" value="<%=dettaglio.getId_dettaglio() %>"/>
 					<fieldset>
-							<legend>Dettaglio Cv</legend>
+							<legend align="center">Dettaglio Cv</legend>
 							<table>
 									<tr>
 										<td>
@@ -276,10 +283,10 @@
 						<table>
 							<tr>
 								<td>
-									<input type="submit" value="modifica dettaglio" onclick="return controlloModificaDettaglio()"/>
+									<button type="submit" value="modifica dettaglio" onclick="return controlloModificaDettaglio()"/>Modifica Dettaglio</button>
 								</td>
 								<td>
-									<input type="button" value="Indietro" onClick="javascript:history.back()" name="button">
+									<button type="button" value="Indietro" onClick="javascript:history.back()" name="button">Indietro</button>
 								</td>
 							</tr>
 						</table>

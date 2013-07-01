@@ -19,17 +19,36 @@ public class TrattativeDAO extends BaseDao {
 		log=new MyLogger(this.getClass());
 	}
 
-	public ArrayList<TrattativeDTO>ricercaTrattative(String codiceCliente, int idRisorsa, int idTrattative, String esito, int anno){
+	public ArrayList<TrattativeDTO>ricercaTrattative(String codiceCliente, String idRisorsa, int idTrattative, String esito, String anno){
 		final String metodo="ricercaTrattative";
 		log.start(metodo);
 		ArrayList<TrattativeDTO> listaTrattativa = new ArrayList<TrattativeDTO>();
 		StringBuilder sql = new StringBuilder("SELECT id_cliente,id_trattativa,ragione_sociale,");
-		sql	.append("id_risorsa,Risorsa,data,oggetto,Esito_trattativa ")
+		sql	.append("id_risorsa,Risorsa,data,oggetto,Esito_trattativa,note ")
 				.append("FROM v_trattative_per_cliente_dettaglio ");
 		PreparedStatement ps=null;
 		ResultSet rs=null;
 		
-		if(codiceCliente != "" && idRisorsa == 0 && esito == "" && anno == 0){//Codice != "" e idRisorsa == "" e esito == "" e anno == ""
+		/*
+		 * faccio questo procedimento in quanto nel richiamo del
+		 * metodo i valori posso essere a null, pertanto casto i valori 
+		 * a NULL in ""
+		 */
+		
+		if(codiceCliente == null){
+			codiceCliente = "";
+		}
+		if(idRisorsa == null){
+			idRisorsa = "";
+		}
+		if(esito == null){
+			esito = "";
+		}
+		if(anno == null){
+			anno = "";
+		}
+		
+		if(codiceCliente != "" && idRisorsa == "" && esito == "" && anno == ""){//Codice != "" e idRisorsa == "" e esito == "" e anno == ""
 			sql.append("WHERE id_cliente = ?");
 			try {
 				ps = connessione.prepareStatement(sql.toString());
@@ -37,15 +56,15 @@ public class TrattativeDAO extends BaseDao {
 			} catch (SQLException e) {
 				log.error(metodo, "prepareStatement 3", e);
 			}
-		}else if(codiceCliente == "" && idRisorsa != 0 && esito == "" && anno == 0) {//Codice == "" e idRisorsa != "" e esito == "" e anno == ""
+		}else if(codiceCliente == "" && idRisorsa != "" && esito == "" && anno == "") {//Codice == "" e idRisorsa != "" e esito == "" e anno == ""
 			sql.append("WHERE id_risorsa=?");
 			try {
 				ps = connessione.prepareStatement(sql.toString());
-				ps.setInt(1, idRisorsa);
+				ps.setInt(1, Integer.parseInt(idRisorsa));
 			} catch (SQLException e) {
 				log.error(metodo, "prepareStatement 2", e);
 			}
-		}else if(codiceCliente == "" && idRisorsa == 0 && esito != "" && anno == 0){//Codice == "" e idRisorsa == "" e esito !="" e anno == "" 
+		}else if(codiceCliente == "" && idRisorsa == "" && esito != "" && anno == ""){//Codice == "" e idRisorsa == "" e esito !="" e anno == "" 
 			sql.append("WHERE esito");
 			if(esito.equals("aperta")||esito.equals("persa")){
 				sql.append("=?");
@@ -63,7 +82,7 @@ public class TrattativeDAO extends BaseDao {
 					log.error(metodo, "prepareStatement 11", e);
 				}
 			}
-		}else if(codiceCliente == "" && idRisorsa == 0 && esito == "" && anno != 0) {//Codice == "" e idRisorsa == "" e esito == "" e anno != ""
+		}else if(codiceCliente == "" && idRisorsa == "" && esito == "" && anno != "") {//Codice == "" e idRisorsa == "" e esito == "" e anno != ""
 			sql.append("WHERE data like ?");
 			try {
 				ps = connessione.prepareStatement(sql.toString());
@@ -71,16 +90,16 @@ public class TrattativeDAO extends BaseDao {
 			} catch (SQLException e) {
 				log.error(metodo, "prepareStatement 2", e);
 			}
-		}else if(codiceCliente != "" && idRisorsa != 0 && esito == "" && anno == 0){// Codice != "" e idRisorsa != "" e esito == "" e anno == ""
+		}else if(codiceCliente != "" && idRisorsa != "" && esito == "" && anno == ""){// Codice != "" e idRisorsa != "" e esito == "" e anno == ""
 			sql.append("WHERE id_cliente=? AND id_risorsa=?");
 			try {
 				ps = connessione.prepareStatement(sql.toString());
 				ps.setString(1, codiceCliente);
-				ps.setInt(2, idRisorsa);
+				ps.setInt(2, Integer.parseInt(idRisorsa));
 			} catch (SQLException e) {
 				log.error(metodo, "prepareStatement 1", e);
 			}
-		}else if(codiceCliente != "" && idRisorsa == 0 && esito != "" && anno == 0){//Codice !="" e idRisorsa == "" e esito !="" 
+		}else if(codiceCliente != "" && idRisorsa == "" && esito != "" && anno == ""){//Codice !="" e idRisorsa == "" e esito !="" 
 			sql.append("WHERE id_cliente=? AND esito");
 			if(esito.equals("aperta")||esito.equals("persa")){
 				sql.append("=?");
@@ -100,7 +119,7 @@ public class TrattativeDAO extends BaseDao {
 					log.error(metodo, "prepareStatement 9", e);
 				}
 			}
-		}else if(codiceCliente != "" && idRisorsa == 0 && esito == "" && anno != 0){// Codice != "" e idRisorsa == "" e esito == "" e anno != ""
+		}else if(codiceCliente != "" && idRisorsa == "" && esito == "" && anno != ""){// Codice != "" e idRisorsa == "" e esito == "" e anno != ""
 			sql.append("WHERE id_cliente=? AND data like ?");
 			try {
 				ps = connessione.prepareStatement(sql.toString());
@@ -109,13 +128,13 @@ public class TrattativeDAO extends BaseDao {
 			} catch (SQLException e) {
 				log.error(metodo, "prepareStatement 1", e);
 			}
-		}else if(codiceCliente == "" && idRisorsa != 0 && esito != "" && anno == 0) {//Codice == "" e idRisorsa !="" e esito !="" e anno == ""
+		}else if(codiceCliente == "" && idRisorsa != "" && esito != "" && anno == "") {//Codice == "" e idRisorsa !="" e esito !="" e anno == ""
 			sql.append("WHERE id_risorsa=? AND esito");
 			if(esito.equals("aperta")||esito.equals("persa")){
 				sql.append("=?");
 				try {
 					ps = connessione.prepareStatement(sql.toString());
-					ps.setInt(1, idRisorsa);
+					ps.setInt(1, Integer.parseInt(idRisorsa));
 					ps.setString(2, esito);
 				} catch (SQLException e) {
 					log.error(metodo, "prepareStatement 6", e);
@@ -124,22 +143,22 @@ public class TrattativeDAO extends BaseDao {
 				sql.append(" NOT IN('aperta','persa')");
 				try {
 					ps = connessione.prepareStatement(sql.toString());
-					ps.setInt(1, idRisorsa);
+					ps.setInt(1, Integer.parseInt(idRisorsa));
 				} catch (SQLException e) {
 					log.error(metodo, "prepareStatement 7", e);
 				}
 			}
-		}else if(codiceCliente == "" && idRisorsa != 0 && esito == "" && anno != 0) {//Codice == "" e idRisorsa !="" e esito == "" e anno != ""
+		}else if(codiceCliente == "" && idRisorsa != "" && esito == "" && anno != "") {//Codice == "" e idRisorsa !="" e esito == "" e anno != ""
 			sql.append("WHERE id_risorsa=? AND data like ?");
 			try {
 				ps = connessione.prepareStatement(sql.toString());
-				ps.setInt(1, idRisorsa);
+				ps.setInt(1, Integer.parseInt(idRisorsa));
 				ps.setString(2, "%"+anno);
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-		}else if(codiceCliente == "" && idRisorsa == 0 && esito != "" && anno != 0) {//Codice == "" e idRisorsa == "" e esito != "" e anno != ""
+		}else if(codiceCliente == "" && idRisorsa == "" && esito != "" && anno != "") {//Codice == "" e idRisorsa == "" e esito != "" e anno != ""
 			sql.append("WHERE data like ? AND esito");
 			if(esito.equals("aperta")||esito.equals("persa")){
 				sql.append("=?");
@@ -159,14 +178,14 @@ public class TrattativeDAO extends BaseDao {
 					log.error(metodo, "prepareStatement 7", e);
 				}
 			}
-		}else if(codiceCliente != "" && idRisorsa != 0 && esito != "" && anno == 0){//Codice != "" e idRisorsa != "" e esito != "" e anno == 0
+		}else if(codiceCliente != "" && idRisorsa != "" && esito != "" && anno == ""){//Codice != "" e idRisorsa != "" e esito != "" e anno == 0
 			sql.append("WHERE id_cliente=? AND id_risorsa=? AND esito");
 			if(esito.equals("aperta")||esito.equals("persa")){
 				sql.append("=?");
 				try {
 					ps = connessione.prepareStatement(sql.toString());
 					ps.setString(1, codiceCliente);
-					ps.setInt(2, idRisorsa);
+					ps.setInt(2, Integer.parseInt(idRisorsa));
 					ps.setString(3, esito);
 				} catch (SQLException e) {
 					log.error(metodo, "prepareStatement 4", e);
@@ -176,29 +195,29 @@ public class TrattativeDAO extends BaseDao {
 				try {
 					ps = connessione.prepareStatement(sql.toString());
 					ps.setString(1, codiceCliente);
-					ps.setInt(2, idRisorsa);
+					ps.setInt(2, Integer.parseInt(idRisorsa));
 				} catch (SQLException e) {
 					log.error(metodo, "prepareStatement 5", e);
 				}
 			}
-		}else if(codiceCliente != "" && idRisorsa != 0 && esito == "" && anno != 0){//Codice != "" e idRisorsa != "" e esito == "" e anno != 0
+		}else if(codiceCliente != "" && idRisorsa != "" && esito == "" && anno != ""){//Codice != "" e idRisorsa != "" e esito == "" e anno != 0
 			sql.append("WHERE id_cliente=? AND id_risorsa=? AND data like ?");
 			try {
 				ps = connessione.prepareStatement(sql.toString());
 				ps.setString(1, codiceCliente);
-				ps.setInt(2, idRisorsa);
+				ps.setInt(2, Integer.parseInt(idRisorsa));
 				ps.setString(3, "%"+anno);
 			} catch (SQLException e) {
 				log.error(metodo, "prepareStatement 4", e);
 			}
 			
-		}else if(codiceCliente == "" && idRisorsa != 0 && esito != "" && anno != 0){//Codice == "" e idRisorsa != "" e esito != "" e anno != 0
+		}else if(codiceCliente == "" && idRisorsa != "" && esito != "" && anno != ""){//Codice == "" e idRisorsa != "" e esito != "" e anno != 0
 			sql.append("WHERE id_cliente=? AND id_risorsa=? AND data like ? AND esito");
 			if(esito.equals("aperta")||esito.equals("persa")){
 				sql.append("=?");
 				try {
 					ps = connessione.prepareStatement(sql.toString());
-					ps.setInt(1, idRisorsa);
+					ps.setInt(1, Integer.parseInt(idRisorsa));
 					ps.setString(2, "%"+anno);
 					ps.setString(3, esito);
 				} catch (SQLException e) {
@@ -208,13 +227,13 @@ public class TrattativeDAO extends BaseDao {
 				sql.append(" NOT IN('aperta','persa')");
 				try {
 					ps = connessione.prepareStatement(sql.toString());
-					ps.setInt(1, idRisorsa);
+					ps.setInt(1, Integer.parseInt(idRisorsa));
 					ps.setString(2, "%"+anno);
 				} catch (SQLException e) {
 					log.error(metodo, "prepareStatement 5", e);
 				}
 			}
-		}else if(codiceCliente != "" && idRisorsa == 0 && esito != "" && anno != 0){//Codice != "" e idRisorsa == "" e esito != "" e anno != 0
+		}else if(codiceCliente != "" && idRisorsa == "" && esito != "" && anno != ""){//Codice != "" e idRisorsa == "" e esito != "" e anno != 0
 			sql.append("WHERE id_cliente=? AND data like ? AND data like ? AND esito");
 			if(esito.equals("aperta")||esito.equals("persa")){
 				sql.append("=?");
@@ -230,20 +249,20 @@ public class TrattativeDAO extends BaseDao {
 				sql.append(" NOT IN('aperta','persa')");
 				try {
 					ps = connessione.prepareStatement(sql.toString());
-					ps.setInt(1, idRisorsa);
+					ps.setString(1, codiceCliente);
 					ps.setString(2, "%"+anno);
 				} catch (SQLException e) {
 					log.error(metodo, "prepareStatement 5", e);
 				}
 			}
-		}else if(codiceCliente != "" && idRisorsa != 0 && esito != "" && anno != 0){//Codice != "" e idRisorsa != "" e esito != "" e anno != 0
+		}else if(codiceCliente != "" && idRisorsa != "" && esito != "" && anno != ""){//Codice != "" e idRisorsa != "" e esito != "" e anno != 0
 			sql.append("WHERE id_cliente=? AND id_risorsa = ? AND data like ? AND data like ? AND esito");
 			if(esito.equals("aperta")||esito.equals("persa")){
 				sql.append("=?");
 				try {
 					ps = connessione.prepareStatement(sql.toString());
 					ps.setString(1, codiceCliente);
-					ps.setInt(2, idRisorsa);
+					ps.setInt(2, Integer.parseInt(idRisorsa));
 					ps.setString(3, "%"+anno);
 					ps.setString(4, esito);
 				} catch (SQLException e) {
@@ -254,7 +273,7 @@ public class TrattativeDAO extends BaseDao {
 				try {
 					ps = connessione.prepareStatement(sql.toString());
 					ps.setString(1, codiceCliente);
-					ps.setInt(2, idRisorsa);
+					ps.setInt(2, Integer.parseInt(idRisorsa));
 					ps.setString(3, "%"+anno);
 				} catch (SQLException e) {
 					log.error(metodo, "prepareStatement 5", e);
@@ -289,6 +308,7 @@ public class TrattativeDAO extends BaseDao {
 						rs.getString("data"),
 						rs.getString("oggetto"),
 						rs.getString("Esito_trattativa"),
+						rs.getString("note"),
 						rs.getString("Risorsa"),
 						rs.getString("ragione_sociale")));
 			}
@@ -309,7 +329,7 @@ public class TrattativeDAO extends BaseDao {
 	public String inserimentoTrattative(TrattativeDTO trattativa){
 		final String metodo="inserimentoTrattative";
 		log.start(metodo);
-		String sql = "INSERT INTO tbl_trattative(id_cliente,id_risorsa,contatto,data,oggetto,esito,id_tipologia_trattattiva)VALUES(?,?,?,?,?,?,?)";
+		String sql = "INSERT INTO tbl_trattative(id_cliente,id_risorsa,contatto,data,oggetto,esito,id_tipologia_trattattiva,note)VALUES(?,?,?,?,?,?,?,?)";
 		log.debug(metodo,sql);
 		int esitoInserimentoTrattative = 0;
 		PreparedStatement ps=null;
@@ -322,6 +342,7 @@ public class TrattativeDAO extends BaseDao {
 			ps.setString(5, trattativa.getOggetto());
 			ps.setString(6, trattativa.getEsito());
 			ps.setString(7, trattativa.getId_tipologiaTrattative());
+			ps.setString(8, trattativa.getNote());
 			esitoInserimentoTrattative = ps.executeUpdate();
 		} catch (SQLException e) {
 			log.error(metodo, "INSERT INTO tbl_trattative for id_risorsa:"+trattativa.getId_risorsa(), e);
@@ -369,7 +390,7 @@ public class TrattativeDAO extends BaseDao {
 		log.start(metodo);
 		StringBuilder sql = new StringBuilder("SELECT cliente.ragione_sociale,");
 		sql	.append("trattative.id_trattativa,trattative.id_cliente,trattative.id_risorsa,trattative.contatto,")
-				.append("trattative.data,trattative.oggetto,trattative.esito,trattative.id_tipologia_trattattiva ")
+				.append("trattative.data,trattative.oggetto,trattative.esito,trattative.id_tipologia_trattattiva,trattative.note ")
 				.append("FROM tbl_trattative AS trattative, tbl_clienti AS cliente ")
 				.append("WHERE cliente.id_cliente=trattative.id_cliente AND trattative.id_trattativa=?");
 		log.debug(metodo,sql.toString());
@@ -391,6 +412,7 @@ public class TrattativeDAO extends BaseDao {
 				trattativa.setOggetto(rs.getString("oggetto"));
 				trattativa.setEsito(rs.getString("esito"));
 				trattativa.setId_tipologiaTrattative(rs.getString("id_tipologia_trattattiva"));
+				trattativa.setNote(rs.getString("note"));
 			}
 		} catch (SQLException e) {
 			log.error(metodo, "SELECT tbl_trattative,tbl_clienti for idTrattativa:"+idTrattativa, e);
@@ -410,7 +432,7 @@ public class TrattativeDAO extends BaseDao {
 		final String metodo="modificaTrattativa";
 		log.start(metodo);
 		StringBuilder sql = new StringBuilder("UPDATE tbl_trattative ");
-		sql	.append("SET id_cliente=?,id_risorsa=?,contatto=?,data=?,oggetto=?,esito=?,id_tipologia_trattattiva=? ")
+		sql	.append("SET id_cliente=?,id_risorsa=?,contatto=?,data=?,oggetto=?,esito=?,id_tipologia_trattattiva=?,note=? ")
 				.append("WHERE id_trattativa=?");
 		log.debug(metodo,sql.toString());
 		int esitoModificaTrattativa = 0;
@@ -424,7 +446,8 @@ public class TrattativeDAO extends BaseDao {
 			ps.setString(5, trattativa.getOggetto());
 			ps.setString(6, trattativa.getEsito());
 			ps.setString(7, trattativa.getId_tipologiaTrattative());
-			ps.setInt(8, trattativa.getIdTrattative());
+			ps.setString(8, trattativa.getNote());
+			ps.setInt(9, trattativa.getIdTrattative());
 			esitoModificaTrattativa = ps.executeUpdate();
 		} catch (SQLException e) {
 			log.error(metodo, "UPDATE tbl_trattative for trattativa:"+trattativa.getIdTrattative(), e);

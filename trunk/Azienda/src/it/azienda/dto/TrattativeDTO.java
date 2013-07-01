@@ -11,6 +11,7 @@ public class TrattativeDTO {
 	private String esito;
 	private boolean trattativa_chiusa;
 	private String id_tipologiaTrattative;
+	private String note;
 	
 	private String codiceCommessa;
 	private String descrizioneRisorsa;
@@ -30,7 +31,7 @@ public class TrattativeDTO {
 	 * @param descrizioneCliente
 	 */
 	public TrattativeDTO(int idTrattative, String id_cliente, int id_risorsa,
-			String data, String oggetto, String esito,
+			String data, String oggetto, String esito, String note,
 			String descrizioneRisorsa, String descrizioneCliente) {
 		super();
 		this.idTrattative = idTrattative;
@@ -39,10 +40,17 @@ public class TrattativeDTO {
 		this.data = data;
 		this.oggetto = oggetto;
 		this.esito = esito;
+		this.note = note;
 		this.descrizioneRisorsa = descrizioneRisorsa;
 		this.descrizioneCliente = descrizioneCliente;
 	}
-
+	
+	public String getNote() {
+		return note;
+	}
+	public void setNote(String note) {
+		this.note = note;
+	}
 	public String getId_tipologiaTrattative() {
 		return id_tipologiaTrattative;
 	}

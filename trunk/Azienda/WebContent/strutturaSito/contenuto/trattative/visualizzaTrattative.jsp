@@ -15,7 +15,7 @@ if(controlloUtenteLoggato.getAttribute("utenteLoggato") != null){
 
 <div class="subtitle ">Visualizza Trattative</div>
 	
-<div id="flusso">
+<!-- <div id="flusso">
 	<table>
 		<tr>
 			<td><a href="index.jsp?azione=homePage">Home</a></td>
@@ -23,6 +23,7 @@ if(controlloUtenteLoggato.getAttribute("utenteLoggato") != null){
 		</tr>
 	</table>
 </div>
+ -->
 
 <div class="spazio" id="ricercaTrattattive">
 	<form action="./GestioneTrattattive?azione=ricercaTrattativaCliente" method="post" name="visualizzaTrattative">
@@ -80,7 +81,7 @@ if(controlloUtenteLoggato.getAttribute("utenteLoggato") != null){
 				</select>
 				</td>
 				<td>
-					<%@include file="valorizzazioneRisorsaTrattative.jsp" %>
+					<jsp:include page="valorizzazioneRisorsaTrattative.jsp" />
 				</td>
 				<td>
 					<select name="esito">
@@ -103,7 +104,7 @@ if(controlloUtenteLoggato.getAttribute("utenteLoggato") != null){
 					</select>
 				</td>
 				<td>
-					<input type="submit" value="ricerca">
+					<button type="submit" value="ricerca">Ricerca</button>
 				</td>
 			</tr>
 		</table>
@@ -252,34 +253,38 @@ if(controlloUtenteLoggato.getAttribute("utenteLoggato") != null){
 			<%
 				}
 			%>
-			<fieldset>
-				<legend>Visualizzazione Trattativa Cliente</legend>
+			<fieldset class="spazioMin">
+				<legend align="center">Visualizzazione Trattativa Cliente</legend>
 				<table>
 					<tr>
 						<td><label>Cliente</label></td>
-						<td><%=trattative.getDescrizioneCliente() %></td>
+						<td><label><%=trattative.getDescrizioneCliente() %></label></td>
 					</tr>
 					<tr>
 						<td><label>Risorsa</label></td>
 						<td>
 							<%
 							if(trattative.getDescrizioneRisorsa() != null){
-								out.print(trattative.getDescrizioneRisorsa());
+								out.print("<label>"+trattative.getDescrizioneRisorsa()+"</label>");
 							}
 							%>
 						</td>
 					</tr>
 					<tr>
 						<td><label>Data</label></td>
-						<td><%=trattative.getData() %></td>
+						<td><label><%=trattative.getData() %></label></td>
 					</tr>
 					<tr>
 						<td><label>Oggetto</label></td>
-						<td><%=trattative.getOggetto() %></td>
+						<td><label><%=trattative.getOggetto() %></label></td>
 					</tr>
 					<tr>
 						<td><label>Esito</label></td>
-						<td><%=trattative.getEsito() %></td>
+						<td><label><%=trattative.getEsito() %></label></td>
+					</tr>
+					<tr>
+						<td><label>Note</label></td>
+						<td><label><%=trattative.getNote() %></label></td>
 					</tr>
 				</table>
 			</fieldset>

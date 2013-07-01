@@ -102,7 +102,11 @@ public class GestioneCurriculum extends BaseServlet {
 				
 				request.setAttribute("curriculumVitae", curriculumVitae);
 				
-				getServletContext().getRequestDispatcher("/index.jsp?azione=dettaglioCurriculum").forward(request, response);
+				if(request.getParameter("dispositiva") != null){
+					getServletContext().getRequestDispatcher("/index.jsp?azione=dettaglioCurriculum&dispositiva=risorsa").forward(request, response);
+				}else{
+					getServletContext().getRequestDispatcher("/index.jsp?azione=dettaglioCurriculum").forward(request, response);
+				}
 				
 			}else if(azione.equals("modificaIntestazione") || azione.equals("modificaEsperienza") || azione.equals("modificaDettaglio")){
 				

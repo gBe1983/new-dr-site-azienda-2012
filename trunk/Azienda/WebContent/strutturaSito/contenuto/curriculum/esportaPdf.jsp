@@ -33,6 +33,6 @@
 			</tr>
 		</table>
 	</div>
-	<input type="submit" value="esporta" onclick="return closeWindows()">
-	<button value="chiudi" onclick="return closeFinestra()">chiudi</button>
+	<button type="submit" value="esporta" onclick="return closeWindows()">Esporta</button>
+	<button value="chiudi" onclick="return closeFinestra()">Chiudi</button>
 </form>

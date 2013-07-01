@@ -8,14 +8,26 @@
 %>
 <div class="subtitle ">Dettaglio Curriculum Vitae</div>
 
-<div id="toolbar" class="spazioUltra"><a href="#" onclick="return openFinestra('<%=curriculum.getId_risorsa() %>','<%=request.getParameter("azione") %>','notAll','anteprima')">Anteprima</a><a href="#" onclick="return openFinestra('<%=curriculum.getId_risorsa() %>','<%=request.getParameter("azione") %>','notAll','esporta')">Esporta in Pdf</a><a href="./GestioneCurriculum?azione=caricamentoAllCurriculum&dispositiva=gestione">Indietro</a></div>
+<%
+	if(request.getParameter("dispositiva") != null){
+		if(request.getParameter("dispositiva").equals("risorsa")){
+%>
+			<div id="toolbar" class="spazioUltra"><a href="#" onclick="return openFinestra('<%=curriculum.getId_risorsa() %>','<%=request.getParameter("azione") %>','notAll','anteprima')">Anteprima</a><a href="#" onclick="return openFinestra('<%=curriculum.getId_risorsa() %>','<%=request.getParameter("azione") %>','notAll','esporta')">Esporta in Pdf</a><a href="GestioneRisorse?azione=caricamentoProfiloRisorsa&page=dettaglio&risorsa=<%=curriculum.getId_risorsa() %>">Indietro</a></div>	
+<%
+		}
+	}else{
+%>
+			<div id="toolbar" class="spazioUltra"><a href="#" onclick="return openFinestra('<%=curriculum.getId_risorsa() %>','<%=request.getParameter("azione") %>','notAll','anteprima')">Anteprima</a><a href="#" onclick="return openFinestra('<%=curriculum.getId_risorsa() %>','<%=request.getParameter("azione") %>','notAll','esporta')">Esporta in Pdf</a><a href="./GestioneCurriculum?azione=caricamentoAllCurriculum&dispositiva=gestione">Indietro</a></div>
+<%
+	}
+%>
 
 <div id="finestra" title="Esporta Pdf">
-	<%@include file="esportaPdf.jsp" %>
+	<jsp:include page="esportaPdf.jsp" />
 </div>
 
 <div id="anteprima" title="Anteprima Curriculum">
-	<%@include file="anteprima.jsp" %>
+	<jsp:include page="anteprima.jsp" />
 </div>
 
 <div class="spazioUltra">
@@ -32,7 +44,7 @@
 						<option value="modificaIntestazione">Modifica</option>
 						<option value="anteprimaIntestazione">Anteprima</option>
 					</select>
-					<input type="submit" value="esegui" onclick="return controlloSceltaIntestazione()">
+					<button type="submit" value="esegui" onclick="return controlloSceltaIntestazione()">Esegui</button>
 				</form>
 			</td>
 		</tr>
@@ -126,7 +138,7 @@
 						<option value="anteprimaEsperienza">Anteprima</option>
 						<option value="eliminaEsperienza">Elimina</option>
 					</select>
-					<input type="submit" value="esegui" onclick="return controlloSceltaEsperienze()">
+					<button type="submit" value="esegui" onclick="return controlloSceltaEsperienze()">Esegui</button>
 				</form>
 			</td>
 		</tr>
@@ -222,7 +234,7 @@
 						<option value="anteprimaDettaglio">Anteprima</option>
 						<option value="eliminaDettaglio">Elimina</option>
 					</select>
-					<input type="submit" value="esegui" onclick="return controlloSceltaDettaglio()">
+					<button type="submit" value="esegui" onclick="return controlloSceltaDettaglio()">Esegui</button>
 				</form>
 			</td>
 		</tr>

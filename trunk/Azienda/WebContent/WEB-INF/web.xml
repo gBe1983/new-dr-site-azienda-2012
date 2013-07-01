@@ -73,7 +73,6 @@
 		<servlet-name>StartScheduler</servlet-name>
 		<servlet-class>
 		it.azienda.servlet.StartScheduler</servlet-class>
-		<load-on-startup>1</load-on-startup>
 	</servlet>
 	<servlet-mapping>
 		<servlet-name>GestioneAzienda</servlet-name>
@@ -115,11 +114,6 @@
 		<welcome-file>default.htm</welcome-file>
 		<welcome-file>default.jsp</welcome-file>
 	</welcome-file-list>
-
-	<context-param>
-		<param-name>log4jConfigLocation</param-name>
-		<param-value>/WEB-INF/classes/log4j.xml</param-value>
-	</context-param>
 
 	<context-param>
 		<param-name>DB.driver</param-name>

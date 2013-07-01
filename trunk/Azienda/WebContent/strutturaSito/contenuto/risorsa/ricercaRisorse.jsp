@@ -10,7 +10,7 @@
 <form action="./GestioneRisorse" method="post" class="spazio">
 	<input type="hidden" name="azione" value="ricercaRisorse">
 	<fieldset>
-		<legend>Ricerca Risorse</legend>
+		<legend align="center">Ricerca Risorse</legend>
 	<table>
 		<tr>
 			<td><label>Cognome</label></td>
@@ -43,8 +43,8 @@
 	</fieldset>
 	<table>
 		<tr>
-			<td><input type="submit" value="ricerca Risorsa"/></td>
-			<td><input type="reset" value="cancella Dati"/></td>
+			<td><button type="submit" value="ricerca Risorsa"/>Ricerca Risorsa</button></td>
+			<td><button type="reset" value="cancella Dati"/>Cancella Dati</button></td>
 		<tr>
 	</table>
 </form>

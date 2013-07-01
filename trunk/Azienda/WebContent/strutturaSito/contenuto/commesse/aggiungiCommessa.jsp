@@ -49,7 +49,7 @@ if(controlloUtenteLoggato.getAttribute("utenteLoggato") != null){
 
 <table>
 	<tr>
-		<td>Tipologia Commessa:</td>
+		<td><label>Tipologia Commessa:</label></td>
 		<td>
 			<select name="tipologiaCommessa" id="sceltaTipologia" onchange="tipologia(this.value)">
 				<option value="0" selected="selected">-- Scegliere il tipo di
@@ -75,7 +75,7 @@ if(controlloUtenteLoggato.getAttribute("utenteLoggato") != null){
 
 <p>* i campi segnati in asterisco sono obbligatori</p>
 
-<fieldset><legend>Aggiungi Commessa Esterna Singola</legend>
+<fieldset><legend align="center">Aggiungi Commessa Esterna Singola</legend>
 <table>
 	<tr>
 		<td><label>* Cliente: </label></td>
@@ -112,46 +112,46 @@ if(controlloUtenteLoggato.getAttribute("utenteLoggato") != null){
 		</select></td>
 	</tr>
 	<tr>
-		<td>Codice</td>
+		<td><label>Codice</label></td>
 		<td><input type="text" name="commessaEsternaSingola_codiceCommessa" id="codiceCommessa" value="<%=newCodCommessaEsterna%>" readonly="readonly" /></td>
 	</tr>
 	<tr>
-		<td>* Data</td>
+		<td><label>* Data</label></td>
 		<td><input type="text" name="commessaEsternaSingola_dataOfferta"
 			class="data" /></td>
 	</tr>
 	<tr>
-		<td>* Oggetto</td>
+		<td><label>* Oggetto</label></td>
 		<td><input type="text" name="commessaEsternaSingola_oggettoOfferta" /></td>
 
-		<td>* Descrizione</td>
+		<td><label>* Descrizione</label></td>
 		<td><input type="text" name="commessaEsternaSingola_descrizione" />
 		</td>
 	</tr>
 	<tr>
-		<td>Sede Lavoro</td>
+		<td><label>Sede Lavoro</label></td>
 		<td><input type="text" name="commessaEsternaSingola_sedeLavoro" />
 		</td>
 	</tr>
 	<tr>
-		<td>* Data Inizio</td>
+		<td><label>* Data Inizio</label></td>
 		<td><input type="text" name="commessaEsternaSingola_dataInizio"
 			class="data" /></td>
 
-		<td>* Data Fine</td>
+		<td><label>* Data Fine</label></td>
 		<td><input type="text" name="commessaEsternaSingola_dataFine"
 			class="data" /></td>
 	</tr>
 	<tr>
-		<td>* Importo</td>
+		<td><label>* Importo</label></td>
 		<td><input type="text" name="commessaEsternaSingola_importo" /></td>
 	</tr>
 	<tr>
-		<td>Importo Lettere</td>
+		<td><label>Importo Lettere</label></td>
 		<td><input type="text" name="commessaEsternaSingola_importoLettere" /></td>
 
 
-		<td>Pagamento</td>
+		<td><label>Pagamento</label></td>
 		<td><select name="commessaEsternaSingola_pagamento">
 			<option value=""></option>
 			<option value="30">30</option>
@@ -162,10 +162,10 @@ if(controlloUtenteLoggato.getAttribute("utenteLoggato") != null){
 		</select></td>
 	</tr>
 	<tr>
-		<td>Ore</td>
+		<td><label>Ore</label></td>
 		<td><input type="text" name="commessaEsternaSingola_ore" /></td>
 		
-		<td>Al</td>
+		<td><label>Al</label></td>
 		<td>
 			<select name="commessaEsternaSingola_al">
 				<option value=""></option>
@@ -175,15 +175,15 @@ if(controlloUtenteLoggato.getAttribute("utenteLoggato") != null){
 		</td>
 	</tr>
 	<tr>
-		<td>Note<br>
-		(1000 caratteri)</td>
+		<td><label>Note<br>
+		(1000 caratteri)</label></td>
 		<td><textarea name="commessaEsternaSingola_note" cols="30"
 			rows="10"
 			onclick="cancellaCampoTextArea('inserisciCommessa','singola')"
 			onfocus="cancellaCampoTextArea('inserisciCommessa','singola')">Inserisci la descrizione</textarea></td>
 	</tr>
 	<tr>
-		<td>Stato</td>
+		<td><label>Stato</label></td>
 		<td><select name="commessaEsternaSingola_stato">
 			<option value="aperta">Aperta</option>
 		</select></td>
@@ -193,10 +193,10 @@ if(controlloUtenteLoggato.getAttribute("utenteLoggato") != null){
 <table>
 	<tr>
 		<td>
-			<input type="submit" value="inserisci commessa" id="inserisciTrattativa" onclick="return controlloInserisciCommessa('1')"/>
+			<button type="submit" value="inserisci commessa" id="inserisciTrattativa" onclick="return controlloInserisciCommessa('1')" >Inserisci Commessa</button>
 		</td>
 		<td>
-			<input type="reset" value="svuota campi" />
+			<button type="reset" value="svuota campi" >Svuota Campi</button>
 		</td>
 	</tr>
 </table>
@@ -226,40 +226,40 @@ if(controlloUtenteLoggato.getAttribute("utenteLoggato") != null){
 		</select></td>
 	</tr>
 	<tr>
-		<td>Codice</td>
+		<td><label>Codice</label></td>
 		<td><input type="text" name="codiceCommessa" id="codiceCommessa" value="<%=newCodCommessaEsterna%>" readonly="readonly" /></td>
 	</tr>
 	<tr>
-		<td>* Data</td>
+		<td><label>* Data</label></td>
 		<td><input type="text" name="dataOfferta" class="data" /></td>
 	</tr>
 	<tr>
-		<td>* Oggetto</td>
+		<td><label>* Oggetto</label></td>
 		<td><input type="text" name="oggettoOfferta" /></td>
 
-		<td>* Descrizione</td>
+		<td><label>* Descrizione</label></td>
 		<td><input type="text" name="descrizione" /></td>
 	</tr>
 	<tr>
-		<td>Sede Lavoro</td>
+		<td><label>Sede Lavoro</label></td>
 		<td><input type="text" name="sedeLavoro" /></td>
 	</tr>
 	<tr>
-		<td>* Data Inizio</td>
+		<td><label>* Data Inizio</label></td>
 		<td><input type="text" name="dataInizio" class="data" /></td>
 
-		<td>* Data Fine</td>
+		<td><label>* Data Fine</label></td>
 		<td><input type="text" name="dataFine" class="data" /></td>
 	</tr>
 	<tr>
-		<td>* Importo</td>
+		<td><label>* Importo</label></td>
 		<td><input type="text" name="importo" /></td>
 	</tr>
 	<tr>
-		<td>Importo Lettere</td>
+		<td><label>Importo Lettere</label></td>
 		<td><input type="text" name="importoLettere" /></td>
 
-		<td>Pagamento</td>
+		<td><label>Pagamento</label></td>
 		<td><select name="pagamento">
 			<option value=""></option>
 			<option value="30">30</option>
@@ -270,10 +270,10 @@ if(controlloUtenteLoggato.getAttribute("utenteLoggato") != null){
 		</select></td>
 	</tr>
 	<tr>
-		<td>Ore</td>
+		<td><label>Ore</label></td>
 		<td><input type="text" name="ore" /></td>
 		
-		<td>Al</td>
+		<td><label>Al</label></td>
 		<td>
 			<select name="al">
 				<option value=""></option>
@@ -283,14 +283,14 @@ if(controlloUtenteLoggato.getAttribute("utenteLoggato") != null){
 		</td>
 	</tr>
 	<tr>
-		<td>Note<br>
-		(1000 caratteri)</td>
+		<td><label>Note<br>
+		(1000 caratteri)</label></td>
 		<td><textarea name="note" cols="30" rows="10"
 			onclick="cancellaCampoTextArea('inserisciCommessa','multiple')"
 			onfocus="cancellaCampoTextArea('inserisciCommessa','multiple')">Inserisci la descrizione</textarea></td>
 	</tr>
 	<tr>
-		<td>Stato</td>
+		<td><label>Stato</label></td>
 		<td><select name="stato">
 			<option value="aperta">Aperta</option>
 		</select></td>
@@ -299,8 +299,8 @@ if(controlloUtenteLoggato.getAttribute("utenteLoggato") != null){
 </fieldset>
 <table>
 	<tr>
-		<td><input type="submit" value="inserisci commessa" id="inserisciTrattativa" onclick="return controlloInserisciCommessa('2')" /></td>
-		<td><input type="reset" value="svuota campi" /></td>
+		<td><button type="submit" value="inserisci commessa" id="inserisciTrattativa" onclick="return controlloInserisciCommessa('2')" >Inserisci commessa</button></td>
+		<td><button type="reset" value="svuota campi" >Svuota Campi</button></td>
 	</tr>
 </table>
 </div>
@@ -316,45 +316,45 @@ if(controlloUtenteLoggato.getAttribute("utenteLoggato") != null){
 <legend>Aggiungi Commessa Interna</legend>
 <table>
 	<tr>
-		<td>Codice</td>
+		<td><label>Codice</label></td>
 		<td><input type="text" name="commessaInterna_codiceCommessa" id="codiceCommessa" value="<%=newCodCommessaInterna%>" readonly="readonly" /></td>
 	</tr>
 	<tr>
-		<td>* Data</td>
+		<td><label>* Data</label></td>
 		<td><input type="text" name="commessaInterna_dataOfferta"
 			class="data" /></td>
 	</tr>
 	<tr>
-		<td>* Oggetto</td>
+		<td><label>* Oggetto</label></td>
 		<td><input type="text"name="commessaInterna_oggettoOfferta" /></td>
 
-		<td>* Descrizione</td>
+		<td><label>* Descrizione</label></td>
 			<td><input type="text" name="commessaInterna_descrizione" />
 		</td>
 	</tr>
 	<tr>
-		<td>Sede Lavoro</td>
+		<td><label>Sede Lavoro</label></td>
 		<td><input type="text" name="commessaInterna_sedeLavoro" />
 		</td>
 	</tr>
 	<tr>
-		<td>* Data Inizio</td>
+		<td><label>* Data Inizio</label></td>
 		<td><input type="text" name="commessaInterna_dataInizio"
 			class="data" /></td>
 
-		<td>* Data Fine</td>
+		<td><label>* Data Fine</label></td>
 		<td><input type="text" name="commessaInterna_dataFine"
 			class="data" /></td>
 	</tr>
 	<tr>
-		<td>* Importo</td>
+		<td><label>* Importo</label></td>
 		<td><input type="text" name="commessaInterna_importo" /></td>
 	</tr>
 	<tr>
-		<td>Importo Lettere</td>
+		<td><label>Importo Lettere</label></td>
 		<td><input type="text" name="commessaInterna_importoLettere" /></td>
 
-		<td>Pagamento</td>
+		<td><label>Pagamento</label></td>
 		<td><select name="commessaInterna_pagamento">
 			<option value=""></option>
 			<option value="30">30</option>
@@ -365,10 +365,10 @@ if(controlloUtenteLoggato.getAttribute("utenteLoggato") != null){
 		</select></td>
 	</tr>
 	<tr>
-		<td>Ore</td>
+		<td><label>Ore</label></td>
 		<td><input type="text" name="commessaInterna_ore" /></td>
 		
-		<td>Al</td>
+		<td><label>Al</label></td>
 		<td>
 			<select name="commessaInterna_al">
 				<option value=""></option>
@@ -378,15 +378,15 @@ if(controlloUtenteLoggato.getAttribute("utenteLoggato") != null){
 		</td>
 	</tr>
 	<tr>
-		<td>Note<br>
-		(1000 caratteri)</td>
+		<td><label>Note<br>
+		(1000 caratteri)</label></td>
 		<td><textarea name="commessaInterna_note" cols="30"
 			rows="10"
 			onclick="cancellaCampoTextArea('inserisciCommessa','interna')"
 			onfocus="cancellaCampoTextArea('inserisciCommessa','interna')">Inserisci la descrizione</textarea></td>
 	</tr>
 	<tr>
-		<td>Stato</td>
+		<td><label>Stato</label></td>
 		<td><select name="commessaInterna_stato">
 			<option value="aperta">Aperta</option>
 		</select></td>
@@ -395,8 +395,8 @@ if(controlloUtenteLoggato.getAttribute("utenteLoggato") != null){
 </fieldset>
 <table>
 	<tr>
-		<td><input type="submit" value="inserisci commessa" id="inserisciTrattativa" onclick="return controlloInserisciCommessa('3')"/></td>
-		<td><input type="reset" value="svuota campi" /></td>
+		<td><button type="submit" value="inserisci commessa" id="inserisciTrattativa" onclick="return controlloInserisciCommessa('3')" >Inserisci Commessa</button></td>
+		<td><button type="reset" value="svuota campi" />Svuota Campi</button></td>
 	</tr>
 </table>
 </div>
@@ -407,7 +407,7 @@ if(controlloUtenteLoggato.getAttribute("utenteLoggato") != null){
 	<%
 	if(altreCommesse != null){
 %>		
-		<p align="center"> Commessa che gestisce le Assenze è già presente. Selezionare "Modifica Commessa" per visualizzare le voci selezionate. <p>
+		<p align="center">Commessa che gestisce le Assenze è già presente. Selezionare "Modifica Commessa" per visualizzare le voci selezionate. </p>
 <%
 	}else{
 %>
@@ -417,16 +417,16 @@ if(controlloUtenteLoggato.getAttribute("utenteLoggato") != null){
 		<legend>Aggiungi Commessa Generica</legend>
 		<table>
 			<tr>
-				<td>Codice</td>
+				<td><label>Codice</label></td>
 				<td><input type="text" name="altro_codiceCommessa" id="codiceCommessa" value="<%=newCodCommessaInterna%>" readonly="readonly"/></td>
 			</tr>
 			<tr>
-			<td>* Descrizione</td>
+			<td><label>* Descrizione</label></td>
 				<td><input type="text" name="altro_descrizione" value="Assenze"/>
 			</td>
 			</tr>
 			<tr>
-				<td>* Tipologia Commessa:</td>
+				<td><label>* Tipologia Commessa:</label></td>
 				<td>
 					<input type="checkbox" name="ferie" value="true" />Ferie
 					<input type="checkbox" name="permessi" value="true" />Permessi
@@ -437,7 +437,7 @@ if(controlloUtenteLoggato.getAttribute("utenteLoggato") != null){
 				</td>
 			</tr>
 			<tr>
-				<td>Note<br>(1000 caratteri)</td>
+				<td><label>Note<br>(1000 caratteri)</label></td>
 				<td><textarea name="altro_note" cols="30" rows="10" onclick="cancellaCampoTextArea('inserisciCommessa','altro')" onfocus="cancellaCampoTextArea('inserisciCommessa','altro')">Inserisci la descrizione</textarea></td>
 			</tr>
 		</table>
@@ -445,10 +445,10 @@ if(controlloUtenteLoggato.getAttribute("utenteLoggato") != null){
 	<table>
 		<tr>
 			<td>
-				<input type="submit" value="inserisci commessa" id="inserisciTrattativa" onclick="return controlloInserisciCommessa('4')"/>
+				<button type="submit" value="inserisci commessa" id="inserisciTrattativa" onclick="return controlloInserisciCommessa('4')" >Inserisci Commessa</button>
 			</td>
 			<td>
-				<input type="reset" value="svuota campi" />
+				<button type="reset" value="svuota campi" />Svuota Campi</button>
 			</td>
 		</tr>
 	</table>
@@ -537,7 +537,7 @@ if(controlloUtenteLoggato.getAttribute("utenteLoggato") != null){
 	if(!commessa.getTipologia().equals("4")){
 %>
 	<fieldset>
-		<legend>Dettaglio Commessa Esterna Singola</legend>
+		<legend align="center">Dettaglio Commessa Esterna Singola</legend>
 		<table class="dettaglioCommessa">
 			<tr>
 				<td><label>Cliente: </label></td>
@@ -562,7 +562,7 @@ if(controlloUtenteLoggato.getAttribute("utenteLoggato") != null){
 				}
 			%>
 			<tr>
-				<td>Codice</td>
+				<td><label>Codice</label></td>
 				<td>
 					<%
 						if(commessa.getCodiceCommessa() != null){
@@ -572,7 +572,7 @@ if(controlloUtenteLoggato.getAttribute("utenteLoggato") != null){
 				</td>
 			</tr>
 			<tr>
-				<td>Data Offerta</td>
+				<td><label>Data Offerta</label></td>
 				<td>
 					<%
 						if(commessa.getData_offerta() != null){
@@ -582,7 +582,7 @@ if(controlloUtenteLoggato.getAttribute("utenteLoggato") != null){
 				</td>
 			</tr>
 			<tr>
-				<td>Oggetto</td>
+				<td><label>Oggetto</label></td>
 				<td>
 					<%
 						if(commessa.getOggetto_offerta() != null){
@@ -591,7 +591,7 @@ if(controlloUtenteLoggato.getAttribute("utenteLoggato") != null){
 					%>
 				</td>
 		
-				<td>Descrizione</td>
+				<td><label>Descrizione</label></td>
 				<td>
 					<%
 						if(commessa.getDescrizione() != null){
@@ -601,7 +601,7 @@ if(controlloUtenteLoggato.getAttribute("utenteLoggato") != null){
 				</td>
 			</tr>
 			<tr>
-				<td>Sede Lavoro</td>
+				<td><label>Sede Lavoro</label></td>
 				<td>
 					<%
 						if(commessa.getSede_lavoro() != null){
@@ -611,7 +611,7 @@ if(controlloUtenteLoggato.getAttribute("utenteLoggato") != null){
 				</td>
 			</tr>
 			<tr>
-				<td>Data Inizio</td>
+				<td><label>Data Inizio</label></td>
 				<td>
 					<%
 						if(commessa.getData_inizio() != null){
@@ -620,7 +620,7 @@ if(controlloUtenteLoggato.getAttribute("utenteLoggato") != null){
 					%>
 				</td>
 		
-				<td>Data Fine</td>
+				<td><label>Data Fine</label></td>
 				<td>
 					<%
 						if(commessa.getData_fine() != null){
@@ -630,7 +630,7 @@ if(controlloUtenteLoggato.getAttribute("utenteLoggato") != null){
 				</td>
 			</tr>
 			<tr>
-				<td>Importo</td>
+				<td><label>Importo</label></td>
 				<td>
 					<%
 						if(commessa.getImporto() != 0.0){
@@ -640,7 +640,7 @@ if(controlloUtenteLoggato.getAttribute("utenteLoggato") != null){
 				</td>
 			</tr>
 			<tr>
-				<td>Importo Lettere</td>
+				<td><label>Importo Lettere</label></td>
 				<td>
 					<%
 						if(commessa.getImporto_lettere() != null){
@@ -649,7 +649,7 @@ if(controlloUtenteLoggato.getAttribute("utenteLoggato") != null){
 					%>
 				</td>
 				
-				<td>Pagamento</td>
+				<td><label>Pagamento</label></td>
 				<td>
 					<%
 						if(commessa.getPagamento() != null){
@@ -663,7 +663,7 @@ if(controlloUtenteLoggato.getAttribute("utenteLoggato") != null){
 				</td>
 			</tr>
 			<tr>
-				<td>Ore</td>
+				<td><label>Ore</label></td>
 				<td>
 					<%
 						if(commessa.getTotaleOre() != 0){
@@ -672,7 +672,7 @@ if(controlloUtenteLoggato.getAttribute("utenteLoggato") != null){
 					%>
 				</td>
 				
-				<td>Al</td>
+				<td><label>Al</label></td>
 				<td>
 					<%
 						if(commessa.getAl() != null){
@@ -682,7 +682,7 @@ if(controlloUtenteLoggato.getAttribute("utenteLoggato") != null){
 				</td>
 			</tr>
 			<tr>
-				<td>Note</td>
+				<td><label>Note</label></td>
 				<td>
 					<label>
 						<%
@@ -694,7 +694,7 @@ if(controlloUtenteLoggato.getAttribute("utenteLoggato") != null){
 				</td>
 			</tr>
 			<tr>
-				<td>Stato</td>
+				<td><label>Stato</label></td>
 				<td>
 					<%
 						if(commessa.getStato() != null){

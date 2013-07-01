@@ -58,7 +58,7 @@
 					<li class="title"><a href="#">Trattative</a></li>
 					<li class="sub-menu">
 						<ul>
-							<li><a href="./GestioneTrattattive?azione=aggiungiTrattative&dispositiva=trattamenti">Aggiungi Trattative</a></li>
+							<li><a href="./GestioneTrattattive?azione=aggiungiTrattative&dispositiva=trattamenti">Aggiungi Tratt.</a></li>
 							<li><a href="./GestioneTrattattive?azione=ricercaTrattativaCliente&tipo=tutte&dispositiva=trattative">Visualizza Tratt.</a></li>
 						</ul>
 					</li>
@@ -93,8 +93,7 @@
 						<ul>
 							<li><a href="./GestioneAzienda?azione=aggiornaAzienda">Modifica Profilo</a></li>
 							<li><a href="./GestioneAzienda?azione=visualizzaAzienda">Visualizza Profilo</a></li>
-							<li><a href="./index.jsp?azione=cambioPassword">Modifica Password</a></li>
-							<li><a href="./GestioneAzienda?azione=eliminaProfilo" onClick="return confirm('Sei sicuro di voler Cancellare il tuo profilo aziendale?');">Cancella Profilo</a></li>
+							<li><a href="./index.jsp?azione=cambioPassword">Modifica Pwd</a></li>
 							<li><a href="./GestioneAzienda?azione=logout">Logout</a></li>
 						</ul>
 					</li>

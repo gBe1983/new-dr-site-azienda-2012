@@ -10,11 +10,11 @@
 
 	<p>* i campi segnati in asterisco sono obbligatori
 	<div class="spazioUltra">
-		<fieldset>
-			<legend>Esperienza Lavorativa</legend>
 			<form action="./GestioneCurriculum" method="post" id="inserisciEsperienza" name="inserisciEsperienza">		
 				<input type="hidden" name="azione" value="aggiungiEsperienza">
 				<input type="hidden" name="parametroId" value="<%=Integer.parseInt(request.getParameter("parametroId")) %>" />
+				<fieldset>
+				<legend align="center">Esperienza Lavorativa</legend>
 				<table>
 					<tr>
 						<td>
@@ -99,15 +99,18 @@
 							<textarea rows="15" cols="50" name="descrizione" maxlength="10000">Inserisci testo</textarea>
 						</td>
 					</tr>
+				</table>
+				</fieldset>
+				<table>
 					<tr>
 						<td colspan="2"> 
-							<input type="submit" value="inserisci esperienza" onclick="return controlloCampiInserimentoExp()">
-							<input type="button" value="indietro" onClick="javascript:history.back()" name="button">
+							<button type="submit" value="inserisci esperienza" onclick="return controlloCampiInserimentoExp()">Inserisci Esperienza</button>
+							<button type="button" value="indietro" onClick="javascript:history.back()" name="button">Indietro</button>
 						</td>
 					</tr>
 				</table>
 			</form>
-			</fieldset>
+			
 		</div>
 <%			
 		}else{
