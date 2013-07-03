@@ -6,7 +6,7 @@
       <param name="Append" value="true"/>
       <param name="DatePattern" value="'.'yyyy-MM-dd"/>
 <!--  <param name="File" value="C:/Users/Utente/Desktop/Progetti Java/dierreconsulting/Azienda/WebContent/WEB-INF/logs/Azienda.log"/> -->
-  	  <param name="File" value="/nfs_home/drcon860/public_html/log/DrConsultingEditor/Dipendente.log"/> 
+  	  <param name="File" value="/nfs_home/drcon860/public_html/log/Azienda/Dipendente.log"/> 
       <layout class="org.apache.log4j.PatternLayout">
          <param name="ConversionPattern" value="%d{dd-MM-yyyy HH:mm:ss:SSS} | [%c] | %p | %M:%L | %m %n "/>
       </layout>
