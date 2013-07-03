@@ -17,6 +17,6 @@ public class TriggerLogEvent implements TriggeringEventEvaluator{
 	 */
 	@Override
 	public boolean isTriggeringEvent(LoggingEvent event) {
-		return event.getLevel().isGreaterOrEqual(Level.WARN);
+		return event.getLevel().isGreaterOrEqual(Level.ERROR);
 	}
 }
