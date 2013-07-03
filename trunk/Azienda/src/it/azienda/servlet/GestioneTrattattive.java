@@ -22,21 +22,22 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.apache.log4j.Logger;
+
 /**
  * Servlet implementation class GestioneTrattattive
  */
 public class GestioneTrattattive extends BaseServlet {
 	private static final long serialVersionUID = -1773569816950815813L;
-	private MyLogger log = new MyLogger(GestioneCommessa.class);
+	private Logger log = Logger.getLogger(GestioneCommessa.class);
 	/**
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse
 	 *      response)
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		final String metodo = "doGet";
-		log.start(metodo);
+		
+		log.info("metodo: doGet");
 		processRequest(request, response);
-		log.end(metodo);
 	}
 
 	/**
@@ -44,15 +45,15 @@ public class GestioneTrattattive extends BaseServlet {
 	 *      response)
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		final String metodo = "doPost";
-		log.start(metodo);
+		
+		log.info("metodo: doPost");
 		processRequest(request, response);
-		log.end(metodo);
+		
 	}
 
 	private void processRequest(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		final String metodo = "processRequest";
-		log.start(metodo);
+		
+		log.info("metodo: processRequest");
 
 		// recupero sessione
 		HttpSession sessione = request.getSession();
@@ -62,7 +63,6 @@ public class GestioneTrattattive extends BaseServlet {
 		ClienteDAO cDAO = new ClienteDAO(conn.getConnection());
 		CommesseDAO commesseDAO = new CommesseDAO(conn.getConnection());
 
-		RequestDispatcher rd = null;
 
 		if(sessione.getAttribute("utenteLoggato") != null){
 			// recupero il parametro azione e verifico il suo valore
@@ -72,7 +72,10 @@ public class GestioneTrattattive extends BaseServlet {
 			 * singolo cliente o di tutte le trattative dell'azienda
 			 */
 			if (azione.equals("ricercaTrattativaCliente")) {
-	
+				
+				log.info("-------------------------------------------------------------------------------");
+				log.info("azione: "+ azione);
+				
 				ArrayList listaRisorse = rDAO.elencoRisorse();
 				ArrayList listaTrattattive = null;
 	
@@ -160,19 +163,27 @@ public class GestioneTrattattive extends BaseServlet {
 				if (request.getParameter("dispositiva") != null) {
 					if (request.getParameter("dispositiva").equals("trattative")) {
 						if(request.getParameter("dettaglioTrattativa") != null){
-							rd = getServletContext().getRequestDispatcher("/index.jsp?azione=visualizzaTrattative&tipo=tutte&dispositiva=trattative&dettaglioTrattativa="+request.getParameter("dettaglioTrattativa"));
-							rd.forward(request, response);
+							
+							log.info("url: /index.jsp?azione=visualizzaTrattative&tipo=tutte&dispositiva=trattative&dettaglioTrattativa="+request.getParameter("dettaglioTrattativa"));
+							
+							getServletContext().getRequestDispatcher("/index.jsp?azione=visualizzaTrattative&tipo=tutte&dispositiva=trattative&dettaglioTrattativa="+request.getParameter("dettaglioTrattativa")).forward(request, response);
 						}else{
-							rd = getServletContext().getRequestDispatcher("/index.jsp?azione=visualizzaTrattative&tipo=tutte&dispositiva=trattative");
-							rd.forward(request, response);
+							
+							log.info("url: /index.jsp?azione=visualizzaTrattative&tipo=tutte&dispositiva=trattative");
+							
+							getServletContext().getRequestDispatcher("/index.jsp?azione=visualizzaTrattative&tipo=tutte&dispositiva=trattative").forward(request, response);
 						}
 					} else {
 						if(request.getParameter("dettaglioTrattativa") != null){
-							rd = getServletContext().getRequestDispatcher("/index.jsp?azione=visualizzaTrattative&dettaglioTrattativa="+request.getParameter("dettaglioTrattativa")+"&tipo=azienda&dispositiva=cliente");
-							rd.forward(request, response);
+							
+							log.info("url: /index.jsp?azione=visualizzaTrattative&dettaglioTrattativa="+request.getParameter("dettaglioTrattativa")+"&tipo=azienda&dispositiva=cliente");
+							
+							getServletContext().getRequestDispatcher("/index.jsp?azione=visualizzaTrattative&dettaglioTrattativa="+request.getParameter("dettaglioTrattativa")+"&tipo=azienda&dispositiva=cliente").forward(request, response);
 						}else{
-							rd = getServletContext().getRequestDispatcher("/index.jsp?azione=visualizzaTrattative&tipo=azienda&dispositiva=cliente");
-							rd.forward(request, response);
+							
+							log.info("url: /index.jsp?azione=visualizzaTrattative&tipo=azienda&dispositiva=cliente");
+							
+							getServletContext().getRequestDispatcher("/index.jsp?azione=visualizzaTrattative&tipo=azienda&dispositiva=cliente").forward(request, response);
 						}
 						
 					}
@@ -180,6 +191,10 @@ public class GestioneTrattattive extends BaseServlet {
 	
 			} else if (azione.equals("aggiungiTrattative") || azione.equals("aggiungiCommessa") || azione.equals("ricercaCommessa")) {
 				request.setAttribute("newCodCommessaEsterna",commesseDAO.creazioneCodiceCommessaEsterna());
+				
+				log.info("-------------------------------------------------------------------------------");
+				log.info("azione: "+ azione);
+				
 				/*
 				 * in questa sezione entro quando l'utente clicca su
 				 * "Aggiungi Trattative" o clicca su "Aggingi Commessa" o clicca "Ricerca Commessa" 
@@ -205,14 +220,24 @@ public class GestioneTrattattive extends BaseServlet {
 				 */
 	
 				if (azione.equals("aggiungiTrattative")) {
+					
+					log.info("url: /index.jsp?azione=aggiungiTrattative&tipo=tutte&dispositiva=trattative");
+					
 					getServletContext()
 							.getRequestDispatcher(
 									"/index.jsp?azione=aggiungiTrattative&tipo=tutte&dispositiva=trattative").forward(request, response);;
+				
 				} else if (azione.equals("ricercaCommessa")) {
+					
+					log.info("url: /index.jsp?azione=ricercaCommessa&dispositiva=commessa");
+					
 					getServletContext()
 							.getRequestDispatcher(
 									"/index.jsp?azione=ricercaCommessa&dispositiva=commessa").forward(request, response);;
 				} else {
+					
+					log.info("url: /index.jsp?azione=aggiungiCommessa&dispositiva=commessa");
+					
 					getServletContext()
 							.getRequestDispatcher(
 									"/index.jsp?azione=aggiungiCommessa&dispositiva=commessa").forward(request, response);
@@ -221,6 +246,9 @@ public class GestioneTrattattive extends BaseServlet {
 	
 			} else if (azione.equals("inserisciTrattative") || azione.equals("modificaTrattativa")) {
 	
+				log.info("-------------------------------------------------------------------------------");
+				log.info("azione: "+ azione);
+				
 				/*
 				 * in questa sezione effettuo l'inserimento di tutte le trattative
 				 * che l'utente
@@ -287,12 +315,12 @@ public class GestioneTrattattive extends BaseServlet {
 							try {
 								commessa.setData_inizio(formattaDataServer.format(formattaDataWeb.parse(request.getParameter("dataInizio"))));
 							} catch (ParseException e) {
-								log.error(metodo, "dataInizio", e);
+								log.error("errore di conversione data: " + e);
 							}
 							try {
 								commessa.setData_fine(formattaDataServer.format(formattaDataWeb.parse(request.getParameter("dataFine"))));
 							} catch (ParseException e) {
-								log.error(metodo, "dataFine", e);
+								log.error("errore di conversione data: " + e);
 							}
 	
 							commessa.setImporto(Double.parseDouble(request.getParameter("importo")));
@@ -332,12 +360,12 @@ public class GestioneTrattattive extends BaseServlet {
 									try {
 										asscommessa.setDataInizio(formattaDataServer.format(formattaDataWeb.parse(request.getParameter("dataInizio"))));
 									} catch (ParseException e) {
-										log.error(metodo, "dataInizio", e);
+										log.error("errore di conversione data: " + e);
 									}
 									try {
 										asscommessa.setDataFine(formattaDataServer.format(formattaDataWeb.parse(request.getParameter("dataFine"))));
 									} catch (ParseException e) {
-										log.error(metodo, "dataFine", e);
+										log.error("errore di conversione data: " + e);
 									}
 									asscommessa.setTotaleImporto(Double.parseDouble(request.getParameter("importo")));
 									
@@ -347,14 +375,14 @@ public class GestioneTrattattive extends BaseServlet {
 									try {
 										calendar.setTime(format.parse(request.getParameter("dataInizio")));
 									} catch (ParseException e) {
-										log.error(metodo, "dataInizio", e);
+										log.error("errore di conversione data: " + e);
 									}
 									
 									Calendar calendar2 = Calendar.getInstance();
 									try {
 										calendar2.setTime(format.parse(request.getParameter("dataFine")));
 									} catch (ParseException e) {
-										log.error(metodo, "dataFine", e);
+										log.error("errore di conversione data: " + e);
 									}
 									
 									double giorni = calendar.getTimeInMillis() - calendar2.getTimeInMillis();
@@ -375,33 +403,37 @@ public class GestioneTrattattive extends BaseServlet {
 										commesseDAO.caricamentoCalendario(giornieffettivi,calendar,commesseDAO.caricamentoIdAssociazione());
 										
 										request.setAttribute("messaggio","La modifica della trattattiva e l'associazione con una nuova commessa è avvenuta con successo");
-										rd = getServletContext().getRequestDispatcher("/index.jsp?azione=messaggio");
-										rd.forward(request, response);
+										
+										log.info("url: /index.jsp?azione=messaggio");
+										
+										getServletContext().getRequestDispatcher("/index.jsp?azione=messaggio").forward(request, response);
 									}else{
 										request.setAttribute("messaggio","Spiacenti la modifica della trattativa con l'associazione a una nuova commessa non è avvenuta con successo.");
-										rd = getServletContext().getRequestDispatcher("/index.jsp?azione=messaggio");
-										rd.forward(request, response);
+										
+										log.info("url: /index.jsp?azione=messaggio");
+										getServletContext().getRequestDispatcher("/index.jsp?azione=messaggio").forward(request, response);
 									}
 								} else{
 									request.setAttribute("messaggio","La modifica della trattattiva e l'associazione con una nuova commessa è avvenuta con successo");
-									rd = getServletContext().getRequestDispatcher("/index.jsp?azione=messaggio");
-									rd.forward(request, response);
+									
+									log.info("url: /index.jsp?azione=messaggio");
+									getServletContext().getRequestDispatcher("/index.jsp?azione=messaggio").forward(request, response);
 								}
 							} else {
 								request.setAttribute("messaggio", messaggioCommessa);
-								rd = getServletContext().getRequestDispatcher("/index.jsp?azione=messaggio");
-								rd.forward(request, response);
+								
+								log.info("url: /index.jsp?azione=messaggio");
+								
+								getServletContext().getRequestDispatcher("/index.jsp?azione=messaggio").forward(request, response);
 							}
 	
 						} else {
 							request.setAttribute("messaggio","Inserimento trattattiva avvenuta con successo");
-							rd = getServletContext().getRequestDispatcher("/index.jsp?azione=messaggio");
-							rd.forward(request, response);
+							getServletContext().getRequestDispatcher("/index.jsp?azione=messaggio").forward(request, response);
 						}
 					} else {
 						request.setAttribute("messaggio", messaggio);
-						rd = getServletContext().getRequestDispatcher("/index.jsp?azione=messaggio");
-						rd.forward(request, response);
+						getServletContext().getRequestDispatcher("/index.jsp?azione=messaggio").forward(request, response);
 					}
 				} else {
 					
@@ -446,12 +478,12 @@ public class GestioneTrattattive extends BaseServlet {
 							try {
 								commessa.setData_inizio(formattaDataServer.format(formattaDataWeb.parse(request.getParameter("dataInizio"))));
 							} catch (ParseException e) {
-								log.error(metodo, "dataInizio", e);
+								log.error("errore conversione della data: " + e);
 							}
 							try {
 								commessa.setData_fine(formattaDataServer.format(formattaDataWeb.parse(request.getParameter("dataFine"))));
 							} catch (ParseException e) {
-								log.error(metodo, "dataFine", e);
+								log.error("errore conversione della data: "+ e);
 							}
 	
 							commessa.setImporto(Double.parseDouble(request.getParameter("importo")));
@@ -483,12 +515,12 @@ public class GestioneTrattattive extends BaseServlet {
 									try {
 										asscommessa.setDataInizio(formattaDataServer.format(formattaDataWeb.parse(request.getParameter("dataInizio"))));
 									} catch (ParseException e) {
-										log.error(metodo, "dataInizio", e);
+										log.error("errore conversione della data: "+ e);
 									}
 									try {
 										asscommessa.setDataFine(formattaDataServer.format(formattaDataWeb.parse(request.getParameter("dataFine"))));
 									} catch (ParseException e) {
-										log.error(metodo, "dataFine", e);
+										log.error("errore conversione della data: "+ e);
 									}
 									asscommessa.setTotaleImporto(commessa.getImporto());
 									
@@ -498,14 +530,14 @@ public class GestioneTrattattive extends BaseServlet {
 									try {
 										calendar.setTime(format.parse(request.getParameter("dataInizio")));
 									} catch (ParseException e) {
-										log.error(metodo, "dataInizio", e);
+										log.error("errore conversione della data: "+ e);
 									}
 									
 									Calendar calendar2 = Calendar.getInstance();
 									try {
 										calendar2.setTime(format.parse(request.getParameter("dataFine")));
 									} catch (ParseException e) {
-										log.error(metodo, "dataFine", e);
+										log.error("errore conversione della data: "+ e);
 									}
 									
 									double giorni = calendar.getTimeInMillis() - calendar2.getTimeInMillis();
@@ -513,7 +545,7 @@ public class GestioneTrattattive extends BaseServlet {
 									long giornieffettivi = Math.round(Math.round(giorni / 1000 / 60 / 60 / 24));
 									giornieffettivi = Math.abs(giornieffettivi);
 									
-									System.out.println("I giorni di differenza sono: " + giornieffettivi);
+									log.info("I giorni di differenza sono: " + giornieffettivi);
 									
 	
 									if(request.getParameter("stato").equals("aperta")){
@@ -528,37 +560,53 @@ public class GestioneTrattattive extends BaseServlet {
 										commesseDAO.caricamentoCalendario(giornieffettivi,calendar,commesseDAO.caricamentoIdAssociazione());
 										
 										request.setAttribute("messaggio","La modifica della trattattiva e l'associazione con una nuova commessa è avvenuta con successo");
-										rd = getServletContext().getRequestDispatcher("/index.jsp?azione=messaggio");
-										rd.forward(request, response);
+										
+										log.info("url: /index.jsp?azione=messaggio");
+										
+										getServletContext().getRequestDispatcher("/index.jsp?azione=messaggio").forward(request, response);
 									}else{
 										request.setAttribute("messaggio","Spiacenti la modifica della trattativa con l'associazione a una nuova commessa non è avvenuta con successo.");
-										rd = getServletContext().getRequestDispatcher("/index.jsp?azione=messaggio");
-										rd.forward(request, response);
+										
+										log.info("url: /index.jsp?azione=messaggio");
+										
+										getServletContext().getRequestDispatcher("/index.jsp?azione=messaggio").forward(request, response);
 									}
 								}else{
 									request.setAttribute("messaggio","La modifica della trattattiva e l'associazione con una nuova commessa è avvenuta con successo");
-									rd = getServletContext().getRequestDispatcher("/index.jsp?azione=messaggio");
-									rd.forward(request, response);
+									
+									log.info("url: /index.jsp?azione=messaggio");
+									
+									getServletContext().getRequestDispatcher("/index.jsp?azione=messaggio").forward(request, response);
 								}
 							} else {
 								request.setAttribute("messaggio",messaggioCommessa);
-								rd = getServletContext().getRequestDispatcher("/index.jsp?azione=messaggio");
-								rd.forward(request, response);
+								
+								log.info("url: /index.jsp?azione=messaggio");
+								
+								getServletContext().getRequestDispatcher("/index.jsp?azione=messaggio").forward(request, response);
 							}
 	
 							// in questa sezione gestisco il valore "CommessaEsistente" del campo "Esito"
 						} else {
 							request.setAttribute("messaggio","Modifica trattattiva avvenuta con successo");
-							rd = getServletContext().getRequestDispatcher("/index.jsp?azione=messaggio");
-							rd.forward(request, response);
+							
+							log.info("url: /index.jsp?azione=messaggio");
+							
+							getServletContext().getRequestDispatcher("/index.jsp?azione=messaggio").forward(request, response);
 						}
 					} else {
 						request.setAttribute("messaggio", messaggio);
-						rd = getServletContext().getRequestDispatcher("/index.jsp?azione=messaggio");
-						rd.forward(request, response);
+						
+						log.info("url: /index.jsp?azione=messaggio");
+						
+						getServletContext().getRequestDispatcher("/index.jsp?azione=messaggio").forward(request, response);
 					}
 				}
 			}else if (azione.equals("aggiornaTrattativa")) {
+				
+				log.info("-------------------------------------------------------------------------------");
+				log.info("azione: "+ azione);
+				
 				request.setAttribute("newCodCommessaEsterna",commesseDAO.creazioneCodiceCommessaEsterna());
 
 				TrattativeDTO trattativa = tDAO.aggiornaSingolaTrattativa(Integer.parseInt(request.getParameter("trattativa")));
@@ -580,17 +628,21 @@ public class GestioneTrattattive extends BaseServlet {
 				 */
 
 				if (request.getParameter("dispositiva") != null) { 
-					if(request.getParameter("dispositiva").equals("cliente")) { 
-						rd = getServletContext() .getRequestDispatcher("/index.jsp?azione=aggiornaTrattativa&dispositiva=cliente"); 
+					if(request.getParameter("dispositiva").equals("cliente")) {
+						
+						log.info("url: /index.jsp?azione=aggiornaTrattativa&dispositiva=cliente");
+						
+						getServletContext() .getRequestDispatcher("/index.jsp?azione=aggiornaTrattativa&dispositiva=cliente").forward(request, response);
 					} else {
-						rd = getServletContext() .getRequestDispatcher("/index.jsp?azione=aggiornaTrattativa&tipo=tutte&dispositiva=trattative"); 
+						
+						log.info("url: /index.jsp?azione=aggiornaTrattativa&tipo=tutte&dispositiva=trattative");
+						
+						getServletContext() .getRequestDispatcher("/index.jsp?azione=aggiornaTrattativa&tipo=tutte&dispositiva=trattative").forward(request, response); 
 					}
 				}
-				rd.forward(request, response);
 			}
 		}else{
 			sessioneScaduta(response);
 		}
-		log.end(metodo);
 	}
 }

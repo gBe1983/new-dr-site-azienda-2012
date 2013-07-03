@@ -18,36 +18,35 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.apache.log4j.Logger;
+
 /**
  * Servlet implementation class GestioneRisorse
  */
 public class GestioneRisorse extends BaseServlet {
 	private static final long serialVersionUID = 4268516633020206244L;
-	private MyLogger log = new MyLogger(GestioneRisorse.class);
+	private Logger log = Logger.getLogger(GestioneRisorse.class);
 	
 	/**
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		final String metodo="doGet";
-		log.start(metodo);
+		log.info("metodo: doGet");
 		processRequest(request,response);
-		log.end(metodo);
 	}
 
 	/**
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		final String metodo="doPost";
-		log.start(metodo);
+		log.info("metodo: doPost");
 		processRequest(request,response);
-		log.end(metodo);
 	}
 	
 	private void processRequest(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		final String metodo="processRequest";
-		log.start(metodo);
+		
+		log.info("metodo: processRequest");
+		
 		HttpSession sessione = request.getSession();
 		RisorsaDAO rDAO = new RisorsaDAO(conn.getConnection());
 		if(sessione.getAttribute("utenteLoggato") != null){
@@ -55,6 +54,10 @@ public class GestioneRisorse extends BaseServlet {
 			String azione = request.getParameter("azione");
 			
 			if(azione.equals("aggiungiRisorsa") || azione.equals("modificaRisorsa")){
+				
+				log.info("-------------------------------------------------------------------------------");
+				log.info("azione: "+ azione);
+				
 				RisorsaDTO risorsa = new RisorsaDTO();
 				
 				//parte anagrafica
@@ -131,8 +134,9 @@ public class GestioneRisorse extends BaseServlet {
 							try {
 								mail.sendMail(risorsa.getEmail(), "Iscrizione Account Aziendale", testoEmail.toString());
 							} catch (Exception e) {
-								log.error(metodo, "Invio Mail Iscrizione Account Aziendale Fallita", e);
+								log.error("eccezione: Invio Mail Iscrizione Account Aziendale Fallita" + e);
 							}
+							
 							request.setAttribute("messaggio", "Inserimento della risorsa avvenuta correttamente");
 						}else{
 							request.setAttribute("messaggio", messaggio);
@@ -140,13 +144,24 @@ public class GestioneRisorse extends BaseServlet {
 					}else{
 						request.setAttribute("messaggio", messaggio);
 					}
+					
+					log.info("url: /index.jsp?azione=messaggio");
+					
 					getServletContext()
 						.getRequestDispatcher("/index.jsp?azione=messaggio")
 							.forward(request, response);
 					
 				}else if(azione.equals("modificaRisorsa")){//in questa sezione effettuo la modifica della risorsa effettuando un controllo sull'esito dell'inserimento della risorsa
+					
+					log.info("-------------------------------------------------------------------------------");
+					log.info("azione: "+ azione);
+					
 					risorsa.setIdRisorsa(Integer.parseInt(request.getParameter("idRisorsa")));
+					
 					request.setAttribute("messaggio", rDAO.modificaRisorsa(risorsa));
+					
+					log.info("url: /index.jsp?azione=messaggio");
+					
 					getServletContext()
 						.getRequestDispatcher("/index.jsp?azione=messaggio")
 							.forward(request, response);
@@ -159,6 +174,9 @@ public class GestioneRisorse extends BaseServlet {
 				 * della risorsa
 				 */
 				
+				log.info("-------------------------------------------------------------------------------");
+				log.info("azione: "+ azione);
+				
 				RisorsaDTO risorsa = new RisorsaDTO();
 				risorsa.setCognome(request.getParameter("cognome"));
 				risorsa.setNome(request.getParameter("nome"));
@@ -169,9 +187,15 @@ public class GestioneRisorse extends BaseServlet {
 				ArrayList listaRisorse = rDAO.ricercaRisorse(risorsa);
 				if(listaRisorse.size() != 0){
 					sessione.setAttribute("listaRisorse", listaRisorse);
+					
+					log.info("url: ./index.jsp?azione=visualizzaRisorse&numeroPagina=0&dispositiva=risorsa");
+					
 					response.sendRedirect("./index.jsp?azione=visualizzaRisorse&numeroPagina=0&dispositiva=risorsa");
 				}else{
 					request.setAttribute("messaggio", "Nessuna risorsa trovata! Effettuare la ricerca nuovamente.");
+					
+					log.info("url: /index.jsp?azione=messaggio");
+					
 					getServletContext()
 						.getRequestDispatcher("/index.jsp?azione=messaggio")
 							.forward(request, response);
@@ -185,46 +209,80 @@ public class GestioneRisorse extends BaseServlet {
 				 * pagina AggiungiRisorsa
 				 */
 				
+				log.info("-------------------------------------------------------------------------------");
+				log.info("azione: "+ azione);
+				
 				int idRisorsa = Integer.parseInt(request.getParameter("risorsa"));
+				
 				RisorsaDTO risorsa = rDAO.caricamentoProfiloRisorsa(idRisorsa);
+				
 				request.setAttribute("risorsa", risorsa);
+				
 				if(request.getParameter("page").equals("modifica")){
+				
+					log.info("url: /index.jsp?azione=modificaRisorsa&dispositiva=risorsa");
+					
 					getServletContext()
 						.getRequestDispatcher("/index.jsp?azione=modificaRisorsa&dispositiva=risorsa")
 							.forward(request, response);
 				}else if(request.getParameter("page").equals("dettaglio")){
+					
+					log.info("url: /index.jsp?azione=dettaglioRisorsa&dispositiva=risorsa");
+					
 					getServletContext()
 						.getRequestDispatcher("/index.jsp?azione=dettaglioRisorsa&dispositiva=risorsa")
 							.forward(request, response);
 				}
 			}else if(azione.equals("eliminaRisorsa")){
+				
+				log.info("-------------------------------------------------------------------------------");
+				log.info("azione: "+ azione);
+				
 				request.setAttribute("messaggio", rDAO.eliminaRisorsa(Integer.parseInt(request.getParameter("risorsa"))));
+				
+				log.info("url: /index.jsp?azione=messaggio");
+				
 				getServletContext()
 					.getRequestDispatcher("/index.jsp?azione=messaggio")
 						.forward(request, response);
+				
 			}else if(azione.equals("valorizzazioneRisorsa")){
 				/*
 				 * questo metodo viene richiamato, tramite funzione javascript, per valorizzare dinamicamente
 				 * le risorse associate a un cliente al momento della ricerca delle trattattive.
 				 */
+				
+				log.info("-------------------------------------------------------------------------------");
+				log.info("azione: "+ azione);
+				
 				PrintWriter out;
 				try {
 					out = response.getWriter();
 					out.print(rDAO.elencoTrattativeRisorse(request.getParameter("parametro")));
 					out.flush();
 				} catch (IOException e) {
-					log.error(metodo, "valorizzazioneRisorsa Fallita", e);
+					log.error("valorizzazioneRisorsa Fallita"+ e);
 				}
+				
 			}else if(azione.equals("caricamentoCredenziali")){
+				
+				log.info("-------------------------------------------------------------------------------");
+				log.info("azione: "+ azione);
 				
 				request.setAttribute("risorsa", rDAO.caricamentoProfiloRisorsa(Integer.parseInt(request.getParameter("risorsa"))));
 				sessione.setAttribute("credenziali", rDAO.caricamentoCredenziali(Integer.parseInt(request.getParameter("risorsa"))));
+				
+				log.info("url: /index.jsp?azione=credenziali&dispositiva=risorsa");
+				
 				getServletContext()
 					.getRequestDispatcher("/index.jsp?azione=credenziali&dispositiva=risorsa")
 						.forward(request, response);
 				
 			}else if(azione.equals("modificaCredenziali")){
-
+				
+				log.info("-------------------------------------------------------------------------------");
+				log.info("azione: "+ azione);
+				
 				String messaggio = rDAO.modificaCredenziali(request.getParameter("username"),
 															request.getParameter("password"),
 															Integer.parseInt(request.getParameter("utente")));
@@ -242,25 +300,42 @@ public class GestioneRisorse extends BaseServlet {
 					try {
 						mail.sendMail(((UtenteDTO)sessione.getAttribute("credenziali")).getEmail(),"Modifica Credenziali", testoEmail.toString());
 					} catch (Exception e) {
-						log.error(metodo, "Invio Mail Modifica Credenziali Fallita", e);
+						log.error("errore: Invio Mail Modifica Credenziali Fallita" + e);
 					}
 					request.setAttribute("messaggio", "La modifica delle credenziali della risorsa è avvenuta correttamente");
 				}else{
 					request.setAttribute("messaggio", "La modifica delle credenziali della risorsa non avvenuta correttamente");
 				}
+				
+				log.info("url: /index.jsp?azione=messaggio");
+				
 				getServletContext()
 					.getRequestDispatcher("/index.jsp?azione=messaggio")
 						.forward(request, response);
 			}else if(azione.equals("listaRisorseDaAbilitare")){
 				
+				log.info("-------------------------------------------------------------------------------");
+				log.info("azione: "+ azione);
+				
 				request.setAttribute("listaRisorseDaAbilitare", rDAO.listaRisorseDaAbilitare());
+				
+				log.info("url: /index.jsp?azione=listaRisorseDaAbilitare&dispositiva=risorsa");
+				
 				getServletContext()
 					.getRequestDispatcher("/index.jsp?azione=listaRisorseDaAbilitare&dispositiva=risorsa")
 						.forward(request, response);
 			}else if(azione.equals("abilitaRisorsa")){
+				
+				log.info("-------------------------------------------------------------------------------");
+				log.info("azione: "+ azione);
+				
 				int idRisorsa = Integer.parseInt(request.getParameter("risorsa"));
 				String messaggio = rDAO.abilitaRisorsa(idRisorsa);
+				
 				request.setAttribute("messaggio",messaggio.equals("ok")?"L'abilitazione della Risorsa è avvenuta con successo":messaggio);
+				
+				log.info("url: /index.jsp?azione=messaggio");
+				
 				getServletContext()
 					.getRequestDispatcher("/index.jsp?azione=messaggio")
 						.forward(request, response);
@@ -268,6 +343,5 @@ public class GestioneRisorse extends BaseServlet {
 		}else{
 			sessioneScaduta(response);
 		}
-		log.end(metodo);
 	}
 }

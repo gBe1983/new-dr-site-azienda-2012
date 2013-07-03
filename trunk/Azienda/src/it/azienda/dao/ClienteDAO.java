@@ -10,12 +10,14 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.log4j.Logger;
+
 public class ClienteDAO extends BaseDao {
-	private MyLogger log;
+	private Logger log;
 
 	public ClienteDAO(Connection connessione) {
 		super(connessione);
-		log=new MyLogger(this.getClass());
+		log= Logger.getLogger(ClienteDAO.class);
 	}
 
 	/**
@@ -24,13 +26,17 @@ public class ClienteDAO extends BaseDao {
 	 * @return
 	 */
 	public String inserimentoCliente(ClienteDTO cliente){
-		final String metodo="";
-		log.start(metodo);
+		
+		log.info("metodo: inserimentoCliente");
+		
 		StringBuilder sql = new StringBuilder("insert into tbl_clienti");
 		sql	.append("(id_cliente,ragione_sociale,indirizzo,cap,citta,provincia,p_iva,referente,telefono,")
 				.append("cellulare,fax,email,sito,cod_Fiscale)")
 				.append("VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?)");
-		log.debug(metodo, sql.toString());
+		
+		log.info("sql: insert into tbl_clienti (id_cliente,ragione_sociale,indirizzo,cap,citta,provincia,p_iva,referente,telefono,cellulare,fax,email,sito,cod_Fiscale) VALUES("+cliente.getId_cliente()+","+cliente.getRagioneSociale()+","+cliente.getIndirizzo()+","+cliente.getCap()+","+cliente.getCitta()+","+cliente.getProvincia()+","+cliente.getPIva()+","
+				+cliente.getReferente()+","+cliente.getTelefono()+","+cliente.getCellulare()+","+cliente.getFax()+","+cliente.getEmail()+","+cliente.getSito()+","+cliente.getCodFiscale());
+		
 		int esitoInserimentoCliente = 0;
 		PreparedStatement ps=null;
 		try {
@@ -51,11 +57,10 @@ public class ClienteDAO extends BaseDao {
 			ps.setString(14, cliente.getCodFiscale());
 			esitoInserimentoCliente = ps.executeUpdate();
 		} catch (SQLException e) {
-			log.error(metodo, "", e);
+			log.error("errore sql: "+e);
 			return "Siamo spiacenti ma l'inserimento del Cliente non è avvenuta con successo. Contattare l'amministrazione.";
 		}finally{
 			close(ps);
-			log.end(metodo);
 		}
 		return (esitoInserimentoCliente == 1)?
 			"ok":
@@ -68,13 +73,19 @@ public class ClienteDAO extends BaseDao {
 	 * @return
 	 */
 	public String modificaCliente(ClienteDTO cliente){
-		final String metodo="modificaCliente";
-		log.start(metodo);
+		
+		log.info("metodo: modificaCliente");
+		
 		StringBuilder sql = new StringBuilder("UPDATE tbl_clienti ");
 		sql	.append("SET ragione_sociale=?,indirizzo=?,cap=?,citta=?,provincia=?,p_iva=?,")
 				.append("referente=?,telefono=?,cellulare=?,fax=?,email=?,sito=?,cod_fiscale=? ")
 				.append("WHERE id_cliente=?");
-		log.debug(metodo, sql.toString());
+		
+		log.info("sql: UPDATE tbl_clienti SET ragione_sociale="+cliente.getRagioneSociale()+",indirizzo="+cliente.getIndirizzo()+",cap="+cliente.getCap()+"," +
+				"citta="+cliente.getCitta()+",provincia="+cliente.getProvincia()+",p_iva="+cliente.getPIva()+",referente="+cliente.getReferente()+"," +
+				"telefono="+cliente.getTelefono()+",cellulare="+cliente.getCellulare()+",fax="+cliente.getFax()+"," +
+				"email="+cliente.getEmail()+",sito="+cliente.getSito()+",cod_fiscale="+cliente.getCodFiscale()+" WHERE id_cliente="+cliente.getId_cliente());
+		
 		int esitoModificaCliente = 0;
 		PreparedStatement ps=null;
 		try {
@@ -95,11 +106,10 @@ public class ClienteDAO extends BaseDao {
 			ps.setString(14, cliente.getId_cliente());
 			esitoModificaCliente = ps.executeUpdate();
 		} catch (SQLException e) {
-			log.error(metodo, "UPDATE tbl_clienti", e);
+			log.error("errore sql: " + e);
 			return "Siamo spiacenti ma la modifica del Cliente non è avvenuta con successo. Contattare l'amministrazione.";
 		}finally{
 			close(ps);
-			log.end(metodo);
 		}
 		return(esitoModificaCliente == 1)?
 			"ok":
@@ -111,11 +121,14 @@ public class ClienteDAO extends BaseDao {
 	 * @return
 	 */
 	public List<String>caricamentoNominativiCliente(){
-		final String metodo="caricamentoNominativiCliente";
-		log.start(metodo);
+		
+		log.info("metodo: caricamentoNominativiCliente");
+		
 		List<String>listaNominativi = new ArrayList<String>();
+		
 		String sql = "SELECT ragione_sociale FROM tbl_clienti WHERE attivo=1 ORDER BY ragione_sociale ASC";
-		log.debug(metodo, sql.toString());
+		log.info("sql: " + sql.toString());
+		
 		PreparedStatement ps=null;
 		ResultSet rs=null;
 		try {
@@ -125,10 +138,9 @@ public class ClienteDAO extends BaseDao {
 				listaNominativi.add(rs.getString("ragione_sociale"));
 			}
 		} catch (SQLException e) {
-			log.error(metodo, "SELECT tbl_clienti attivo=1", e);
+			log.error("errore sql: " + e);
 		}finally{
 			close(ps,rs);
-			log.end(metodo);
 		}
 		return listaNominativi;
 	}
@@ -138,11 +150,14 @@ public class ClienteDAO extends BaseDao {
 	 * @return
 	 */
 	public List<String>caricamentoNominativiClienteDisabilitati(){
-		final String metodo="caricamentoNominativiClienteDisabilitati";
-		log.start(metodo);
+		
+		log.info("metodo: caricamentoNominativiClienteDisabilitati");
+		
 		List<String>listaNominativi = new ArrayList<String>();
+		
 		String sql = "SELECT ragione_sociale FROM tbl_clienti WHERE attivo=0";
-		log.debug(metodo, sql.toString());
+		log.info("sql: " + sql.toString());
+		
 		PreparedStatement ps=null;
 		ResultSet rs=null;
 		try {
@@ -152,10 +167,9 @@ public class ClienteDAO extends BaseDao {
 				listaNominativi.add(rs.getString("ragione_sociale"));
 			}
 		} catch (SQLException e) {
-			log.error(metodo, "SELECT tbl_clienti attivo=0", e);
+			log.error("errore sql:"+ e);
 		}finally{
 			close(ps,rs);
-			log.end(metodo);
 		}
 		return listaNominativi;
 	}
@@ -169,15 +183,23 @@ public class ClienteDAO extends BaseDao {
 	 * @return
 	 */
 	public ClienteDTO caricamentoCliente(String codiceCliente, String nominativo){
-		final String metodo="caricamentoCliente";
-		log.start(metodo);
+		
+		log.info("metodo: caricamentoCliente");
 		StringBuilder sql = new StringBuilder("SELECT id_cliente,ragione_sociale,indirizzo,cap,citta,");
 		sql	.append("provincia,p_iva,referente,telefono,cellulare,fax,email,")
 				.append("sito,attivo,cod_fiscale,id_conto_corrente ")
 				.append(" FROM tbl_clienti WHERE ")
 				.append(((codiceCliente == null)?" ragione_sociale":"id_cliente"))
 				.append("=?");
-		log.debug(metodo, sql.toString());
+		
+		if(codiceCliente == null){
+			log.info("SELECT id_cliente,ragione_sociale,indirizzo,cap,citta,provincia,p_iva,referente,telefono,cellulare," +
+					"fax,email,sito,attivo,cod_fiscale,id_conto_corrente FROM tbl_clienti WHERE ragione_sociale = "+nominativo);
+		}else{
+			log.info("SELECT id_cliente,ragione_sociale,indirizzo,cap,citta,provincia,p_iva,referente,telefono,cellulare," +
+					"fax,email,sito,attivo,cod_fiscale,id_conto_corrente FROM tbl_clienti WHERE ragione_sociale = "+codiceCliente);
+		}
+		
 		PreparedStatement ps=null;
 		ResultSet rs=null;
 		ClienteDTO cliente = null;
@@ -206,10 +228,9 @@ public class ClienteDAO extends BaseDao {
 						rs.getInt("id_conto_corrente"));
 			}
 		} catch (SQLException e) {
-			log.error(metodo, "SELECT tbl_clienti for codiceCliente:"+codiceCliente+" nominativo:"+nominativo, e);
+			log.error("errore sql: " + e);
 		}finally{
 			close(ps,rs);
-			log.end(metodo);
 		}
 		return cliente;
 	}
@@ -219,11 +240,12 @@ public class ClienteDAO extends BaseDao {
 	 * @return
 	 */
 	public List<ClienteDTO>caricamentoClienti(){
-		final String metodo="caricamentoClienti";
-		log.start(metodo);
+		
+		log.info("metodo: caricamentoClienti");
 		List<ClienteDTO>listaClienti = new ArrayList<ClienteDTO>();
 		String sql = "SELECT id_cliente,ragione_sociale FROM tbl_clienti WHERE attivo=true ORDER BY ragione_sociale ASC";
-		log.debug(metodo, sql.toString());
+		
+		log.info("sql: " + sql.toString());
 		PreparedStatement ps=null;
 		ResultSet rs=null;
 		try {
@@ -236,10 +258,9 @@ public class ClienteDAO extends BaseDao {
 						rs.getString("ragione_sociale")));
 			}
 		} catch (SQLException e) {
-			log.error(metodo, "SELECT tbl_clienti attivo=true", e);
+			log.error("errore sql: "+ e);
 		}finally{
 			close(ps,rs);
-			log.end(metodo);
 		}
 		return listaClienti;
 	}
@@ -250,10 +271,13 @@ public class ClienteDAO extends BaseDao {
 	 * @return
 	 */
 	public String disabilitaCliente(String codiceCliente){
-		final String metodo="disabilitaCliente";
-		log.start(metodo);
+		
+		log.info("metodo: disabilitaCliente");
+		
 		String sql = "UPDATE tbl_clienti SET attivo=0 WHERE id_cliente=?";
-		log.debug(metodo, sql.toString());
+		
+		log.info("sql: UPDATE tbl_clienti SET attivo=0 WHERE id_cliente="+codiceCliente);
+		
 		int esitoEliminazioneCliente = 0;
 		PreparedStatement ps=null;
 		try {
@@ -261,11 +285,10 @@ public class ClienteDAO extends BaseDao {
 			ps.setString(1, codiceCliente);
 			esitoEliminazioneCliente = ps.executeUpdate();
 		} catch (SQLException e) {
-			log.error(metodo, "UPDATE tbl_clienti for codiceCliente:"+codiceCliente, e);
+			log.error("errore sql: " + e);
 			return "Siamo spiacenti ma l'eliminazione del Cliente non è avvenuta con successo. Contattare l'amministrazione.";
 		}finally{
 			close(ps);
-			log.end(metodo);
 		}
 		return (esitoEliminazioneCliente != 0)?
 			"ok":
@@ -273,10 +296,13 @@ public class ClienteDAO extends BaseDao {
 	}
 
 	public boolean controlloCodiceCliente(String codiceCliente){
-		final String metodo="controlloCodiceCliente";
-		log.start(metodo);
+		
+		log.info("metodo: controlloCodiceCliente");
+		
 		String sql = "SELECT ragione_sociale FROM tbl_clienti WHERE id_cliente=?";
-		log.debug(metodo, sql.toString());
+		
+		log.info("sql: SELECT ragione_sociale FROM tbl_clienti WHERE id_cliente="+codiceCliente);
+		
 		boolean esitoControlloCodiceCliente = false;
 		PreparedStatement ps=null;
 		ResultSet rs=null;
@@ -288,10 +314,9 @@ public class ClienteDAO extends BaseDao {
 				esitoControlloCodiceCliente = true;
 			}
 		} catch (SQLException e) {
-			log.error(metodo, "SELECT tbl_cliente for id_cliente:"+codiceCliente, e);
+			log.error("errore sql: " + e);
 		}finally{
 			close(ps,rs);
-			log.end(metodo);
 		}
 		return esitoControlloCodiceCliente;
 	}
@@ -301,10 +326,13 @@ public class ClienteDAO extends BaseDao {
 	 * @return
 	 */
 	public String creazioneCodiceCliente(){
-		final String metodo="creazioneCodiceCliente";
-		log.start(metodo);
+		
+		log.info("metodo: creazioneCodiceCliente");
+		
 		String sql = "SELECT MAX(id_cliente)max_id_cliente FROM tbl_clienti ORDER BY id_cliente";
-		log.debug(metodo, sql.toString());
+		
+		log.info("sql: " + sql.toString());
+		
 		int codCliente = 0;
 		PreparedStatement ps=null;
 		ResultSet rs=null;
@@ -317,10 +345,9 @@ public class ClienteDAO extends BaseDao {
 				}
 			}
 		} catch (SQLException e) {
-			log.error(metodo, "SELECT MAX(id_cliente) tbl_clienti", e);
+			log.error("errore sql: " + e);
 		}finally{
 			close(ps,rs);
-			log.end(metodo);
 		}
 		codCliente++;
 		String codiceCliente = "CL";
@@ -335,11 +362,14 @@ public class ClienteDAO extends BaseDao {
 	}
 
 	public List<String>caricamentoNominativiClienteDisabilitato(int idAzienda){
-		final String metodo="caricamentoNominativiClienteDisabilitato";
-		log.start(metodo);
+		
+		log.info("metodo: caricamentoNominativiClienteDisabilitato");
+		
 		List<String>listaNominativi = new ArrayList<String>();
+		
 		String sql = "SELECT ragioneSociale FROM tbl_cliente WHERE id_azienda=? and attivo=0";
-		log.debug(metodo, sql.toString());
+		
+		log.info("sql: SELECT ragioneSociale FROM tbl_cliente WHERE id_azienda="+idAzienda+" and attivo=0");
 		PreparedStatement ps=null;
 		ResultSet rs=null;
 		try {
@@ -350,10 +380,9 @@ public class ClienteDAO extends BaseDao {
 				listaNominativi.add(rs.getString("ragioneSociale"));
 			}
 		} catch (SQLException e) {
-			log.error(metodo, "SELECT tbl_cliente for idAzienda:"+idAzienda, e);
+			log.error("errore sql: "+ e);
 		}finally{
 			close(ps,rs);
-			log.end(metodo);
 		}
 		return listaNominativi;
 	}
@@ -364,10 +393,13 @@ public class ClienteDAO extends BaseDao {
 	 * @return
 	 */
 	public String abilitaCliente(String codiceCliente){
-		final String metodo="abilitaCliente";
-		log.start(metodo);
+		
+		log.info("metodo: abilitaCliente");
+		
 		String sql = "UPDATE tbl_clienti SET attivo=1 WHERE id_cliente=?";
-		log.debug(metodo, sql.toString());
+		
+		log.info("sql: UPDATE tbl_clienti SET attivo=1 WHERE id_cliente="+codiceCliente);
+		
 		int esitoAbilitazioneCliente = 0;
 		PreparedStatement ps=null;
 		try {
@@ -375,11 +407,10 @@ public class ClienteDAO extends BaseDao {
 			ps.setString(1, codiceCliente);
 			esitoAbilitazioneCliente = ps.executeUpdate();
 		} catch (SQLException e) {
-			log.error(metodo, "UPDATE tbl_clienti for id_cliente:"+codiceCliente, e);
+			log.error("errore sql: " + e);
 			return "Siamo spiacenti ma l'abilitazione del Cliente non è avvenuta con successo. Contattare l'amministrazione.";
 		}finally{
 			close(ps);
-			log.end(metodo);
 		}
 		return (esitoAbilitazioneCliente != 0)?
 			"ok":
@@ -387,10 +418,12 @@ public class ClienteDAO extends BaseDao {
 	}
 	
 	public String caricamentoNominativo(String id_cliente){
-		final String metodo="abilitaCliente";
-		log.start(metodo);
+		
+		log.info("metodo: abilitaCliente");
+		
 		String sql = "Select ragione_sociale from tbl_clienti WHERE id_cliente=?";
-		log.debug(metodo, sql.toString());
+		
+		log.info("sql: Select ragione_sociale from tbl_clienti WHERE id_cliente="+id_cliente);
 		
 		String nominativo = null;
 		
@@ -404,10 +437,9 @@ public class ClienteDAO extends BaseDao {
 				nominativo = rs.getString(1);
 			}
 		} catch (SQLException e) {
-			log.error(metodo, "UPDATE tbl_clienti for id_cliente:"+id_cliente, e);
+			log.error("errore sql: "+ e);
 		}finally{
 			close(ps);
-			log.end(metodo);
 		}
 		
 		return nominativo;

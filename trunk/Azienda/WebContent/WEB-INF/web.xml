@@ -131,7 +131,7 @@
 		<param-name>DB.password</param-name>
 		<param-value>DiErre2012</param-value>
 	</context-param>
-
+	
 	<context-param>
 		<param-name>mail.protocol</param-name>
 		<param-value>smtp</param-value>

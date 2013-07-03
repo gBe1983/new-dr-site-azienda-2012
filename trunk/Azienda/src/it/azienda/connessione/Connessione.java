@@ -8,21 +8,25 @@ import java.sql.SQLException;
 
 import javax.servlet.ServletContext;
 
+import org.apache.log4j.Logger;
+
 public class Connessione {
-	private MyLogger log;
+	
+	Logger log = Logger.getLogger(Connessione.class);
+	
 	private Connection connection;
 	private String url;
 	private String userName;
 	private String password;
 
 	public Connessione(ServletContext servletContext) {
-		log =new MyLogger(this.getClass());
-		final String metodo="costruttore";
-		log.start(metodo);
+		
+		log.info("metodo: costruttore Connessione");
+		
 		try {
 			Class.forName(servletContext.getInitParameter("DB.driver"));
 		} catch (ClassNotFoundException e) {
-			log.fatal(metodo, "driver non caricati", e);
+			log.error("errore sql: driver non caricati" + e);
 		}
 		url=servletContext.getInitParameter("DB.url");
 		userName=servletContext.getInitParameter("DB.userName");
@@ -30,9 +34,8 @@ public class Connessione {
 		try {
 			connection = DriverManager.getConnection(url,userName,password);
 		} catch (SQLException e) {
-			log.fatal(metodo, "connessione fallita", e);
+			log.fatal("errore sql: connessione fallita" + e);
 		}
-		log.end(metodo);
 	}
 
 	/**
@@ -47,54 +50,54 @@ public class Connessione {
 	 */
 	@Deprecated
 	public void closeConnection(){
-		final String metodo="closeConnection";
-		log.start(metodo);
+		
+		log.info("metodo: closeConnection");
+		
 		if (connection!=null) {
 			try {
 				connection.close();
 			} catch (SQLException e) {
-				log.warn(metodo, "tentativo chiusura connessione db", e);
+				log.warn("errore sql: tentativo chiusura connessione db" + e);
 			}
 		}
-		log.end(metodo);
 	}
 
 	/**
 	 * @return the connection
 	 */
 	public Connection getConnection() {
-		final String metodo="getConnection";
-		log.start(metodo);
+		
+		log.info("metodo: getConnection");
+		
 		if(connection!=null){
 			try {
 				if(connection.isClosed()){
-					log.info(metodo, "la connessione è chiusa");
+					log.info("la connessione è chiusa");
 					try {
 						connection = DriverManager.getConnection(url,userName,password);
 					} catch (SQLException e) {
-						log.fatal(metodo, "connessione fallita", e);
+						log.error("errore sql: connessione fallita" + e);
 					}
 				}
 				if(!connection.isValid(60)){
-					log.info(metodo, "la connessione non è valida");
+					log.info("la connessione non è valida");
 					try {
 						connection = DriverManager.getConnection(url,userName,password);
 					} catch (SQLException e) {
-						log.fatal(metodo, "connessione fallita", e);
+						log.error("errore sql: connessione fallita"+e);
 					}
 				}
 			} catch (SQLException e) {
-				log.error(metodo, "verifica consistenza connessione", e);
+				log.error("errore sql: verifica consistenza connessione"+ e);
 			}
 		}else{
-			log.warn(metodo, "connessione null");
+			log.warn("errore sql: connessione null");
 			try {
 				connection = DriverManager.getConnection(url,userName,password);
 			} catch (SQLException e) {
-				log.fatal(metodo, "connessione fallita", e);
+				log.error("errore sql: connessione fallita"+e);
 			}
 		}
-		log.end(metodo);
 		return connection;
 	}
 }

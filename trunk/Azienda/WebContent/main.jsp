@@ -40,7 +40,7 @@ String azione = request.getParameter("azione");
 if(azione!=null){
 	if(azione.equals("homePage")){
 %>
-		<%@include file="strutturaSito/contenuto/homePage.jsp"%>
+		<%@include file="strutturaSito/contenuto/home/homePage.jsp"%>
 <%
 }else if(azione.equals("visualizzaConsuntivi")){
 		if(request.getParameter("tipologia") != null){
@@ -65,7 +65,7 @@ if(azione!=null){
 		}
 	}else{
 %>
-	<%@include file="strutturaSito/contenuto/homePage.jsp"%>
+	<%@include file="strutturaSito/contenuto/home/homePage.jsp"%>
 <%
 	}
 }

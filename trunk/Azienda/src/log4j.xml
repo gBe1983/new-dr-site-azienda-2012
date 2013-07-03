@@ -5,8 +5,8 @@
 	<appender name="fileAppender" class="org.apache.log4j.DailyRollingFileAppender">
       <param name="Append" value="true"/>
       <param name="DatePattern" value="'.'yyyy-MM-dd"/>
-       <param name="File" value="C:/Users/Utente/Desktop/Progetti Java/dierreconsulting/Azienda/WebContent/WEB-INF/logs/Azienda.log"/>
-  <!-- <param name="File" value="/nfs_home/drcon860/public_html/log/DrConsultingEditor/Dipendente.log"/> -->
+<!--  <param name="File" value="C:/Users/Utente/Desktop/Progetti Java/dierreconsulting/Azienda/WebContent/WEB-INF/logs/Azienda.log"/> -->
+  	  <param name="File" value="/nfs_home/drcon860/public_html/log/DrConsultingEditor/Dipendente.log"/> 
       <layout class="org.apache.log4j.PatternLayout">
          <param name="ConversionPattern" value="%d{dd-MM-yyyy HH:mm:ss:SSS} | [%c] | %p | %M:%L | %m %n "/>
       </layout>
@@ -19,8 +19,8 @@
 		<param name="SMTPUsername" value="logwebapp@gmail.com"/>
 		<param name="SMTPPassword" value="2013Dr2013"/>
 		<param name="From" value="logwebapp@gmail.com"/>
-		<param name="To" value="gabriele.bertaina+webappazienda@gmail.com,emmanuel.devita+webappazienda@gmail.com"/>
-		<param name="Cc" value="roberto.camarca+webappazienda@gmail.com,davicam21+webappazienda@gmail.com"/>
+		<param name="To" value="emmanuel.devita+webappazienda@gmail.com"/>
+		<param name="Cc" value="roberto.camarca+webappazienda@gmail.com"/>
 		<param name="Subject" value="Log Web Application Azienda"/>
 		<param name="BufferSize" value="5"/>
 		<param name="EvaluatorClass" value="it.util.log.TriggerLogEvent"/>

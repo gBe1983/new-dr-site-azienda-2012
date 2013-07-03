@@ -2,7 +2,6 @@ package it.azienda.servlet;
 
 import it.azienda.dao.ClienteDAO;
 import it.azienda.dto.ClienteDTO;
-import it.util.log.MyLogger;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -13,44 +12,42 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.apache.log4j.Logger;
+
 /**
  * Servlet implementation class GestioneCliente
  */
 public class GestioneCliente extends BaseServlet {
 	private static final long serialVersionUID = 1L;
-	private MyLogger log;
+	private Logger log;
 
 	/**
 	 * 
 	 */
 	public GestioneCliente() {
 		super();
-		log = new MyLogger(this.getClass());
+		log = Logger.getLogger(GestioneCliente.class);
 	}
 
 	/**
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doGet(HttpServletRequest request,HttpServletResponse response) throws ServletException, IOException {
-		final String metodo = "doGet";
-		log.start(metodo);
+		log.info("metodo: doGet");
 		processRequest(request, response);
-		log.end(metodo);
 	}
 
 	/**
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doPost(HttpServletRequest request,HttpServletResponse response) throws ServletException, IOException {
-		final String metodo = "doPost";
-		log.start(metodo);
+		log.info("metodo: doPost");
 		processRequest(request, response);
-		log.end(metodo);
 	}
 
 	private void processRequest(HttpServletRequest request,HttpServletResponse response) throws ServletException, IOException {
-		final String metodo = "processRequest";
-		log.start(metodo);
+		
+		log.info("metodo: processRequest");
 		HttpSession sessione = request.getSession();
 		// creo l'istanza della classe ClienteDAO
 		ClienteDAO cDAO = new ClienteDAO(conn.getConnection());
@@ -61,7 +58,10 @@ public class GestioneCliente extends BaseServlet {
 
 			// verifico che valore ha assunto il parametro "Azione"
 			if (azione.equals("inserimentoCliente")|| azione.equals("modificaCliente")) {
-
+				
+				log.info("-------------------------------------------------------------------------------");
+				log.info("azione: "+ azione);
+				
 				// creo l'istanza dell'oggetto ClienteDTO
 				ClienteDTO cliente = new ClienteDTO();
 
@@ -90,10 +90,16 @@ public class GestioneCliente extends BaseServlet {
 					if (messaggio.equals("ok")) {
 						request.setAttribute("messaggio",
 								"Inserimento del Cliente avvenuta con successo");
+						
+						log.info("url: /index.jsp?azione=messaggio");
+						
 						getServletContext()
 							.getRequestDispatcher("/index.jsp?azione=messaggio")
 								.forward(request, response);
 					} else {
+						
+						log.info("url: /index.jsp?azione=messaggio");
+						
 						request.setAttribute("messaggio", messaggio);
 						getServletContext()
 							.getRequestDispatcher("/index.jsp?azione=messaggio")
@@ -104,11 +110,17 @@ public class GestioneCliente extends BaseServlet {
 					if (messaggio.equals("ok")) {
 						request.setAttribute("messaggio",
 								"La modifica del Cliente avvenuta con successo");
+						
+						log.info("url: /index.jsp?azione=messaggio");
+						
 						getServletContext()
 							.getRequestDispatcher("/index.jsp?azione=messaggio")
 								.forward(request, response);
 					} else {
 						request.setAttribute("messaggio", messaggio);
+						
+						log.info("url: /index.jsp?azione=messaggio");
+						
 						getServletContext()
 							.getRequestDispatcher("/index.jsp?azione=messaggio")
 								.forward(request, response);
@@ -116,12 +128,22 @@ public class GestioneCliente extends BaseServlet {
 				}
 				
 			} else if (azione.equals("caricamentoNominativiCliente")) {//in questa sezione effettuo il caricamento di tutti i clienti che sono stati caricati nella tabella "Tbl_Cliente"
+				
+				log.info("-------------------------------------------------------------------------------");
+				log.info("azione: "+ azione);
+				
 				request.setAttribute("nominativi",cDAO.caricamentoNominativiCliente());
+				
+				log.info("url: /index.jsp?azione=visualizzaNominativi&dispositiva=cliente");
+				
 				getServletContext()
 					.getRequestDispatcher(	"/index.jsp?azione=visualizzaNominativi&dispositiva=cliente")
 						.forward(request, response);
 				
 			} else if (azione.equals("ricercaCliente")) {
+				
+				log.info("-------------------------------------------------------------------------------");
+				log.info("azione: "+ azione);
 				
 				/*
 				 * la ricerca cliente può avvenire da diversi canali che sono
@@ -135,30 +157,51 @@ public class GestioneCliente extends BaseServlet {
 				 * non sempre tale parametro viene passato in modalita "Modifica Cliente"
 				 */
 				if (request.getParameter("nominativo") != null) {
+					
+					log.info("url: /index.jsp?azione=visualizzaCliente&dispositiva=cliente");
+					
 					getServletContext()
 						.getRequestDispatcher("/index.jsp?azione=visualizzaCliente&dispositiva=cliente")
 							.forward(request, response);
 				} else {
+					
+					log.info("url: /index.jsp?azione=aggiornaCliente&dispositiva=cliente");
+					
 					getServletContext()
 						.getRequestDispatcher("/index.jsp?azione=aggiornaCliente&dispositiva=cliente")
 							.forward(request, response);
 				}
 				
-			} else if (azione.equals("disabilitaCliente")) {//in questa sezione effettuo l'eliminazione logica del singolo Cliente che l'Utente ha deciso di eliminare
+			} else if (azione.equals("disabilitaCliente")) {
+				
+				log.info("-------------------------------------------------------------------------------");
+				log.info("azione: "+ azione);
+				
+				//in questa sezione effettuo l'eliminazione logica del singolo Cliente che l'Utente ha deciso di eliminare
 				String messaggio = cDAO.disabilitaCliente(request.getParameter("codice"));
 				if (messaggio.equals("ok")) {
 					request.setAttribute("messaggio","Il Cliente è stato diabilitato con successo");
+					
+					log.info("url: /index.jsp?azione=messaggio");
+					
 					getServletContext()
 						.getRequestDispatcher("/index.jsp?azione=messaggio")
 							.forward(request, response);
 				} else {
 					request.setAttribute("messaggio", messaggio);
+					
+					log.info("url: /index.jsp?azione=messaggio");
+					
 					getServletContext()
 						.getRequestDispatcher("/index.jsp?azione=messaggio")
 							.forward(request, response);
 				}
 				
 			} else if (azione.equals("controlloCodiceCliente")) {
+				
+				log.info("-------------------------------------------------------------------------------");
+				log.info("azione: "+ azione);
+				
 				boolean controlloCodiceCliente = cDAO.controlloCodiceCliente(request.getParameter("codiceCliente"));
 				PrintWriter out;
 				try {
@@ -166,24 +209,41 @@ public class GestioneCliente extends BaseServlet {
 					out.print(controlloCodiceCliente);
 					out.flush();
 				} catch (IOException e) {
-					log.error(metodo, "controlloCodiceCliente", e);
+					log.error("eccezione"+ e);
 				}
 				
 			} else if (azione.equals("caricamentoNominativiClienteDisabilitati")) {//in questa sezione effettuo il caricamento di tutti i clienti che sono stati caricati nella tabella "Tbl_Cliente"
+				
+				log.info("-------------------------------------------------------------------------------");
+				log.info("azione: "+ azione);
+				
 				request.setAttribute("nominativi",cDAO.caricamentoNominativiClienteDisabilitati());
+				
+				log.info("url: /index.jsp?azione=visualizzaNominativi&dispositiva=cliente&tipo=disabilitato");
+				
 				getServletContext()
 					.getRequestDispatcher("/index.jsp?azione=visualizzaNominativi&dispositiva=cliente&tipo=disabilitato")
 						.forward(request, response);
 			
 			} else if (azione.equals("abilitazioneCliente")) {
+				
+				log.info("-------------------------------------------------------------------------------");
+				log.info("azione: "+ azione);
+				
 				String messaggio = cDAO.abilitaCliente(request.getParameter("codice"));
 				if (messaggio.equals("ok")) {
 					request.setAttribute("messaggio","L'abilitazione del Cliente avvenuta con successo");
+				
+					log.info("url: /index.jsp?azione=messaggio");
+					
 					getServletContext()
 						.getRequestDispatcher("/index.jsp?azione=messaggio")
 							.forward(request, response);
 				} else {
 					request.setAttribute("messaggio", messaggio);
+					
+					log.info("url: /index.jsp?azione=messaggio");
+					
 					getServletContext()
 						.getRequestDispatcher("/index.jsp?azione=messaggio")
 							.forward(request, response);
@@ -192,6 +252,5 @@ public class GestioneCliente extends BaseServlet {
 		} else {
 			sessioneScaduta(response);
 		}
-		log.end(metodo);
 	}
 }

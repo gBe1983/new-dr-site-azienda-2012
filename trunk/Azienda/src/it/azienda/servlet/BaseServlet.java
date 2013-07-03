@@ -16,39 +16,46 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.apache.log4j.Logger;
+
 public class BaseServlet extends HttpServlet {
 	private static final long serialVersionUID = -8632980348704639397L;
 	protected Connessione conn;
 	protected Email mail;
 	protected Properties prop;
-	private MyLogger log;
+	private Logger log;
 
 	public BaseServlet() {
-		log =new MyLogger(this.getClass());
+		log = Logger.getLogger(BaseServlet.class);
 	}
 
 	public void init(ServletConfig config) throws ServletException {
-		final String metodo="init";
-		log.start(metodo);
+	
+		log.info("-------------------------------------------------------------------------------");
+		log.info("metodo: init");
+		
 		super.init(config);
 		ServletContext servletContext = getServletContext();
 		conn = new Connessione(servletContext);
 		mail = new Email(servletContext);
 		initProperties(servletContext);
-		log.end(metodo);
+		
 	}
 
 	private void initProperties(ServletContext servletContext) throws ServletException {
-		final String metodo="initProperties";
-		log.start(metodo);
+		
+		log.info("-------------------------------------------------------------------------------");
+		log.info("metodo: initProperties");
+		
 		prop=new Properties();
 		prop.setProperty("siteUrl", servletContext.getInitParameter("siteUrl"));
-		log.end(metodo);
 	}
 
 	protected void sessioneScaduta(HttpServletResponse response){
-		final String metodo="sessioneScaduta";
-		log.start(metodo);
+		
+		log.info("-------------------------------------------------------------------------------");
+		log.info("metodo: sessioneScaduta");
+		
 		response.setContentType("text/html");
 		try {
 			PrintWriter out = response.getWriter();
@@ -75,22 +82,20 @@ public class BaseServlet extends HttpServlet {
 					"</script></body></html>");
 			out.flush();
 		} catch (IOException e) {
-			log.error(metodo,"",e);
-		}finally{
-			log.end(metodo);
+			log.error("errore: " + e);
 		}
 	}
 
 	protected void clearSession(HttpSession session) {
-		final String metodo="clearSession";
-		log.start(metodo);
+		
+		log.info("metodo: clearSession");
+		
 		Enumeration<String> attrNames = session.getAttributeNames();
 		String valoriSessione;
 		while (attrNames.hasMoreElements()){
 				valoriSessione = (String) attrNames.nextElement();
 				session.removeAttribute(valoriSessione);
-				log.debug(metodo, valoriSessione);
+				log.debug("valori in sessione: "+ valoriSessione);
 		}
-		log.end(metodo);
 	}
 }

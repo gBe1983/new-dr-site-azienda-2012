@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
+import org.apache.log4j.Logger;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.hssf.usermodel.HSSFFont;
@@ -33,11 +34,11 @@ import org.apache.poi.hssf.util.HSSFColor;
 
 
 public class ReportDAO extends BaseDao {
-	private MyLogger log;
+	private Logger log;
 
 	public ReportDAO(Connection connessione) {
 		super(connessione);
-		log=new MyLogger(this.getClass());
+		log= Logger.getLogger(ReportDAO.class);
 	}
 
 	//mi serve per castare le varie date_inizio e date_fine delle varie commesse
@@ -47,10 +48,13 @@ public class ReportDAO extends BaseDao {
 	SimpleDateFormat formattaDataServer = new SimpleDateFormat("yyyy-MM-dd");
 	
 	public List<CommessaDTO>caricamentoCommessa(){
-		final String metodo="caricamentoCommessa";
-		log.start(metodo);
+		
+		log.info("metodo: caricamentoCommessa");
+		
 		String sql = "select id_commessa,descrizione,codice_commessa from tbl_commesse";
-		log.debug(metodo, sql);
+		
+		log.info("sql: "+sql);
+		
 		List<CommessaDTO>listaCommesse = new ArrayList<CommessaDTO>();
 		PreparedStatement ps=null;
 		ResultSet rs=null;
@@ -65,19 +69,21 @@ public class ReportDAO extends BaseDao {
 				listaCommesse.add(commessa);
 			}
 		} catch (SQLException e) {
-			log.error(metodo, "select tbl_commesse", e);
+			log.error("errore sql: "+ e);
 		}finally{
 			close(ps,rs);
-			log.end(metodo);
 		}
 		return listaCommesse;
 	}
 
 	public ArrayList caricamentoCommesseCliente(String id_cliente){
-		final String metodo="caricamentoCommesseCliente";
-		log.start(metodo);
+		
+		log.info("metodo: caricamentoCommesseCliente");
+		
 		String sql = "select id_commessa from tbl_commesse where id_cliente = ?";
-		log.debug(metodo, sql);
+		
+		log.info("sql: select id_commessa from tbl_commesse where id_cliente = "+id_cliente);
+		
 		ArrayList listaCommesse = new ArrayList();
 		PreparedStatement ps=null;
 		ResultSet rs=null;
@@ -91,10 +97,9 @@ public class ReportDAO extends BaseDao {
 				listaCommesse.add(commessa);
 			}
 		} catch (SQLException e) {
-			log.error(metodo, "select tbl_commesse", e);
+			log.error("errore sql: "+ e);
 		}finally{
 			close(ps,rs);
-			log.end(metodo);
 		}
 		return listaCommesse;
 	}
@@ -107,9 +112,11 @@ public class ReportDAO extends BaseDao {
 	 * @return
 	 */
 	public PlanningDTO caricamentoPlanning(int id_associazione,String dataInizio, String dataFine){
-		final String metodo="caricamentoPlanning";
-		log.start(metodo);
+		
+		log.info("metodo: caricamentoPlanning");
+		
 		String sql = "";
+		
 		String codiceCliente = controlloCodiceCliente(id_associazione);
 		if(codiceCliente != null){
 			sql =	"select sum(num_ore), risorsa.cognome, risorsa.nome, cliente.ragione_sociale, commessa.codice_commessa, commessa.descrizione" +
@@ -129,7 +136,9 @@ public class ReportDAO extends BaseDao {
 					" and asscommessa.id_commessa = commessa.id_commessa" +
 					" and planning.data between ? and ?";
 		}
-		log.debug(metodo, sql);
+		
+		log.info("sql: "+ sql);
+		
 		PlanningDTO planning = null;
 		PreparedStatement ps=null;
 		ResultSet rs=null;
@@ -156,10 +165,9 @@ public class ReportDAO extends BaseDao {
 				
 			}
 		} catch (SQLException e) {
-			log.error(metodo, "select tbl_planning,tbl_associaz_risor_comm,tbl_risorse,tbl_commesse", e);
+			log.error("errore sql: " + e);
 		}finally{
 			close(ps,rs);
-			log.end(metodo);
 		}
 		return planning;
 	}
@@ -174,8 +182,9 @@ public class ReportDAO extends BaseDao {
 	 * @return
 	 */
 	public ArrayList caricamentoAssociazioniCommessaRisorsa(ArrayList listaCommesse, int id_commessa, int id_risorsa, String dataInizio, String dataFine){
-		final String metodo="caricamentoAssociazioniCommessaRisorsa";
-		log.start(metodo);
+		
+		log.info("metodo: caricamentoAssociazioniCommessaRisorsa");
+		
 		if(id_commessa != 0 || id_risorsa != 0){
 			String sql = "select id_associazione,id_commessa,id_risorsa from tbl_associaz_risor_comm";
 			boolean commessa = false;
@@ -216,7 +225,7 @@ public class ReportDAO extends BaseDao {
 					ps.setString(3, dataInizio);
 					ps.setString(4, dataFine);
 				}
-				log.debug(metodo, sql);
+				log.info("sql"+ sql);
 				rs = ps.executeQuery();
 				while(rs.next()){
 					Associaz_Risor_Comm asscommessa = new Associaz_Risor_Comm();
@@ -226,16 +235,16 @@ public class ReportDAO extends BaseDao {
 					listaCommesse.add(asscommessa);
 				}
 			} catch (SQLException e) {
-				log.error(metodo, "id_commessa != 0 || id_risorsa != 0", e);
+				log.error("errore sql: "+ e);
 			}finally{
 				close(ps,rs);
-				log.end(metodo);
 			}
 		}else{
 			String sql = "select id_associazione,id_commessa,id_risorsa from tbl_associaz_risor_comm where data_inizio <= ? and data_fine >= ?";
 			PreparedStatement ps=null;
 			ResultSet rs=null;
-			log.debug(metodo, sql);
+			
+			log.debug("sql: "+ sql);
 			try {
 				ps = connessione.prepareStatement(sql);
 				ps.setString(1, formattaDataServer.format(formattaDataWeb.parse(dataInizio)));
@@ -249,12 +258,11 @@ public class ReportDAO extends BaseDao {
 					listaCommesse.add(asscommessa);
 				}
 			} catch (SQLException e) {
-				log.error(metodo, "else", e);
+				log.error("errore sql: "+ e);
 			} catch (ParseException e) {
-				log.error(metodo, "else", e);
+				log.error("errore sql: "+ e);
 			}finally{
 				close(ps,rs);
-				log.end(metodo);
 			}
 		}
 		return listaCommesse;
@@ -266,10 +274,13 @@ public class ReportDAO extends BaseDao {
 	 * @return
 	 */
 	private String controlloCodiceCliente(int associazione){
-		final String metodo="caricamentoPlanning";
-		log.start(metodo);
+		
+		log.info("metodo: controlloCodiceCliente");
+		
 		String sql = "select commessa.id_cliente from tbl_associaz_risor_comm as asscommessa, tbl_commesse as commessa where asscommessa.id_associazione = ? and asscommessa.id_commessa = commessa.id_commessa";
-		log.debug(metodo, sql);
+		
+		log.debug("sql: select commessa.id_cliente from tbl_associaz_risor_comm as asscommessa, tbl_commesse as commessa where asscommessa.id_associazione = "+associazione+" and asscommessa.id_commessa = commessa.id_commessa");
+		
 		String codiceCliente = null;
 		PreparedStatement ps=null;
 		ResultSet rs=null;
@@ -281,17 +292,16 @@ public class ReportDAO extends BaseDao {
 				codiceCliente = rs.getString(1);
 			}
 		} catch (SQLException e) {
-			log.error(metodo, "select tbl_associaz_risor_comm,tbl_commesse", e);
+			log.error("errore sql"+ e);
 		}finally{
 			close(ps,rs);
-			log.end(metodo);
 		}
 		return codiceCliente;
 	}
 
 	public TimeReport getTimeReport(Calendar dtDa, Calendar dtA, String idCliente, String idRisorsa, String idCommessa){
-		final String metodo="getTimeReport";
-		log.start(metodo);
+		
+		log.info("metodo: getTimeReport");
 		
 		TimeReport tr = new TimeReport(dtDa, dtA, idCliente, idRisorsa, idCommessa);
 		StringBuilder sql = new StringBuilder("SELECT ");
@@ -319,10 +329,12 @@ public class ReportDAO extends BaseDao {
 		}
 
 		sql.append("ORDER BY cognome,data");
-
+		
+		log.info("sql: "+sql.toString());
+		
 		PreparedStatement ps=null;
 		ResultSet rs=null;
-		log.debug(metodo, sql.toString());
+		
 		int i=1;
 		try {
 			ps = connessione.prepareStatement(sql.toString());
@@ -355,10 +367,9 @@ public class ReportDAO extends BaseDao {
 						rs.getString("nome")));
 			}
 		} catch (SQLException e) {
-			log.error(metodo, "", e);
+			log.error("errore sql: "+ e);
 		}finally{
 			close(ps,rs);
-			log.end(metodo);
 		}
 		return tr;
 	}
@@ -367,8 +378,7 @@ public class ReportDAO extends BaseDao {
 		
 		ArrayList<PlanningDTO> listaGiornate = new ArrayList<PlanningDTO>();
 		
-		final String metodo="getTimeReport";
-		log.start(metodo);
+		log.info("metodo: getTimeReport");
 		
 		String sql = "SELECT planning.data,planning.num_ore,planning.straordinari,planning.ferie,planning.permessi,planning.mutua,planning.permessiNonRetribuiti " +
 				" FROM tbl_planning planning,tbl_associaz_risor_comm asscommessa,tbl_commesse commessa,tbl_risorse risorse, tbl_clienti cliente " +
@@ -385,7 +395,9 @@ public class ReportDAO extends BaseDao {
 
 		PreparedStatement ps=null;
 		ResultSet rs=null;
-		log.debug(metodo, sql.toString());
+		
+		log.info("sql: "+ sql.toString());
+		
 		int i=1;
 		try {
 			ps = connessione.prepareStatement(sql.toString());
@@ -411,10 +423,9 @@ public class ReportDAO extends BaseDao {
 				listaGiornate.add(planning);
 			}
 		} catch (SQLException e) {
-			log.error(metodo, "", e);
+			log.error("errore sql: "+ e);
 		}finally{
 			close(ps,rs);
-			log.end(metodo);
 		}
 		return listaGiornate;
 	}
@@ -435,8 +446,7 @@ public class ReportDAO extends BaseDao {
 	
 	public ArrayList<Associaz_Risor_Comm> caricamentoAssociazioni(String dataDa, String dataA, String id_cliente, String id_risorsa, String id_commessa){
 		
-		final String metodo="caricamentoAssociazioni";
-		log.start(metodo);
+		log.info("metodo: caricamentoAssociazioni");
 		
 		String sql = "SELECT asscommessa.id_associazione,cliente.ragione_sociale, commessa.descrizione, commessa.id_commessa,risorse.id_risorsa, risorse.nome, risorse.cognome " +
 				" FROM tbl_planning planning, tbl_associaz_risor_comm asscommessa,tbl_commesse commessa,tbl_risorse risorse, tbl_clienti cliente " +
@@ -464,6 +474,8 @@ public class ReportDAO extends BaseDao {
 				
 				sql += " group by asscommessa.id_associazione ORDER BY ragione_sociale";
 		
+		log.info("sql: "+sql);
+				
 		ArrayList<Associaz_Risor_Comm> listaAssociazioni = new ArrayList<Associaz_Risor_Comm>();
 		
 		PreparedStatement ps=null;
@@ -498,10 +510,9 @@ public class ReportDAO extends BaseDao {
 			}
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
-			log.error(metodo, "", e);
+			log.error("errore sql: "+ e);
 		}finally{
 			close(ps,rs);
-			log.end(metodo);
 		}
 		
 		return listaAssociazioni;
@@ -522,8 +533,7 @@ public class ReportDAO extends BaseDao {
 	
 	public ArrayList<PlanningDTO> caricamentoOrePerCliente(Calendar dtDa, Calendar dtA, int mesi, int id_associazione){
 		
-		final String metodo="caricamentoOrePerCliente";
-		log.start(metodo);
+		log.info("metodo: caricamentoOrePerCliente");
 		
 		SimpleDateFormat formatoGiorni = new SimpleDateFormat("dd");
 		
@@ -540,7 +550,8 @@ public class ReportDAO extends BaseDao {
 							 " AND planning.data >= ?  AND planning.data <= ? " +
 							 " AND planning.attivo = true "+
 							 " AND asscommessa.id_associazione = ?";
-			
+				
+				log.info("sql: "+sql);
 			
 				PreparedStatement ps=null;
 				ResultSet rs=null;
@@ -565,10 +576,9 @@ public class ReportDAO extends BaseDao {
 					}
 				} catch (SQLException e) {
 					// TODO Auto-generated catch block
-					log.error(metodo, "", e);
+					log.error("errore sql: " + e);
 				}finally{
 					close(ps,rs);
-					log.end(metodo);
 				}
 			}else{
 				
@@ -597,6 +607,8 @@ public class ReportDAO extends BaseDao {
 								 " AND planning.attivo = true "+
 								 " AND asscommessa.id_associazione = ?";
 			
+					log.info("sql: "+sql);
+					
 					PreparedStatement ps=null;
 					ResultSet rs=null;
 					
@@ -629,10 +641,9 @@ public class ReportDAO extends BaseDao {
 						}
 					} catch (SQLException e) {
 						// TODO Auto-generated catch block
-						log.error(metodo, "", e);
+						log.error("errore sql"+ e);
 					} finally{
 						close(ps,rs);
-						log.end(metodo);
 					}
 					//aggiungo i giorni alla data iniziale
 					dtDa.add(Calendar.DAY_OF_MONTH, differenzaGiorni+1);
@@ -653,8 +664,8 @@ public class ReportDAO extends BaseDao {
 	 */
 	
 	public ArrayList<ClienteDTO> caricamentoClienti(String dataDa, String dataA){
-		final String metodo="caricamentoClienti";
-		log.start(metodo);
+		
+		log.info("metodo: caricamentoClienti");
 		
 		String sql = "SELECT cliente.id_cliente, cliente.ragione_sociale" +
 				" FROM tbl_planning planning, tbl_associaz_risor_comm asscommessa,tbl_commesse commessa, tbl_clienti cliente " +
@@ -664,6 +675,8 @@ public class ReportDAO extends BaseDao {
 				" AND planning.data >= ? " +
 				" AND planning.data <= ? " +
 				" group by ragione_sociale ORDER BY ragione_sociale";
+		
+		log.info("sql: "+sql);
 		
 		ArrayList<ClienteDTO> listaClienti = new ArrayList<ClienteDTO>();
 		
@@ -683,10 +696,9 @@ public class ReportDAO extends BaseDao {
 			}
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
-			log.error(metodo, "", e);
+			log.error("errore sql: "+ e);
 		}finally{
 			close(ps, rs);
-			log.end(metodo);
 		}
 		
 		return listaClienti;
@@ -704,8 +716,8 @@ public class ReportDAO extends BaseDao {
 	 */
 	
 	public int differenzaMesi(Calendar dataDa, Calendar dataA){
-		final String metodo="caricamentoClienti";
-		log.start(metodo);
+		
+		log.info("metodo: caricamentoClienti");
 		
 		SimpleDateFormat formato = new SimpleDateFormat("yyyyMM");
 		
@@ -726,10 +738,9 @@ public class ReportDAO extends BaseDao {
 			}
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
-			log.error(metodo, "", e);
+			log.error("errore sql: "+ e);
 		}finally{
 			close(ps,rs);
-			log.end(metodo);
 		}
 		
 		return differenzaMesi;
@@ -740,6 +751,8 @@ public class ReportDAO extends BaseDao {
 	}
 	
 	public File scaricaReportInExcel(String dataDa, String dataA, ArrayList<RisorsaDTO> elencoRisorse, ArrayList<PlanningDTO> giornate,String url){
+		
+		log.info("metodo: scaricaReportInExcel");
 		
 		SimpleDateFormat formatWeb = new SimpleDateFormat("dd-MM-yyyy");
 		SimpleDateFormat formatMese = new SimpleDateFormat("MMMM yyyy");
@@ -753,7 +766,7 @@ public class ReportDAO extends BaseDao {
 			dataFine.setTime(formatWeb.parse(dataA));
 		} catch (ParseException e1) {
 			// TODO Auto-generated catch block
-			e1.printStackTrace();
+			log.error("errore di conversione: "+e1);
 		}
 		
 		int maxGiorni = dataInizio.getActualMaximum(Calendar.DAY_OF_MONTH);
@@ -1026,19 +1039,19 @@ public class ReportDAO extends BaseDao {
 			outStream.close();
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			log.error("file non trovato: "+e);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			log.error("eccezione: "+e);
 		}
 	    
-	    
-		
 		return file;
 		
 	}
 	
 	private boolean controlloPresenzaGiornate(ArrayList<PlanningDTO> giornate, String risorsa){
+		
+		log.info("metodo: controlloPresenzaGiornate");
 		
 		for(int x = 0; x < giornate.size(); x++){
 			PlanningDTO pl = (PlanningDTO) giornate.get(x);
@@ -1051,11 +1064,10 @@ public class ReportDAO extends BaseDao {
 
 	public ArrayList<PlanningDTO> caricaGiornatePerExcel(String dataDa, String dataA,String risorsa,String cliente,String commessa){
 		
+		log.info("metodo: caricaGiornatePerExcel");
+		
 		SimpleDateFormat formatServer = new SimpleDateFormat("yyyy-MM-dd");
 		SimpleDateFormat formatWeb = new SimpleDateFormat("dd-MM-yyyy");
-		
-		final String metodo="caricaGiornatePerExcel";
-		log.start(metodo);
 		
 		PreparedStatement ps = null;
 		
@@ -1080,6 +1092,8 @@ public class ReportDAO extends BaseDao {
 		}
 		
 		sql += "group by risorsa.id_risorsa,planning.data order by risorsa.cognome,planning.data";
+		
+		log.info("sql: "+sql);
 		
 		int contatore = 1;
 		try {
@@ -1129,10 +1143,10 @@ public class ReportDAO extends BaseDao {
 			}
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			log.error("errore sql: "+e);
 		} catch (ParseException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			log.error("errore di conversione: " + e);
 		}
 		
 		return listaGiornate;
