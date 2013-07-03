@@ -32,6 +32,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.apache.log4j.Logger;
+
 import com.itextpdf.text.BadElementException;
 import com.itextpdf.text.BaseColor;
 import com.itextpdf.text.Chunk;
@@ -50,7 +52,7 @@ import com.itextpdf.text.pdf.PdfWriter;
  */
 public class GestioneCommessa extends BaseServlet {
 	private static final long serialVersionUID = -7191888491109702174L;
-	private MyLogger log = new MyLogger(GestioneCommessa.class);
+	private Logger log = Logger.getLogger(GestioneCommessa.class);
 
 	// mi serve per castare le varie date_inizio e date_fine delle varie
 	// commesse
@@ -64,30 +66,26 @@ public class GestioneCommessa extends BaseServlet {
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doGet(HttpServletRequest request,HttpServletResponse response) throws ServletException, IOException {
-		final String metodo = "doGet";
-		log.start(metodo);
+		
+		log.info("metodo: doGet");
 		processRequest(request, response);
-		log.end(metodo);
 	}
 
 	/**
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doPost(HttpServletRequest request,HttpServletResponse response) throws ServletException, IOException {
-		final String metodo = "doPost";
-		log.start(metodo);
+		
+		log.info("metodo: doPost");
 		processRequest(request, response);
-		log.end(metodo);
 	}
 
 	private void processRequest(HttpServletRequest request,HttpServletResponse response) throws ServletException, IOException {
-		final String metodo = "processRequest";
-		log.start(metodo);
+		
+		log.info("metodo: processRequest");
 
 		// mi carico la sessione
 		HttpSession sessione = request.getSession();
-
-		RequestDispatcher rd = null;
 
 		// creo l'istanza della classe CommesseDAO
 		CommesseDAO commesseDAO = new CommesseDAO(conn.getConnection());
@@ -96,7 +94,10 @@ public class GestioneCommessa extends BaseServlet {
 			String azione = request.getParameter("azione");
 
 			if (azione.equals("inserisciCommessa") || azione.equals("modificaCommessa")) {
-
+				
+				log.info("-------------------------------------------------------------------------------");
+				log.info("azione: "+ azione);
+				
 				String tipologia = request.getParameter("tipologiaCommessa");
 
 				/*
@@ -145,12 +146,12 @@ public class GestioneCommessa extends BaseServlet {
 						try {
 							commessa.setData_inizio(formattaDataServer.format(formattaDataWeb.parse(request.getParameter("commessaEsternaSingola_dataInizio"))));
 						} catch (ParseException e) {
-							log.error(metodo, "ParseException", e);
+							log.error("errore di conversione: "+ e);
 						}
 						try {
 							commessa.setData_fine(formattaDataServer.format(formattaDataWeb.parse(request.getParameter("commessaEsternaSingola_dataFine"))));
 						} catch (ParseException e) {
-							log.error(metodo, "ParseException", e);
+							log.error("errore di conversione"+ e);
 						}
 
 						/*
@@ -178,12 +179,12 @@ public class GestioneCommessa extends BaseServlet {
 							try {
 								asscommessa.setDataInizio(formattaDataServer.format(formattaDataWeb.parse(request.getParameter("commessaEsternaSingola_dataInizio"))));
 							} catch (ParseException e) {
-								log.error(metodo, "ParseException", e);
+								log.error("errore di conversione: "+ e);
 							}
 							try {
 								asscommessa.setDataFine(formattaDataServer.format(formattaDataWeb.parse(request.getParameter("commessaEsternaSingola_dataFine"))));
 							} catch (ParseException e) {
-								log.error(metodo, "ParseException", e);
+								log.error("errore di conversione: "+ e);
 							}
 							asscommessa.setTotaleImporto(Double.parseDouble(request.getParameter("commessaEsternaSingola_importo")));
 							asscommessa.setAttiva(true);
@@ -207,14 +208,14 @@ public class GestioneCommessa extends BaseServlet {
 								try {
 									calendar.setTime(format.parse(request.getParameter("commessaEsternaSingola_dataInizio")));
 								} catch (ParseException e) {
-									log.error(metodo, "ParseException", e);
+									log.error("errore di conversione: "+ e);
 								}
 
 								Calendar calendar2 = Calendar.getInstance();
 								try {
 									calendar2.setTime(format.parse(request.getParameter("commessaEsternaSingola_dataFine")));
 								} catch (ParseException e) {
-									log.error(metodo, "ParseException", e);
+									log.error("errore di conversione: "+ e);
 								}
 
 								/*
@@ -226,7 +227,7 @@ public class GestioneCommessa extends BaseServlet {
 								long giornieffettivi = Math.round(Math.round(giorni / 1000 / 60 / 60 / 24));
 								giornieffettivi = Math.abs(giornieffettivi);
 
-								log.debug(metodo, "I giorni di differenza sono: "+ giornieffettivi);
+								log.info("I giorni di differenza sono: "+ giornieffettivi);
 
 								/*
 								 * con questo metodo effettuo l'inserimento
@@ -251,6 +252,9 @@ public class GestioneCommessa extends BaseServlet {
 						} else {
 							request.setAttribute("messaggio","L'inserimento della commessa non è avvenuta con successo. Contattare l'amministratore");
 						}
+						
+						log.info("url: /index.jsp?azione=messaggio");
+						
 						getServletContext()
 							.getRequestDispatcher("/index.jsp?azione=messaggio")
 								.forward(request, response);
@@ -266,7 +270,7 @@ public class GestioneCommessa extends BaseServlet {
 							commessa.setData_inizio(formattaDataServer.format(formattaDataWeb.parse(request.getParameter("commessaEsternaSingola_dataInizio"))));
 						} catch (ParseException e1) {
 							// TODO Auto-generated catch block
-							e1.printStackTrace();
+							log.info("errore di conversione: "+e1);
 						}
 
 						/*
@@ -277,7 +281,7 @@ public class GestioneCommessa extends BaseServlet {
 						try {
 							commessa.setData_fine(formattaDataServer.format(formattaDataWeb.parse(request.getParameter("commessaEsternaSingola_dataFine"))));
 						} catch (ParseException e) {
-							log.error(metodo, "ParseException", e);
+							log.error("errore di conversione: "+ e);
 						}
 
 						commessa.setId_commessa(Integer.parseInt(request.getParameter("parametro")));
@@ -294,6 +298,9 @@ public class GestioneCommessa extends BaseServlet {
 						} else {
 							request.setAttribute("messaggio", messaggio);
 						}
+						
+						log.info("url: /index.jsp?azione=messaggio");
+						
 						getServletContext()
 							.getRequestDispatcher("/index.jsp?azione=messaggio")
 								.forward(request, response);
@@ -331,24 +338,29 @@ public class GestioneCommessa extends BaseServlet {
 						try {
 							commessa.setData_inizio(formattaDataServer.format(formattaDataWeb.parse(request.getParameter("dataInizio"))));
 						} catch (ParseException e) {
-							log.error(metodo, "ParseException", e);
+							log.error("errore di conversione: "+ e);
 						}
 						try {
 							commessa.setData_fine(formattaDataServer.format(formattaDataWeb.parse(request.getParameter("dataFine"))));
 						} catch (ParseException e) {
-							log.error(metodo, "ParseException", e);
+							log.error("errore di convesione: "+ e);
 						}
 
 						String messaggioCommessa = commesseDAO.inserimentoCommessa(commessa, tipologia);
 
 						if (messaggioCommessa.equals("ok")) {
 							request.setAttribute("messaggio","L'inserimento della commessa è avvenuta con successo");
-							rd = getServletContext().getRequestDispatcher("/index.jsp?azione=messaggio");
-							rd.forward(request, response);
+							
+							log.info("url: /index.jsp?azione=messaggio");
+							
+							getServletContext().getRequestDispatcher("/index.jsp?azione=messaggio").forward(request, response);
+							
 						} else {
 							request.setAttribute("messaggio","L'inserimento della commessa non è avvenuta con successo. Contattare l'amministratore");
-							rd = getServletContext().getRequestDispatcher("/index.jsp?azione=messaggio");
-							rd.forward(request, response);
+							
+							log.info("url: /index.jsp?azione=messaggio");
+							
+							getServletContext().getRequestDispatcher("/index.jsp?azione=messaggio").forward(request, response);
 						}
 					} else {
 						
@@ -362,25 +374,29 @@ public class GestioneCommessa extends BaseServlet {
 							commessa.setData_inizio(formattaDataServer.format(formattaDataWeb.parse(request.getParameter("dataInizio"))));
 						} catch (ParseException e1) {
 							// TODO Auto-generated catch block
-							e1.printStackTrace();
+							log.error("errore di conversione: "+e1);
 						}
 
 						try {
 							commessa.setData_fine(formattaDataServer.format(formattaDataWeb.parse(request.getParameter("dataFine"))));
 						} catch (ParseException e) {
-							log.error(metodo, "ParseException", e);
+							log.error("errore di conversione: "+ e);
 						}
 
 						commessa.setId_commessa(Integer.parseInt(request.getParameter("parametro")));
 						String messaggio = commesseDAO.modificaCommessa(commessa);
 						if (messaggio.equals("ok")) {
 							request.setAttribute("messaggio","La modifica della commessa è avvenuta con successo.");
-							rd = getServletContext().getRequestDispatcher("/index.jsp?azione=messaggio");
-							rd.forward(request, response);
+							
+							log.info("url: /index.jsp?azione=messaggio");
+							
+							getServletContext().getRequestDispatcher("/index.jsp?azione=messaggio").forward(request, response);
 						} else {
 							request.setAttribute("messaggio", messaggio);
-							rd = getServletContext().getRequestDispatcher("/index.jsp?azione=messaggio");
-							rd.forward(request, response);
+							
+							log.info("url: /index.jsp?azione=messaggio");
+							
+							getServletContext().getRequestDispatcher("/index.jsp?azione=messaggio").forward(request, response);
 						}
 					}
 				} else if (tipologia.equals("3")) {
@@ -415,24 +431,28 @@ public class GestioneCommessa extends BaseServlet {
 						try {
 							commessa.setData_inizio(formattaDataServer.format(formattaDataWeb.parse(request.getParameter("commessaInterna_dataInizio"))));
 						} catch (ParseException e) {
-							log.error(metodo, "ParseException", e);
+							log.error("errore di conversione: "+ e);
 						}
 						try {
 							commessa.setData_fine(formattaDataServer.format(formattaDataWeb.parse(request.getParameter("commessaInterna_dataFine"))));
 						} catch (ParseException e) {
-							log.error(metodo, "ParseException", e);
+							log.error("errore di conversione: "+ e);
 						}
 
 						String messaggioCommessa = commesseDAO.inserimentoCommessa(commessa, tipologia);
 
 						if (messaggioCommessa.equals("ok")) {
 							request.setAttribute("messaggio","L'inserimento della commessa è avvenuta con successo");
-							rd = getServletContext().getRequestDispatcher("/index.jsp?azione=messaggio");
-							rd.forward(request, response);
+							
+							log.info("url: /index.jsp?azione=messaggio");
+							
+							getServletContext().getRequestDispatcher("/index.jsp?azione=messaggio").forward(request, response);
 						} else {
 							request.setAttribute("messaggio","L'inserimento della commessa non è avvenuta con successo. Contattare l'amministratore");
-							rd = getServletContext().getRequestDispatcher("/index.jsp?azione=messaggio");
-							rd.forward(request, response);
+							
+							log.info("url: /index.jsp?azione=messaggio");
+							
+							getServletContext().getRequestDispatcher("/index.jsp?azione=messaggio").forward(request, response);
 						}
 					} else {
 						/*
@@ -445,13 +465,13 @@ public class GestioneCommessa extends BaseServlet {
 							commessa.setData_inizio(formattaDataServer.format(formattaDataWeb.parse(request.getParameter("commessaInterna_dataInizio"))));
 						} catch (ParseException e1) {
 							// TODO Auto-generated catch block
-							e1.printStackTrace();
+							log.error("errore di conversione: "+e1);
 						}
 
 						try {
 							commessa.setData_fine(formattaDataServer.format(formattaDataWeb.parse(request.getParameter("commessaInterna_dataFine"))));
 						} catch (ParseException e) {
-							log.error(metodo, "ParseException", e);
+							log.error("errore di conversione: "+ e);
 						}
 
 						commessa.setId_commessa(Integer.parseInt(request.getParameter("parametro")));
@@ -459,12 +479,16 @@ public class GestioneCommessa extends BaseServlet {
 
 						if (messaggio.equals("ok")) {
 							request.setAttribute("messaggio","La modifica della commessa è avvenuta con successo.");
-							rd = getServletContext().getRequestDispatcher("/index.jsp?azione=messaggio");
-							rd.forward(request, response);
+							
+							log.info("url: /index.jsp?azione=messaggio");
+							
+							getServletContext().getRequestDispatcher("/index.jsp?azione=messaggio").forward(request, response);
 						} else {
 							request.setAttribute("messaggio", messaggio);
-							rd = getServletContext().getRequestDispatcher("/index.jsp?azione=messaggio");
-							rd.forward(request, response);
+							
+							log.info("url: /index.jsp?azione=messaggio");
+							
+							getServletContext().getRequestDispatcher("/index.jsp?azione=messaggio").forward(request, response);
 						}
 					}
 				} else if (tipologia.equals("4")) {
@@ -498,12 +522,16 @@ public class GestioneCommessa extends BaseServlet {
 
 						if (messaggioCommessa.equals("ok")) {
 							request.setAttribute("messaggio","L'inserimento della commessa è avvenuta con successo");
-							rd = getServletContext().getRequestDispatcher("/index.jsp?azione=messaggio");
-							rd.forward(request, response);
+							
+							log.info("url: /index.jsp?azione=messaggio");
+							
+							getServletContext().getRequestDispatcher("/index.jsp?azione=messaggio").forward(request, response);
 						} else {
 							request.setAttribute("messaggio","L'inserimento della commessa non è avvenuta con successo. Contattare l'amministratore");
-							rd = getServletContext().getRequestDispatcher("/index.jsp?azione=messaggio");
-							rd.forward(request, response);
+							
+							log.info("url: /index.jsp?azione=messaggio");
+							
+							getServletContext().getRequestDispatcher("/index.jsp?azione=messaggio").forward(request, response);
 						}
 					} else {
 
@@ -511,17 +539,24 @@ public class GestioneCommessa extends BaseServlet {
 						String messaggio = commesseDAO.modificaCommessa(commessa);
 						if (messaggio.equals("ok")) {
 							request.setAttribute("messaggio","La modifica della commessa è avvenuta con successo.");
-							rd = getServletContext().getRequestDispatcher("/index.jsp?azione=messaggio");
-							rd.forward(request, response);
+							
+							log.info("url: /index.jsp?azione=messaggio");
+							
+							getServletContext().getRequestDispatcher("/index.jsp?azione=messaggio").forward(request, response);
 						} else {
 							request.setAttribute("messaggio", messaggio);
-							rd = getServletContext().getRequestDispatcher("/index.jsp?azione=messaggio");
-							rd.forward(request, response);
+							
+							log.info("url: /index.jsp?azione=messaggio");
+							
+							getServletContext().getRequestDispatcher("/index.jsp?azione=messaggio").forward(request, response);
 						}
 					}
 				}
 			} else if (azione.equals("visualizzaCommessa")) {
 
+				log.info("-------------------------------------------------------------------------------");
+				log.info("azione: "+ azione);				
+				
 				CommessaDTO commessa = new CommessaDTO();
 
 				if (request.getParameter("codiceCommessa") != null) {
@@ -564,10 +599,17 @@ public class GestioneCommessa extends BaseServlet {
 				ArrayList listaCommesse = commesseDAO.caricamentoCommesse(commessa,anno);
 
 				request.setAttribute("listaCommesse", listaCommesse);
+				
+				log.info("url: /index.jsp?azione=visualizzaCommesse&dispositiva=commessa");
+				
 				getServletContext().getRequestDispatcher("/index.jsp?azione=visualizzaCommesse&dispositiva=commessa").forward(request, response);
 
 			} else if (azione.equals("aggiornaCommessa")
 					|| azione.equals("dettaglioCommessa")) {
+				
+				log.info("-------------------------------------------------------------------------------");
+				log.info("azione: "+ azione);
+				
 				/*
 				 * in questa sezione effettuo il carimento della singola
 				 * commessa per poi visualizzare i dati
@@ -586,12 +628,21 @@ public class GestioneCommessa extends BaseServlet {
 				request.setAttribute("commessa", commessa);
 
 				if (azione.equals("aggiornaCommessa")) {
+					
+					log.info("url: /index.jsp?azione=aggiornaCommessa&dispositiva=commessa");
+					
 					getServletContext().getRequestDispatcher("/index.jsp?azione=aggiornaCommessa&dispositiva=commessa").forward(request, response);
 				} else {
+					
+					log.info("url: /index.jsp?azione=dettaglioCommessa&dispositiva=commessa");
+					
 					getServletContext().getRequestDispatcher("/index.jsp?azione=dettaglioCommessa&dispositiva=commessa").forward(request, response);
 				}
 
 			} else if (azione.equals("risorseAssociate")) {
+				
+				log.info("-------------------------------------------------------------------------------");
+				log.info("azione: "+ azione);
 
 				ArrayList listaRisorseAssociate = commesseDAO.caricamentoRisorseCommessa(Integer.parseInt(request.getParameter("parametro")), request.getParameter("tipologia"));
 
@@ -606,9 +657,15 @@ public class GestioneCommessa extends BaseServlet {
 				request.setAttribute("listaRisorseAssociate",listaRisorseAssociate);
 
 				
+				log.info("url: /index.jsp?azione=risorseAssociate&dispositiva=commessa");
+				
 				getServletContext().getRequestDispatcher("/index.jsp?azione=risorseAssociate&dispositiva=commessa").forward(request, response);
 
 			} else if (azione.equals("controlloCodiceCommessa")) {
+				
+				log.info("-------------------------------------------------------------------------------");
+				log.info("azione: "+ azione);
+				
 				/*
 				 * in questa sezione effettuo il controllo del codiceCommessa
 				 * che non venga inserito due volte
@@ -620,10 +677,13 @@ public class GestioneCommessa extends BaseServlet {
 					out.print(controlloCommessa);
 					out.flush();
 				} catch (IOException e) {
-					log.error(metodo, "IOException", e);
+					log.error("eccezione: "+ e);
 				}
 			} else if (azione.equals("risorseDaAssociare")) {
 
+				log.info("-------------------------------------------------------------------------------");
+				log.info("azione: "+ azione);
+				
 				RisorsaDAO risorsa = new RisorsaDAO(conn.getConnection());
 
 				/*
@@ -656,17 +716,24 @@ public class GestioneCommessa extends BaseServlet {
 						&& request.getParameter("tipoligia").equals("4")) {
 					request.setAttribute("commessa", commessa);
 					request.setAttribute("listaRisorseDaAssociare",listaRisorse);
-					rd = getServletContext().getRequestDispatcher("/index.jsp?azione=risorseDaAssociate&tipologia="+ request.getParameter("tipologia")+ "&parametro="+ request.getParameter("parametro")+ "&dispositiva=commessa");
-					rd.forward(request, response);
+					
+					log.info("url: /index.jsp?azione=risorseDaAssociate&tipologia="+ request.getParameter("tipologia")+ "&parametro="+ request.getParameter("parametro")+ "&dispositiva=commessa");
+					
+					getServletContext().getRequestDispatcher("/index.jsp?azione=risorseDaAssociate&tipologia="+ request.getParameter("tipologia")+ "&parametro="+ request.getParameter("parametro")+ "&dispositiva=commessa").forward(request, response);
 				} else {
 					request.setAttribute("commessa", commessa);
 					request.setAttribute("listaRisorseDaAssociare",listaRisorse);
-					rd = getServletContext().getRequestDispatcher("/index.jsp?azione=risorseDaAssociate&codice="+ request.getParameter("codice")+ "&parametro="+ request.getParameter("parametro")+ "&dispositiva=commessa");
-					rd.forward(request, response);
+					
+					log.info("url: /index.jsp?azione=risorseDaAssociate&codice="+ request.getParameter("codice")+ "&parametro="+ request.getParameter("parametro")+ "&dispositiva=commessa");
+					
+					getServletContext().getRequestDispatcher("/index.jsp?azione=risorseDaAssociate&codice="+ request.getParameter("codice")+ "&parametro="+ request.getParameter("parametro")+ "&dispositiva=commessa").forward(request, response);
 				}
 
 			} else if (azione.equals("caricaAssociazione")) {
 
+				log.info("-------------------------------------------------------------------------------");
+				log.info("azione: "+ azione);
+				
 				/*
 				 * in questa sezione effettuo l'associazione tra la risorsa e la
 				 * commessa
@@ -690,13 +757,13 @@ public class GestioneCommessa extends BaseServlet {
 								asscommessa.setDataInizio(formattaDataServer.format(formattaDataWeb.parse("01-01-"+calendario.get(Calendar.YEAR))));
 							} catch (ParseException e) {
 								// TODO Auto-generated catch block
-								e.printStackTrace();
+								log.error("errore di conversione: "+e);
 							}
 							try {
 								asscommessa.setDataFine(formattaDataServer.format(formattaDataWeb.parse("31-12-"+calendario.get(Calendar.YEAR))));
 							} catch (ParseException e) {
 								// TODO Auto-generated catch block
-								e.printStackTrace();
+								log.error("errore di conversione: "+e);
 							}
 							asscommessa.setAttiva(true);
 							messaggio = commesseDAO.inserimentoAssCommessa(asscommessa);
@@ -709,12 +776,12 @@ public class GestioneCommessa extends BaseServlet {
 					try {
 						asscommessa.setDataInizio(formattaDataServer.format(formattaDataWeb.parse(request.getParameter("dataInizio"))));
 					} catch (ParseException e) {
-						log.error(metodo, "ParseException", e);
+						log.error("errore di conversione: "+e);
 					}
 					try {
 						asscommessa.setDataFine(formattaDataServer.format(formattaDataWeb.parse(request.getParameter("dataFine"))));
 					} catch (ParseException e) {
-						log.error(metodo, "ParseException", e);
+						log.error("errore di conversione: "+e);
 					}
 					asscommessa.setTotaleImporto(Double.parseDouble(request.getParameter("importo")));
 					asscommessa.setAl(request.getParameter("al"));
@@ -726,14 +793,14 @@ public class GestioneCommessa extends BaseServlet {
 					try {
 						calendar.setTime(formattaDataWeb.parse(request.getParameter("dataInizio")));
 					} catch (ParseException e) {
-						log.error(metodo, "ParseException", e);
+						log.info("errore di conversione: "+e);
 					}
 
 					Calendar calendar2 = Calendar.getInstance();
 					try {
 						calendar2.setTime(formattaDataWeb.parse(request.getParameter("dataFine")));
 					} catch (ParseException e) {
-						log.error(metodo, "ParseException", e);
+						log.info("errore di conversione: "+e);;
 					}
 
 					double giorni = calendar.getTimeInMillis()- calendar2.getTimeInMillis();
@@ -741,8 +808,8 @@ public class GestioneCommessa extends BaseServlet {
 					long giornieffettivi = Math.round(Math.round(giorni / 1000/ 60 / 60 / 24));
 					giornieffettivi = Math.abs(giornieffettivi);
 
-					log.debug(metodo, "I giorni di differenza sono: " + giornieffettivi);
-
+					log.info("I giorni di differenza sono: " + giornieffettivi);
+					
 					commesseDAO.caricamentoCalendario(giornieffettivi,calendar, commesseDAO.caricamentoIdAssociazione());
 				}
 
@@ -784,16 +851,23 @@ public class GestioneCommessa extends BaseServlet {
 
 					request.setAttribute("commessa", commessa);
 					request.setAttribute("listaRisorseDaAssociare",listaRisorse);
-					rd = getServletContext().getRequestDispatcher("/index.jsp?azione=risorseDaAssociate&codice="+ request.getParameter("cliente")+ "&parametro="+ Integer.parseInt(valore)+ "&dispositiva=commessa");
-					rd.forward(request, response);
+					
+					log.info("url: /index.jsp?azione=risorseDaAssociate&codice="+ request.getParameter("cliente")+ "&parametro="+ Integer.parseInt(valore)+ "&dispositiva=commessa");
+					
+					getServletContext().getRequestDispatcher("/index.jsp?azione=risorseDaAssociate&codice="+ request.getParameter("cliente")+ "&parametro="+ Integer.parseInt(valore)+ "&dispositiva=commessa").forward(request, response);
 				} else {
 					request.setAttribute("messaggio","L'associazione della risorsa con la commessa non è avvenuta con successo. Contattare l'amministratore");
-					rd = getServletContext().getRequestDispatcher("/index.jsp?azione=messaggio");
-					rd.forward(request, response);
+					
+					log.info("url: /index.jsp?azione=messaggio");
+					
+					getServletContext().getRequestDispatcher("/index.jsp?azione=messaggio").forward(request, response);
 				}
 
 			} else if (azione.equals("dissociazioneRisorsaCommessa")) {
 
+				log.info("-------------------------------------------------------------------------------");
+				log.info("azione: "+ azione);
+				
 				/*
 				 * recupero i parametri che mi vengono passati
 				 */
@@ -841,15 +915,22 @@ public class GestioneCommessa extends BaseServlet {
 				}
 
 				if (!tipologia.equals("4")) {
-					rd = getServletContext().getRequestDispatcher("/index.jsp?azione=dettaglioAssociazione&dispositiva=commessa");
-					rd.forward(request, response);
+					
+					log.info("url: /index.jsp?azione=dettaglioAssociazione&dispositiva=commessa");
+					
+					getServletContext().getRequestDispatcher("/index.jsp?azione=dettaglioAssociazione&dispositiva=commessa").forward(request, response);
 				} else {
-					rd = getServletContext().getRequestDispatcher("/index.jsp?azione=risorseAssociate&dispositiva=commessa");
-					rd.forward(request, response);
+					
+					log.info("url: /index.jsp?azione=risorseAssociate&dispositiva=commessa");
+					
+					getServletContext().getRequestDispatcher("/index.jsp?azione=risorseAssociate&dispositiva=commessa").forward(request, response);
 				}
 
 			} else if (azione.equals("modificaDissociazioneRisorsaCommessa")) {
 
+				log.info("-------------------------------------------------------------------------------");
+				log.info("azione: "+ azione);
+				
 				/*
 				 * recupero i valori dal form caricaAssociazione
 				 */
@@ -869,7 +950,7 @@ public class GestioneCommessa extends BaseServlet {
 					// casto la data in formato Web
 					dataFineCommessa = formattaDataWeb.parse(associazione_Risorsa_Commessa.getDataFine());
 				} catch (ParseException e) {
-					log.error(metodo, "ParseException", e);
+					log.error("errore di conversione: "+ e);
 				}
 
 				/*
@@ -914,10 +995,10 @@ public class GestioneCommessa extends BaseServlet {
 						if (esito.equals("corretto")) {
 							giorniFine.add(Calendar.DATE, 1);
 							date = formattaDataServer.format(giorniFine.getTime());
-							log.debug(metodo, "chiusura commessa + associazione e giorni avvenuta con successo");
+							log.info("chiusura commessa + associazione e giorni avvenuta con successo");
 						} else {
 							giorniFine.add(Calendar.DATE, 1);
-							log.debug(metodo, "chiusura commessa + associazione e giorni non è avvenuta con successo");
+							log.info("chiusura commessa + associazione e giorni non è avvenuta con successo");
 						}
 					}
 				} else if (dataFineForm.after(dataFineCommessa)) {
@@ -955,11 +1036,16 @@ public class GestioneCommessa extends BaseServlet {
 				}
 
 				request.setAttribute("messaggio","Modifica associazione avvenuta correttamente");
-				rd = getServletContext().getRequestDispatcher("/index.jsp?azione=messaggio");
-				rd.forward(request, response);
+				
+				log.info("url: /index.jsp?azione=messaggio");
+				
+				getServletContext().getRequestDispatcher("/index.jsp?azione=messaggio").forward(request, response);
 
 			} else if (azione.equals("chiudiCommessa")) {
 
+				log.info("-------------------------------------------------------------------------------");
+				log.info("azione: "+ azione);
+				
 				/*
 				 * in questa parte di codice effettuo la chiusa di una commessa
 				 * cambiato la data e lo stato da aperto a chiuso e la voce
@@ -998,7 +1084,7 @@ public class GestioneCommessa extends BaseServlet {
 							try {
 								dataOdierna = formattaDataWeb.parse(formattaDataWeb.format(data.getTime()));
 							} catch (ParseException e) {
-								log.error(metodo, "ParseException", e);
+								log.error("errore di conversione: "+ e);
 							}
 							try {
 								if (dataOdierna.before(formattaDataWeb.parse(formattaDataWeb.format(formattaDataServer.parse(asscommessa.getDataFine()))))) {
@@ -1011,7 +1097,7 @@ public class GestioneCommessa extends BaseServlet {
 									try {
 										giornoCommessa.setTime(formattaDataWeb.parse(formattaDataWeb.format(formattaDataServer.parse(asscommessa.getDataFine()))));
 									} catch (ParseException e) {
-										log.error(metodo, "ParseException", e);
+										log.error("errore di conversione: "+ e);
 									}
 
 									double giorni = dateOdierna.getTimeInMillis()- giornoCommessa.getTimeInMillis();
@@ -1033,21 +1119,21 @@ public class GestioneCommessa extends BaseServlet {
 										if (esito.equals("corretto")) {
 											dateOdierna.add(Calendar.DATE, 1);
 											date = formattaDataServer.format(dateOdierna.getTime());
-											log.debug(metodo, "chiusura commessa + associazione e giorni avvenuta con successo");
+											log.info("chiusura commessa + associazione e giorni avvenuta con successo");
 										} else {
 											dateOdierna.add(Calendar.DATE, 1);
-											log.debug(metodo, "chiusura commessa + associazione e giorni non è avvenuta con successo");
+											log.info("chiusura commessa + associazione e giorni non è avvenuta con successo");
 										}
 									}
 								}
 							} catch (ParseException e) {
-								log.error(metodo, "ParseException", e);
+								log.error("errore di conversione: "+ e);
 							}
 
 						}
 					}
 				} else {
-					log.debug(metodo, "chiusura commessa non avvenuta con successo");
+					log.info("chiusura commessa non avvenuta con successo");
 				}
 
 				/*
@@ -1060,16 +1146,23 @@ public class GestioneCommessa extends BaseServlet {
 
 				if (messaggio.equals("ok")) {
 					request.setAttribute("chiusuraCommessa","Chiusura commessa avvenuta con successo");
-					rd = getServletContext()
-							.getRequestDispatcher("/GestioneCommessa?azione=visualizzaCommessa&codiceCommessa=&codice=&stato=&tipologiaCommessa=0");
-					rd.forward(request, response);
+					
+					log.info("url: /GestioneCommessa?azione=visualizzaCommessa&codiceCommessa=&codice=&stato=&tipologiaCommessa=0");
+					
+					getServletContext().getRequestDispatcher("/GestioneCommessa?azione=visualizzaCommessa&codiceCommessa=&codice=&stato=&tipologiaCommessa=0").forward(request, response);
 				} else {
 					request.setAttribute("messaggio","Siamo spiacenti abbiamo riscontrato un problema sulla chiusura della commessa. Contattare l'amministratore.");
-					rd = getServletContext().getRequestDispatcher("/index.jsp?azione=messaggio");
-					rd.forward(request, response);
+					
+					log.info("url: /index.jsp?azione=messaggio");
+					
+					getServletContext().getRequestDispatcher("/index.jsp?azione=messaggio").forward(request, response);
 				}
 
 			} else if (azione.equals("chiudiMensilita")) {
+				
+				log.info("-------------------------------------------------------------------------------");
+				log.info("azione: "+ azione);
+				
 				/*
 				 * questa sezione mi permette di chiudere, se presenti tutte le
 				 * commesse del mese e anno scelto.
@@ -1106,12 +1199,12 @@ public class GestioneCommessa extends BaseServlet {
 								if (messaggio.equals("ok")) {
 									String messaggioCommessa = commesseDAO.chiudiCommessa_Senza_Data(((Associaz_Risor_Comm) listaCommesseDaChiudere.get(y)).getId_commessa());
 									if (messaggioCommessa.equals("ok")) {
-										log.debug(metodo, "Update corretta sulla tabella Tbl_Commesse con id "+ ((Associaz_Risor_Comm) listaCommesseDaChiudere.get(y)).getId_commessa());
+										log.info("Update corretta sulla tabella Tbl_Commesse con id "+ ((Associaz_Risor_Comm) listaCommesseDaChiudere.get(y)).getId_commessa());
 									} else {
-										log.warn(metodo, "Update fallita sulla tabella Tbl_Commesse con id "+ ((Associaz_Risor_Comm) listaCommesseDaChiudere.get(y)).getId_commessa());
+										log.warn("Update fallita sulla tabella Tbl_Commesse con id "+ ((Associaz_Risor_Comm) listaCommesseDaChiudere.get(y)).getId_commessa());
 									}
 								} else {
-									log.warn(metodo, "Update fallita sulla tabella Tbl_Associaz_Risor_Comm con id "+ ((Associaz_Risor_Comm) listaCommesseDaChiudere.get(y)).getId_associazione());
+									log.warn("Update fallita sulla tabella Tbl_Associaz_Risor_Comm con id "+ ((Associaz_Risor_Comm) listaCommesseDaChiudere.get(y)).getId_associazione());
 								}
 							}
 						} else {
@@ -1130,12 +1223,12 @@ public class GestioneCommessa extends BaseServlet {
 								if (messaggio.equals("ok")) {
 									String messaggioCommessa = commesseDAO.chiudiCommessa_Senza_Data(((Associaz_Risor_Comm) listaCommesseDaChiudere.get(y)).getId_commessa());
 									if (messaggioCommessa.equals("ok")) {
-										log.debug(metodo, "Update corretta sulla tabella Tbl_Commesse con id "+ ((Associaz_Risor_Comm) listaCommesseDaChiudere.get(y)).getId_commessa());
+										log.debug("Update corretta sulla tabella Tbl_Commesse con id "+ ((Associaz_Risor_Comm) listaCommesseDaChiudere.get(y)).getId_commessa());
 									} else {
-										log.warn(metodo, "Update fallita sulla tabella Tbl_Commesse con id "+ ((Associaz_Risor_Comm) listaCommesseDaChiudere.get(y)).getId_commessa());
+										log.warn("Update fallita sulla tabella Tbl_Commesse con id "+ ((Associaz_Risor_Comm) listaCommesseDaChiudere.get(y)).getId_commessa());
 									}
 								} else {
-									log.warn(metodo, "Update fallita sulla tabella Tbl_Associaz_Risor_Comm con id "+ ((Associaz_Risor_Comm) listaCommesseDaChiudere.get(y)).getId_associazione());
+									log.warn("Update fallita sulla tabella Tbl_Associaz_Risor_Comm con id "+ ((Associaz_Risor_Comm) listaCommesseDaChiudere.get(y)).getId_associazione());
 								}
 							}
 						}
@@ -1156,12 +1249,12 @@ public class GestioneCommessa extends BaseServlet {
 								if (messaggio.equals("ok")) {
 									String messaggioCommessa = commesseDAO.chiudiCommessa_Senza_Data(((Associaz_Risor_Comm) listaCommesseDaChiudere.get(y)).getId_commessa());
 									if (messaggioCommessa.equals("ok")) {
-										log.debug(metodo, "Update corretta sulla tabella Tbl_Commesse con id "+ ((Associaz_Risor_Comm) listaCommesseDaChiudere.get(y)).getId_commessa());
+										log.debug("Update corretta sulla tabella Tbl_Commesse con id "+ ((Associaz_Risor_Comm) listaCommesseDaChiudere.get(y)).getId_commessa());
 									} else {
-										log.warn(metodo, "Update fallita sulla tabella Tbl_Commesse con id "+ ((Associaz_Risor_Comm) listaCommesseDaChiudere.get(y)).getId_commessa());
+										log.warn("Update fallita sulla tabella Tbl_Commesse con id "+ ((Associaz_Risor_Comm) listaCommesseDaChiudere.get(y)).getId_commessa());
 									}
 								} else {
-									log.warn(metodo, "Update fallita sulla tabella Tbl_Associaz_Risor_Comm con id "+ ((Associaz_Risor_Comm) listaCommesseDaChiudere.get(y)).getId_associazione());
+									log.warn("Update fallita sulla tabella Tbl_Associaz_Risor_Comm con id "+ ((Associaz_Risor_Comm) listaCommesseDaChiudere.get(y)).getId_associazione());
 								}
 							}
 						} else {
@@ -1180,12 +1273,12 @@ public class GestioneCommessa extends BaseServlet {
 								if (messaggio.equals("ok")) {
 									String messaggioCommessa = commesseDAO.chiudiCommessa_Senza_Data(((Associaz_Risor_Comm) listaCommesseDaChiudere.get(y)).getId_commessa());
 									if (messaggioCommessa.equals("ok")) {
-										log.debug(metodo, "Update corretta sulla tabella Tbl_Commesse con id "+ ((Associaz_Risor_Comm) listaCommesseDaChiudere.get(y)).getId_commessa());
+										log.info("Update corretta sulla tabella Tbl_Commesse con id "+ ((Associaz_Risor_Comm) listaCommesseDaChiudere.get(y)).getId_commessa());
 									} else {
-										log.warn(metodo, "Update fallita sulla tabella Tbl_Commesse con id "+ ((Associaz_Risor_Comm) listaCommesseDaChiudere.get(y)).getId_commessa());
+										log.warn("Update fallita sulla tabella Tbl_Commesse con id "+ ((Associaz_Risor_Comm) listaCommesseDaChiudere.get(y)).getId_commessa());
 									}
 								} else {
-									log.warn(metodo, "Update fallita sulla tabella Tbl_Associaz_Risor_Comm con id "+ ((Associaz_Risor_Comm) listaCommesseDaChiudere.get(y)).getId_associazione());
+									log.warn("Update fallita sulla tabella Tbl_Associaz_Risor_Comm con id "+ ((Associaz_Risor_Comm) listaCommesseDaChiudere.get(y)).getId_associazione());
 								}
 							}
 						}
@@ -1234,11 +1327,16 @@ public class GestioneCommessa extends BaseServlet {
 				}
 
 				request.setAttribute("messaggio", messaggio);
-				rd = getServletContext().getRequestDispatcher("/index.jsp?azione=messaggio");
-				rd.forward(request, response);
+				
+				log.info("url: /index.jsp?azione=messaggio");
+				
+				getServletContext().getRequestDispatcher("/index.jsp?azione=messaggio").forward(request, response);
 
 			} else if (azione.equals("controlloDataCommessa")) {
 
+				log.info("-------------------------------------------------------------------------------");
+				log.info("azione: "+ azione);
+				
 				int idCommessa = Integer.parseInt(request.getParameter("parametro"));
 				String data = request.getParameter("data");
 
@@ -1249,11 +1347,14 @@ public class GestioneCommessa extends BaseServlet {
 					out.print(esitoControlloDataCommessa);
 					out.flush();
 				} catch (IOException e) {
-					log.error(metodo, "IOException", e);
+					log.error("eccezione: "+ e);
 				}
 
 			} else if (azione.equals("controlloDataInizioAssociazione")) {
 
+				log.info("-------------------------------------------------------------------------------");
+				log.info("azione: "+ azione);
+				
 				int idCommessa = Integer.parseInt(request.getParameter("parametro"));
 				String data = request.getParameter("data");
 
@@ -1264,10 +1365,13 @@ public class GestioneCommessa extends BaseServlet {
 					out.print(esitoControlloDataCommessa);
 					out.flush();
 				} catch (IOException e) {
-					log.error(metodo, "IOException", e);
+					log.error("eccezione: "+ e);
 				}
 
 			}else if(azione.equals("esportaCommessaPDF")){
+				
+				log.info("-------------------------------------------------------------------------------");
+				log.info("azione: "+ azione);
 				
 				//recupero l'id della risorsa
 				int id_commessa = Integer.parseInt(request.getParameter("parametro")); 
@@ -1282,7 +1386,6 @@ public class GestioneCommessa extends BaseServlet {
 				response.setContentType("application/octet-stream; name=\"" + file.getName() + "\"");
 				response.setCharacterEncoding("UTF-8");
 				response.addHeader("content-disposition", "attachment; filename=\"" + file.getName() + "\"");
-				
 				
 				Document doc = new Document(PageSize.A4, 10, 10, 10, 40);
 				doc.addTitle("Commessa_"+ commessa.getCodiceCommessa());
@@ -1605,21 +1708,18 @@ public class GestioneCommessa extends BaseServlet {
 					
 				} catch (BadElementException e) {
 					// TODO Auto-generated catch block
-					e.printStackTrace();
+					log.error("errore: " +e);
 				} catch (DocumentException e) {
 					// TODO Auto-generated catch block
-					e.printStackTrace();
+					log.error("errore: "+e);
 				} catch (ParseException e) {
 					// TODO Auto-generated catch block
-					e.printStackTrace();
+					log.error("errore di conversione: "+e);
 				}
-				
-				
 				
 			}// qui terminano gli if();
 		} else {
 			sessioneScaduta(response);
 		}
-		log.end(metodo);
 	}
 }

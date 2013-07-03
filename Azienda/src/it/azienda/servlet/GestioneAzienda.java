@@ -16,36 +16,40 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.apache.log4j.Logger;
+
 /**
  * Servlet implementation class GestioneAzienda
  */
 public class GestioneAzienda extends BaseServlet{
 	private static final long serialVersionUID = -7318371187106812683L;
-	private MyLogger log = new MyLogger(GestioneAzienda.class);
+	private Logger log = Logger.getLogger(GestioneAzienda.class);
 
 	/**
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		final String metodo="doGet";
-		log.start(metodo);
+		log.info("-------------------------------------------------------------------------------");
+		log.info("metodo: doGet");
+		
 		processRequest(request,response);
-		log.end(metodo);
 	}
 
 	/**
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		final String metodo="doGet";
-		log.start(metodo);
+		log.info("-------------------------------------------------------------------------------");
+		log.info("metodo: doPost");
+		
 		processRequest(request,response);
-		log.end(metodo);
 	}
 
 	private void processRequest(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		final String metodo="processRequest";
-		log.start(metodo);
+		
+		log.info("-------------------------------------------------------------------------------");
+		log.info("metodo: processRequest");
+		
 		HttpSession sessione = request.getSession();
 		String messaggio = "";
 
@@ -55,6 +59,7 @@ public class GestioneAzienda extends BaseServlet{
 		sessione.setAttribute("connessione", conn.getConnection());//TODO VERIFICARE COME TOGLIERE IL PASSAGGIO DELLA CONNESSIONE ALLE 3 JSP CHE LA SFRUTTANO
 
 		String azione = request.getParameter("azione");
+		
 		if(azione.equals("registrazioneAzienda") || azione.equals("modificaAzienda")){
 			AziendaDTO azienda = new AziendaDTO();
 			azienda.setRagioneSociale(request.getParameter("ragioneSociale"));
@@ -103,7 +108,7 @@ public class GestioneAzienda extends BaseServlet{
 				try {
 					mail.sendMail(azienda.getMail(), "Iscrizione Nuovo Utente Aziendale", testoEmail.toString());
 				} catch (Exception e) {
-					log.error(metodo, "invio mail creazione utente aziendale fallita", e);
+					log.error("invio mail creazione utente aziendale fallita"+ e);
 				}
 			}else{
 				
@@ -118,36 +123,78 @@ public class GestioneAzienda extends BaseServlet{
 			getServletContext()
 				.getRequestDispatcher("/index.jsp?azione=messaggio")
 					.forward(request, response);
+			
 		}else if(azione.equals("login")){
+			
+			log.info("-------------------------------------------------------------------------------");
+			log.info("azione: login");
+			
 			int idAzienda = Integer.parseInt(request.getParameter("utente"));
 			UtenteDTO utenteLoggato = uDAO.caricamentoAzienda(idAzienda);
 			sessione.setAttribute("utenteLoggato", utenteLoggato);
+			
+			log.info("url: ./index.jsp?azione=homePage");
+			
 			response.sendRedirect("./index.jsp?azione=homePage");
 		}
+		
 		if(sessione.getAttribute("utenteLoggato") != null){
 			
 			if(azione.equals("visualizzaAzienda") || azione.equals("aggiornaAzienda")){//in questa sezione effettuo il caricamento del profilo dell'Azienda
+				
+				log.info("-------------------------------------------------------------------------------");
+				log.info("azione: " + azione);
+				
 				AziendaDTO azienda = aDAO.visualizzaProfiloAzienda(((UtenteDTO)sessione.getAttribute("utenteLoggato")).getId_azienda());
+				
 				request.setAttribute("profiloAzienda", azienda);
-				getServletContext()
-				.getRequestDispatcher("/index.jsp?azione="+azione)
-					.forward(request, response);
+				
+				log.info("url: /index.jsp?azione="+azione);
+				
+				getServletContext().getRequestDispatcher("/index.jsp?azione="+azione).forward(request, response);
+				
 			}else if(azione.equals("logout")){
+				
+				log.info("-------------------------------------------------------------------------------");
+				log.info("azione: " + azione);
+				
 				clearSession(sessione);
+				
+				log.info("url: " + prop.getProperty("siteUrl"));
+				
 				response.sendRedirect(prop.getProperty("siteUrl"));
+				
 			}else if(azione.equals("eliminaProfilo")){//in questa sezione effettuo l'eliminazione logica dell'azienda
+				
+				log.info("-------------------------------------------------------------------------------");
+				log.info("azione: " + azione);
+				
 				aDAO.eliminaProfiloAzienda(((UtenteDTO)sessione.getAttribute("utenteLoggato")).getId_azienda());
 				clearSession(sessione);
+				
+				log.info("url: ./index.jsp?azione=homePage");
+				
 				response.sendRedirect("./index.jsp?azione=homePage");
-			}else if(azione.equals("cambioPassword")){//in questa sezione effettuo l'eliminazione logica dell'azienda
+			}else if(azione.equals("cambioPassword")){
+				//in questa sezione effettuo l'eliminazione logica dell'azienda
+				
+				log.info("-------------------------------------------------------------------------------");
+				log.info("azione: " + azione);
+				
+				
 				String messaggioCambioPass = aDAO.cambioPassword(request.getParameter("nuovaPassword"),((UtenteDTO)sessione.getAttribute("utenteLoggato")).getId_utente());
 				if(messaggioCambioPass.equals("ok")){
+					
 					request.setAttribute("messaggio", "Cambio della password avvenuta con successo");
-					getServletContext()
-						.getRequestDispatcher("/index.jsp?azione=messaggio")
-							.forward(request, response);
+					
+					log.info("url: /index.jsp?azione=messaggio");
+					
+					getServletContext().getRequestDispatcher("/index.jsp?azione=messaggio").forward(request, response);
 				}
 			}else if(azione.equals("loginEditor")){
+				
+				log.info("-------------------------------------------------------------------------------");
+				log.info("azione: " + azione);
 				
 				String username = request.getParameter("username");
 				String password = request.getParameter("password");
@@ -156,6 +203,9 @@ public class GestioneAzienda extends BaseServlet{
 				
 				if(!username.equals("editor")){
 					request.setAttribute("url", url);
+					
+					log.info("url: /editorLogin.jsp?errore=loginErrato");
+					
 					getServletContext().getRequestDispatcher("/editorLogin.jsp?errore=loginErrato").forward(request, response);
 				}else{
 				
@@ -163,9 +213,15 @@ public class GestioneAzienda extends BaseServlet{
 					
 					if(id_azienda == 0){
 						request.setAttribute("url", url);
+						
+						log.info("url: /editorLogin.jsp?errore=loginErrato");
+						
 						getServletContext().getRequestDispatcher("/editorLogin.jsp?errore=loginErrato").forward(request, response);
 					}else{
 						//response.sendRedirect("http://localhost:8080/DrConsultingEditor/GestioneLogin?azione=login&utente="+id_azienda);
+						
+						log.info("url: http://drconsulting.tv/DrConsultingEditor/GestioneLogin?azione=login&utente="+id_azienda);
+						
 						response.sendRedirect("http://drconsulting.tv/DrConsultingEditor/GestioneLogin?azione=login&utente="+id_azienda);
 					}
 				}
@@ -173,6 +229,5 @@ public class GestioneAzienda extends BaseServlet{
 		}else{
 			sessioneScaduta(response);
 		}
-		log.end(metodo);
 	}
 }

@@ -11,12 +11,14 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
+import org.apache.log4j.Logger;
+
 public class RisorsaDAO extends BaseDao {
-	private MyLogger log;
+	private Logger log;
 
 	public RisorsaDAO(Connection connessione) {
 		super(connessione);
-		log=new MyLogger(this.getClass());
+		log= Logger.getLogger(RisorsaDAO.class);
 	}
 
 	/*
@@ -26,11 +28,21 @@ public class RisorsaDAO extends BaseDao {
 	
 	public String inserimentoRisorsa(RisorsaDTO risorsa){
 		
+		log.info("metodo: inserimentoRisorsa");
+		
 		String messaggio = "";
 		
 		int esitoInserimentoRisorsa = 0;
 		
 		String sql = "insert into tbl_risorse (cognome,nome,data_nascita,luogo_nascita,sesso,cod_fiscale,mail,telefono,cellulare,fax,indirizzo,citta,provincia,cap,nazione,servizio_militare,patente,costo,occupato,tipo_contratto,figura_professionale,seniority) values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+		
+		log.info("sql: insert into tbl_risorse (cognome,nome,data_nascita,luogo_nascita,sesso,cod_fiscale,mail,telefono,cellulare,fax, " +
+				"indirizzo,citta,provincia,cap,nazione,servizio_militare,patente,costo,occupato,tipo_contratto,figura_professionale,seniority) values ("
+				+risorsa.getCognome()+","+risorsa.getNome()+","+risorsa.getDataNascita()+","+risorsa.getLuogoNascita()+","+risorsa.getSesso()+","+risorsa.getCodiceFiscale()+","
+				+risorsa.getEmail()+","+risorsa.getTelefono()+","+risorsa.getCellulare()+","+risorsa.getFax()+","+risorsa.getIndirizzo()+","+risorsa.getCitta()+","+risorsa.getProvincia()+","+risorsa.getCap()+","
+				+risorsa.getNazione()+","+risorsa.getServizioMilitare()+","+risorsa.getPatente()+","+risorsa.getCosto()+","+risorsa.isOccupato()+","+risorsa.getTipoContratto()+","
+				+risorsa.getFiguraProfessionale()+","+risorsa.getSeniority()+")");
+		
 		PreparedStatement ps=null;
 		try {
 			ps = connessione.prepareStatement(sql);
@@ -67,7 +79,7 @@ public class RisorsaDAO extends BaseDao {
 			
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			log.error("errore sql: " + e);
 			return "Siamo spiacenti l'inserimento della risorsa non è avvenuta con successo. Contattare l'amministrazione";
 		}finally{
 			close(ps);
@@ -87,6 +99,8 @@ public class RisorsaDAO extends BaseDao {
 	 * inseriti dall'utente
 	 */
 	public ArrayList ricercaRisorse(RisorsaDTO risorsa){
+		
+		log.info("metodo: ricercaRisorse");
 		
 		ArrayList listaRisorse = new ArrayList();
 		
@@ -116,6 +130,8 @@ public class RisorsaDAO extends BaseDao {
 		
 		PreparedStatement ps=null;
 		ResultSet rs=null;
+		
+		log.info("sql: " + sql);
 		
 		int contatore = 1;
 		try {
@@ -176,7 +192,7 @@ public class RisorsaDAO extends BaseDao {
 			
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			log.error("errore sql: " + e);
 		}finally{
 			close(ps,rs);
 		}
@@ -191,9 +207,14 @@ public class RisorsaDAO extends BaseDao {
 	
 	public RisorsaDTO caricamentoProfiloRisorsa(int idRisorsa){
 		
+		log.info("metodo: caricamentoProfiloRisorsa");
+		
 		RisorsaDTO risorsa = null;
 		
 		String sql = "select * from tbl_risorse where id_risorsa = ?";
+		
+		log.info("sql: select * from tbl_risorse where id_risorsa = "+idRisorsa);
+		
 		PreparedStatement ps=null;
 		ResultSet rs=null;
 		try {
@@ -230,7 +251,7 @@ public class RisorsaDAO extends BaseDao {
 			}	
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			log.error("errore sql: " + e);
 		}finally{
 			close(ps,rs);
 		}
@@ -238,12 +259,22 @@ public class RisorsaDAO extends BaseDao {
 	}
 	
 	public String modificaRisorsa(RisorsaDTO risorsa){
+	
+		log.info("metodo: modificaRisorsa");
 		
 		String messaggio = "";
 		
 		int esitoModificaRisorsa = 0;
 		
 		String sql = "update tbl_risorse set cognome = ?, nome = ?, data_nascita = ?, luogo_nascita = ?, sesso = ?, cod_fiscale = ?, mail = ?, telefono = ?, cellulare = ?, fax = ?, indirizzo = ?, citta = ?, provincia = ?, cap = ?, nazione = ?, servizio_militare = ?, patente = ?, costo = ?, occupato = ?, tipo_contratto = ?, figura_professionale = ?, seniority = ? where id_risorsa = ?";
+		
+		log.info("sql: update tbl_risorse set cognome = "+risorsa.getCognome()+", nome = "+risorsa.getNome()+", data_nascita = "+risorsa.getDataNascita()+", luogo_nascita = "+risorsa.getLuogoNascita()+"," +
+				"sesso = "+risorsa.getSesso()+", cod_fiscale = "+risorsa.getCodiceFiscale()+", mail = "+risorsa.getEmail()+", telefono = "+risorsa.getTelefono()+", cellulare = "+risorsa.getCellulare()+", " +
+				"fax = "+risorsa.getFax()+", indirizzo = "+risorsa.getIndirizzo()+", citta = "+risorsa.getCitta()+", provincia = "+risorsa.getProvincia()+", cap = "+risorsa.getCap()+", " +
+				"nazione = "+risorsa.getNazione()+", servizio_militare = "+risorsa.getServizioMilitare()+", patente = "+risorsa.getPatente()+", costo = "+risorsa.getCosto()+"," +
+				"occupato = "+risorsa.isOccupato()+", tipo_contratto = "+risorsa.getTipoContratto()+", figura_professionale = "+risorsa.getFiguraProfessionale()+", seniority = "+risorsa.getSeniority()+" " +
+				"where id_risorsa = "+risorsa.getIdRisorsa());
+		
 		PreparedStatement ps=null;
 		try {
 			ps = connessione.prepareStatement(sql);
@@ -282,7 +313,7 @@ public class RisorsaDAO extends BaseDao {
 			
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			log.error("errore sql: " + e);
 			return "Siamo spiacenti la modifica della risorsa non è avvenuta con successo. Contattare l'amministrazione";
 		}finally{
 			close(ps);
@@ -299,11 +330,16 @@ public class RisorsaDAO extends BaseDao {
 	
 	public String eliminaRisorsa(int idRisorsa){
 		
+		log.info("metodo: eliminaRisorsa");
+		
 		String messaggio = "";
 		
 		int esitoEliminaRisorsa = 0;
 		
 		String sql = "update tbl_risorse as risorsa,tbl_utenti as utente set risorsa.visible = 0,utente.utente_visible = 0 where risorsa.id_risorsa = ? and utente.id_risorsa = ?";
+		
+		log.info("sql: update tbl_risorse as risorsa,tbl_utenti as utente set risorsa.visible = 0,utente.utente_visible = 0 where risorsa.id_risorsa = "+idRisorsa+" and utente.id_risorsa = "+idRisorsa);
+		
 		PreparedStatement ps=null;
 		try {
 			ps = connessione.prepareStatement(sql);
@@ -313,7 +349,7 @@ public class RisorsaDAO extends BaseDao {
 			
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			log.error("errore sql: " + e);
 			return "Siamo spiacenti la risorsa non è stata disibilitata con successo. Contattare l'amministrazione";
 		}finally{
 			close(ps);
@@ -330,9 +366,14 @@ public class RisorsaDAO extends BaseDao {
 	
 	public ArrayList<RisorsaDTO> elencoRisorse(){
 		
+		log.info("metodo: elencoRisorse");
+		
 		ArrayList<RisorsaDTO> listaRisorse = new ArrayList<RisorsaDTO>();
 		
 		String sql = "select id_risorsa, nome, cognome, costo, figura_professionale, seniority from tbl_risorse where visible = true order by cognome ASC";
+		
+		log.info("sql: select id_risorsa, nome, cognome, costo, figura_professionale, seniority from tbl_risorse where visible = true order by cognome ASC");
+		
 		PreparedStatement ps=null;
 		ResultSet rs=null;
 		try {
@@ -350,7 +391,7 @@ public class RisorsaDAO extends BaseDao {
 			}
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			log.error("errore sql: " + e);
 		}finally{
 			close(ps,rs);
 		}
@@ -365,9 +406,14 @@ public class RisorsaDAO extends BaseDao {
 	
 	public String elencoTrattativeRisorse(String codiceCliente){
 		
+		log.info("metodo: elencoTrattativeRisorse");
+		
 		String valori = "";
 		
 		String sql = "select risorse.id_risorsa, risorse.cognome, risorse.nome from tbl_risorse as risorse, tbl_trattative as trattative where trattative.id_risorsa = risorse.id_risorsa and trattative.id_cliente = ? and risorse.visible = true group by id_risorsa order by cognome ASC";
+		
+		log.info("sql: select risorse.id_risorsa, risorse.cognome, risorse.nome from tbl_risorse as risorse, tbl_trattative as trattative where trattative.id_risorsa = risorse.id_risorsa and trattative.id_cliente = "+codiceCliente+" and risorse.visible = true group by id_risorsa order by cognome ASC");
+		
 		PreparedStatement ps=null;
 		ResultSet rs=null;
 		try {
@@ -379,7 +425,7 @@ public class RisorsaDAO extends BaseDao {
 			}
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			log.error("errore sql: " + e);
 		}finally{
 			close(ps,rs);
 		}
@@ -390,7 +436,11 @@ public class RisorsaDAO extends BaseDao {
 	
 	public UtenteDTO caricamentoCredenziali(int idRisorsa){
 		
+		log.info("metodo: caricamentoCredenziali");
+		
 		String sql = "select risorsa.cognome, risorsa.nome, risorsa.mail, utenti.id_utente, utenti.username, utenti.password from tbl_utenti as utenti, tbl_risorse as risorsa where utenti.id_risorsa = risorsa.id_risorsa and utenti.id_risorsa = ?";
+		
+		log.info("sql: select risorsa.cognome, risorsa.nome, risorsa.mail, utenti.id_utente, utenti.username, utenti.password from tbl_utenti as utenti, tbl_risorse as risorsa where utenti.id_risorsa = risorsa.id_risorsa and utenti.id_risorsa = "+idRisorsa);
 		
 		UtenteDTO utente = null;
 		PreparedStatement ps=null;
@@ -409,7 +459,7 @@ public class RisorsaDAO extends BaseDao {
 			}
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			log.error("errore sql: " + e);
 		}finally{
 			close(ps,rs);
 		}
@@ -419,7 +469,11 @@ public class RisorsaDAO extends BaseDao {
 	
 	public String modificaCredenziali(String username,String password,int idUtente){
 		
+		log.info("metodo: modificaCredenziali");
+		
 		String sql = "update tbl_utenti set username = ?, password = ? where id_utente = ?";
+		
+		log.info("sql: update tbl_utenti set username = "+username+", password = "+password+" where id_utente = "+idUtente);
 		
 		int esitoModifica = 0;
 		PreparedStatement ps=null;
@@ -432,7 +486,7 @@ public class RisorsaDAO extends BaseDao {
 			
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			log.error("errore sql: "+e);
 			return "Siamo spiacenti la modifica delle credenziali della risorsa non sono avvenute con successo. Contattare l'amministrazione.";
 		}finally{
 			close(ps);
@@ -452,7 +506,11 @@ public class RisorsaDAO extends BaseDao {
 	
 	public ArrayList listaRisorseDaAbilitare(){
 		
+		log.info("metodo: listaRisorseDaAbilitare");
+		
 		String sql = "select id_risorsa,cognome,nome from tbl_risorse where visible = false";
+		
+		log.info("sql: select id_risorsa,cognome,nome from tbl_risorse where visible = false");
 		
 		ArrayList listaRisorse = new ArrayList();
 		
@@ -470,7 +528,7 @@ public class RisorsaDAO extends BaseDao {
 			}
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			log.error("errore sql: " + e);
 		}finally{
 			close(ps, rs);
 		}
@@ -480,7 +538,11 @@ public class RisorsaDAO extends BaseDao {
 	
 	public String abilitaRisorsa(int id_risorsa){
 		
+		log.info("metodo: abilitaRisorsa");
+		
 		String sql = "update tbl_risorse as risorsa,tbl_utenti as utente set risorsa.visible = 1,utente.utente_visible = 1 where risorsa.id_risorsa = ? and utente.id_risorsa = ?";
+		
+		log.info("sql: update tbl_risorse as risorsa,tbl_utenti as utente set risorsa.visible = 1,utente.utente_visible = 1 where risorsa.id_risorsa = "+id_risorsa+" and utente.id_risorsa = "+id_risorsa);
 		
 		PreparedStatement ps = null;
 		
@@ -493,7 +555,7 @@ public class RisorsaDAO extends BaseDao {
 			esito = ps.executeUpdate();
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			log.info("errore sql: " + e);
 			return "errore comando sql "+e.getMessage();
 		}
 		
@@ -507,14 +569,16 @@ public class RisorsaDAO extends BaseDao {
 	}
 	
 	
-
-	
 	public ArrayList<RisorsaDTO>invioEmail(){
-		final String metodo="caricamentoCommessa";
-		log.start(metodo);
+		
+		log.info("metodo: caricamentoCommessa");
+		
 		String sql = "select * from utente";
-		log.debug(metodo, sql);
+		
+		log.info("sql: "+sql);
+		
 		ArrayList<RisorsaDTO>listaUtenti = new ArrayList<RisorsaDTO>();
+		
 		PreparedStatement ps=null;
 		ResultSet rs=null;
 		try {
@@ -524,10 +588,9 @@ public class RisorsaDAO extends BaseDao {
 				listaUtenti.add(new RisorsaDTO(rs.getInt(1),rs.getString(2),rs.getString(3),rs.getString(4)));
 			}
 		} catch (SQLException e) {
-			log.error(metodo, "select utente", e);
+			log.error("errore sql: "+  e);
 		}finally{
 			close(ps,rs);
-			log.end(metodo);
 		}
 		return listaUtenti;
 	}

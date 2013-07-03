@@ -19,17 +19,22 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.apache.log4j.Logger;
+
 /**
  * Servlet implementation class GestioneCurriculum
  */
 public class GestioneCurriculum extends BaseServlet {
 	private static final long serialVersionUID = 1L;
+	Logger log = Logger.getLogger(GestioneCurriculum.class);
 
 	/**
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
+		
+		log.info("metodo: doGest");
 		processRequest(request,response);
 	}
 
@@ -38,11 +43,15 @@ public class GestioneCurriculum extends BaseServlet {
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
+		
+		log.info("metodo: doPost");
 		processRequest(request,response);
 	}
 	
 	private void processRequest(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
+		
+		log.info("metodo: processRequest");
 		
 		//recupero la sessione
 		HttpSession sessione = request.getSession();
@@ -55,6 +64,9 @@ public class GestioneCurriculum extends BaseServlet {
 			String azione = request.getParameter("azione");
 			
 			if(azione.equals("caricamentoAllCurriculum")){
+				
+				log.info("-------------------------------------------------------------------------------");
+				log.info("azione: "+ azione);
 				
 				/**
 				 * mi carico tutti i curriculum che sono stati creati verificando
@@ -71,19 +83,28 @@ public class GestioneCurriculum extends BaseServlet {
 				
 				if(request.getParameter("dispositiva").equals("gestione")){
 					
+					log.info("url: /index.jsp?azione=visualizzaCurriculum");
+					
 					getServletContext().getRequestDispatcher("/index.jsp?azione=visualizzaCurriculum").forward(request, response);
 				
 				}else if(request.getParameter("dispositiva").equals("esportaPDF")){
 					
+					log.info("url: /index.jsp?azione=visualizzaElencoCurriculum&dispositiva=esportaPdf");
+					
 					getServletContext().getRequestDispatcher("/index.jsp?azione=visualizzaElencoCurriculum&dispositiva=esportaPdf").forward(request, response);
 					
 				}else if(request.getParameter("dispositiva").equals("anteprimaCv")){
+					
+					log.info("url: /index.jsp?azione=visualizzaElencoCurriculum&dispositiva=anteprimaGlobale");
 					
 					getServletContext().getRequestDispatcher("/index.jsp?azione=visualizzaElencoCurriculum&dispositiva=anteprimaGlobale").forward(request, response);
 					
 				}
 				
 			}else if(azione.equals("caricamentoCv")){
+				
+				log.info("-------------------------------------------------------------------------------");
+				log.info("azione: "+ azione);
 				
 				/**
 				 * in questa sezione carico il curriculum selezionato 
@@ -103,12 +124,21 @@ public class GestioneCurriculum extends BaseServlet {
 				request.setAttribute("curriculumVitae", curriculumVitae);
 				
 				if(request.getParameter("dispositiva") != null){
+					
+					log.info("url: /index.jsp?azione=dettaglioCurriculum&dispositiva=risorsa");
+					
 					getServletContext().getRequestDispatcher("/index.jsp?azione=dettaglioCurriculum&dispositiva=risorsa").forward(request, response);
 				}else{
+					
+					log.info("url: /index.jsp?azione=dettaglioCurriculum");
+					
 					getServletContext().getRequestDispatcher("/index.jsp?azione=dettaglioCurriculum").forward(request, response);
 				}
 				
 			}else if(azione.equals("modificaIntestazione") || azione.equals("modificaEsperienza") || azione.equals("modificaDettaglio")){
+				
+				log.info("-------------------------------------------------------------------------------");
+				log.info("azione: "+ azione);
 				
 				/**
 				 * in questa sezione gestisco le modifiche delle varie sezioni
@@ -122,6 +152,8 @@ public class GestioneCurriculum extends BaseServlet {
 					
 					request.setAttribute("intestazioneRisorsa", risorsa);
 					
+					log.info("url: /index.jsp?azione=gestioneSingoleSezioniCurriculum&sezione=intestazione");
+					
 					getServletContext().getRequestDispatcher("/index.jsp?azione=gestioneSingoleSezioniCurriculum&sezione=intestazione").forward(request, response);
 					
 				}else if(azione.equals("modificaEsperienza")){
@@ -131,6 +163,8 @@ public class GestioneCurriculum extends BaseServlet {
 					EsperienzeDTO exp = cDAO.caricamentoEsperienza(id_esperienza);
 					
 					request.setAttribute("esperienza", exp);
+				
+					log.info("url: /index.jsp?azione=gestioneSingoleSezioniCurriculum&sezione=esperienza");
 					
 					getServletContext().getRequestDispatcher("/index.jsp?azione=gestioneSingoleSezioniCurriculum&sezione=esperienza").forward(request, response);
 
@@ -142,12 +176,17 @@ public class GestioneCurriculum extends BaseServlet {
 					
 					request.setAttribute("dettaglio", dettaglio);
 					
+					log.info("url: /index.jsp?azione=gestioneSingoleSezioniCurriculum&sezione=dettaglio");
+					
 					getServletContext().getRequestDispatcher("/index.jsp?azione=gestioneSingoleSezioniCurriculum&sezione=dettaglio").forward(request, response);
 
 				}
 				
 				
 			}else if(azione.equals("salvaIntestazione") || azione.equals("salvaEsperienza") || azione.equals("salvaDettaglio")){
+				
+				log.info("-------------------------------------------------------------------------------");
+				log.info("azione: "+ azione);
 				
 				/**
 				 * in questa sezione salvo tutte le modifiche avvenute alle varie sezioni
@@ -209,12 +248,21 @@ public class GestioneCurriculum extends BaseServlet {
 				request.setAttribute("curriculumVitae", curriculumVitae);
 				
 				if(esitoModifica == 1){
+					
+					log.info("url: /index.jsp?azione=dettaglioCurriculum&esito=1");
+					
 					getServletContext().getRequestDispatcher("/index.jsp?azione=dettaglioCurriculum&esito=1").forward(request, response);
 				}else{
+					
+					log.info("url: /index.jsp?azione=dettaglioCurriculum&esito=0");
+					
 					getServletContext().getRequestDispatcher("/index.jsp?azione=dettaglioCurriculum&esito=0").forward(request, response);
 				}
 			
 			}else if(azione.equals("anteprimaIntestazione") || azione.equals("anteprimaEsperienza") || azione.equals("anteprimaDettaglio") || azione.equals("anteprimaGlobale")){
+				
+				log.info("-------------------------------------------------------------------------------");
+				log.info("azione: "+ azione);
 				
 				/**
 				 * in questa sezione effettuo l'anteprima delle singole sezioni
@@ -234,6 +282,8 @@ public class GestioneCurriculum extends BaseServlet {
 					RisorsaDTO risorsa = cDAO.caricamentoIntestazioneRisorsa(id_risorsa);
 					
 					request.setAttribute("anteprimaIntestazione", risorsa);
+				
+					log.info("url: /index.jsp?azione=gestioneAnteprimeSezioniCurriculum&sezione=intestazione");
 					
 					getServletContext().getRequestDispatcher("/index.jsp?azione=gestioneAnteprimeSezioniCurriculum&sezione=intestazione").forward(request, response);
 				
@@ -261,18 +311,28 @@ public class GestioneCurriculum extends BaseServlet {
 					
 					request.setAttribute("listaEsperienze", curriculum);
 					
+					log.info("url: /index.jsp?azione=gestioneAnteprimeSezioniCurriculum&sezione=esperienze");
+					
 					getServletContext().getRequestDispatcher("/index.jsp?azione=gestioneAnteprimeSezioniCurriculum&sezione=esperienze").forward(request, response);
 				
 				}else if(azione.equals("anteprimaDettaglio")){
-										
+					
+					log.info("-------------------------------------------------------------------------------");
+					log.info("azione: "+ azione);
+					
 					Dettaglio_Cv_DTO dettaglio = cDAO.caricamentoDettaglio(id_risorsa);
 					
 					request.setAttribute("dettaglio", dettaglio);
 					
+					log.info("url: /index.jsp?azione=gestioneAnteprimeSezioniCurriculum&sezione=dettaglio");
+					
 					getServletContext().getRequestDispatcher("/index.jsp?azione=gestioneAnteprimeSezioniCurriculum&sezione=dettaglio").forward(request, response);
 					
 				}else if(azione.equals("anteprimaGlobale")){
-										
+					
+					log.info("-------------------------------------------------------------------------------");
+					log.info("azione: "+ azione);
+					
 					CurriculumDTO curriculumVitae = cDAO.caricamentoCurriculum(id_risorsa);
 					curriculumVitae.setId_risorsa(id_risorsa);
 					
@@ -293,17 +353,25 @@ public class GestioneCurriculum extends BaseServlet {
 							/*
 							 * l'utente arriva dalla visualizzazione di tutti i curriculum
 							 */
+							log.info("url: /index.jsp?azione=anteprimaCurriculum&tipoAnteprima="+tipoAnteprima+"&dispositiva="+tipoVisualizzazioneAnteprima+"&area=all");
+							
 							getServletContext().getRequestDispatcher("/index.jsp?azione=anteprimaCurriculum&tipoAnteprima="+tipoAnteprima+"&dispositiva="+tipoVisualizzazioneAnteprima+"&area=all").forward(request, response);
 						}else{
 							/*
 							 * l'utente arriva dal dettaglio curriculum
 							 */
+							
+							log.info("url: /index.jsp?azione=anteprimaCurriculum&tipoAnteprima="+tipoAnteprima+"&dispositiva="+tipoVisualizzazioneAnteprima+"&area=notAll");
+							
 							getServletContext().getRequestDispatcher("/index.jsp?azione=anteprimaCurriculum&tipoAnteprima="+tipoAnteprima+"&dispositiva="+tipoVisualizzazioneAnteprima+"&area=notAll").forward(request, response);
 						}
 					}else{
 						/*
 						* questa anteprima arriva dalla schermata Curriculum Vitae/Curriculum -> Anteprima C.V. -> scelta risorsa -> anteprima
 						*/
+						
+						log.info("url: /index.jsp?azione=anteprimaCurriculum&tipoAnteprima="+tipoAnteprima+"&dispositiva="+tipoVisualizzazioneAnteprima);
+						
 						getServletContext().getRequestDispatcher("/index.jsp?azione=anteprimaCurriculum&tipoAnteprima="+tipoAnteprima+"&dispositiva="+tipoVisualizzazioneAnteprima).forward(request, response);
 					}
 					
@@ -311,6 +379,9 @@ public class GestioneCurriculum extends BaseServlet {
 				}
 				
 			}else if (azione.equals("aggiungiEsperienza") || azione.equals("aggiungiDettaglio")) {
+				
+				log.info("-------------------------------------------------------------------------------");
+				log.info("azione: "+ azione);
 				
 				int id_risorsa = Integer.parseInt(request.getParameter("parametroId"));
 				
@@ -348,8 +419,14 @@ public class GestioneCurriculum extends BaseServlet {
 				request.setAttribute("curriculumVitae", curriculumVitae);
 				
 				if(esitoAggiungi == 1){
+					
+					log.info("url: /index.jsp?azione=dettaglioCurriculum&esito=1");
+					
 					getServletContext().getRequestDispatcher("/index.jsp?azione=dettaglioCurriculum&esito=1").forward(request, response);
 				}else{
+					
+					log.info("url: /index.jsp?azione=dettaglioCurriculum&esito=0");
+					
 					getServletContext().getRequestDispatcher("/index.jsp?azione=dettaglioCurriculum&esito=0").forward(request, response);
 				}
 				
@@ -361,6 +438,10 @@ public class GestioneCurriculum extends BaseServlet {
 				 *  in questa sezione effettuo l'eliminazione delle singole 
 				 *  parti del curriculum
 				 */
+				
+				log.info("-------------------------------------------------------------------------------");
+				log.info("azione: "+ azione);
+				
 				int id_risorsa = 0;
 				
 				if(request.getParameter("parametro") != null){
@@ -403,9 +484,10 @@ public class GestioneCurriculum extends BaseServlet {
 					
 					request.setAttribute("listaCurriculum", curriculumVitae);
 					
-					getServletContext().getRequestDispatcher("/index.jsp?azione=visualizzaCurriculum").forward(request, response);
-
+					log.info("url: /index.jsp?azione=visualizzaCurriculum");
 					
+					getServletContext().getRequestDispatcher("/index.jsp?azione=visualizzaCurriculum").forward(request, response);
+				
 				}
 				
 				CurriculumDTO curriculumVitae = cDAO.caricamentoCurriculum(id_risorsa);
@@ -415,14 +497,23 @@ public class GestioneCurriculum extends BaseServlet {
 				
 				if(!azione.equals("eliminazioneGlobale")){
 					if(esitoEliminazione == 1){
+						
+						log.info("url: /index.jsp?azione=dettaglioCurriculum&esito=1");
+						
 						getServletContext().getRequestDispatcher("/index.jsp?azione=dettaglioCurriculum&esito=1").forward(request, response);
 					}else{
+						
+						log.info("url: /index.jsp?azione=dettaglioCurriculum&esito=2");
+						
 						getServletContext().getRequestDispatcher("/index.jsp?azione=dettaglioCurriculum&esito=2").forward(request, response);
 					}
 				}
 				
 				
 			}else if(azione.equals("esportaPdf")){
+				
+				log.info("-------------------------------------------------------------------------------");
+				log.info("azione: "+ azione);				
 				
 				//recupero l'id della risorsa
 				int id_risorsa = Integer.parseInt(request.getParameter("parametro")); 
@@ -433,9 +524,13 @@ public class GestioneCurriculum extends BaseServlet {
 				
 				if(sceltaTipoCurriculum.equals("aziendale")){
 					
+					log.info("scelta tipo curriculum: " + sceltaTipoCurriculum);
+					
 					File filePdf = null;
 					
 					String tipoVisualizzazione = request.getParameter("tipoVisualizzazione");
+					
+					log.info("tipo visualizzazione: "+tipoVisualizzazione);
 					
 					if(tipoVisualizzazione.equals("completo")){
 						/* recupero il file pdf */
@@ -481,11 +576,17 @@ public class GestioneCurriculum extends BaseServlet {
 									/*
 									 * l'utente arriva dalla visualizzazione di tutti i curriculum
 									 */
+									
+									log.info("url: /index.jsp?azione=anteprimaCurriculum&area=all");
+									
 									getServletContext().getRequestDispatcher("/index.jsp?azione=anteprimaCurriculum&area=all").forward(request, response);
 								}else{
 									/*
 									 * l'utente arriva dal dettaglio curriculum
 									 */
+									
+									log.info("url: /index.jsp?azione=anteprimaCurriculum&area=notAll");
+									
 									getServletContext().getRequestDispatcher("/index.jsp?azione=anteprimaCurriculum&area=notAll").forward(request, response);
 								}
 							}
@@ -496,6 +597,8 @@ public class GestioneCurriculum extends BaseServlet {
 							
 							request.setAttribute("listaCurriculum", curriculumVitae);
 							request.setAttribute("esitoInvioEmail", esitoInvioEmail);
+							
+							log.info("url: /index.jsp?azione=visualizzaElencoCurriculum&dispositiva=esportaPdf");
 							
 							getServletContext().getRequestDispatcher("/index.jsp?azione=visualizzaElencoCurriculum&dispositiva=esportaPdf").forward(request, response);
 						}
@@ -514,11 +617,13 @@ public class GestioneCurriculum extends BaseServlet {
 						fileInputStream.close();
 						out.close();
 						boolean fileCancellato= new File(getServletContext().getRealPath("/")+"CurriculumVitae"+ curriculum.getRisorsa().getCognome() + curriculum.getRisorsa().getNome() +".pdf").delete();
-						System.out.println("esito della cancellazione del file: " + fileCancellato);
+						log.info("esito della cancellazione del file: " + fileCancellato);
 						
 					}	
 					
 				}else if(sceltaTipoCurriculum.equals("europeo")){
+					
+					log.info("scelta tipo curriculum: " + sceltaTipoCurriculum);
 					
 					File filePdf = cDAO.creazioneCurriculumVitaeFormatoEuropeo(getServletContext().getRealPath("/"), curriculum, new File(getServletContext().getRealPath("/")+"CurriculumVitae_"+ curriculum.getRisorsa().getCognome() + "_" + curriculum.getRisorsa().getNome() +".pdf"));
 					
@@ -558,11 +663,17 @@ public class GestioneCurriculum extends BaseServlet {
 									/*
 									 * l'utente arriva dalla visualizzazione di tutti i curriculum
 									 */
+									
+									log.info("url: /index.jsp?azione=anteprimaCurriculum&area=all");
+									
 									getServletContext().getRequestDispatcher("/index.jsp?azione=anteprimaCurriculum&area=all").forward(request, response);
 								}else{
 									/*
 									 * l'utente arriva dal dettaglio curriculum
 									 */
+									
+									log.info("url: /index.jsp?azione=anteprimaCurriculum&area=notAll");
+									
 									getServletContext().getRequestDispatcher("/index.jsp?azione=anteprimaCurriculum&area=notAll").forward(request, response);
 								}
 							}
@@ -573,6 +684,8 @@ public class GestioneCurriculum extends BaseServlet {
 							
 							request.setAttribute("listaCurriculum", curriculumVitae);
 							request.setAttribute("esitoInvioEmail", esitoInvioEmail);
+							
+							log.info("url: /index.jsp?azione=visualizzaElencoCurriculum&dispositiva=esportaPdf");
 							
 							getServletContext().getRequestDispatcher("/index.jsp?azione=visualizzaElencoCurriculum&dispositiva=esportaPdf").forward(request, response);
 						}
@@ -598,9 +711,14 @@ public class GestioneCurriculum extends BaseServlet {
 				
 			 }else if(azione.equals("selezionaRisorsa")){
 				 
+				 log.info("-------------------------------------------------------------------------------");
+				 log.info("azione: "+ azione);
+				 
 				 ArrayList<RisorsaDTO> listaRisorsa = cDAO.caricamentoRisorseSenzaCurriculum();
 				 
 				 request.setAttribute("listaRisorsa", listaRisorsa);
+				 
+				 log.info("url: /index.jsp?azione=selezionaRisorsa");
 				 
 				 getServletContext().getRequestDispatcher("/index.jsp?azione=selezionaRisorsa").forward(request, response);
 				 

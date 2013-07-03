@@ -9,19 +9,24 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+import org.apache.log4j.Logger;
+
 public class UtenteDAO extends BaseDao {
-	private MyLogger log;
+	private Logger log;
 
 	public UtenteDAO(Connection connessione) {
 		super(connessione);
-		log=new MyLogger(this.getClass());
+		log= Logger.getLogger(UtenteDAO.class);
 	}
 
 	public String inserimentoUtente(UtenteDTO utente){
-		final String metodo="inserimentoUtente";
-		log.start(metodo);
+		
+		log.info("metodo: inserimentoUtente");
+		
 		String sql = "INSERT INTO tbl_utenti(username,password,id_azienda,data_registrazione,data_login,id_risorsa)VALUES(?,?,?,?,?,?)";
-		log.debug(metodo,sql);
+		
+		log.info("sql: INSERT INTO tbl_utenti(username,password,id_azienda,data_registrazione,data_login,id_risorsa)VALUES("+utente.getUsername()+","+MD5.encript(utente.getPassword())+","+utente.getId_azienda()+","+utente.getData_registrazione()+","+utente.getData_login()+","+utente.getId_risorsa()+")");
+		
 		int esito = 0; 
 		PreparedStatement ps=null;
 		try {
@@ -34,11 +39,10 @@ public class UtenteDAO extends BaseDao {
 			ps.setInt(6, utente.getId_risorsa());
 			ps.executeUpdate();
 		} catch (SQLException e) {
-			log.error(metodo,"insert into tbl_utenti",e);
+			log.error("errore sql: "+e);
 			return "Siamo spiacenti l'inserimento della risorsa non è avvenuto correttamente. Contattare l'amministrazione";
 		}finally{
 			close(ps);
-			log.end(metodo);
 		}
 		return (esito == 1)?
 			"ok":
@@ -46,10 +50,13 @@ public class UtenteDAO extends BaseDao {
 	}
 
 	public int caricamentoIdRisorsa(){
-		final String metodo="caricamentoIdRisorsa";
-		log.start(metodo);
+		
+		log.info("metodo: caricamentoIdRisorsa");
+		
 		String sql = "select max(id_risorsa) from tbl_risorse";
-		log.debug(metodo,sql);
+		
+		log.info("sql: " + sql);
+		
 		int idRisorsa = 0;
 		PreparedStatement ps=null;
 		ResultSet rs=null;
@@ -60,20 +67,23 @@ public class UtenteDAO extends BaseDao {
 				idRisorsa = rs.getInt(1);
 			}
 		} catch (SQLException e) {
-			log.error(metodo,"max(id_risorsa) tbl_risorse",e);
+			log.error("errore sql: " + e);
 		}finally{
 			close(ps,rs);
-			log.end(metodo);
 		}
 		return idRisorsa;
 	}
 
 	public UtenteDTO caricamentoAzienda(int idAzienda){
-		final String metodo="caricamentoAzienda";
-		log.start(metodo);
+		
+		log.info("metodo: caricamentoAzienda");
+		
 		UtenteDTO utente = null;
+		
 		String sql = "select * from tbl_utenti where id_azienda = ?";//TODO *
-		log.debug(metodo,sql);
+		
+		log.info("sql: select * from tbl_utenti where id_azienda = " + idAzienda);
+		
 		PreparedStatement ps=null;
 		ResultSet rs=null;
 		try {
@@ -92,20 +102,22 @@ public class UtenteDAO extends BaseDao {
 				utente.setId_risorsa(rs.getInt(8));
 			}
 		} catch (SQLException e) {
-			log.error(metodo,"select tbl_utenti",e);
+			log.error("errore sql: " + e);
 		}finally{
 			close(ps,rs);
-			log.end(metodo);
 		}
 		return utente;
 	}
 
 	public UtenteDTO login(String username, String password){
-		final String metodo="login";
-		log.start(metodo);
+		
+		log.info("metodo: login");
+		
 		UtenteDTO utente = null;//TODO *
 		String sql = "select login.* from tbl_utenti as login, tbl_azienda as azienda where login.username = ? and login.password = ? and login.id_azienda = azienda.id_azienda and azienda.attivo = true and login.utente_visible = true";
-		log.debug(metodo,sql);
+		
+		log.info("sql: select login.* from tbl_utenti as login, tbl_azienda as azienda where login.username = "+username+" and login.password = "+password+" and login.id_azienda = azienda.id_azienda and azienda.attivo = true and login.utente_visible = true");
+		
 		PreparedStatement ps=null;
 		ResultSet rs=null;
 		try {
@@ -125,10 +137,9 @@ public class UtenteDAO extends BaseDao {
 				utente.setId_risorsa(rs.getInt(8));
 			}
 		} catch (SQLException e) {
-			log.error(metodo,"select tbl_utenti,tbl_azienda",e);
+			log.error("errore sql: " + e);
 		}finally{
 			close(ps,rs);
-			log.end(metodo);
 		}
 		return utente;
 	}

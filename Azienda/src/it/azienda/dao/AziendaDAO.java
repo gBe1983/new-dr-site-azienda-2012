@@ -9,23 +9,32 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+import org.apache.log4j.Logger;
+
 public class AziendaDAO extends BaseDao {
-	private MyLogger log;
+	private Logger log;
 
 	public AziendaDAO(Connection connessione) {
 		super(connessione);
-		log=new MyLogger(this.getClass());
+		log= Logger.getLogger(AziendaDAO.class);
 	}
 
 	public String inserimentoAzienda(AziendaDTO azienda){
-		final String metodo="inserimentoAzienda";
-		log.start(metodo);
+		
+		log.info("metodo: inserimentoAzienda");
+		
 		StringBuilder sql = new StringBuilder("INSERT INTO tbl_azienda");
 		sql	.append("(ragioneSociale,indirizzo,citta,provincia,cap,nazione,telefono,fax,mail,")
 				.append("codiceFiscale,pIva,indirizzoLegale,cittaLegale,provinciaLegale,")
 				.append("capLegale,nazioneLegale,referente,telefonoReferente,sito,trattamentoDati)")
 				.append("VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)");
-		log.debug(metodo, sql.toString());
+		
+		log.info("sql: INSERT INTO tbl_azienda (ragioneSociale,indirizzo,citta,provincia,cap,nazione,telefono,fax,mail,codiceFiscale,pIva,indirizzoLegale,cittaLegale,provinciaLegale," +
+				"capLegale,nazioneLegale,referente,telefonoReferente,sito,trattamentoDati) VALUES("+azienda.getRagioneSociale()+","+azienda.getIndirizzo()+","+azienda.getCitta()+","+azienda.getProvincia()+"," +
+				""+azienda.getCap()+","+azienda.getNazione()+","+azienda.getTelefono()+","+azienda.getFax()+","+azienda.getMail()+","+azienda.getCodiceFiscale()+","+azienda.getPIva()+"," +
+				""+azienda.getIndirizzoLegale()+","+azienda.getCittaLegale()+","+azienda.getProvinciaLegale()+","+azienda.getCapLegale()+","+azienda.getNazioneLegale()+","+azienda.getReferente()+"," +
+				""+azienda.getTelefonoReferente()+","+azienda.getSito()+","+azienda.isTrattamentoDati()+")");
+		
 		int esitoInserimentoAzienda = 0;
 		PreparedStatement ps=null;
 		try {
@@ -52,11 +61,10 @@ public class AziendaDAO extends BaseDao {
 			ps.setBoolean(20, azienda.isTrattamentoDati());
 			esitoInserimentoAzienda = ps.executeUpdate();
 		} catch (SQLException e) {
-			log.error(metodo, "INSERT INTO tbl_azienda", e);
+			log.error("errore sql: " + e);
 			return "Siamo spiacenti, per via dei problemi tecnici la registrazione non avvenuta con successo. Contattare l'amministrazione";
 		}finally{
 			close(ps);
-			log.end(metodo);
 		}
 		return (esitoInserimentoAzienda == 1)?
 			"Registrazione avvenuta con successo":
@@ -64,15 +72,19 @@ public class AziendaDAO extends BaseDao {
 	}
 
 	public String modificaAzienda(AziendaDTO azienda){
-		final String metodo="modificaAzienda";
-		log.start(metodo);
+		
+		log.info("metodo: modificaAzienda");
 		StringBuilder sql = new StringBuilder("UPDATE tbl_aziende ");
 		sql	.append("SET ragione_sociale=?,indirizzo=?,citta=?,provincia=?,cap=?,nazione=?,")
 				.append("telefono=?,fax=?,mail=?,codice_fiscale=?,p_iva=?,indirizzo_legale=?,")
 				.append("citta_legale=?,provincia_legale=?,cap_legale=?,nazione_legale=?,referente=?,")
 				.append("telefono_referente=?,sito=?,trattamento_dati=? ")
 				.append("WHERE id_azienda=?");
-		log.debug(metodo, sql.toString());
+		
+		log.info("sql: UPDATE tbl_aziende SET ragione_sociale="+azienda.getRagioneSociale()+",indirizzo="+azienda.getIndirizzo()+",citta="+azienda.getCitta()+",provincia="+azienda.getProvincia()+",cap="+azienda.getCap()+",nazione="+azienda.getNazione()+",telefono="+azienda.getTelefono()+",fax="+azienda.getFax()+",mail="+azienda.getMail()+",codice_fiscale="+azienda.getCodiceFiscale()+"," +
+				"p_iva="+azienda.getPIva()+",indirizzo_legale="+azienda.getIndirizzoLegale()+",citta_legale="+azienda.getCittaLegale()+",provincia_legale="+azienda.getProvinciaLegale()+"," +
+						"cap_legale="+azienda.getCapLegale()+",nazione_legale="+azienda.getNazioneLegale()+",referente="+azienda.getReferente()+",telefono_referente="+azienda.getTelefonoReferente()+",sito="+azienda.getSito()+",trattamento_dati="+azienda.isTrattamentoDati()+" WHERE id_azienda="+azienda.getIdAzienda());
+		
 		int esitoAggiornametoAzienda = 0;
 		PreparedStatement ps=null;
 		try {
@@ -100,11 +112,10 @@ public class AziendaDAO extends BaseDao {
 			ps.setInt(21, azienda.getIdAzienda());
 			esitoAggiornametoAzienda = ps.executeUpdate();
 		} catch (SQLException e) {
-			log.error(metodo, "UPDATE tbl_aziende", e);
+			log.error("errore sql: "+ e);
 			return "Siamo spiacenti, per via dei problemi tecnici la registrazione non avvenuta con successo. Contattare l'amministrazione";
 		}finally{
 			close(ps);
-			log.end(metodo);
 		}
 		return (esitoAggiornametoAzienda == 1)?
 			"ok":
@@ -116,11 +127,13 @@ public class AziendaDAO extends BaseDao {
 	 * @return
 	 */
 	public int caricamentoIdAzienda(){
-		final String metodo="caricamentoIdAzienda";
-		log.start(metodo);
+		
+		log.info("metodo: caricamentoIdAzienda");
 		int idAzienda = 0;
 		String sql = "SELECT MAX(id_azienda)max_id_azienda FROM tbl_azienda";
-		log.debug(metodo, sql);
+		
+		log.info("sql: "+sql);
+		
 		PreparedStatement ps=null;
 		ResultSet rs=null;
 		try {
@@ -130,10 +143,9 @@ public class AziendaDAO extends BaseDao {
 				idAzienda = rs.getInt("max_id_azienda");
 			}
 		} catch (SQLException e) {
-			log.error(metodo, "SELECT MAX(id_azienda) tbl_azienda", e);
+			log.error("errore sql: "+ e);
 		}finally{
 			close(ps,rs);
-			log.end(metodo);
 		}
 		return idAzienda;
 	}
@@ -144,15 +156,21 @@ public class AziendaDAO extends BaseDao {
 	 * @return
 	 */
 	public AziendaDTO visualizzaProfiloAzienda(int idAzienda){
-		final String metodo="visualizzaProfiloAzienda";
-		log.start(metodo);
+		
+		log.info("metodo: visualizzaProfiloAzienda");
+		
 		StringBuilder sql = new StringBuilder("SELECT id_azienda,ragione_sociale,indirizzo,citta,");
 		sql	.append("provincia,cap,nazione,telefono,fax,mail,codice_fiscale,p_iva,indirizzo_legale,")
 				.append("citta_legale,provincia_legale,cap_legale,nazione_legale,referente,")
 				.append("telefono_referente,sito,trattamento_dati,visible,attivo ")
 				.append("FROM tbl_aziende ")
 				.append("WHERE id_azienda=?");
-		log.debug(metodo, sql.toString());
+		
+		log.info("sql: SELECT id_azienda,ragione_sociale,indirizzo,citta,provincia,cap,nazione,telefono,fax,mail,codice_fiscale,p_iva,indirizzo_legale," +
+				" citta_legale,provincia_legale,cap_legale,nazione_legale,referente," +
+				" telefono_referente,sito,trattamento_dati,visible,attivo " +
+				" FROM tbl_aziende WHERE id_azienda="+idAzienda);
+		
 		AziendaDTO azienda = null;
 		PreparedStatement ps=null;
 		ResultSet rs=null;
@@ -187,10 +205,9 @@ public class AziendaDAO extends BaseDao {
 				azienda.setAttivo(rs.getBoolean("attivo"));
 			}
 		} catch (SQLException e) {
-			log.error(metodo, "SELECT tbl_aziende for idAzienda:"+idAzienda, e);
+			log.error("errore sql: " + e);
 		}finally{
 			close(ps,rs);
-			log.end(metodo);
 		}
 		return azienda;
 	}
@@ -200,29 +217,32 @@ public class AziendaDAO extends BaseDao {
 	 * @param idAzienda
 	 */
 	public void eliminaProfiloAzienda(int idAzienda){
-		final String metodo="eliminaProfiloAzienda";
-		log.start(metodo);
+		
+		log.info("metodo: eliminaProfiloAzienda");
+		
 		String sql = "UPDATE tbl_utente SET utenteVisible=false WHERE id_azienda=?";
-		log.debug(metodo, sql);
+		
+		log.info("sql: UPDATE tbl_utente SET utenteVisible=false WHERE id_azienda="+idAzienda);
+		
 		PreparedStatement ps=null;
 		try {
 			ps = connessione.prepareStatement(sql);
 			ps.setInt(1, idAzienda);
 			ps.executeUpdate();
 		} catch (SQLException e) {
-			log.error(metodo, "UPDATE tbl_utente for idAzienda:"+idAzienda, e);
+			log.error("errore sql: "+ e);
 		}finally{
 			close(ps);
-			log.end(metodo);
 		}
 	}
 
 	public int loginEditor(String username, String password){
 		
 		final String metodo="loginEditor";
-		log.start(metodo);
+		log.info("metodo: loginEditor");
 		String sql = "select id_azienda from tbl_utenti where username = ? and password = ?";
-		log.debug(metodo, sql);
+		
+		log.info("sql: select id_azienda from tbl_utenti where username = "+username+" and password = "+MD5.encript(password));
 		PreparedStatement ps=null;
 		
 		int id_azienda = 0;
@@ -237,7 +257,7 @@ public class AziendaDAO extends BaseDao {
 			}
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			log.error("errore sql: " + e);
 		}
 		
 		return id_azienda;
@@ -249,10 +269,11 @@ public class AziendaDAO extends BaseDao {
 	 * @return
 	 */
 	public String cambioPassword(String password,int id_utente){
-		final String metodo="cambioPassword";
-		log.start(metodo);
+		
+		log.info("metodo: cambioPassword");
 		String sql = "UPDATE tbl_utente SET password=? WHERE id_utente = ?";
-		log.debug(metodo, sql);
+		
+		log.info("sql: UPDATE tbl_utente SET password=? WHERE id_utente = "+sql);
 		int aggiornamentoPassword = 0;
 		PreparedStatement ps=null;
 		try {
@@ -261,11 +282,10 @@ public class AziendaDAO extends BaseDao {
 			ps.setInt(2, id_utente);
 			aggiornamentoPassword = ps.executeUpdate();
 		} catch (SQLException e) {
-			log.error(metodo, "UPDATE tbl_utente for id_utente :"+id_utente, e);
+			log.error("errore sql: " + e);
 			return "Siamo spiacenti, il cambio password non è avvenuto con successo. Contattare l'amministrazione.";
 		}finally{
 			close(ps);
-			log.end(metodo);
 		}
 		return (aggiornamentoPassword == 1)?
 			"ok":

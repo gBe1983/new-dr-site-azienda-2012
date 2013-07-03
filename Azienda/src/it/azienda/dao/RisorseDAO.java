@@ -10,17 +10,19 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.log4j.Logger;
+
 public class RisorseDAO extends BaseDao{
-	private MyLogger log;
+	private Logger log;
 
 	public RisorseDAO(Connection connessione) {
 		super(connessione);
-		log=new MyLogger(this.getClass());
+		log= Logger.getLogger(RisorseDAO.class);
 	}
 
 	public List<RisorsaDTO> getRisorse(){
-		final String metodo="getRisorse";
-		log.start(metodo);
+		
+		log.info("metodo: getRisorse");
 		PreparedStatement ps=null;
 		ResultSet rs=null;
 		StringBuilder sql = new StringBuilder("SELECT ");
@@ -28,7 +30,9 @@ public class RisorseDAO extends BaseDao{
 				.append("FROM tbl_risorse ")
 				.append("where visible = true ")
 				.append("ORDER BY cognome");
-		log.debug(metodo,"sql:"+sql.toString());
+		
+		log.info("sql:"+sql.toString());
+		
 		List<RisorsaDTO>ris=new ArrayList<RisorsaDTO>();
 		try {
 			ps = connessione.prepareStatement(sql.toString());
@@ -37,17 +41,16 @@ public class RisorseDAO extends BaseDao{
 				ris.add(new RisorsaDTO(rs.getInt("id_risorsa"),rs.getString("cognome"),rs.getString("nome")));
 			}
 		} catch (SQLException e) {
-			log.error(metodo, "select tbl_planning,tbl_associaz_risor_comm,tbl_commesse for risorsa:", e);
+			log.error("errore sql: " + e);
 		}finally{
 			close(ps,rs);
-			log.end(metodo);
 		}
 		return ris;
 	}
 
 	public RisorsaDTO getRisorsa(int idRisorsa){
-		final String metodo="getRisorsa";
-		log.start(metodo);
+		
+		log.info("metodo: getRisorsa");
 		PreparedStatement ps=null;
 		ResultSet rs=null;
 		RisorsaDTO risorsa = null;
@@ -56,7 +59,9 @@ public class RisorseDAO extends BaseDao{
 				.append("cellulare,fax,indirizzo,citta,provincia,cap,nazione,servizio_militare,patente,costo,occupato,")
 				.append("tipo_contratto,figura_professionale,seniority,visible,flag_creazione_cv,cv_visibile ")
 				.append("FROM tbl_risorse WHERE id_risorsa=?");
-		log.debug(metodo,"sql:"+sql.toString());
+		log.info("sql: SELECT id_risorsa,cognome,nome,data_nascita,luogo_nascita,sesso,cod_fiscale,mail,telefono," +
+				"cellulare,fax,indirizzo,citta,provincia,cap,nazione,servizio_militare,patente,costo,occupato," +
+				"tipo_contratto,figura_professionale,seniority,visible,flag_creazione_cv,cv_visibile FROM tbl_risorse WHERE id_risorsa="+idRisorsa);
 		try {
 			ps = connessione.prepareStatement(sql.toString());
 			ps.setInt(1, idRisorsa);
@@ -90,10 +95,9 @@ public class RisorseDAO extends BaseDao{
 														rs.getBoolean("cv_visibile"));
 			}
 		} catch (SQLException e) {
-			log.error(metodo, "select tbl_risorse for risorsa:"+idRisorsa, e);
+			log.error("errore sql: " + e);
 		}finally{
 			close(ps,rs);
-			log.end(metodo);
 		}
 		return risorsa;
 	}

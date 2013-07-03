@@ -29,41 +29,43 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.apache.log4j.Logger;
+
 /**
  * Servlet implementation class GestioneReport
  */
 public class GestioneReport extends BaseServlet {
 	private static final long serialVersionUID = 1L;
-	private MyLogger log;
+	private Logger log;
 
 	public GestioneReport() {
 		super();
-		log =new MyLogger(this.getClass());
+		log = Logger.getLogger(GestioneReport.class);
 	}
 
 	/**
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		final String metodo="doGet";
-		log.start(metodo);
+		
+		log.info("doGet");
 		processRequest(request, response);
-		log.end(metodo);
+		
 	}
 
 	/**
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		final String metodo="doPost";
-		log.start(metodo);
+		
+		log.info("metodo: doPost");
 		processRequest(request, response);
-		log.end(metodo);
+		
 	}
 	
 	private void processRequest(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		final String metodo="processRequest";
-		log.start(metodo);
+		
+		log.info("metodo: processRequest");
 		// mi carico la sessione
 		HttpSession sessione = request.getSession();
 
@@ -72,6 +74,9 @@ public class GestioneReport extends BaseServlet {
 			String azione = request.getParameter("azione");
 			
 			if("visualizzaReport".equals(azione)){
+				
+				log.info("-------------------------------------------------------------------------------");
+				log.info("azione: "+ azione);
 				
 				ReportDAO rDAO = new ReportDAO(conn.getConnection());
 				RisorsaDAO risDAO = new RisorsaDAO(conn.getConnection());
@@ -85,9 +90,14 @@ public class GestioneReport extends BaseServlet {
 				request.setAttribute("listaRisorse", listaRisorse);
 				request.setAttribute("listaCliente", listaCliente);
 				
+				log.info("url: /index.jsp?azione=visualizzaReport&dispositiva=report");
+				
 				getServletContext().getRequestDispatcher("/index.jsp?azione=visualizzaReport&dispositiva=report").forward(request, response);
 				
 			}else if("ricercaReport".equals(azione)){
+				
+				log.info("-------------------------------------------------------------------------------");
+				log.info("azione: "+ azione);
 				
 				SimpleDateFormat formatDate = new SimpleDateFormat("dd-MM-yyyy");
 				SimpleDateFormat formattazione = new SimpleDateFormat("yyyy-MM-dd");
@@ -106,7 +116,7 @@ public class GestioneReport extends BaseServlet {
 					dataInizio = formatDate.parse(request.getParameter("da"));
 				} catch (ParseException e1) {
 					// TODO Auto-generated catch block
-					e1.printStackTrace();
+					log.info("errore di conversione: " + e1);
 				}
 				
 				Date dataFine = null;
@@ -114,7 +124,7 @@ public class GestioneReport extends BaseServlet {
 					dataFine = formatDate.parse(request.getParameter("a"));
 				} catch (ParseException e) {
 					// TODO Auto-generated catch block
-					e.printStackTrace();
+					log.info("errore di conversione: " + e);
 				}
 				
 				ArrayList report = null;
@@ -303,9 +313,15 @@ public class GestioneReport extends BaseServlet {
 				}
 				
 				request.setAttribute("report",report);
+				
+				log.info("url: /index.jsp?azione=visualizzaReport&dispositiva=report");
+				
 				getServletContext().getRequestDispatcher("/index.jsp?azione=visualizzaReport&dispositiva=report").forward(request, response);
 			
 			}else if("visualizzaConsuntivi".equals(azione)){
+				
+				log.info("-------------------------------------------------------------------------------");
+				log.info("azione: "+ azione);
 				
 				ReportDAO reportDAO=new ReportDAO(conn.getConnection());
 				request.setAttribute("commesse",reportDAO.caricamentoCommessa());
@@ -325,7 +341,7 @@ public class GestioneReport extends BaseServlet {
 					try {
 						dtDa.setTime(sdf.parse(dataDa));
 					} catch (ParseException e) {
-						log.warn(metodo, "dataDa", e);
+						log.warn("errore di conversione: "+ e);
 					}
 				}else{
 					while(dtDa.get(Calendar.DAY_OF_MONTH)!=1){
@@ -340,7 +356,7 @@ public class GestioneReport extends BaseServlet {
 					try {
 						dtA.setTime(sdf.parse(dataA));
 					} catch (ParseException e) {
-						log.warn(metodo, "dataA", e);
+						log.warn("errore di conversione: "+ e);
 					}
 				}else{
 					int actualMaximum=dtA.getActualMaximum(Calendar.DAY_OF_MONTH);
@@ -430,7 +446,7 @@ public class GestioneReport extends BaseServlet {
 						dtDa.setTime(sdf.parse(request.getParameter("dtDa")));
 					} catch (Exception e) {
 						// TODO Auto-generated catch block
-						e.printStackTrace();
+						log.info("eccezione: "+e);
 					}
 					
 					/*
@@ -474,7 +490,7 @@ public class GestioneReport extends BaseServlet {
 									dtA.setTime(formatoWeb.parse(request.getParameter("dtA")));
 								} catch (ParseException e) {
 									// TODO Auto-generated catch block
-									e.printStackTrace();
+									log.error("errore di conversione: "+e);
 								}
 								
 								PlanningDTO planning = new PlanningDTO();
@@ -496,6 +512,8 @@ public class GestioneReport extends BaseServlet {
 					request.setAttribute("listaAssCommessa", listaAssociazioni);
 					request.setAttribute("listaClienti", listaClienti);
 					request.setAttribute("calendario", mesi);
+					
+					log.info("url: /main.jsp?azione=visualizzaConsuntivi&tipologia=1&cliente="+request.getParameter("cliente")+"&risorsa="+request.getParameter("risorsa")+"&commessa="+request.getParameter("commessa"));
 					
 					getServletContext().getRequestDispatcher("/main.jsp?azione=visualizzaConsuntivi&tipologia=1&cliente="+request.getParameter("cliente")+"&risorsa="+request.getParameter("risorsa")+"&commessa="+request.getParameter("commessa")).forward(request, response);
 										
@@ -544,6 +562,8 @@ public class GestioneReport extends BaseServlet {
 					request.setAttribute("timeReport", timeReport);
 					request.setAttribute("listaGiornate", listaGiornate);
 					
+					log.info("url: /main.jsp?azione=visualizzaConsuntivi&tipologia=2&cliente="+request.getParameter("cliente")+"&risorsa="+request.getParameter("risorsa")+"&commessa="+request.getParameter("commessa"));
+					
 					getServletContext().getRequestDispatcher("/main.jsp?azione=visualizzaConsuntivi&tipologia=2&cliente="+request.getParameter("cliente")+"&risorsa="+request.getParameter("risorsa")+"&commessa="+request.getParameter("commessa")).forward(request, response);
 
 					
@@ -558,10 +578,15 @@ public class GestioneReport extends BaseServlet {
 							request.getParameter("risorsa"),
 							request.getParameter("commessa")));
 					
+					log.info("url: /main.jsp?azione=visualizzaConsuntivi&tipologia=3&cliente="+request.getParameter("cliente")+"&risorsa="+request.getParameter("risorsa")+"&commessa="+request.getParameter("commessa"));
+					
 					getServletContext().getRequestDispatcher("/main.jsp?azione=visualizzaConsuntivi&tipologia=3&cliente="+request.getParameter("cliente")+"&risorsa="+request.getParameter("risorsa")+"&commessa="+request.getParameter("commessa")).forward(request, response);
 				}
 				
 			}else if("caricamentoReport".equals(azione)){
+				
+				log.info("-------------------------------------------------------------------------------");
+				log.info("azione: "+ azione);
 				
 				SimpleDateFormat sdf=new SimpleDateFormat("dd-MM-yyyy");
 				Calendar dtDa=Calendar.getInstance();
@@ -570,7 +595,7 @@ public class GestioneReport extends BaseServlet {
 					try {
 						dtDa.setTime(sdf.parse(dataDa));
 					} catch (ParseException e) {
-						log.warn(metodo, "dataDa", e);
+						log.warn("errore di conversione: "+ e);
 					}
 				}else{
 					while(dtDa.get(Calendar.DAY_OF_MONTH)!=1){
@@ -585,7 +610,7 @@ public class GestioneReport extends BaseServlet {
 					try {
 						dtA.setTime(sdf.parse(dataA));
 					} catch (ParseException e) {
-						log.warn(metodo, "dataA", e);
+						log.warn("errore di conversione: "+e);
 					}
 				}else{
 					int actualMaximum=dtA.getActualMaximum(Calendar.DAY_OF_MONTH);
@@ -600,9 +625,14 @@ public class GestioneReport extends BaseServlet {
 				request.setAttribute("risorse",new RisorseDAO(conn.getConnection()).getRisorse());
 				request.setAttribute("clienti",new ClienteDAO(conn.getConnection()).caricamentoClienti());
 				
+				log.info("url: /main.jsp?azione=visualizzaConsuntivi");
+				
 				getServletContext().getRequestDispatcher("/main.jsp?azione=visualizzaConsuntivi").forward(request, response);
 			
 			}else if(azione.equals("scaricaReportExcel")){
+				
+				log.info("-------------------------------------------------------------------------------");
+				log.info("azione: "+ azione);
 				
 				ReportDAO rDAO = new ReportDAO(conn.getConnection());
 				
@@ -631,9 +661,9 @@ public class GestioneReport extends BaseServlet {
 				out.close();
 				boolean fileCancellato= new File(getServletContext().getRealPath("/")+"xls/"+file.getName()).delete();
 				if(fileCancellato){
-					log.info("scaricaReportInFormatoExcel", "File cancellato");
+					log.info("scaricaReportInFormatoExcel File cancellato");
 				}else{
-					log.info("scaricaReportInFormatoExcel", "File non Cancellato");
+					log.info("scaricaReportInFormatoExcel File non Cancellato");
 				}
 			}
 		}else{
