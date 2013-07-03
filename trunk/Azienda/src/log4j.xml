@@ -31,7 +31,7 @@
 	</appender>
 
 	<root>
-		<level value="WARN"/>
+		<level value="INFO,WARN,ERROR"/>
 		<appender-ref ref="fileAppender"/>
 		<appender-ref ref="SmtpAppender"/>
 	</root>
